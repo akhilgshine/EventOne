@@ -1,0 +1,9 @@
+Django==1.11.3
+olefile==0.44
+Pillow==4.2.1
+pytz==2017.2
+dj-database-url==0.4.2
+dj-static==0.0.6
+django-toolbelt==0.0.1
+gunicorn==19.7.0
+whitenoise==3.3.0

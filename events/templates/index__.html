@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- Updated stylesheet url -->
+  <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+  <!-- Updated JavaScript url -->
+  <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+
+
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <p><a href="#">Link</a></p>
+    </div>
+    <div class="col-sm-8 text-left" style="margin-top: 50px; margin-bottom: 50px;"> 
+      
+      <form method="POST" style="width: 50%;" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+        <label for="id_title">Title:</label>
+        <input id="id_title" class="form-control" type="text" maxlength="45" name="title">
+        </p>
+        <p>
+        <label for="id_description">Description:</label>
+        <input id="id_description" class="form-control" type="text" maxlength="45" name="description">
+        </p>
+
+        <p>
+        <label for="id_event_image">Event image:</label>
+        <input id="id_event_image" type="file" name="event_image">
+        </p>
+
+        <p>
+        <label for="id_event_date">Event date:</label>
+        <input id="id_event_date" class="form-control" type="text" required="" name="event_date">
+        </p>
+
+        <p>
+        <label for="id_start_time">Start time:</label>
+        <input id="id_start_time" class="form-control" type="text" required="" name="start_time">
+        </p>
+
+        <p>
+        <label for="id_end_time">End time:</label>
+        <input id="id_end_time" class="form-control" type="text" required="" name="end_time">
+        </p>
+
+        <p>
+        <label for="id_price">Price:</label>
+        <input id="id_price" class="form-control" type="number" required="" name="price">
+        </p>
+        <p>
+        <label for="id_total_seats">Total seats:</label>
+        <input id="id_total_seats" class="form-control" type="number" required="" name="total_seats">
+        </p>
+        <button type="submit"> Create Event</button>
+      </form>
+    </div>
+    <div class="col-sm-2 sidenav">
+      <div class="well">
+        <p>ADS</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer>
+
+  <script>
+  $( function() {
+    $( "#id_event_date" ).datepicker();
+    $('#id_start_time').timepicker({'timeFormat':'H:i' });
+    $('#id_end_time').timepicker({'timeFormat': 'H:i'});
+  } );
+  </script>
+</body>
+</html>
