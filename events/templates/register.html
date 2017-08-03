@@ -142,7 +142,7 @@
             <tr>
               <td>Select Table: </td>
               <td>
-              <select id="selectid" name='table' onchange="viewDetails()" class="form-control">
+              <select id="selectid" class="form-control">
               <option value=''>Select User</option>
                 {% for val in tables %}
                     <option value="{{ val.id }}">{{ val.table_name }}</option>
@@ -156,43 +156,49 @@
           <div id="eventUserDetails" style="display: none;">
             <form method="POST">
             {% csrf_token %}
+              <input type="hidden" id="table_id" name="table_val">
              <table class="table">
-            <tr>
-              <td>Name : </td>
+            <tr>          
+              <td><label for="id_name">Name:</label></td>
               <td>
-                <input class="form-control" type="text" id='autoName' name='name' />
+                <input id="id_name" class="form-control" type="text" maxlength="255" required="" name="name">
               </td>   
             </tr>
             <tr>
-              <td>Email : </td>
+
+
+
+              <td><label for="id_email">Email:</label></td>
               <td>
-                <input class="form-control" type="text" name="email" id='email' />
+                <input class="form-control"  id="id_email" type="email" required="" name="email">
               </td>
             </tr>
 
             <tr>
-              <td>Phone : </td>
+              <td><label for="id_phone">Phone:</label> </td>
               <td>
-                <input class="form-control" type="text" name="mobile" id="mobile" />
+                <input class="form-control"  id="id_phone" type="text" maxlength="255" required="" name="phone">
               </td>
             </tr>
 
             <tr>
-              <td>Price : </td>
+              <td><label for="id_price">Price:</label></td>
               <td>
-                <input type="number" name="price"  />
+                <input id="id_price" type="number" required="" step="any" name="price">
               </td>
             </tr>
             
             <tr>
               <td>Payment Option : </td>
               <td>
-                <label class="radio-inline"><input type="radio" name="payment" />Cash</label>
-                <label class="radio-inline"><input type="radio" name="payment" />Check</label>
+                <label class="radio-inline"><input type="radio" name="payment" value='cash' />Cash</label>
+                <label class="radio-inline"><input type="radio" name="payment" value='PayTm' />PayTm</label>
+                <label class="radio-inline"><input type="radio" name="payment" value='Credit/Debit'/>Credit/Debit</label>
               </td>
             </tr>
             <tr>
-              <td></td>
+              <td>
+              </td>
               <td>
                 <button type="submit" class="btn btn-danger">Save</button>
               </td>
@@ -211,53 +217,39 @@
     </footer>
 
   <script>
-  var table_name = ''
-  // $(document).ready(function(){
-  //     $("#eventUserDetails").hide();
-  // });
-  function viewDetails(val) {    
-    $("#eventUserDetails").show();
-  }
 
-  $('#autoName').focusout(function(){
-    var input = $('#autoName').val()    
-    $.ajax({
-      url: '/get_user_data/',
-      type:'GET',
-      data:{
-        'username':input,
-      },
-      success: function (data){
-        console.log("success");
-        $("#email").val(data.email);
-        $("#mobile").val(data.mobile);
-      }
+  $(document).ready(function(){
+  var selected_id = ""
+
+  $('#selectid').on('change', function(){
+      selected_id = $("#selectid option:selected").val();
+      $("#eventUserDetails").show();
+
+      $("#table_id").val(selected_id);
+
+      $("#id_name").autocomplete({
+        source: "/auto_name/?table="+selected_id,
+        minLength: 2,
+      });
     });
 
-  });
-
-  function getCookie(name){
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-          var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
+      $('#id_name').focusout(function(){
+        var input = $('#id_name').val()    
+        $.ajax({
+          url: '/get_user_data/',
+          type:'GET',
+          data:{
+            'username':input,
+          },
+          success: function (data){
+            console.log("success");
+            $("#id_email").val(data.email);
+            $("#id_phone").val(data.mobile);
           }
-        }
-      }
-      return cookieValue;
-    }
-  // autocomplete name
-    $(function() {
-        $("#autoName").autocomplete({
-          source: "/auto_name/?table="+table_name,
-          minLength: 2,
         });
       });
+  })
+
   </script>
 </body>
 </html>

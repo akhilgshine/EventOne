@@ -68,26 +68,21 @@ span.psw {
 
 <h2>Login Form</h2>
 
-<form>
-  <div class="imgcontainer" style="margin-top: 100px;">
-  </div>
+<form method="POST">
+{% csrf_token %}
+ <p>
+    <label for="id_username">Username:</label>
+    <input id="id_username" class="form-control" type="text" maxlength="255" required="" name="username">
+</p>
 
-  <div class="container">
-    <label><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" required>
+<p>
+    <label for="id_password">Password:</label>
+    <input id="id_password" class="form-control" type="password" required="" name="password">
+</p>
 
-    <label><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
-        
-    <button type="submit">Login</button>
-    <input type="checkbox" checked="checked"> Remember me
-  </div>
-
-  <div class="container" style="background-color:#f1f1f1">
-    <button type="button" class="cancelbtn">Cancel</button>
-    <span class="psw">Forgot <a href="#">password?</a></span>
-  </div>
+<input type="submit"> </input>
 </form>
+
 
 </body>
 </html>

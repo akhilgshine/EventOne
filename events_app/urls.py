@@ -19,10 +19,11 @@ from events.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',IndexPage.as_view(), name='index_page'),
+    url(r'^login/$', LoginView.as_view(), name='login'),
+    url(r'^logout/$', logout_view, name='logout'),
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
