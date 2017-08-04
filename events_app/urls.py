@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
-    url(r'^list_user/$',ListUsers.as_view(), name='list_users'),
+    url(r'^users/$',ListUsers.as_view(), name='list_users'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
