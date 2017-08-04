@@ -84,7 +84,6 @@ class RegisterEvent(TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = {}
 		try:
-			import pdb; pdb.set_trace()
 			name = request.POST['first_name']
 			email = request.POST['email']
 			phone = request.POST['phone']
