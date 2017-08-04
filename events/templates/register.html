@@ -45,13 +45,13 @@
                       <h3>Enter Details</h3>
                       <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Table:</label>
-                        <div class="col-sm-8">
-                            <input type="button" class="btn btn-primary" id="other_table_id" value="Other"></input> 
+                        <div class="col-sm-8">                  
                             <select name=""  class="form-control" id="selectId">
                                 <option value=" ">Select Table</option>
                                 {% for val in tables %}
                                 <option value="{{ val.id }}">{{ val.table_name }}</option>
                                 {% endfor %}
+                                <option value="other">Other</option>
                             </select>
 
                         </div>
@@ -151,18 +151,12 @@
       selected_id = $("#selectId option:selected").val();
       $("#detailForm").show();
 
-      $("#id_table").val(selected_id);
-
-      $("#id_first_name").autocomplete({
-        source: "/auto_name/?table="+selected_id,
-        minLength: 1,
-      });
-    });
-
-    $('#other_table_id').on('click', function(){
-      selected_id = $("#selectId option:selected").val();
-      $("#detailForm").show();
-      $("#other_table_div").show();
+      if( selected_id == 'other'){
+        $("#other_table_div").show();
+      }
+      else{
+        $("#other_table_div").hide();
+      }
 
       $("#id_table").val(selected_id);
 
@@ -171,6 +165,19 @@
         minLength: 1,
       });
     });
+
+    // $('#other_table_id').on('click', function(){
+    //   selected_id = $("#selectId option:selected").val();
+    //   $("#detailForm").show();
+    //   $("#other_table_div").show();
+
+    //   $("#id_table").val(selected_id);
+
+    //   $("#id_first_name").autocomplete({
+    //     source: "/auto_name/?table="+selected_id,
+    //     minLength: 1,
+    //   });
+    // });
 
 
 
