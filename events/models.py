@@ -8,10 +8,7 @@ class Event(models.Model):
 	title = models.CharField(max_length=45, blank=True, null=True)
 	description = models.TextField()
 	event_image = models.ImageField(upload_to='event_images/', blank=True)
-	event_date = models.DateField(blank=False)
-	start_time = models.TimeField(blank=False)
-	end_time = models.TimeField(blank=False)
-	price = models.IntegerField(blank=False)
+	price = models.IntegerField(blank=True)
 	total_seats = models.IntegerField(blank=False, null=True)
 
 	def __str__(self):
@@ -44,6 +41,7 @@ class RegisteredUsers(models.Model):
 	payment = models.CharField(max_length=20, blank=False)
 	amount_paid = models.CharField(max_length=20, blank=False, null=False)
 	table = models.ForeignKey(Table)
+	created_date=models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
 		return self.event.title

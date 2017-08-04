@@ -20,7 +20,8 @@ class Command(BaseCommand):
 
         data = csv.reader(f)
 
-        event = Event.objects.filter()[0]
+
+        event = Event.objects.create(title='Area 1Agm of Roundable India for the year 2018',description='Area 1Agm of Roundable India for the year 2018 Lets go nuts hosted at Qrt 85 at Kollam. Count down starts here', price=2000)
 
 
 
