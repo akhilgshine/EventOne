@@ -24,7 +24,7 @@
 </head>
 
 <body id="page-top">
-        <div id="myNav" class="overlay">
+  <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
       <a href="/">Home</a>
@@ -32,37 +32,44 @@
       <a href="/logout/">Logout</a>
     </div>
   </div>
-    <div class="container-fluid wrap-nuts">
+  <div class="container-fluid wrap-nuts">
         
-        <div class="container">
-            <div class="row text-center">
-                <div class="logo-wrap">
-                   <a href="/"> <img src="{% static 'images/logo.png' %}" class="img-responsive" alt=""></a>
-                </div>
-            </div>
-            <div class="row">
-              
-              <div class="col-sm-6">
-
-              </div>
-
-             {% for user in users %}
-
-              {{ user.event_user.first_name}} {{ user.event_user.last_name}}
-
-             {% endfor %}
-            </div>            
+    <div class="container">
+      <div class="row text-center">
+          <div class="logo-wrap">
+              <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
           </div>
-
+      </div>
+      <div class="row">              
+        <div class="col-sm-6">              
+          <div class="container" style=" width:80%; margin-top:20%;margin-left:5%; " > 
+            <table style="color: #fff; overflow: scroll;">
+             {% for user in users %}
+              <tr>
+                <td> <i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbsp&nbsp&nbsp </td><td>{{ user.event_user.first_name}} {{ user.event_user.last_name}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>            
+      </div>
     </div>  
-
+  </div>
     <!-- jQuery -->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 
+    <script>
+      function openNav() {
+          document.getElementById("myNav").style.height = "100%";
+      }
 
+      function closeNav() {
+          document.getElementById("myNav").style.height = "0%";
+      }
+    </script>
 </body>
 
 </html>

@@ -92,7 +92,18 @@ class RegisterEvent(TemplateView):
 			payment = request.POST['payment']
 			price = request.POST['amount_paid']
 
-			table = Table.objects.get(id=int(table))
+			event = Event.objects.filter()[0]
+
+			try:
+				new_table = request.POST['other_table']
+			except:
+				new_table = ''
+
+			if new_table:
+				table = Table.objects.create(table_name=new_table,
+					event=event)
+			else:
+				table = Table.objects.get(id=int(table))
 			
 			event_user, created = EventUsers.objects.get_or_create(table=table,
 				first_name=name,
@@ -100,9 +111,6 @@ class RegisterEvent(TemplateView):
 				mobile=phone)
 			if created:
 				event_user.save()
-
-			event = Event.objects.filter()[0]
-
 
 			qrcode = 'QRT0001'
 			event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
@@ -115,11 +123,11 @@ class RegisterEvent(TemplateView):
 			event_reg.save()
 
 			if event_reg:
-				phone = '9946341903' #Phone
-				message = "Hello welcome to"
-				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+mobile+'&sender=QrtReg&message='+message)
+				phone = phone
+				message = "You are successfully registered for the event hosted by QRT 85 at Kollam QRT CODE : "+event_reg.qrcode
+				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 
-				# send_email(email,message,event_reg)
+				send_email(email,message,event_reg)
 
 			context['event_register'] = event_reg
 
@@ -200,6 +208,4 @@ class ListUsers(TemplateView):
 		# 	data = {}
 		# 	data['name'] = user.event_user.first_name+' '+user.event_user.last_name
 		# 	user_list.append(data)
-
-
 		return render(request, self.template_name, context)

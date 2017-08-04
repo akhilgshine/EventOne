@@ -24,13 +24,20 @@
 </head>
 
 <body id="page-top">
-    
+    <div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+      <a href="/">Home</a>
+      <a href="/users/">Users List</a>
+      <a href="/logout/">Logout</a>
+    </div>
+  </div>
     <div class="container-fluid wrap-nuts register">
         
         <div class="container-fluid">
             <div class="row">
                 <div class="logo-wrap">
-                    <a href="/"><img src="{% static '/images/logo.png' %}" class="img-responsive" alt=""></a>
+                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
                 </div>
                 
                 <div class="col-sm-12 wrap-form-submit" >
@@ -39,12 +46,14 @@
                       <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Table:</label>
                         <div class="col-sm-8">
+                            <input type="button" class="btn btn-primary" id="other_table_id" value="Other"></input> 
                             <select name=""  class="form-control" id="selectId">
                                 <option value=" ">Select Table</option>
                                 {% for val in tables %}
                                 <option value="{{ val.id }}">{{ val.table_name }}</option>
                                 {% endfor %}
                             </select>
+
                         </div>
                       </div>
                       </form>
@@ -53,6 +62,13 @@
                         <form method= "POST" class="form-horizontal form-nuts"> 
                          {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
+
+                        <div class="form-group" id="other_table_div" style="color: #fff; display: none">
+                          <label class="control-label col-sm-4" for="id_other_table">Other Table:</label>
+                          <div class="col-sm-8"> 
+                          <input type="text" class="form-control" id="id_other_table" placeholder="For New Table Only" name='other_table'>
+                          </div>
+                        </div>
 
                         <div class="form-group" style="color: #fff">
                           <label class="control-label col-sm-4" for="id_first_name">First Name:</label>
@@ -143,6 +159,20 @@
       });
     });
 
+    $('#other_table_id').on('click', function(){
+      selected_id = $("#selectId option:selected").val();
+      $("#detailForm").show();
+      $("#other_table_div").show();
+
+      $("#id_table").val(selected_id);
+
+      $("#id_first_name").autocomplete({
+        source: "/auto_name/?table="+selected_id,
+        minLength: 1,
+      });
+    });
+
+
 
     $('#id_first_name').focusout(function(){
       var input = $('#id_first_name').val()    
@@ -162,7 +192,13 @@
       });
     });
 
+    function openNav() {
+        document.getElementById("myNav").style.height = "100%";
+    }
 
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
     </script>
 </body>
 
