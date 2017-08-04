@@ -26,32 +26,6 @@ class IndexPage(TemplateView):
 		return context
 
 
-	# def post(self, request, *args, **kwargs):
-	# 	try:
-	# 		name = request.POST['name']
-	# 		email = request.POST['email']
-
-	# 		table = request.POST['table']
-	# 		payment = request.POST['payment']
-
-	# 		event = Event.objects.filter()[0]
-	# 		table = Table.objects.get(id=table)
-	# 		try:
-	# 			user = User.objects.get(username=name,email=email)
-	# 		except:
-	# 			user = User.objects.create(username=name,
-	# 				email=email,
-	# 				password='pswd4321')
-			
-	# 		register = Registered.objects.create(user=user,
-	# 			event=event,
-	# 			payment=payment,
-	# 			table=table)
-	# 		send_email(str(email),event.title, event.event_date)
-	# 	except:
-	# 		print "exception"
-	# 	return HttpResponseRedirect('')
-
 """
     Login View
     """
@@ -110,13 +84,14 @@ class RegisterEvent(TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = {}
 		try:
-			name = request.POST['name']
+			import pdb; pdb.set_trace()
+			name = request.POST['first_name']
 			email = request.POST['email']
 			phone = request.POST['phone']
 			table = request.POST['table_val']
 
 			payment = request.POST['payment']
-			price = request.POST['price']
+			price = request.POST['amount_paid']
 
 			table = Table.objects.get(id=int(table))
 			
@@ -134,13 +109,12 @@ class RegisterEvent(TemplateView):
 				payment=payment,
 				amount_paid=price,
 				table= table,)
-			import pdb; pdb.set_trace()
 			if event_reg:
-				phone = '9946341903' #phone
+				phone = '9946341903' #Phone
 				message = "Hello welcome to "
 				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+mobile+'&sender=QrtReg&message='+message)
 
-				send_email(email,message,event_reg)
+				# send_email(email,message,event_reg)
 
 			context['event_register'] = event_reg
 
@@ -188,11 +162,13 @@ class GetUserData(TemplateView):
     	try:
     		username = request.GET['username']
     		name_list = username.split(' ', 1)
-    		print username
+    		# print username
     		user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
     		data['email'] = user.email
     		data['mobile'] = user.mobile
-    		print("Data : ", data)
+    		data['first_name'] = user.first_name
+    		data['last_name'] = user.last_name
+    		# print("Data : ", data)
     		return HttpResponse(json.dumps(data), content_type='application/json')
     	except:
     		data['success'] = "False"

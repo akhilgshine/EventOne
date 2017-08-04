@@ -39,42 +39,34 @@
                     <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="">
                 </div>
 
-                <img src="{% static 'images/area-head.png' %}" class="img-responsive img-inline" alt="">
             </div>
-
         </div>
 
-        <div class="container">
-            <div class="row">
-                <h3 class="text-center text-white-col">Count Down Starts Here</h3>
-                
-                <div class="col-sm-12">
-                    <div class="main-example">
-                      <div class="countdown-container text-center" id="main-example"></div>
-                    </div>
-                    <!-- <div id="countdown-timer">         
-                    </div> -->
-                </div>
+        <div class="container" style="margin-top:30%; margin-left: 20%; color:black;">
+          <table>
 
-            </div>
-            <div class="row">
-                <div class="col-sm-12 text-center">
-                    <a href="/register/"> <button class="btn btn-primary btn-reg stnd-box-shadow">REGISTER</button> </a>
-                </div>
-            </div>
+          <tr>
+            <td> Event : </td> <td>{{ event_register.event }}</td>
+          </tr>
+
+          <tr>
+            <td> Table : </td> <td>{{ event_register.table }} </td>
+          </tr>
+
+          <tr>
+            <td>Event User : </td>{{ event_register.event_user }} <td></td>
+          </tr>
+
+          <tr>
+            <td>Amount Paid : </td>{{ event_register.amount_paid }} <td></td>
+          </tr>
+
+          </table>
+
+          <p>Registered Successfully</p>
         </div>
 
     </div>  
-
-    <script type="text/template" id="main-example-template">
-        <div class="time <%= label %>">
-          <span class="count curr top"><%= curr %></span>
-          <span class="count next top"><%= next %></span>
-          <span class="count next bottom"><%= next %></span>
-          <span class="count curr bottom"><%= curr %></span>
-          <span class="label"><%= label.length < 6 ? label : label.substr(0, 3)  %></span>
-        </div>
-    </script>
 
     <!-- jQuery -->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
@@ -82,10 +74,6 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 
-    <!-- Theme Custom Countdown JS --> <!-- START  -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-    <script src="{% static 'js/jquery.countdown.min.js' %}"></script>
-    <script src="{% static 'js/custom.js' %}"></script>
 
 </body>
 

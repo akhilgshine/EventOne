@@ -2,254 +2,166 @@
 <html lang="en">
 {% load static %}
 <head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
- <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+    <title>Creative - Start Bootstrap Theme</title>
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="{% static 'js/jquery.countdown.min.js' %}"></script>
-  
-  <!-- jquery.countdown.min.js -->
-  <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */ 
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"  rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
+    <!-- Custom css style -->
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
     
-    /* Set gray background color and 100% height */
-    .sidenav {
-      padding-top: 20px;
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-    
-    /* Set black background color, white text and some padding */
-    footer {
-      background-color: #555;
-      color: white;
-      padding: 15px;
-    }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height:auto;} 
-    }
-    .ui-autocomplete {
-    z-index: 10000;
-    }
-    .timer{
-      width:100%;
-      padding-top: 10px;
-      text-align: center;
-      font-size: 30px;
-      color: rgb(207, 41, 41);
-      font-weight: bold;
-    }
-    .hr_timer{
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
 
-
-    .event_image {
-        position: relative;
-        width: 100%;
-    }
-
-    .image {
-      opacity: 1;
-      display: block;
-      width: 100%;
-      height: auto;
-      transition: .5s ease;
-      backface-visibility: hidden;
-    }
-
-    .middle {
-      transition: .5s ease;
-      opacity: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%)
-    }
-
-    .event_image:hover .image {
-      opacity: 0.3;
-    }
-
-    .event_image:hover .middle {
-      opacity: 1;
-    }
-
-    .text {
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      padding: 16px 32px;
-    }
-  </style>
-  <!-- border:solid 1px red; -->
 </head>
-<body>
 
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>                        
-          </button>
-          <img src="{% static 'images/logo.jpg' %}" class="img-thumbnail" alt="Cinque Terre" style="width:80px; height: 60px;" />
+<body id="page-top">
+    
+    <div class="container-fluid wrap-nuts register">
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="logo-wrap">
+                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="">
+                </div>
+                
+                <div class="col-sm-12 wrap-form-submit">
+                      <form class="form-horizontal form-nuts">
+                      <h3>Enter Details</h3>
+                      <div class="form-group">
+                        <label class="control-label col-sm-4" for="email">Select Table:</label>
+                        <div class="col-sm-8">
+                            <select name=""  class="form-control" id="selectId">
+                                <option value=" ">Select Table</option>
+                                {% for val in tables %}
+                                <option value="{{ val.id }}">{{ val.table_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                      </div>
+                      </form>
+
+                      <div  id="detailForm" style="display: none;">                        
+                        <form method= "POST" class="form-horizontal form-nuts"> 
+                         {% csrf_token %}
+                        <input type="hidden" id="id_table" name="table_val">
+
+                        <div class="form-group" style="color: #fff">
+                          <label class="control-label col-sm-4" for="id_first_name">First Name:</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" class="form-control" id="id_first_name" placeholder="Enter your First Name" name='first_name'>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_last_name">Last Name:</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_phone">Phone Number:</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" class="form-control" id="id_phone" placeholder="Enter your Phone Number" name="phone">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_email">Email:</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" class="form-control" id="id_email" placeholder="Enter your Email" name="email">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount:</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="pwd">Mode Of Payment:</label>
+                          <div class="col-sm-2"> 
+                              <label>
+                                  <input type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
+                              </label>
+                          </div>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
+                              </label>
+                          </div>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Card
+                              </label>
+                          </div>
+                              
+                        </div>
+                        <hr>
+                        <div class="form-group"> 
+                          <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-default nuts-sub">Confirm Register</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Projects</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  
-    <div class="container-fluid text-center">    
-      <div class="row content">
-        <div class="col-sm-2 sidenav">
-        </div>
-        <div class="col-sm-8 text-left" style="margin-bottom: 30px;">         
-          <div id="select_Table" >
-             <table class="table">
-            <tr>
-              <td>Select Table: </td>
-              <td>
-              <select id="selectid" class="form-control">
-              <option value=''>Select User</option>
-                {% for val in tables %}
-                    <option value="{{ val.id }}">{{ val.table_name }}</option>
-                    {% endfor %}
-              </select>
-              </td>
-            </tr>
-            </table>
-          </div>
-
-          <div id="eventUserDetails" style="display: none;">
-            <form method="POST">
-            {% csrf_token %}
-              <input type="hidden" id="table_id" name="table_val">
-             <table class="table">
-            <tr>          
-              <td><label for="id_name">Name:</label></td>
-              <td>
-                <input id="id_name" class="form-control" type="text" maxlength="255" required="" name="name">
-              </td>   
-            </tr>
-            <tr>
+    </div>  
 
 
+    <!-- jQuery -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
-              <td><label for="id_email">Email:</label></td>
-              <td>
-                <input class="form-control"  id="id_email" type="email" required="" name="email">
-              </td>
-            </tr>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 
-            <tr>
-              <td><label for="id_phone">Phone:</label> </td>
-              <td>
-                <input class="form-control"  id="id_phone" type="text" maxlength="255" required="" name="phone">
-              </td>
-            </tr>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
 
-            <tr>
-              <td><label for="id_price">Price:</label></td>
-              <td>
-                <input id="id_price" type="number" required="" step="any" name="price">
-              </td>
-            </tr>
-            
-            <tr>
-              <td>Payment Option : </td>
-              <td>
-                <label class="radio-inline"><input type="radio" name="payment" value='cash' />Cash</label>
-                <label class="radio-inline"><input type="radio" name="payment" value='PayTm' />PayTm</label>
-                <label class="radio-inline"><input type="radio" name="payment" value='Credit/Debit'/>Credit/Debit</label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-              </td>
-              <td>
-                <button type="submit" class="btn btn-danger">Save</button>
-              </td>
-            </tr> 
-            </table>          
-          </form>
-        </div>    
-      </div>
-        <div class="col-sm-2 sidenav">
-        </div>
-      </div>
-    </div>
-    <!-- END MODAL -->
-    <footer class="container-fluid text-center">
-      <p>Footer Text</p>
-    </footer>
+    <script type="text/javascript">
 
-  <script>
+      $('#selectId').on('change', function(){
+      selected_id = $("#selectId option:selected").val();
+      $("#detailForm").show();
 
-  $(document).ready(function(){
-  var selected_id = ""
+      $("#id_table").val(selected_id);
 
-  $('#selectid').on('change', function(){
-      selected_id = $("#selectid option:selected").val();
-      $("#eventUserDetails").show();
-
-      $("#table_id").val(selected_id);
-
-      $("#id_name").autocomplete({
+      $("#id_first_name").autocomplete({
         source: "/auto_name/?table="+selected_id,
-        minLength: 2,
+        minLength: 1,
       });
     });
 
-      $('#id_name').focusout(function(){
-        var input = $('#id_name').val()    
-        $.ajax({
-          url: '/get_user_data/',
-          type:'GET',
-          data:{
-            'username':input,
-          },
-          success: function (data){
-            console.log("success");
-            $("#id_email").val(data.email);
-            $("#id_phone").val(data.mobile);
-          }
-        });
-      });
-  })
 
-  </script>
+    $('#id_first_name').focusout(function(){
+      var input = $('#id_first_name').val()    
+      $.ajax({
+        url: '/get_user_data/',
+        type:'GET',
+        data:{
+          'username':input,
+        },
+        success: function (data){
+          console.log("success");
+          $("#id_email").val(data.email);
+          $("#id_phone").val(data.mobile);          
+          $("#id_first_name").val(data.first_name);          
+          $("#id_last_name").val(data.last_name);
+        }
+      });
+    });
+
+
+    </script>
 </body>
+
 </html>

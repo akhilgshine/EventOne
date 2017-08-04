@@ -25,11 +25,12 @@ class LoginForm(forms.Form):
 
 class EventRegisterForm(forms.Form):
 	table = forms.CharField(widget=forms.HiddenInput(), initial=123)
-	name = forms.CharField(max_length=255, required=True)
+	first_name = forms.CharField(max_length=255, required=True)
+	last_name = forms.CharField(max_length=255, required=True)
 	email = forms.EmailField(required=True)
 	phone = forms.CharField(max_length=255, required=True)
 	payment = forms.CharField(max_length=255, required=True)
-	price = forms.FloatField( required=True)
+	amount_paid = forms.FloatField( required=True)
 	
 	# payment = ChoiceField(label='', 
 	# 	initial='bank', 
