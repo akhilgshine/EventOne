@@ -414,3 +414,14 @@ img::-moz-selection {
 body {
   webkit-tap-highlight-color: #222222;
 }
+.club-image {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  float: right;
+  width: 100px;
+}
+
+.wrap-nuts{
+  position: relative;
+}

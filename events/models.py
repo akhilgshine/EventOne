@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class Event(models.Model):
-	title = models.CharField(max_length=45, blank=True, null=True)
+	title = models.CharField(max_length=100, blank=True, null=True)
 	description = models.TextField()
 	event_image = models.ImageField(upload_to='event_images/', blank=True)
 	price = models.IntegerField(blank=True)
@@ -25,11 +25,11 @@ class Table(models.Model):
 
 class EventUsers(models.Model):
 	table = models.ForeignKey(Table)
-	first_name = models.CharField(max_length=20, blank=False)
-	last_name = models.CharField(max_length=20, blank=False)
+	first_name = models.CharField(max_length=40, blank=False)
+	last_name = models.CharField(max_length=40, blank=False)
 	mobile = models.CharField(max_length=20, blank=True)
-	email = models.CharField(max_length=20, blank=False)
-	post = models.CharField(max_length=20, blank=True)
+	email = models.CharField(max_length=30, blank=False)
+	post = models.CharField(max_length=30, blank=True)
 
 	def __str__(self):
 		return self.first_name
@@ -40,6 +40,7 @@ class RegisteredUsers(models.Model):
 	event = models.ForeignKey(Event)
 	payment = models.CharField(max_length=20, blank=False)
 	amount_paid = models.CharField(max_length=20, blank=False, null=False)
+	qrcode = models.CharField(max_length=20, blank=False, null=False)
 	table = models.ForeignKey(Table)
 	created_date=models.DateTimeField(auto_now_add=True)
 

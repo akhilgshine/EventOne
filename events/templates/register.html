@@ -30,10 +30,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="logo-wrap">
-                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="">
+                    <a href="/"><img src="{% static '/images/logo.png' %}" class="img-responsive" alt=""></a>
                 </div>
                 
-                <div class="col-sm-12 wrap-form-submit">
+                <div class="col-sm-12 wrap-form-submit" >
                       <form class="form-horizontal form-nuts">
                       <h3>Enter Details</h3>
                       <div class="form-group">
@@ -57,49 +57,49 @@
                         <div class="form-group" style="color: #fff">
                           <label class="control-label col-sm-4" for="id_first_name">First Name:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_first_name" placeholder="Enter your First Name" name='first_name'>
+                            <input type="text" class="form-control" id="id_first_name" placeholder="Enter your First Name" name='first_name' required="">
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_last_name">Last Name:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name">
+                            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name"  required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_phone">Phone Number:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_phone" placeholder="Enter your Phone Number" name="phone">
+                            <input type="text" class="form-control" id="id_phone" placeholder="Enter your Phone Number" name="phone"  required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_email">Email:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_email" placeholder="Enter your Email" name="email">
+                            <input type="text" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid">
+                            <input type="text" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment:</label>
                           <div class="col-sm-2"> 
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
+                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
+                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Paytm
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Card
+                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Card
                               </label>
                           </div>
                               
@@ -124,8 +124,10 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
     <script type="text/javascript">
 
@@ -154,7 +156,7 @@
           console.log("success");
           $("#id_email").val(data.email);
           $("#id_phone").val(data.mobile);          
-          $("#id_first_name").val(data.first_name);          
+          // $("#id_first_name").val(data.first_name);          
           $("#id_last_name").val(data.last_name);
         }
       });

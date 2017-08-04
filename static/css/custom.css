@@ -428,5 +428,16 @@ span.radio-change{
   }
 
 }
+.club-image {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  float: right;
+  width: 100px;
+}
+
+.wrap-nuts{
+  position: relative;
+}
 
 /* Checking Responsiveness */ /* END  */
