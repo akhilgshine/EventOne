@@ -127,7 +127,7 @@ class RegisterEvent(TemplateView):
 				message = "You are successfully registered for the event hosted by QRT 85 at Kollam QRT CODE : "+event_reg.qrcode
 				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 
-				send_email(email,message,event_reg)
+				send_email(email,message,event_reg )
 
 			context['event_register'] = event_reg
 
