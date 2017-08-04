@@ -37,38 +37,13 @@
               
               <div class="col-sm-6">
 
-                <div class="container" style=" width:80%; margin-top:20%;margin-left:5%;" >              
-                  <table class="table" style="color: #fff">
-                  <tr>
-                    <td> QRT CODE : </td> <td>{{ event_register.qrcode }}</td>
-                  </tr>
-
-                  <tr>
-                    <td> Table : </td> <td>{{ event_register.table }} </td>
-                  </tr>
-
-                  <tr>
-                    <td>Event User : </td> <td>{{ event_register.event_user }} </td>
-                  </tr>
-
-                  <tr>
-                    <td>Amount Paid : </td> <td>{{ event_register.amount_paid }} </td>
-                  </tr>
-                  </table>
-                  <p>Registered Successfully</p>
-                </div>
-
               </div>
 
-              <div class="col-sm-6">
-                <div style="width:100%;height:80%;border: 1px solid red; overflow: scroll;">
-                   <p style="padding:5%; "><span style="color:blue">blue</span> </p> 
-                </div>
-                <div>
-                  <button class="btn btn-primary">List Registered Users</button>
-                </div>
-                
-              </div>
+             {% for user in users %}
+
+              {{ user.event_user.first_name}} {{ user.event_user.last_name}}
+
+             {% endfor %}
             </div>            
           </div>
 

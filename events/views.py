@@ -103,14 +103,20 @@ class RegisterEvent(TemplateView):
 
 			event = Event.objects.filter()[0]
 
-			event_reg = RegisteredUsers.objects.create(event_user=event_user,
+
+			qrcode = 'QRT0001'
+			event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
 				event=event,
-				payment=payment,
-				amount_paid=price,
 				table= table,)
+
+			event_reg.payment = payment
+			event_reg.amount_paid = price
+			event_reg.qrcode = qrcode + str(event_reg.id)
+			event_reg.save()
+
 			if event_reg:
 				phone = '9946341903' #Phone
-				message = "Hello welcome to "
+				message = "Hello welcome to"
 				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+mobile+'&sender=QrtReg&message='+message)
 
 				# send_email(email,message,event_reg)
@@ -179,3 +185,21 @@ class GetUserData(TemplateView):
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect('/')
+
+
+
+class ListUsers(TemplateView):
+	template_name = 'user_list.html'
+
+	def get(self, request, *args, **kwargs):
+		context ={}
+		registered_users = RegisteredUsers.objects.all()
+		context['users'] = registered_users
+		# user_list = []
+		# for user in registered_users:
+		# 	data = {}
+		# 	data['name'] = user.event_user.first_name+' '+user.event_user.last_name
+		# 	user_list.append(data)
+
+
+		return render(request, self.template_name, context)
