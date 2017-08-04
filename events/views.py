@@ -108,11 +108,11 @@ class RegisterEvent(TemplateView):
 		return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
-
+		context = {}
 		try:
 			name = request.POST['name']
 			email = request.POST['email']
-			mobile = request.POST['mobile']
+			phone = request.POST['phone']
 			table = request.POST['table_val']
 
 			payment = request.POST['payment']
@@ -123,7 +123,7 @@ class RegisterEvent(TemplateView):
 			event_user, created = EventUsers.objects.get_or_create(table=table,
 				first_name=name,
 				email=email,
-				mobile=mobile)
+				mobile=phone)
 			if created:
 				event_user.save()
 
@@ -134,9 +134,9 @@ class RegisterEvent(TemplateView):
 				payment=payment,
 				amount_paid=price,
 				table= table,)
-
+			import pdb; pdb.set_trace()
 			if event_reg:
-				mobile = '9946341903'
+				phone = '9946341903' #phone
 				message = "Hello welcome to "
 				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+mobile+'&sender=QrtReg&message='+message)
 
@@ -169,8 +169,8 @@ class GetName(TemplateView):
 			for user in users:
 				user_json = {}
 				user_json['id'] = user.id
-				user_json['label'] = user.first_name
-				user_json['value'] = user.first_name
+				user_json['label'] = user.first_name+ ' ' +user.last_name
+				user_json['value'] = user.first_name+ ' ' +user.last_name
 				results.append(user_json)
 
 			data = json.dumps(results)
@@ -187,10 +187,12 @@ class GetUserData(TemplateView):
     	django_messages = []
     	try:
     		username = request.GET['username']
-
-    		user = EventUsers.objects.get(first_name=username)
+    		name_list = username.split(' ', 1)
+    		print username
+    		user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
     		data['email'] = user.email
     		data['mobile'] = user.mobile
+    		print("Data : ", data)
     		return HttpResponse(json.dumps(data), content_type='application/json')
     	except:
     		data['success'] = "False"
