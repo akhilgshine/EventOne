@@ -1,0 +1,58 @@
+
+@charset "utf-8";
+/* CSS Document */
+@font-face {
+    /* There can be only one font-family in a font-face declaration. Multiple will break the font-face. */
+    /* Test on Chrome in Linux to see the result of the broken font-face declaration (fonts will be serif). */
+    /* Also, for some reason, IE 11 does not use this custom font. See this by changing the body font to just 'segoeui'. */
+    /* Also, this font-family cannot be called "Segoe UI", as that causes issues on IE 11/Windows 8. */
+    font-family:'Helvetica-Bold';
+    src: url('font/Helvetica-Bold.eot'), /* IE9 Compat Modes */
+        url('font/Helvetica-Bold.eot?#iefix') format('embedded-opentype'), /* IE7-IE8 */
+        url('font/Helvetica-Bold.woff') format('woff'), /* Modern Browsers */
+        url('font/Helvetica-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+        url('font/Helvetica-Bold.otf') format('opentype'), /* modern font formats */
+        url('font/Helvetica-Bold.svg') format('svg'); /* Legacy iOS */}
+
+  @font-face {
+    /* There can be only one font-family in a font-face declaration. Multiple will break the font-face. */
+    /* Test on Chrome in Linux to see the result of the broken font-face declaration (fonts will be serif). */
+    /* Also, for some reason, IE 11 does not use this custom font. See this by changing the body font to just 'segoeui'. */
+    /* Also, this font-family cannot be called "Segoe UI", as that causes issues on IE 11/Windows 8. */
+    font-family:'Helvetica-Normal';
+    src: url('font/Helvetica-Normal.eot'), /* IE9 Compat Modes */
+        url('font/Helvetica-Normal.eot?#iefix') format('embedded-opentype'), /* IE7-IE8 */
+        url('font/Helvetica-Normal.woff') format('woff'), /* Modern Browsers */
+        url('font/Helvetica-Normal.ttf') format('truetype'), /* Safari, Android, iOS */
+        url('font/Helvetica-Normal.otf') format('opentype'), /* modern font formats */
+        url('font/Helvetica-Normal.svg') format('svg'); /* Legacy iOS */}
+
+
+.wrap-nuts{
+  background: url('/static/images/bg-pink-dark.jpg');
+  min-height: 100vh;
+}
+.logo-wrap img{
+  max-width: 200px;
+  display: inline-block;
+}
+
+.img-inline{
+  display: inline-block;
+}
+
+.logo-wrap{
+  position: absolute;
+  left:20px;
+  top:20px;
+  text-align: center;
+}
+
+.text-white-col{
+  color:#fff;
+  font-size: 30px;
+}
+.wrap-head{
+  background: url('/static/images/main-content-bg.png');
+  background-size: cover;
+}
