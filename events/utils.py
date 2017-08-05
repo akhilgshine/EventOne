@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.core.mail import EmailMessage
 from django.template import Context
 from django.template.loader import render_to_string
-import imgkit
+# import imgkit
 from django.core.files import File
 from django.contrib.sites.shortcuts import get_current_site
 
