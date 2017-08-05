@@ -25,10 +25,10 @@ class Table(models.Model):
 
 class EventUsers(models.Model):
 	table = models.ForeignKey(Table)
-	first_name = models.CharField(max_length=40, blank=False)
-	last_name = models.CharField(max_length=40, blank=False)
-	mobile = models.CharField(max_length=20, blank=True)
-	email = models.CharField(max_length=30, blank=False)
+	first_name = models.CharField(max_length=50, blank=False)
+	last_name = models.CharField(max_length=50, blank=False)
+	mobile = models.CharField(max_length=30, blank=True)
+	email = models.CharField(max_length=100, blank=False)
 	post = models.CharField(max_length=30, blank=True)
 
 	def __str__(self):
@@ -43,6 +43,7 @@ class RegisteredUsers(models.Model):
 	qrcode = models.CharField(max_length=20, blank=False, null=False)
 	table = models.ForeignKey(Table)
 	created_date=models.DateTimeField(auto_now_add=True)
+	confirm_image = models.ImageField(upload_to='confirm_images/', blank=True)
 
 	def __str__(self):
 		return self.event.title

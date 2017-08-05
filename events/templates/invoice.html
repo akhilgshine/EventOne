@@ -48,7 +48,6 @@
                                 <tr>
                                     <td colspan="3" align="center" style="padding-top: 24px; padding-bottom: 14px;" >
                                            <img src="{% static 'images/logo_invoice.png' %}">
-
                                     </td>
                                 </tr>
                                 <tr>
@@ -62,7 +61,7 @@
                                 </tr>
                                 <tr>
                                     <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
-                                        Table Number  
+                                        Table
                                     </td>
                                     <td valign="top" class="sorting_element"> : </td>
                                     <td valign="top" align="left" class="sorting_element" > 
@@ -85,6 +84,15 @@
                                     <td valign="top" class="sorting_element"> : </td>
                                     <td valign="top" align="left" class="sorting_element" > 
                                         {{ event_register.event_user.mobile }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
+                                        Paid Amount 
+                                    </td>
+                                    <td valign="top" class="sorting_element"> : </td>
+                                    <td valign="top" align="left" class="sorting_element" > 
+                                        {{ event_register.amount_paid }}
                                     </td>
                                 </tr>
                                 <tr style=" height: 62px;">
