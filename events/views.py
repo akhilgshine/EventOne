@@ -126,7 +126,7 @@ class RegisterEvent(TemplateView):
 
 			if event_reg:
 				phone = phone
-				message = "You are successfully registered for the event Area 1 Agm of Round Table India for the Year 2018."+ "Your registration number is : "+event_reg.qrcode" And you have paid Rs."+ event_reg.amount_paid+"/-"
+				message = "You are successfully registered for the event Area 1 Agm of Round Table India for the Year 2018."+ "Your registration number is : "+event_reg.qrcode+" And you have paid Rs."+ event_reg.amount_paid+"/-"
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 				try:
 					send_email(email,message,event_reg)
@@ -144,7 +144,7 @@ class RegisterEvent(TemplateView):
 
 
 		except:
-			return HttpResponseRedirect(reverse('register_event'))
+		return HttpResponseRedirect(reverse('register_event'))
 
 
 class GetName(TemplateView):
