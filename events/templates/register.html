@@ -59,7 +59,7 @@
                       </form>
 
                       <div  id="detailForm" style="display: none;">                        
-                        <form method= "POST" class="form-horizontal form-nuts"> 
+                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm"> 
                          {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
 
@@ -92,34 +92,35 @@
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_email">Email:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
+                            <input type="email" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
+                            <input type="number" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment:</label>
                           <div class="col-sm-2"> 
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Cash
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Paytm
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Paytm
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Card
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Card
                               </label>
                           </div>
                               
                         </div>
+                        <p id="notifications" style="color: red"></p>
                         <hr>
                         <div class="form-group"> 
                           <div class="col-sm-offset-4 col-sm-8">
@@ -182,12 +183,14 @@
 
 
     $('#id_first_name').focusout(function(){
-      var input = $('#id_first_name').val()    
+      var input = $('#id_first_name').val()
+      var selected_table = $("#selectId option:selected").val();    
       $.ajax({
         url: '/get_user_data/',
         type:'GET',
         data:{
           'username':input,
+          'selected_table': selected_table,
         },
         success: function (data){
           console.log("success");
@@ -197,7 +200,7 @@
           $("#id_last_name").val(data.last_name);
         }
       });
-    });
+    });    
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";

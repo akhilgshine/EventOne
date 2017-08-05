@@ -144,7 +144,6 @@ class GetName(TemplateView):
 			q = request.GET.get('term', '')
 			table_name = request.GET.get('table', '')
 			table = Table.objects.get(id=int(table_name))
-
 			print("table : ", table)
 
 			users = EventUsers.objects.filter(table = table)
@@ -174,16 +173,20 @@ class GetUserData(TemplateView):
     	django_messages = []
     	try:
     		username = request.GET['username']
-    		name_list = username.split(' ', 1)
+    		selected_table = request.GET['selected_table']
+    		table = Table.objects.get(id=int(selected_table))
+    		# name_list = username.split(' ', 1)
     		# print username
-    		user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
+    		# user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
+    		user = EventUsers.objects.get(first_name=username, table=table)
     		data['email'] = user.email
     		data['mobile'] = user.mobile
     		data['first_name'] = user.first_name
     		data['last_name'] = user.last_name
-    		# print("Data : ", data)
+    		print("Data : ", data)
     		return HttpResponse(json.dumps(data), content_type='application/json')
     	except:
+    		print("except from GetUserData")
     		data['success'] = "False"
     		data['error_msg'] = "something went WRONG"
     		return HttpResponse(json.dumps(data), content_type='application/json')
