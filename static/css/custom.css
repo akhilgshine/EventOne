@@ -46,6 +46,13 @@
 .stnd-box-shadow{
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
 }
+ table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
+
 
 .wrap-nuts{
   background: url('/static/images/bg-pink-dark.jpg');
@@ -493,4 +500,4 @@ span.radio-change{
     top: 15px;
     right: 35px;
   }
-
+}
