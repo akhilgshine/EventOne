@@ -82,11 +82,10 @@ class RegisterEvent(TemplateView):
 		return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
-		import pdb;pdb.set_trace()
 		context = {}
 		try:
-			name = request.POST['first_name']
-			email = request.POST['email']
+			name = request.POST.get('first_name')
+			email = request.POST.get('email')
 			phone = request.POST['phone']
 			table = request.POST['table_val']
 
@@ -102,14 +101,14 @@ class RegisterEvent(TemplateView):
 
 			if new_table:
 				table = Table.objects.create(table_name=new_table,
-					event=event)
+					event=event)				
 			else:
-				table = Table.objects.get(id=table)
-			
+				table = Table.objects.get(table_name=table)
 			event_user, created = EventUsers.objects.get_or_create(table=table,
 				first_name=name,
 				email=email,
 				mobile=phone)
+			
 			if created:
 				event_user.save()
 
@@ -148,7 +147,6 @@ class GetName(TemplateView):
 
 	def get(self, request, *args, **kwargs):
 		if request.is_ajax():
-			import pdb;pdb.set_trace()
 			results = []
 			q = request.GET.get('term', '')
 			table_name = request.GET.get('table', '')
@@ -180,7 +178,6 @@ class GetUserData(TemplateView):
     def get(self, request):
     	data = {}
     	django_messages = []
-    	import pdb;pdb.set_trace()
     	try:
     		username = request.GET['username']
     		selected_table = request.GET['selected_table']
