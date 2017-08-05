@@ -296,6 +296,12 @@
 }
 
 @media screen and (max-width: 48em) {
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
   .main-example {
     width: 100%;
   }
