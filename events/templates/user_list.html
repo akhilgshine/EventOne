@@ -35,7 +35,7 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
       <a href="/">Home</a>
-      <a href="/users/">Users List</a>
+      <a href="/users/">Registered Users</a>
       <a href="/logout/">Logout</a>
     </div>
   </div>
@@ -56,7 +56,10 @@
             <th>User</th>
             <th>Registration code</th>
             <th>Table</th>
+            <th>Email</th>
             <th>Phone number</th>
+            <th>Paid Amount </th>
+            <th>Created Date </th>
             </tr>
             </thead>
             <tbody>
@@ -64,13 +67,19 @@
               <tr>
                 <td> <i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbsp&nbsp&nbsp {{ user.event_user.first_name}} {{ user.event_user.last_name}}</td>
                 <td>{{user.qrcode}}</td>
-                <td>{{user.table.table_name}}</td>
-                <td>{{user.event_user.mobile}}</td>
-              </tr>
+                <td>{{user.table.table_name }}</td>
+                <td>{{user.event_user.email }}</td>
+                <td>{{user.event_user.mobile }}</td>
+                <td>{{user.amount_paid }}</td>
+                <td>{{user.created_date }}</td>
+              </tr>              
               {% endfor %}
-              </tbody>
+              </tbody>              
             </table>
           </div>
+          <div style="margin-bottom: 5%;">
+              <button onclick='window.print()'> Print</button>
+          </div>          
         </div>            
       </div>
     </div>  
