@@ -82,6 +82,7 @@ class RegisterEvent(TemplateView):
 		return render(request, self.template_name, context)
 
 	def post(self, request, *args, **kwargs):
+		import pdb;pdb.set_trace()
 		context = {}
 		try:
 			name = request.POST['first_name']
@@ -103,7 +104,7 @@ class RegisterEvent(TemplateView):
 				table = Table.objects.create(table_name=new_table,
 					event=event)
 			else:
-				table = Table.objects.get(id=int(table))
+				table = Table.objects.get(id=table)
 			
 			event_user, created = EventUsers.objects.get_or_create(table=table,
 				first_name=name,
@@ -113,14 +114,17 @@ class RegisterEvent(TemplateView):
 				event_user.save()
 
 			qrcode = 'QRT0001'
-			event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
-				event=event,
-				table= table,)
+			try:
+				event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
+					event=event,
+					table= table,)
 
-			event_reg.payment = payment
-			event_reg.amount_paid = price
-			event_reg.qrcode = qrcode + str(event_reg.id)
-			event_reg.save()
+				event_reg.payment = payment
+				event_reg.amount_paid = price
+				event_reg.qrcode = qrcode + str(event_reg.id)
+				event_reg.save()
+			except Excepttion as e:
+				event_reg = None
 
 			if event_reg:
 				phone = phone
@@ -129,9 +133,13 @@ class RegisterEvent(TemplateView):
 
 				send_email(email,message,event_reg )
 
-			context['event_register'] = event_reg
+				context['event_register'] = event_reg
 
-			return render(request, 'invoice.html', context)
+				return render(request, 'invoice.html', context)
+			else:
+				message = "There is an issue with your registration. Please try again"
+
+
 		except:
 			return HttpResponseRedirect(reverse('register_event'))
 
@@ -140,10 +148,11 @@ class GetName(TemplateView):
 
 	def get(self, request, *args, **kwargs):
 		if request.is_ajax():
+			import pdb;pdb.set_trace()
 			results = []
 			q = request.GET.get('term', '')
 			table_name = request.GET.get('table', '')
-			table = Table.objects.get(id=int(table_name))
+			table = Table.objects.get(table_name=table_name)
 			print("table : ", table)
 
 			users = EventUsers.objects.filter(table = table)
@@ -171,10 +180,11 @@ class GetUserData(TemplateView):
     def get(self, request):
     	data = {}
     	django_messages = []
+    	import pdb;pdb.set_trace()
     	try:
     		username = request.GET['username']
     		selected_table = request.GET['selected_table']
-    		table = Table.objects.get(id=int(selected_table))
+    		table = Table.objects.get(table_name=selected_table)
     		# name_list = username.split(' ', 1)
     		# print username
     		# user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )

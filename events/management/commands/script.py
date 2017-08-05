@@ -43,3 +43,4 @@ class Command(BaseCommand):
                 mobile = row[2],
                 email = row[3],
                 post = row[4],)
+            table, created = Table.objects.get_or_create(table_name='other',event=event)
