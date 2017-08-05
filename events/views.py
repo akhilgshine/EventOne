@@ -97,7 +97,7 @@ class RegisterEvent(TemplateView):
 				new_table = ''
 
 			if new_table:
-				table, created = Table.objects.get_or_create(table_name=new_table,
+				table = Table.objects.create(table_name=new_table,
 					event=event)				
 			else:
 				table = Table.objects.get(table_name=table)
@@ -126,6 +126,7 @@ class RegisterEvent(TemplateView):
 				phone = phone
 				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+event_reg.amount_paid+"/-"
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
+				# send_email(email,message,event_reg)
 				# try:
 				# 	send_email(email,message,event_reg)
 				# except:
@@ -195,7 +196,7 @@ class GetUserData(TemplateView):
     		# name_list = username.split(' ', 1)
     		# print username
     		# user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
-    		user = EventUsers.objects.filter(first_name=username, table=table)
+    		user = EventUsers.objects.get(first_name=username, table=table)
     		data['email'] = user.email
     		data['mobile'] = user.mobile
     		data['first_name'] = user.first_name
