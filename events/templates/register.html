@@ -80,7 +80,7 @@
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_last_name">Last Name:</label>
                           <div class="col-sm-8"> 
-                            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name"  required="">
+                            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name" >
                           </div>
                         </div>
                         <div class="form-group">
@@ -200,7 +200,17 @@
           $("#id_last_name").val(data.last_name);
         }
       });
-    });    
+    });
+    
+    // $("#DetailForm").submit(function(){
+    //   if($('#radioId').is(':checked')) {
+    //     return true;
+    //   }
+    //   else{
+    //      $("#notifications").text('Please Select a paiment mode !');
+    //      return false;
+    //   }
+    // });
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
