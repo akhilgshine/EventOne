@@ -181,7 +181,15 @@ class GetUserData(TemplateView):
     	try:
     		username = request.GET['username']
     		selected_table = request.GET['selected_table']
+
+    		if selected_table == 'other':
+    			table_other, created = Table.objects.get_or_create(table_name=selected_table)
+    			data['other_table'] = 'other'
+    			data['success'] = "True"
+    			return HttpResponse(json.dumps(data), content_type='application/json')
+
     		table = Table.objects.get(table_name=selected_table)
+
     		# name_list = username.split(' ', 1)
     		# print username
     		# user = EventUsers.objects.get(first_name=name_list[0],last_name=name_list[1] )
@@ -190,6 +198,8 @@ class GetUserData(TemplateView):
     		data['mobile'] = user.mobile
     		data['first_name'] = user.first_name
     		data['last_name'] = user.last_name
+    		data['other_table'] = ''
+    		data['success'] = "True"
     		print("Data : ", data)
     		return HttpResponse(json.dumps(data), content_type='application/json')
     	except:
