@@ -93,7 +93,6 @@ class RegisterEvent(TemplateView):
 			price = request.POST['amount_paid']
 
 			event = Event.objects.filter()[0]
-
 			try:
 				new_table = request.POST['other_table']
 			except:
@@ -127,11 +126,9 @@ class RegisterEvent(TemplateView):
 
 			if event_reg:
 				phone = phone
-				message = "You are successfully registered for the event Area 1 Agm of Round Table India for the Year 2018. Registration Number : "+event_reg.qrcode
+				message = "You are successfully registered for the event Area 1 Agm of Round Table India for the Year 2018. You Paid : "+ event_reg.amount_paid +"Registration Number : "+event_reg.qrcode
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
-
-				send_email(email,message,event_reg )
-
+				send_email(email,message,event_reg)
 				context['event_register'] = event_reg
 
 				return render(request, 'invoice.html', context)
@@ -201,6 +198,7 @@ class GetUserData(TemplateView):
     		data['other_table'] = ''
     		data['success'] = "True"
     		print("Data : ", data)
+
     		return HttpResponse(json.dumps(data), content_type='application/json')
     	except:
     		print("except from GetUserData")
@@ -215,7 +213,6 @@ def logout_view(request):
 	return HttpResponseRedirect('/')
 
 
-
 class ListUsers(TemplateView):
 	template_name = 'user_list.html'
 
@@ -228,4 +225,13 @@ class ListUsers(TemplateView):
 		# 	data = {}
 		# 	data['name'] = user.event_user.first_name+' '+user.event_user.last_name
 		# 	user_list.append(data)
+		return render(request, self.template_name, context)
+
+class InvoiceView(TemplateView):
+	template_name = 'invoice.html'
+	def get(self, request, *args, **kwargs):
+		context = {}
+		pk = kwargs.pop('pk')
+		event_reg = RegisteredUsers.objects.get(id=pk)
+		context['event_register'] = event_reg
 		return render(request, self.template_name, context)

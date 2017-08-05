@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
     url(r'^users/$',ListUsers.as_view(), name='list_users'),
+    url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
