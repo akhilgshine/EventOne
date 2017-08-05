@@ -97,7 +97,7 @@ class RegisterEvent(TemplateView):
 				new_table = ''
 
 			if new_table:
-				table = Table.objects.get_or_create(table_name=new_table,
+				table, created = Table.objects.get_or_create(table_name=new_table,
 					event=event)				
 			else:
 				table = Table.objects.get(table_name=table)
