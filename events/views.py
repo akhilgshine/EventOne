@@ -111,7 +111,7 @@ class RegisterEvent(TemplateView):
 			if created:
 				event_user.save()
 
-			qrcode = 'QRT0001'
+			qrcode = 'QRT001'
 			try:
 				event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
 					event=event,
@@ -129,6 +129,10 @@ class RegisterEvent(TemplateView):
 				message = "You are successfully registered for the event Area 1 Agm of Round Table India for the Year 2018. You Paid : "+ event_reg.amount_paid +"Registration Number : "+event_reg.qrcode
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 				send_email(email,message,event_reg)
+				# try:
+				# 	send_email(email,message,event_reg )
+				# except:
+				# 	pass
 				context['event_register'] = event_reg
 
 				return render(request, 'invoice.html', context)
@@ -235,3 +239,4 @@ class InvoiceView(TemplateView):
 		event_reg = RegisteredUsers.objects.get(id=pk)
 		context['event_register'] = event_reg
 		return render(request, self.template_name, context)
+

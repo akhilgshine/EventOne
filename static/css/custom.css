@@ -46,6 +46,13 @@
 .stnd-box-shadow{
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
 }
+ table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
+
 
 .wrap-nuts{
   background: url('/static/images/bg-pink-dark.jpg');
@@ -289,6 +296,12 @@
 }
 
 @media screen and (max-width: 48em) {
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
   .main-example {
     width: 100%;
   }
@@ -386,6 +399,12 @@ span.radio-change{
 /* Checking Responsiveness */ /* START  */
 
 @media (max-width:1199px){
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
   .logo-wrap img{
     max-width: 150px;
   }
@@ -396,6 +415,12 @@ span.radio-change{
 }
 
 @media (max-width:991px){
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
   .logo-wrap img{
     max-width: 100px;
   }
@@ -406,6 +431,12 @@ span.radio-change{
 }
 
 @media (max-width:767px){
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
   .logo-wrap img{
     max-width: 100px;
   }
@@ -493,4 +524,10 @@ span.radio-change{
     top: 15px;
     right: 35px;
   }
-
+   table.dataTable tr.odd {
+    background-color: transparent !important;
+}
+ table.dataTable tr.even {
+    background-color: transparent !important;
+}
+}
