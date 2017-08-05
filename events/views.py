@@ -144,7 +144,7 @@ class RegisterEvent(TemplateView):
 
 
 		except:
-		return HttpResponseRedirect(reverse('register_event'))
+			return HttpResponseRedirect(reverse('register_event'))
 
 
 class GetName(TemplateView):
