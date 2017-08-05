@@ -1,98 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
 {% load static %}
 <head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+    #bodyTable td.sorting_element{
+        color: #fff;
+        font-family: sans-serif;
+        font-size: 18px;
+        height: 28px;
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Creative - Start Bootstrap Theme</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    
-    <!-- Custom css style -->
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
-    
-
+    }
+    @media only screen and (max-width:480px) {
+        .earning_graph img {
+            width: 70%!important;
+            height: auto!important;
+        }
+        .templateContainer {
+            width: 100%!important;
+        }
+        .sorting_element {
+            padding: 9px!important;
+        }
+        #row .columnContainer {
+            padding: 0!important;
+        }
+        #row {
+            width: 100%!important;
+        }
+        span.full img {
+            width: 100%!important;
+        }
+        .heightFix {
+            height: auto!important;
+        }
+    }
+    </style>
 </head>
 
-<body id="page-top">
-    <div id="myNav" class="overlay">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <div class="overlay-content">
-      <a href="/">Home</a>
-      <a href="/users/">Users List</a>
-      <a href="/logout/">Logout</a>
-    </div>
-  </div>  
-    <div class="container-fluid wrap-nuts">
-        
-        <div class="container">
-            <div class="row text-center">
-                <div class="logo-wrap">
-                   <a href="/"> <img src="{% static 'images/logo.png' %}" class="img-responsive" alt=""></a>
-                </div>
-            </div>
-            <div class="row">
-              
-              <div class="col-sm-6">
+<body>
+    <center>
+        <table id="bodyTable" align="center" border="0" cellpadding="0" cellspacing="0" width="800px" height="100%">
+            <tbody>
+                <tr>
+                    <td valign="top" class="columnContainer">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%; background-image: url('/static/images/bg.jpg'); ">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" align="center" style="padding-top: 24px; padding-bottom: 14px;" >
+                                           <img src="{% static 'images/logo_invoice.png' %}">
 
-                <div class="container" style=" width:80%; margin-top:20%;margin-left:5%;" >              
-                  <table class="table" style="color: #fff">
-                  <tr>
-                    <td> QRT CODE : </td> <td>{{ event_register.qrcode }}</td>
-                  </tr>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="390px" valign="top" align="left" class="sorting_element"  style=" text-indent: 220px; " >
+                                          Name 
+                                    </td>
+                                    <td width="15px" valign="top" class="sorting_element"> : </td>
+                                    <td width="390px" valign="top" align="left" class="sorting_element" > 
+                                        {{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
+                                        Table Number  
+                                    </td>
+                                    <td valign="top" class="sorting_element"> : </td>
+                                    <td valign="top" align="left" class="sorting_element" > 
+                                        {{ event_register.table.table_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
+                                        Email Address   
+                                    </td>
+                                    <td valign="top" class="sorting_element"> : </td>
+                                    <td valign="top" align="left" class="sorting_element" > 
+                                        {{ event_register.event_user.email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
+                                        Phone Number 
+                                    </td>
+                                    <td valign="top" class="sorting_element"> : </td>
+                                    <td valign="top" align="left" class="sorting_element" > 
+                                        {{ event_register.event_user.mobile }}
+                                    </td>
+                                </tr>
+                                <tr style=" height: 62px;">
+                                    <td align="left" class="sorting_element" style="padding-left:25px;" >
+                                        Registration Number : {{ event_register.qrcode }}   
+                                    </td>
+                                    <td class="sorting_element"></td>
+                                    <td align="right" class="sorting_element" style="padding-right:25px;" > 
+                                        Date  :  {{ event_register.created_date }}
+                                    </td>
+                                </tr>
+                            </tbody>
 
-                  <tr>
-                    <td> Table : </td> <td>{{ event_register.table }} </td>
-                  </tr>
-
-                  <tr>
-                    <td>Event User : </td> <td>{{ event_register.event_user }} </td>
-                  </tr>
-
-                  <tr>
-                    <td>Amount Paid : </td> <td>{{ event_register.amount_paid }} </td>
-                  </tr>
-                  </table>
-                  <p style="color: #fff">Registered Successfully</p>
-                  <div style="color:#fff;float: right;">
-                    <a href="/">Go To Home</a>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-sm-6">
-                
-              </div>
-            </div>            
-          </div>
-
-    </div>  
-
-    <!-- jQuery -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-    <script>
-      function openNav() {
-          document.getElementById("myNav").style.height = "100%";
-      }
-
-      function closeNav() {
-          document.getElementById("myNav").style.height = "0%";
-      }
-    </script>
-
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- final template -->
+    </center>
+    <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID">
 </body>
 
 </html>
