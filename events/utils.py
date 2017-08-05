@@ -8,29 +8,21 @@ import pdfkit
 from django.core.files import File
 
 
-def create_pdf(event_obj):	
-	url = 'http://127.0.0.1:8000/invoice/'+str(event_obj.id)
-	# pdfkit.from_url(url, 'mail_data/'+str(event_obj.qrcode)+'.pdf')
+def create_pdf(event_obj):
+		
+	url = 'http://letsgonuts2018.com/'+str(event_obj.id)
 	pdfkit.from_url(url, 'mail.pdf')
-	# file = open('mail_data/'+str(event_obj.qrcode)+'.pdf')
-	file = open('mail.pdf')
-	pdf_file = File(file)
-	return pdf_file
+	file = open('mail.pdf','rb')
+	return file
 
 def send_email(to_email, message, event_obj):
 	subject = 'QRT 85 Registration'
 
 	pdf_file = create_pdf(event_obj)
 
-	to_email = 'salam104104@gmail.com'
-
 	cxt = {'obj': event_obj }
 	content = render_to_string('mail_template/mail_index__.html', cxt)
 	from_email = settings.DEFAULT_FROM_EMAIL
 	msg = EmailMessage(subject, content, from_email, to=[to_email])
-	msg.content_subtype = "application/pdf"
-	msg.attach(pdf_file.name, 'r')
-	# msg.attach('mail.pdf', pdf_file, 'application/pdf')
+	msg.attach('mail.pdf', pdf_file.read(), 'application/pdf')
 	msg.send()
-	# fail_silently=True
-	# send_mail(subject,message_body,from_email,[to_email], fail_silently=False)
