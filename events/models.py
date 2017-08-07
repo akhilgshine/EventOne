@@ -2,7 +2,13 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
+STATUS_CHOICES = (
+    ('Couple', _('Couple')),
+    ('Stag', _('Stag')),
+    ('Not Mentioned', _('Not Mentioned')),
+)
 
 class Event(models.Model):
 	title = models.CharField(max_length=100, blank=True, null=True)
@@ -42,10 +48,10 @@ class RegisteredUsers(models.Model):
 	amount_paid = models.CharField(max_length=20, blank=False, null=False)
 	qrcode = models.CharField(max_length=20, blank=False, null=False)
 	table = models.ForeignKey(Table)
-	created_date=models.DateTimeField(auto_now_add=True)
+	created_date = models.DateTimeField(auto_now_add=True)
 	confirm_image = models.ImageField(upload_to='confirm_images/', blank=True)
+	event_status = models.CharField(choices=STATUS_CHOICES, max_length=30, blank=True, null=True)
 
 	def __str__(self):
 		return self.event.title
-
 

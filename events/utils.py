@@ -7,10 +7,9 @@ from django.template.loader import render_to_string
 import pdfkit
 from django.core.files import File
 
-
 def create_pdf(event_obj):
-	
-	url = 'http://letsgonuts2018.com/invoice/'+str(event_obj.id)
+
+	url = 'http://127.0.0.1:8000/invoice/'+str(event_obj.id)
 	pdfkit.from_url(url, 'mail.pdf')
 	file = open('mail.pdf','rb')
 	return file
@@ -26,3 +25,17 @@ def send_email(to_email, message, event_obj):
 	msg = EmailMessage(subject, content, from_email, to=[to_email])
 	msg.attach('mail.pdf', pdf_file.read(), 'application/pdf')
 	msg.send()
+
+def set_status(event_reg):
+	amount_paid = int(event_reg.amount_paid)
+	if amount_paid >= 6000:
+		event_reg.event_status = 'Couple'
+		event_reg.save()
+	elif amount_paid >= 5000:
+		event_reg.event_status = 'Stag'
+		event_reg.save()
+	else:
+		event_reg.event_status = 'Not Mentioned'
+		event_reg.save()
+
+

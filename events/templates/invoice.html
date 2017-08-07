@@ -2,6 +2,8 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <style type="text/css">
     #bodyTable td.sorting_element{
         color: #fff;
@@ -38,9 +40,26 @@
 </head>
 
 <body>
+    <div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+      <a href="/">Home</a>
+      <a href="/users/">Registered Users</a>
+      <a href="/register/">Register Event </a>
+      <a href="/logout/">Logout</a>
+    </div>
+  </div>
     <center>
         <table id="bodyTable" align="center" border="0" cellpadding="0" cellspacing="0" width="800px" height="100%">
             <tbody>
+                <tr>
+                    <td>
+                        <div style="cursor: context-menu;" onclick="openNav()" >
+                            <i class="fa fa-bars" aria-hidden="true" title="Menu"></i>
+                        </div>
+                        
+                    </td>
+                </tr>
                 <tr>
                     <td valign="top" class="columnContainer">
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%; background-image: url('/static/images/bg.jpg'); ">
@@ -111,9 +130,26 @@
                 </tr>
             </tbody>
         </table>
-        <!-- final template -->
+    
+    <!-- final template -->
     </center>
-    <!-- <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID"> -->
+    <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID">
+
+    <!-- jQuery -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script>
+      function openNav() {
+          document.getElementById("myNav").style.height = "100%";
+      }
+
+      function closeNav() {
+          document.getElementById("myNav").style.height = "0%";
+      }
+    </script>
+
 </body>
 
 </html>

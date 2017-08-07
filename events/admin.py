@@ -10,7 +10,7 @@ class EventUsersAdmin(admin.ModelAdmin):
 	list_display = ('first_name', 'last_name', 'mobile', 'email')
 
 class RegisteredUsersAdmin(admin.ModelAdmin):
-	list_display = ('event_user', 'table', 'event', 'amount_paid', )
+	list_display = ('event_user', 'table', 'event', 'amount_paid', 'event_status')
 
 
 # Register your models here.

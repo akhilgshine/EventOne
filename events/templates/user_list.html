@@ -36,6 +36,7 @@
     <div class="overlay-content">
       <a href="/">Home</a>
       <a href="/users/">Registered Users</a>
+      <a href="/register/">Register Event </a>
       <a href="/logout/">Logout</a>
     </div>
   </div>
@@ -50,32 +51,57 @@
       <div class="row">              
         <div class="col-sm-6">              
           <div class="container" style=" width:80%; margin-top:20%;margin-left:5%; " > 
-            <table id="user_lists" class="table table-striped table-bordered" cellspacing="0" width="100%" style="color: #fff; overflow: scroll;">
-            <thead>
-            <tr>
-            <th>User</th>
-            <th>Registration code</th>
-            <th>Table</th>
-            <th>Email</th>
-            <th>Phone number</th>
-            <th>Paid Amount </th>
-            <th>Created Date </th>
-            </tr>
-            </thead>
-            <tbody>
-             {% for user in users %}
+          <div id="user_lists_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+            
+              <div class="row" >
+                <div class="col-sm-6">
+                  <div id="user_lists_filter" class="dataTables_filter" style="font-weight: bold;">
+                    <label>
+                    Sort By :
+                      <select id=sortOption>
+                        <option>Select one</option>
+                        <option value=1>Name</option>
+                        <option value=3>Table</option>
+                        <option value=8>Date</option>
+                      </select>
+                    </label>
+                  </div>       
+              </div>
+
+              <table id="user_lists" class="table table-striped table-bordered" cellspacing="0" width="100%" style="color: #fff; overflow: scroll;">
+              <thead>
               <tr>
-                <td> <i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbsp&nbsp&nbsp {{ user.event_user.first_name}} {{ user.event_user.last_name}}</td>
-                <td>{{user.qrcode}}</td>
-                <td>{{user.table.table_name }}</td>
-                <td>{{user.event_user.email }}</td>
-                <td>{{user.event_user.mobile }}</td>
-                <td>{{user.amount_paid }}</td>
-                <td>{{user.created_date }}</td>
-              </tr>              
-              {% endfor %}
-              </tbody>              
-            </table>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Registration code</th>
+              <th>Table</th>
+              <th>Email</th>
+              <th>Phone number</th>
+              <th>Paid Amount </th>
+              <th>Status </th>
+              <th>Created Date </th>
+              <th>Coupon</th>
+              </tr>
+              </thead>
+              <tbody>
+               {% for user in users  %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td> <i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbsp&nbsp&nbsp {{ user.event_user.first_name}} {{ user.event_user.last_name}}</td>
+                  <td>{{user.qrcode}}</td>
+                  <td>{{user.table.table_name }}</td>
+                  <td>{{user.event_user.email }}</td>
+                  <td>{{user.event_user.mobile }}</td>
+                  <td>{{user.amount_paid }}</td>
+                  <td>{{user.event_status }}</td>
+                  <td>{{user.created_date }}</td>
+                  <td><a style="color: #fff;" href="/invoice/{{ user.id }}"> View Coupon </a></td>
+                </tr>              
+                {% endfor %}
+                </tbody>              
+              </table>
+
+          </div>
           </div>
           <div style="margin-bottom: 5%;">
               <button onclick='window.print()'> Print</button>
@@ -94,9 +120,23 @@
       function closeNav() {
           document.getElementById("myNav").style.height = "0%";
       }
+
       $(document).ready(function() {
-    $('#user_lists').DataTable();
-} );
+        $('#user_lists').DataTable({
+          "paging":   false,
+          "info":     false,
+        });
+      });
+      $('#sortOption').on('change', function(){
+
+        var table = $('#user_lists').DataTable();
+        var order = table.order();
+
+        selected_id = $("#sortOption option:selected").val();
+
+        table.order( [ selected_id, 'asc' ] ).draw();
+      });
+
     </script>
 
 </body>

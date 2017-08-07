@@ -9,7 +9,7 @@ from events.models import *
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email
+from events.utils import send_email, set_status
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
@@ -82,13 +82,14 @@ class RegisterEvent(TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = {}
 		try:
-			name = request.POST.get('first_name')
-			email = request.POST.get('email')
-			phone = request.POST['phone']
-			table = request.POST['table_val']
+			name = request.POST.get('first_name', '')
+			last_name = request.POST.get('last_name', '')
+			email = request.POST.get('email', '')
+			phone = request.POST.get('phone', '')
+			table = request.POST.get('table_val', '')
 
-			payment = request.POST['payment']
-			price = request.POST['amount_paid']
+			payment = request.POST.get('payment', '')
+			price = request.POST.get('amount_paid', '')
 
 			event = Event.objects.filter()[0]
 			try:
@@ -97,35 +98,37 @@ class RegisterEvent(TemplateView):
 				new_table = ''
 
 			if new_table:
-				table = Table.objects.create(table_name=new_table,
+				table, created = Table.objects.get_or_create(table_name=new_table,
 					event=event)				
 			else:
 				table = Table.objects.get(table_name=table)
+
 			event_user, created = EventUsers.objects.get_or_create(table=table,
 				first_name=name,
 				email=email,
 				mobile=phone)
-			
-			if created:
-				event_user.save()
+
+			event_user.last_name = last_name
+			event_user.save()
 
 			qrcode = 'QRT001'
 			try:
 				event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
 					event=event,
-					table= table,)
+					table= table)
 
 				event_reg.payment = payment
 				event_reg.amount_paid = price
 				event_reg.qrcode = qrcode + str(event_reg.id)
 				event_reg.save()
-			except Excepttion as e:
+			except Exception as e:
 				event_reg = None
 
 			if event_reg:
-				phone = phone
+				set_status(event_reg)
 				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+event_reg.amount_paid+"/-"
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
+
 				# send_email(email,message,event_reg)
 				# try:
 				# 	send_email(email,message,event_reg)
@@ -135,12 +138,12 @@ class RegisterEvent(TemplateView):
 				# 	send_email(email,message,event_reg )
 				# except:
 				# 	pass
+
 				context['event_register'] = event_reg
 
 				return render(request, 'invoice.html', context)
 			else:
 				message = "There is an issue with your registration. Please try again"
-
 
 		except:
 			return HttpResponseRedirect(reverse('register_event'))
@@ -217,7 +220,6 @@ class GetUserData(TemplateView):
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect('/')
-
 
 class ListUsers(TemplateView):
 	template_name = 'user_list.html'
