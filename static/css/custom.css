@@ -57,8 +57,8 @@
 .wrap-nuts{
   background: url('/static/images/bg-pink-dark.jpg');
   min-height: 100vh;
-  padding-left: 220px;
-  padding-right: 220px;
+  padding-left: 232px;
+  padding-right: 60px;
 }
 .logo-wrap img{
   max-width: 200px;
@@ -249,9 +249,6 @@
   font-size: 19px;
   font-weight: 800;
 }
-
-
-
 .countdown-container .time:not(:last-child){
   box-shadow: none;
   border:0px;
@@ -275,7 +272,7 @@
 
 /* Last child styling */
 .countdown-container .time:last-child span:not(:last-child){
-  background: rgba(255, 255, 255, 0.5);  
+  background: rgba(255, 255, 255, 0.5);
 }
 
 
@@ -444,8 +441,8 @@ span.radio-change{
     padding-top: 120px;
     padding-left: 15px;
     padding-right: 15px;
-  } 
-  
+  }
+
   .logo-wrap{
     position: absolute;
     left:50%;
@@ -479,11 +476,11 @@ span.radio-change{
     height: 0%;
     width: 100%;
     position: fixed;
-    z-index: 1;
+    z-index: 100;
     top: 0;
     left: 0;
     background-color: rgba(74, 35, 90);
-    background-color: rgba(74, 35, 90, 0.97); 
+    background-color: rgba(74, 35, 90, 0.97);
     overflow-y: hidden;
     transition: 0.5s;
 }
@@ -531,3 +528,136 @@ span.radio-change{
     background-color: transparent !important;
 }
 }
+.main_div
+{
+  margin-top: 150px;
+}
+.table_block
+{
+  margin-bottom: 20px;
+}
+.margin_disable
+{
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.table_main
+{
+  color: #fff;
+  border: 1px solid #bc78d2 !important;
+  font-size: 16px;
+}
+.table_tr
+{
+  font-size: 14px;
+}
+/* table custom styling starts here*/
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+/* Zebra striping */
+tr:nth-of-type(odd) {
+  /*background: #eee;*/
+}
+th {
+  background: rgba(142, 105, 132, 0.78);
+  color: #020101;
+  font-weight: bold;
+}
+td, th {
+  padding: 6px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+/*from body*/
+@media
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+  /* Force table to not be like tables anymore */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr { border: 1px solid #ccc; }
+
+  td {
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td:before {
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+
+  /*
+  Label the data
+  */
+  td:nth-of-type(1):before { content: "No."; }
+  td:nth-of-type(2):before { content: "Name"; }
+  td:nth-of-type(3):before { content: "Registration code"; }
+  td:nth-of-type(4):before { content: "Table"; }
+  td:nth-of-type(5):before { content: "Table Order"; }
+  td:nth-of-type(6):before { content: "Email"; }
+  td:nth-of-type(7):before { content: "Phone number"; }
+  td:nth-of-type(8):before { content: "Paid Amount"; }
+  td:nth-of-type(9):before { content: "Status"; }
+  td:nth-of-type(10):before { content: "Created Date "; }
+  td:nth-of-type(11):before { content: "Coupon"; }
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+  body {
+    padding: 0;
+    margin: 0;
+    /*width: 320px;*/
+  }
+.drop_down_main
+{
+  margin-bottom: 15px;
+}
+  }
+  .table_div_main
+  {
+    color: #fff;
+    font-size: 14px;
+  }
+  .table_diivider_mobile
+	{
+		margin-top: 20px;
+	}
+  .btn_sort
+  {
+    background: #2d0834;
+    border-color: #fff  ;
+  }
+  .form_serch
+  {
+    background: #2d0834;
+  }
+  .table_list_main
+  {
+    line-height: 35px;
+  }
+/*table custom styling ends here*/

@@ -2,7 +2,7 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
+    <!-- <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"> -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <style type="text/css">
     #bodyTable td.sorting_element{
@@ -36,6 +36,60 @@
             height: auto!important;
         }
     }
+
+    /* Overlay Menu */
+
+        .overlay {
+            height: 0%;
+            width: 100%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: rgba(74, 35, 90);
+            background-color: rgba(74, 35, 90, 0.97); 
+            overflow-y: hidden;
+            transition: 0.5s;
+        }
+
+        .overlay-content {
+            position: relative;
+            top: 25%;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .overlay a {
+            padding: 8px;
+            text-decoration: none;
+            font-size: 20px;
+            color:  #d7bde2;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .overlay a:hover, .overlay a:focus {
+            color: #f1f1f1;
+        }
+
+        .overlay .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 30px;
+        }
+
+        @media screen and (max-height: 450px) {
+          .overlay {overflow-y: auto;}
+          .overlay a {font-size: 20px}
+          .overlay .closebtn {
+            font-size: 40px;
+            top: 15px;
+            right: 35px;
+          }
+
+
     </style>
 </head>
 
@@ -133,7 +187,7 @@
     
     <!-- final template -->
     </center>
-    <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID">
+    <!-- <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID"> -->
 
     <!-- jQuery -->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>

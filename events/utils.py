@@ -38,4 +38,3 @@ def set_status(event_reg):
 		event_reg.event_status = 'Not Mentioned'
 		event_reg.save()
 
-

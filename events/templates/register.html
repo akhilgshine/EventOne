@@ -33,6 +33,20 @@
     </div>
   </div>
     <div class="container-fluid wrap-nuts register">
+
+        {% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="message alert alert-success message"  style="display: none;">
+          <a class="close" data-dismiss="alert" href="#">&times;</a>
+            
+          </div>
+        {% endif %}
         
         <div class="container-fluid">
             <div class="row">
@@ -44,14 +58,14 @@
                       <form class="form-horizontal form-nuts">
                       <h3>Enter Details</h3>
                       <div class="form-group">
-                        <label class="control-label col-sm-4" for="email">Select Table:</label>
+                        <label class="control-label col-sm-4" for="email">Select Table :</label>
                         <div class="col-sm-8">                  
                             <select name=""  class="form-control" id="selectId">
                                 <option value=" ">Select Table</option>
                                 {% for val in tables %}
                                 <option value="{{ val.table_name }}">{{ val.table_name }}</option>
                                 {% endfor %}
-                                <option value="other">Other</option>
+                                <option value="Other">Other</option>
                             </select>
 
                         </div>
@@ -64,62 +78,103 @@
                         <input type="hidden" id="id_table" name="table_val">
 
                         <div class="form-group" id="other_table_div" style="color: #fff; display: none">
-                          <label class="control-label col-sm-4" for="id_other_table">New Table:</label>
+                          <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
                           <div class="col-sm-8"> 
                           <input type="text" class="form-control" id="id_other_table" placeholder="For New Table Only" name='other_table'>
                           </div>
                         </div>
 
                         <div class="form-group" style="color: #fff">
-                          <label class="control-label col-sm-4" for="id_first_name">First Name:</label>
+                          <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
                           <div class="col-sm-8"> 
                             <input type="text" class="form-control" id="id_first_name" placeholder="Enter your First Name" name='first_name' required="">
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_last_name">Last Name:</label>
+                          <label class="control-label col-sm-4" for="id_last_name">Last Name :</label>
                           <div class="col-sm-8"> 
                             <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name" >
                           </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_phone">Phone Number:</label>
+                          <label class="control-label col-sm-4" for="id_phone">Phone Number :</label>
                           <div class="col-sm-8"> 
                             <input type="text" class="form-control" id="id_phone" placeholder="Enter your Phone Number" name="phone"  required="">
                           </div>
                         </div>
+
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_email">Email:</label>
                           <div class="col-sm-8"> 
                             <input type="email" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
                           </div>
                         </div>
+
+                        <div class="form-group" id="balance_div" style="display: none;">
+                          <label class="control-label col-sm-4" for="id_balance">Balance To Pay :</label>
+                          <div class="col-sm-8"> 
+                            <input type="text" class="form-control" id="id_balance" placeholder="Enter your Email" name="balance" >
+                          </div>
+                        </div>
+
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount:</label>
+                          <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount :</label>
                           <div class="col-sm-8"> 
                             <input type="number" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
                           </div>
                         </div>
+
+                        <!-- <div class="form-group" id="balance_div" style="display: none;">
+                          <label class="control-label col-sm-4" for="id_balance">Balance :</label>
+                          <div class="col-sm-8"> 
+                            <input type="number" class="form-control" id="id_balance" placeholder="Enter your Email" name="balance" >
+                          </div>
+                        </div> -->
+
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="pwd">Mode Of Payment:</label>
+                          <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
                           <div class="col-sm-2"> 
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Cash
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Paytm
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment" required=""> <span class="radio-change"></span> Card
+                                  <input id="radioId" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Card
                               </label>
                           </div>
                               
                         </div>
+
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="">Registration Status:</label>
+                          
+                          <div class="col-sm-2"> 
+                              <label>
+                                  <input id="radio_status_1" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
+                              </label>
+                          </div>
+                          
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="radio_status_2" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
+                              </label>
+                          </div>
+                          
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="radio_status_3" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Not Mentioned
+                              </label>
+                          </div>
+                              
+                        </div>
+
                         <p id="notifications" style="color: red"></p>
                         <hr>
                         <div class="form-group"> 
@@ -152,7 +207,7 @@
       selected_id = $("#selectId option:selected").val();
       $("#detailForm").show();
 
-      if( selected_id == 'other'){
+      if( selected_id == 'Other'){
         $("#other_table_div").show();
       }
       else{
@@ -167,53 +222,125 @@
       });
     });
 
-    // $('#other_table_id').on('click', function(){
-    //   selected_id = $("#selectId option:selected").val();
-    //   $("#detailForm").show();
-    //   $("#other_table_div").show();
-
-    //   $("#id_table").val(selected_id);
-
-    //   $("#id_first_name").autocomplete({
-    //     source: "/auto_name/?table="+selected_id,
-    //     minLength: 1,
-    //   });
-    // });
-
 
     $('#id_first_name').focusout(function(){
       var input = $('#id_first_name').val()
-      var selected_table = $("#selectId option:selected").val();    
+      var selected_table = $("#selectId option:selected").val(); 
+      var new_table = $("#id_other_table").val();    
       $.ajax({
         url: '/get_user_data/',
         type:'GET',
         data:{
           'username':input,
           'selected_table': selected_table,
+          'new_table': new_table,
         },
         success: function (data){
           if (data.success == 'True'){
+            console.log(data);
             $("#id_email").val(data.email);
             $("#id_phone").val(data.mobile);
-            // $("#id_first_name").val(data.first_name);
+            $("#id_first_name").val(data.first_name);
             $("#id_last_name").val(data.last_name);
+
+            if (data.user_exist == 'true'){
+              $("#id_balance").val(data.balance);
+              $("#balance_div").show();
+              // if( data.balance > 0 ){
+              //   $("#id_balance").val(data.balance);
+              //   $("#balance_div").show();
+              // }
+            }
+            else{
+              console.log("no user")
+              $("#id_balance").val(-1);
+
+              $("#balance_div").hide();
+            }           
           }
           else{
+            $("#id_balance").val(-1);
             console.log("No Data")
           }
         }
       });
     });
+
+    $('#id_amount_paid').on('change', function(){
+      var amount = $('#id_amount_paid').val()
+      var balance = $('#id_balance').val()
+      console.log("amount : ", amount);
+      console.log("balance : ", balance);
+
+      if ( balance > 0 ){
+        total_amount = +amount +  (5000 - +balance);
+        console.log("total : ", total_amount);
+      }
+      else if( balance == 0){
+        total_amount = +amount + 5000;
+        console.log("0 bal : ", total_amount);
+      }
+      else{
+        total_amount = amount;
+      }
+
+
+      if ( total_amount >= 6000){
+        $("#radio_status_1").prop("checked", true);
+      }
+      else if (total_amount >= 5000){
+        $("#radio_status_2").prop("checked", true);
+      }
+      else{
+        $("#radio_status_3").prop("checked", true);
+      }
+    });
     
     // $("#DetailForm").submit(function(){
-    //   if($('#radioId').is(':checked')) {
-    //     return true;
-    //   }
-    //   else{
-    //      $("#notifications").text('Please Select a paiment mode !');
-    //      return false;
-    //   }
-    // });
+    //   var email = $("#id_email").val();
+    //   var phone = $("#id_phone").val();      
+    //   $.ajax({
+    //       url: '/check_mail_phone/',
+    //       type:'GET',
+    //       data:{
+    //         'email':email,
+    //         'phone': phone,
+    //       },
+    //       success: function (data){
+    //         alert();
+    //         return 'false'
+    //         console.log("Data : ", data);
+
+    //         if (data.success == 'false'){
+    //           update_messages(data.message);              
+    //         }
+    //       }
+    //     });
+
+
+    $("#DetailForm").submit(function(){
+      if($('input[name=payment]:checked').length<=0)
+      {
+        $("#notifications").text('Please Select a paiment mode !');
+        return false;
+      }else{        
+        return true;
+      }    
+    });
+
+    function update_messages(messages){
+      console.log("update message");
+      $(".message").html("");
+      $.each(messages, function (i, m) {
+          $(".message").append(m.message);
+      });  
+      $('.message').show();
+      setTimeout(function() {
+          $('.message').fadeOut('slow');
+          location.reload();
+      }, 3000);
+    }
+
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";

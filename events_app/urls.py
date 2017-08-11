@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
+    # url(r'^check_mail_phone/$',checkRegform, name='check_mail_phone'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
     url(r'^users/$',ListUsers.as_view(), name='list_users'),
     url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view')

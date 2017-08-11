@@ -75,3 +75,30 @@ $(document).ready(function(){
 	    });
   	});
 })
+
+// script from the body
+function openNav() {
+		document.getElementById("myNav").style.height = "100%";
+}
+
+function closeNav() {
+		document.getElementById("myNav").style.height = "0%";
+}
+
+$(document).ready(function() {
+	$('#user_lists').DataTable({
+		"paging":   false,
+		"info":     false,
+	});
+});
+
+$('#sortOption').on('change', function(){
+
+	var table = $('#user_lists').DataTable();
+	var order = table.order();
+
+	selected_id = $("#sortOption option:selected").val();
+
+	table.order( [ selected_id, 'asc' ] ).draw();
+});
+// script from the body ends here
