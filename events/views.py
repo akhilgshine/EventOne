@@ -93,7 +93,7 @@ class RegisterEvent(TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = {}
 		message = ''
-		
+
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -312,7 +312,8 @@ class ListUsers(TemplateView):
 		return render(request, self.template_name, context)
 
 class InvoiceView(TemplateView):
-	template_name = 'invoice.html'
+	# template_name = 'invoice.html'
+	template_name = 'coupon.html'
 	def get(self, request, *args, **kwargs):
 		context = {}
 		pk = kwargs.pop('pk')

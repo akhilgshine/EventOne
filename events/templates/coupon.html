@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)http://nimbupani.com/demo/css3-drop-shadows.html -->
+<html lang="en" >
+{% load static %}
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
+	<link href="{% static 'css/media_queries_coupon.css' %}" rel="stylesheet" type="text/css">
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body >
+		<article class="main_div" >
+			<center style="min-width:100%; background-image: url(/static/images/bg_coupon.jpg);">
+				<div class="container-fluid  main_div" style="padding-right:0px;">
+					<div class="col-md-5">
+						<img src="{% static 'images/logo_invoice.png' %}" class="logo_image img-responsive">
+					</div>
+					<div class="col-md-7 grad_div">
+						<table id="bodyTable" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
+						    <tbody>
+						        <tr>
+						            <td valign="top" class="columnContainer">
+						                <table border="0" cellpadding="0" cellspacing="0" width="100%"  >
+						                  <tbody class="table_main_tbody">
+						                    <tr>
+						                      <td class="table_main_tbody_td">Name</td>
+						                      <td> : &nbsp;</td>
+						                      <td class="td_right">{{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}</td>
+						                    </tr>
+											<tr>
+												<td class="table_main_tbody_td"> Registration Type</td>
+												<td> : &nbsp;</td>
+												<td class="td_right">{{ event_register.event_status }}</td>
+											</tr>
+						                    <tr>
+						                      <td class="table_main_tbody_td">Table</td>
+						                      <td> : &nbsp;</td>
+						                      <td class="td_right">{{ event_register.table.table_name }}</td>
+						                    </tr>
+											<tr>
+												<td class="table_main_tbody_td">Amount Paid</td>
+												<td> : &nbsp;</td>
+												<td class="td_right">{{ event_register.amount_paid }}/-&nbsp;&nbsp;&nbsp;{{ event_register.created_date|date:"D d M Y" }}</td>
+											</tr>
+						                    <tr>
+						                      <td class="table_main_tbody_td">Email Address</td>
+						                      <td> : &nbsp;</td>
+						                      <td class="td_right">{{ event_register.event_user.email }}</td>
+						                    </tr>
+						                    <tr>
+						                      <td class="table_main_tbody_td">Phone Number</td>
+						                      <td> : &nbsp;</td>
+						                      <td class="td_right">{{ event_register.event_user.mobile }}</td>
+						                    </tr>
+						                  </tbody>
+						                    <!-- <hr class="dotted_line"> -->
+						                    <tbody class="tbody_bottom">
+						                      <tr style=" height: 62px;">
+						                          <td align="left" class="sorting_element reg_dttails_td1" style="padding-left:25px;" >
+						                              Registration Number :<span class="reg_code_number">&nbsp;&nbsp;{{ event_register.qrcode }}</span>
+						                          </td>
+						                      </tr>
+						                    </tbody>
+						                </table>
+						            </td>
+						        </tr>
+						    </tbody>
+						</table>
+						</table>
+					</div>
+				</div>
+				<div class="container-fluid div_bottom">
+
+				</div>
+			</center>
+		</article>
+
+</body></html>

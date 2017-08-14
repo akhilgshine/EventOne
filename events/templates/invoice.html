@@ -4,97 +4,70 @@
     <meta charset="UTF-8">
     <!-- <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"> -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    <style type="text/css">
-    #bodyTable td.sorting_element{
-        color: #fff;
-        font-family: sans-serif;
-        font-size: 18px;
-        height: 28px;
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style type="text/css">
 
+    .table_td_first
+    {
+        float: left;
+        font-size: 16px;
     }
-    @media only screen and (max-width:480px) {
-        .earning_graph img {
-            width: 70%!important;
-            height: auto!important;
-        }
-        .templateContainer {
-            width: 100%!important;
-        }
-        .sorting_element {
-            padding: 9px!important;
-        }
-        #row .columnContainer {
-            padding: 0!important;
-        }
-        #row {
-            width: 100%!important;
-        }
-        span.full img {
-            width: 100%!important;
-        }
-        .heightFix {
-            height: auto!important;
-        }
+        .table_td_second
+    {
+        float: left;
+        font-size: 16px;
     }
+
 
     /* Overlay Menu */
 
-        .overlay {
-            height: 0%;
-            width: 100%;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: rgba(74, 35, 90);
-            background-color: rgba(74, 35, 90, 0.97); 
-            overflow-y: hidden;
-            transition: 0.5s;
-        }
+    .overlay {
+        height: 0%;
+        width: 100%;
+        position: fixed;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        background-color: rgba(74, 35, 90);
+        background-color: rgba(74, 35, 90, 0.97);
+        overflow-y: hidden;
+        transition: 0.5s;
+    }
 
-        .overlay-content {
-            position: relative;
-            top: 25%;
-            width: 100%;
-            text-align: center;
-            margin-top: 30px;
-        }
+    .overlay-content {
+        position: relative;
+        top: 25%;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+    }
 
-        .overlay a {
-            padding: 8px;
-            text-decoration: none;
-            font-size: 20px;
-            color:  #d7bde2;
-            display: block;
-            transition: 0.3s;
-        }
+    .overlay a {
+        padding: 8px;
+        text-decoration: none;
+        font-size: 20px;
+        color:  #d7bde2;
+        display: block;
+        transition: 0.3s;
+    }
 
-        .overlay a:hover, .overlay a:focus {
-            color: #f1f1f1;
-        }
+    .overlay a:hover, .overlay a:focus {
+        color: #f1f1f1;
+    }
 
-        .overlay .closebtn {
-            position: absolute;
-            top: 20px;
-            right: 45px;
-            font-size: 30px;
-        }
+    .overlay .closebtn {
+        position: absolute;
+        top: 20px;
+        right: 45px;
+        font-size: 30px;
+    }
+</style>
 
-        @media screen and (max-height: 450px) {
-          .overlay {overflow-y: auto;}
-          .overlay a {font-size: 20px}
-          .overlay .closebtn {
-            font-size: 40px;
-            top: 15px;
-            right: 35px;
-          }
-
-
-    </style>
 </head>
 
 <body>
-    <div id="myNav" class="overlay">
+
+<div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
       <a href="/">Home</a>
@@ -103,90 +76,117 @@
       <a href="/logout/">Logout</a>
     </div>
   </div>
-    <center>
-        <table id="bodyTable" align="center" border="0" cellpadding="0" cellspacing="0" width="800px" height="100%">
-            <tbody>
-                <tr>
-                    <td>
-                        <div style="cursor: context-menu;" onclick="openNav()" >
-                            <i class="fa fa-bars" aria-hidden="true" title="Menu"></i>
-                        </div>
-                        
-                    </td>
-                </tr>
-                <tr>
-                    <td valign="top" class="columnContainer">
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%; background-image: url('/static/images/bg.jpg'); ">
+
+  <div class="container-fluid text-center" style="min-width:100%;min-height:450px;  background-image: url('/static/images/bg.jpg');">    
+  <div class="row content">
+    
+    <div class="col-sm-1 sidenav">
+    </div>
+
+    <div class="col-sm-10 sidenav">
+        <div class="row">
+          <div class="container-fluid text-center">    
+              <div class="row content">                
+                    <div class="col-sm-2 sidenav">
+                    </div>
+                    <div class="col-sm-8 sidenav">
+                        <div style="" onclick="openNav()" >
+                            <img src="{% static 'images/logo_invoice.png' %}" style='width:100%;' border="0" alt="Null">
+                        </div>  
+                    </div>
+                    <div class="col-sm-2 sidenav">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="container-fluid text-center">    
+                <div class="row content">
+
+                    <div class="col-sm-12 sidenav">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                       <table class="" border="0" cellpadding="0" cellspacing="0" width="" style=" color: #fff;margin-bottom: 25px; "  width="800px" height="100%">
                             <tbody>
-                                <tr>
-                                    <td colspan="3" align="center" style="padding-top: 24px; padding-bottom: 14px;" >
+                <!--                 <tr>
+                                    <td colspan="3" align="center" style="padding-top: 24px; padding-bottom: 14px;" onclick="openNav()" >
                                            <img src="{% static 'images/logo_invoice.png' %}">
                                     </td>
-                                </tr>
+                                </tr> -->
                                 <tr>
-                                    <td width="390px" valign="top" align="left" class="sorting_element"  style=" text-indent: 220px; " >
+                                    <td align="right" class="table_td_first">
                                           Name 
                                     </td>
-                                    <td width="15px" valign="top" class="sorting_element"> : </td>
-                                    <td width="390px" valign="top" align="left" class="sorting_element" > 
+                                    <td> : </td>
+                                    <td align="right" class="table_td_second">  
                                         {{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
-                                        Table
+                                    <td align="right" class="table_td_first"> 
+                                        Table 
                                     </td>
-                                    <td valign="top" class="sorting_element"> : </td>
-                                    <td valign="top" align="left" class="sorting_element" > 
-                                        {{ event_register.table.table_name }}
+                                    <td> : </td>
+                                    <td align="right" class="table_td_second"> 
+                                       {{ event_register.table.table_name }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
+                                    <td align="right" class="table_td_first">
                                         Email Address   
                                     </td>
-                                    <td valign="top" class="sorting_element"> : </td>
-                                    <td valign="top" align="left" class="sorting_element" > 
+                                    <td> : </td>
+                                    <td align="right" class="table_td_second"> 
                                         {{ event_register.event_user.email }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
-                                        Phone Number 
+                                    <td align="right" class="table_td_first">
+                                        Phone Number
                                     </td>
-                                    <td valign="top" class="sorting_element"> : </td>
-                                    <td valign="top" align="left" class="sorting_element" > 
-                                        {{ event_register.event_user.mobile }}
+                                    <td> : </td>
+                                    <td align="left" class="table_td_second"> 
+                                       {{ event_register.event_user.mobile }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" align="left" class="sorting_element" style=" text-indent: 220px; " >
-                                        Paid Amount 
+                                    <td align="right" class="table_td_first">
+                                        Paid Amount
                                     </td>
-                                    <td valign="top" class="sorting_element"> : </td>
-                                    <td valign="top" align="left" class="sorting_element" > 
-                                        {{ event_register.amount_paid }}
+                                    <td> : </td>
+                                    <td align="left" class="table_td_second"> 
+                                       {{ event_register.amount_paid }}
                                     </td>
                                 </tr>
-                                <tr style=" height: 62px;">
-                                    <td align="left" class="sorting_element" style="padding-left:25px;" >
+                                <tr>
+                                    <td align="left" style="font-size: 14px; padding-right: 10px;">
                                         Registration Number : {{ event_register.qrcode }}   
                                     </td>
-                                    <td class="sorting_element"></td>
-                                    <td align="right" class="sorting_element" style="padding-right:25px;" > 
+                                    <td></td>
+                                    <td align="right" style="font-size: 14px; padding-right: 10px;" >
                                         Date  :  {{ event_register.created_date }}
-                                    </td>
+                                    </td>                                
                                 </tr>
-                            </tbody>
+                            </tbody>                         
+                        </table>                      
+                    </div>
+                    <div class="col-md-3"></div>
+                        
+                    </div>
 
-                        </table>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    
-    <!-- final template -->
-    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-1 sidenav">
+    </div>
+
+
+
     <!-- <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID"> -->
 
     <!-- jQuery -->

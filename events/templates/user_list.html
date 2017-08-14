@@ -93,7 +93,6 @@
            <option>Select one</option>
            <option value=1>Name</option>
            <option value=3>Table</option>
-           <option value=4>Table Order</option>
            <option value=8>Date</option>
          </select>
         </div>
@@ -139,7 +138,7 @@
             <td> {{ user.amount_paid }}</td>
             <td> {{ user.event_status }} </td>
             <td> {{ user.created_date|date:"D d M Y" }} </td>
-            <td><a style="color: #fff;" href="/invoice/{{ user.id }}"> View </a></td>
+            <td><a style="color: #fff;" href="/invoice/{{ user.id }}" target="_blank"> View </a></td>
           </tr>
           {% endfor %}
           </tbody>

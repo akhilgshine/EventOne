@@ -1,0 +1,133 @@
+/*old style*/
+
+/*old style ends here*/
+/*drop shadow pf ticket*/
+center:before, center:after {
+
+}
+/*drop shadow of ticket*/
+body {
+  font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif;
+  font-size: 13px;
+  background: #fff !important;
+}
+
+article {
+  display: block;
+  position: relative;
+  width: 90%;
+  margin-top: 50px;
+  background: #ccc;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 1.1em;
+  color: rgba(0,0,0, .8);
+  line-height: 1.5;
+  text-align: center;
+  display: block;
+  margin: 6em auto;
+}
+
+
+article:before, article:after {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-box-shadow: 0 15px 10px rgba(0,0,0, 0.7);
+  -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+}
+
+article:after {
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+/*drop shadow of ticket ends here*/
+.dotted_line {
+    border-top:2px dotted #fff;
+    opacity: 0.1;
+    margin-bottom: 0px;
+    /*Rest of stuff here*/
+}
+
+.main_div
+{
+}
+#bodyTable
+{
+  width: 89%;
+  text-align: center;
+  color: #fff;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: bold;
+}
+#bodyTable tr
+{
+  line-height: 32px;
+}
+.logo_image
+{
+  margin-top: 15px;
+}
+.borderless td, .borderless th {
+    border: none;
+}
+.table-borderless td,
+.table-borderless th {
+    border: 0;
+}
+.td_right
+{
+  float: left;
+}
+/*slant div starts here*/
+
+/*slant div ends here*/
+.grad_div
+{
+  height: 273px;
+  width: 400px;
+  background-image: url("/static/images/grad_bg_main.png");
+}
+.div_bottom
+{
+  padding-right: 0px !important;
+}
+.tbody_bottom
+{
+  /*width: 400px;*/
+  background-image: url("/static/images/grad_bg_sub.png");
+}
+.reg_dttails_td1
+{
+  text-align: center;
+  font-size: 100%;
+}
+.reg_dttails_td2
+{
+  text-align: left;
+  font-size: 110%;
+}
+
+.table_main_tbody_td
+{
+  float: left;
+  padding-left: 37%;
+}
+.reg_code_number
+{
+  font-size: 142%;
+}
