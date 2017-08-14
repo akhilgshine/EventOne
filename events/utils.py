@@ -1,7 +1,8 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import get_template
-from django.core.mail import EmailMessage
+# from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.template import Context
 from django.template.loader import render_to_string
 import pdfkit
@@ -17,13 +18,11 @@ def create_pdf(event_obj):
 def send_email(to_email, message, event_obj):
 	subject = 'QRT 85 Registration'
 
-	pdf_file = create_pdf(event_obj)
-
-	cxt = {'obj': event_obj }
-	content = render_to_string('mail_template/mail_index__.html', cxt)
+	cxt = {'event_register': event_obj }
+	content = render_to_string('coupon.html', cxt)	
 	from_email = settings.DEFAULT_FROM_EMAIL
-	msg = EmailMessage(subject, content, from_email, to=[to_email])
-	msg.attach('mail.pdf', pdf_file.read(), 'application/pdf')
+	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email])
+	msg.attach_alternative(content, "text/html")
 	msg.send()
 
 def set_status(event_reg):
