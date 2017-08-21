@@ -8,4 +8,4 @@ django-toolbelt==0.0.1
 gunicorn==19.7.0
 whitenoise==3.3.0
 requests==2.18.3
-pdfkit==0.6.1
+django-import-export==0.5.1
