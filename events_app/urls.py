@@ -29,6 +29,7 @@ urlpatterns = [
     # url(r'^check_mail_phone/$',checkRegform, name='check_mail_phone'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
     url(r'^users/$',ListUsers.as_view(), name='list_users'),
-    url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view')
+    url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view'),
+    url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

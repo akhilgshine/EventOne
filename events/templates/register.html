@@ -73,7 +73,7 @@
                       </form>
 
                       <div  id="detailForm" style="display: none;">                        
-                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm"> 
+                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
                          {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
 
@@ -110,6 +110,14 @@
                             <input type="email" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
                           </div>
                         </div>
+                            {% if event_registered_user %}
+                            <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_email"></label>
+                          <div class="col-sm-8">
+                            <input type="hidden" class="form-control" id="update_id"  name="update_id" value="{{event_registered_user.id}}">
+                          </div>
+                        </div>
+                            {% endif %}
 
                         <div class="form-group" id="balance_div" style="display: none;">
                           <label class="control-label col-sm-4" for="id_balance">Balance To Pay :</label>
@@ -136,17 +144,17 @@
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
                           <div class="col-sm-2"> 
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
+                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Card
+                                  <input id="radioId_3" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Card
                               </label>
                           </div>
                               
@@ -202,7 +210,29 @@
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
     <script type="text/javascript">
+      {% if event_registered_user %}
+            $("#detailForm").show();
+            $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
+            $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
+            $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
+            $('#id_email').val('{{event_registered_user.event_user.email}}')
+            $('#id_amount_paid').val('{{event_registered_user.amount_paid}}')
+            $('#radio_select').val('{{event_registered_user.amount_paid}}')
+            $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
+            {% ifequal event_registered_user.event_status "Couple" %}
+                $('#radio_status_1').prop('checked',true)
+            {% endifequal %}
+            {% ifequal event_registered_user.event_status "Stag" %}
+                $('#radio_status_2').prop('checked',true)
+            {% endifequal %}
+            {% ifequal event_registered_user.event_status "Not Mentioned" %}
+                $('#radio_status_3').prop('checked',true)
+            {% endifequal %}
+            {% ifequal event_registered_user.payment "on" %}
+                $('#radioId_1').prop('checked',true)
+            {% endifequal %}
 
+      {%endif%}
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
       $("#detailForm").show();

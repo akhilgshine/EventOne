@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import FormView, TemplateView, View
+from django.views.generic import FormView, TemplateView, View,UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from events.models import *
@@ -129,7 +129,21 @@ class RegisterEvent(TemplateView):
 				event_user.mobile = phone
 				event_user.save()
 
-			qrcode = 'QRT001'
+				# qrcode = 'QRT001'
+				try:
+					qrcode =  RegisteredUsers.objects.latest('qrcode').qrcode
+					if not qrcode:
+						qrcode = 'QRT8001'
+					else:
+						qrcode_updated = qrcode[-3:]
+						qrcode_updated_increment = int(qrcode_updated) + 1
+						qrcode_updated_length = len(str(qrcode_updated_increment))
+						if qrcode_updated_length == 1:
+							qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
+						if qrcode_updated_length == 2:
+							qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
+				except:
+					qrcode = 'QRT8001'
 
 			try:
 				event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
@@ -143,7 +157,7 @@ class RegisterEvent(TemplateView):
 					event_reg.payment = payment
 					event_reg.amount_paid = amount_paid
 					event_reg.balance_amount = balance_amount
-					event_reg.qrcode = qrcode + str(event_reg.id)
+					event_reg.qrcode = qrcode
 					event_reg.save()
 
 				else:
@@ -170,6 +184,7 @@ class RegisterEvent(TemplateView):
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 
 				# send_email(email,message,event_reg)
+
 				try:
 					send_email(email,message,event_reg)
 				except:
@@ -320,4 +335,57 @@ class InvoiceView(TemplateView):
 		event_reg = RegisteredUsers.objects.get(id=pk)
 		context['event_register'] = event_reg
 		return render(request, self.template_name, context)
+
+class UserRegisterUpdate(TemplateView):
+	template_name = 'register.html'
+
+	def get(self,request, *args,**kwargs):
+		context={}
+		pk = kwargs.pop('pk')
+		event_registered_user = RegisteredUsers.objects.get(id=pk)
+		context['event_registered_user'] = event_registered_user
+		return render(request, self.template_name, context)
+
+	def post(self,request,*args,**kwargs):
+		try:
+
+			name = request.POST.get('first_name', '')
+			last_name = request.POST.get('last_name', '')
+			email = request.POST.get('email', '')
+			phone = request.POST.get('phone', '')
+			# table = request.POST.get('table_val', '')
+			update_id = request.POST.get('update_id', '')
+
+			payment = request.POST.get('payment', '')
+			amount_paid = request.POST.get('amount_paid', '')
+			reg_user_obj  = RegisteredUsers.objects.get(id=update_id)
+
+			user = EventUsers.objects.get(id=reg_user_obj.event_user.id)
+
+
+			if name:
+				user.first_name = name
+			if last_name:
+				user.last_name = last_name
+			if email:
+				user.email = email
+			if phone:
+				user.phone = phone
+			user.save()
+
+			reg_user_obj.payment = payment
+			last_pay = reg_user_obj.amount_paid
+			tottal_paid = int(last_pay) + int(amount_paid)
+			reg_user_obj.amount_paid = tottal_paid
+			reg_user_obj.save()
+			return HttpResponseRedirect('/users/')
+		except:
+			message = "There is an issue with your registration. Please try again."
+			messages.success(self.request, message)
+			return HttpResponseRedirect(reverse('register_event'))
+
+
+
+
+
 
