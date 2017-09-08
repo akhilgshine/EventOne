@@ -148,7 +148,7 @@ class RegisterEvent(TemplateView):
 				if created:
 					try:
 						qrcode =  RegisteredUsers.objects.latest('qrcode').qrcode
-						if not qrcode:
+						if not qrcode.split('QRT')[1].startswith('8'):
 							qrcode = 'QRT8001'
 						else:
 							qrcode_updated = qrcode[-3:]
