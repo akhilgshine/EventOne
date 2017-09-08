@@ -11,8 +11,6 @@ from django.core.files import File
 
 def send_email(to_email, message, event_obj):
 	subject = 'QRT 85 Registration'
-	to_email = 'salam104104@gmail.com'
-
 	cxt = {'event_register': event_obj }
 	content = render_to_string('coupon_mail.html', cxt)	
 	from_email = settings.DEFAULT_FROM_EMAIL

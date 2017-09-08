@@ -122,7 +122,7 @@
                         <div class="form-group" id="balance_div" style="display: none;">
                           <label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>
                           <div class="col-sm-8"> 
-                            <input type="hidden" class="form-control" id="paid_ampount_id"  name="update_id" value="" readonly>
+                            <input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>
                           </div>
                         </div>
 
@@ -137,24 +137,24 @@
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
                           <div class="col-sm-2"> 
                               <label>
-                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Cash
+                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment"> <span class="radio-change"></span> Paytm
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="paytm"> <span class="radio-change"></span> Paytm
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_3" type="radio" class="payment-mode" name="payment" > <span class="radio-change"></span> Card
+                                  <input id="radioId_3" type="radio" class="payment-mode" name="payment" > <span class="radio-change" value="card"></span> Card
                               </label>
                           </div>
                               
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="">Registration Status:</label>
+                          <label class="control-label col-sm-4" for="">Registration Type:</label>
                           
                           <div class="col-sm-2"> 
                               <label>
@@ -191,7 +191,7 @@
                         <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                         <div class="col-sm-8">
                             <select name="room_type"  class="form-control" id="room_type">
-                                <option value="Single">------</option>
+                                <option value="">---select type---</option>
                                 <option value="Single">Single</option>
                                 <option value="Double">Double</option>
                                 <option value="Deluxe">Deluxe</option>
@@ -234,9 +234,15 @@
             $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
             $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
             $('#id_email').val('{{event_registered_user.event_user.email}}')
-            $('#id_amount_paid').val('{{event_registered_user.amount_paid}}')
-            $('#radio_select').val('{{event_registered_user.amount_paid}}')
-            $('#id_balance').val('{{event_registered_user.balance_amount}}')
+            // $('#id_amount_paid').val('{{event_registered_user.amount_paid}}')
+            // $('#radio_select').val('{{event_registered_user.amount_paid}}')
+            $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
+
+            {% if hotel_obj %}
+              $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
+              $("#id_room_number").val('{{hotel_obj.room_number}}');
+              $("#room_type").val('{{hotel_obj.room_type}}');
+            {% endif %}
 
             $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
             {% ifequal event_registered_user.event_status "Couple" %}
@@ -248,11 +254,21 @@
             {% ifequal event_registered_user.event_status "Not Mentioned" %}
                 $('#radio_status_3').prop('checked',true)
             {% endifequal %}
-            {% ifequal event_registered_user.payment "on" %}
-                $('#radioId_1').prop('checked',true)
+
+            {% ifequal event_registered_user.payment 'cash' %}
+              $("#radioId_1").prop("checked", true);
+            {% endifequal %}
+
+           {% ifequal event_registered_user.payment 'paytm' %}
+              $("#radioId_2").prop("checked", true);
+            {% endifequal %}
+
+            {% ifequal event_registered_user.payment 'card' %}
+              $("#radioId_3").prop("checked", true);
             {% endifequal %}
 
       {%endif%}
+      
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
       $("#detailForm").show();
@@ -297,6 +313,19 @@
               // $("#paid_ampount_id").val(data.balance);
               $("#balance_div").show();
               $("#paid_ampount_id").val(data.paid_amount);
+              $("#id_hotel_name").val(data.hotel_name);
+              $("#id_room_number").val(data.hotel_room_number);
+              $("#room_type").val(data.hotel_type);
+
+              if ( data.payment_type == 'cash'){
+                $("#radioId_1").prop("checked", true);
+              }
+              else if (data.payment_type == 'paytm'){
+                $("#radioId_2").prop("checked", true);
+              }
+              else{
+                $("#radioId_3").prop("checked", true);
+              }
 
               if ( data.paid_amount >= 6000){
                 $("#radio_status_1").prop("checked", true);
@@ -325,7 +354,7 @@
     $('#amount_added_id').on('change', function(){
       var amount_added = $('#amount_added_id').val()
       var amount_paid = $('#paid_ampount_id').val()
-      var total_amount = amount_added + amount_paid;
+      var total_amount = +amount_added +  +amount_paid;
       // console.log("amount : ", amount);
       // console.log("balance : ", balance);
 
@@ -340,8 +369,6 @@
       // else{
       //   total_amount = amount;
       // }
-
-
       if ( total_amount >= 6000){
         $("#radio_status_1").prop("checked", true);
       }

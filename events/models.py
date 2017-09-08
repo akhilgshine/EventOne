@@ -63,7 +63,7 @@ class RegisteredUsers(models.Model):
 		return self.event.title
 
 class PaymentDetails(models.Model):
-	reg_event = models.ForeignKey(RegisteredUsers)
+	reg_event = models.ForeignKey(RegisteredUsers, null=True)
 	amount = models.CharField(max_length=20)
 	created_date = models.DateTimeField(auto_now_add=True)
 		
