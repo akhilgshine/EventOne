@@ -95,7 +95,7 @@ class RegisterEvent(TemplateView):
 		message = ''
 
 		try:
-			# import pdb; pdb.set_trace()
+			import pdb; pdb.set_trace()
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
 			email = request.POST.get('email', '')
@@ -189,10 +189,7 @@ class RegisterEvent(TemplateView):
 				hotel.room_number = hotel_room_number
 				hotel.room_type = room_type
 				hotel.save()
-
-
-
-
+				
 			except Exception as e:
 
 				if created and event_reg:
@@ -203,10 +200,11 @@ class RegisterEvent(TemplateView):
 				set_status(event_reg)
 				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"
 				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
-				try:
-					send_email(email,message,event_reg)
-				except:
-					pass
+				# try:
+				# 	send_email(email,message,event_reg)
+				# except:
+				# 	pass
+
 				context['event_register'] = event_reg
 				return render(request, 'invoice.html', context)
 			else:
@@ -298,7 +296,7 @@ class GetUserData(TemplateView):
     		# Checks user exist
     		try:
     			registered_user = RegisteredUsers.objects.get(event_user=user ,table=table)
-    			data['balance'] = int(registered_user.balance_amount)
+    			# data['balance'] = int(registered_user.balance_amount)
     			data['paid_amount'] = registered_user.amount_paid
     			data['user_exist'] = 'true'
     			print("User exist")

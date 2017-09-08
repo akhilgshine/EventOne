@@ -14,11 +14,6 @@ ROOM_CHOICES = (
 	('Single' , _('Single')),
 	('Double' , _('Double')),
 	('Deluxe' , _('Deluxe')),
-
-
-
-
-
 )
 class Event(models.Model):
 	title = models.CharField(max_length=100, blank=True, null=True)
@@ -68,7 +63,7 @@ class RegisteredUsers(models.Model):
 		return self.event.title
 
 class PaymentDetails(models.Model):
-	event_user = models.ForeignKey(EventUsers)
+	reg_event = models.ForeignKey(RegisteredUsers)
 	amount = models.CharField(max_length=20)
 	created_date = models.DateTimeField(auto_now_add=True)
 		

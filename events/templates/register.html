@@ -120,16 +120,16 @@
                             {% endif %}
 
                         <div class="form-group" id="balance_div" style="display: none;">
-                          <label class="control-label col-sm-4" for="id_balance">Balance To Pay :</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control" id="id_balance"  name="balance" >
+                          <label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>
+                          <div class="col-sm-8"> 
+                            <input type="hidden" class="form-control" id="paid_ampount_id"  name="update_id" value="" readonly>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount :</label>
-                          <div class="col-sm-8">
-                            <input type="number" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
+                          <label class="control-label col-sm-4" for="id_amount_paid">Amount to be added : </label>
+                          <div class="col-sm-8"> 
+                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid" required="">
                           </div>
                         </div>
 
@@ -294,45 +294,52 @@
             $("#id_last_name").val(data.last_name);
 
             if (data.user_exist == 'true'){
-              $("#id_balance").val(data.balance);
+              // $("#paid_ampount_id").val(data.balance);
               $("#balance_div").show();
-              // if( data.balance > 0 ){
-              //   $("#id_balance").val(data.balance);
-              //   $("#balance_div").show();
-              // }
+              $("#paid_ampount_id").val(data.paid_amount);
+
+              if ( data.paid_amount >= 6000){
+                $("#radio_status_1").prop("checked", true);
+              }
+              else if (data.paid_amount >= 5000){
+                $("#radio_status_2").prop("checked", true);
+              }
+              else{
+                $("#radio_status_3").prop("checked", true);
+              }
             }
             else{
-              console.log("no user")
-              $("#id_balance").val(-1);
-
+              // console.log("no user")
+              // $("#id_balance").val(-1);
               $("#balance_div").hide();
             }           
           }
           else{
-            $("#id_balance").val(-1);
+            // $("#id_balance").val(-1);
             console.log("No Data")
           }
         }
       });
     });
 
-    $('#id_amount_paid').on('change', function(){
-      var amount = $('#id_amount_paid').val()
-      var balance = $('#id_balance').val()
-      console.log("amount : ", amount);
-      console.log("balance : ", balance);
+    $('#amount_added_id').on('change', function(){
+      var amount_added = $('#amount_added_id').val()
+      var amount_paid = $('#paid_ampount_id').val()
+      var total_amount = amount_added + amount_paid;
+      // console.log("amount : ", amount);
+      // console.log("balance : ", balance);
 
-      if ( balance > 0 ){
-        total_amount = +amount +  (5000 - +balance);
-        console.log("total : ", total_amount);
-      }
-      else if( balance == 0){
-        total_amount = +amount + 5000;
-        console.log("0 bal : ", total_amount);
-      }
-      else{
-        total_amount = amount;
-      }
+      // if ( balance > 0 ){
+      //   total_amount = +amount +  (5000 - +balance);
+      //   console.log("total : ", total_amount);
+      // }
+      // else if( balance == 0){
+      //   total_amount = +amount + 5000;
+      //   console.log("0 bal : ", total_amount);
+      // }
+      // else{
+      //   total_amount = amount;
+      // }
 
 
       if ( total_amount >= 6000){
