@@ -11,6 +11,7 @@ from django.core.files import File
 
 def send_email(to_email, message, event_obj):
 	subject = 'QRT 85 Registration'
+	to_email = 'salam104104@gmail.com'
 
 	cxt = {'event_register': event_obj }
 	content = render_to_string('coupon_mail.html', cxt)	
@@ -18,6 +19,7 @@ def send_email(to_email, message, event_obj):
 	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email])
 	msg.attach_alternative(content, "text/html")
 	msg.send()
+	print("mail --> ",to_email)
 
 def set_status(event_reg):
 	amount_paid = int(event_reg.amount_paid)

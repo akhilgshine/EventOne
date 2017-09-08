@@ -57,3 +57,8 @@ class RegisteredUsers(models.Model):
 	def __str__(self):
 		return self.event.title
 
+class PaymentDetails(models.Model):
+	event_user = models.ForeignKey(EventUsers)
+	amount = models.CharField(max_length=20)
+	created_date = models.DateTimeField(auto_now_add=True)
+		

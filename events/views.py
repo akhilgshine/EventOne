@@ -14,6 +14,7 @@ from events.utils import send_email, set_status
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
+import re
 
 class IndexPage(TemplateView):
 
@@ -77,7 +78,7 @@ class RegisterEvent(TemplateView):
 			return HttpResponseRedirect(reverse('login'))
 
 		context['form'] = EventRegisterForm()
-		context['tables'] = Table.objects.all()
+		context['tables'] = Table.objects.all() #.order_by('table_order')
 		
 		return render(request, self.template_name, context)
 
@@ -95,6 +96,7 @@ class RegisterEvent(TemplateView):
 		message = ''
 
 		try:
+			# import pdb; pdb.set_trace()
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
 			email = request.POST.get('email', '')
@@ -107,8 +109,7 @@ class RegisterEvent(TemplateView):
 			event = Event.objects.filter()[0]
 
 			try:
-				new_table = request.POST.get('other_table', '')
-				
+				new_table = request.POST.get('other_table', '')				
 				if not new_table:
 					new_table = request.POST.get('table_val', '')
 			except:
@@ -116,7 +117,15 @@ class RegisterEvent(TemplateView):
 
 			if new_table:
 				table, created = Table.objects.get_or_create(table_name=new_table,
-					event=event)				
+					event=event)
+				if created:
+					try:
+						table_order = int(re.search(r'\d+', new_table).group())
+						table.table_order = table_order
+						table.save()
+					except:
+						table.table_order = ''
+						table.save()
 			else:
 				table = Table.objects.get(table_name=table)
 
@@ -181,18 +190,11 @@ class RegisterEvent(TemplateView):
 			if event_reg:
 				set_status(event_reg)
 				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"
-				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
-
-				# send_email(email,message,event_reg)
-
+				# message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 				try:
 					send_email(email,message,event_reg)
 				except:
 					pass
-				# try:
-				# 	send_email(email,message,event_reg )
-				# except:
-				# 	pass
 				context['event_register'] = event_reg
 				return render(request, 'invoice.html', context)
 			else:
@@ -258,6 +260,7 @@ class GetUserData(TemplateView):
     	django_messages = []
     	data['user_exist'] = ''
     	try:
+
     		username = request.GET['username']
     		selected_table = request.GET.get('selected_table', '')
     		new_table = request.GET.get('new_table', '')
@@ -328,6 +331,7 @@ class ListUsers(TemplateView):
 
 class InvoiceView(TemplateView):
 	# template_name = 'invoice.html'
+	# template_name = 'coupon_mail.html'
 	template_name = 'coupon.html'
 	def get(self, request, *args, **kwargs):
 		context = {}
