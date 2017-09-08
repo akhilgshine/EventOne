@@ -10,6 +10,16 @@ STATUS_CHOICES = (
     ('Not Mentioned', _('Not Mentioned')),
 )
 
+ROOM_CHOICES = (
+	('Single' , _('Single')),
+	('Double' , _('Double')),
+	('Deluxe' , _('Deluxe')),
+
+
+
+
+
+)
 class Event(models.Model):
 	title = models.CharField(max_length=100, blank=True, null=True)
 	description = models.TextField()
@@ -62,3 +72,11 @@ class PaymentDetails(models.Model):
 	amount = models.CharField(max_length=20)
 	created_date = models.DateTimeField(auto_now_add=True)
 		
+class Hotels(models.Model):
+	registered_users = models.ForeignKey(RegisteredUsers,null=True)
+	hotel_name = models.CharField(max_length=50,null=True)
+	room_number = models.CharField(max_length=20,null=True)
+	room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
+
+	def __str__(self):
+		return self.hotel_name

@@ -111,7 +111,7 @@
                           </div>
                         </div>
                             {% if event_registered_user %}
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                           <label class="control-label col-sm-4" for="id_email"></label>
                           <div class="col-sm-8">
                             <input type="hidden" class="form-control" id="update_id"  name="update_id" value="{{event_registered_user.id}}">
@@ -121,24 +121,17 @@
 
                         <div class="form-group" id="balance_div" style="display: none;">
                           <label class="control-label col-sm-4" for="id_balance">Balance To Pay :</label>
-                          <div class="col-sm-8"> 
-                            <input type="text" class="form-control" id="id_balance" placeholder="Enter your Email" name="balance" >
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control" id="id_balance"  name="balance" >
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Paid Amount :</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="number" class="form-control" id="id_amount_paid" placeholder="Enter Amount" name="amount_paid" required="">
                           </div>
                         </div>
-
-                        <!-- <div class="form-group" id="balance_div" style="display: none;">
-                          <label class="control-label col-sm-4" for="id_balance">Balance :</label>
-                          <div class="col-sm-8"> 
-                            <input type="number" class="form-control" id="id_balance" placeholder="Enter your Email" name="balance" >
-                          </div>
-                        </div> -->
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
@@ -180,8 +173,32 @@
                                   <input id="radio_status_3" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Not Mentioned
                               </label>
                           </div>
-                              
+
                         </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control" id="id_hotel_name" placeholder="Enter Hotel Name" name="hotel_name" >
+                          </div>
+                        </div>
+                         <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_room_number">Hotel Room Number:</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control" id="id_room_number" placeholder="Enter Room Number" name="hotel_room_number" >
+                          </div>
+                        </div>
+                           <div class="form-group">
+                        <label class="control-label col-sm-4" for="room_type">Room Type :</label>
+                        <div class="col-sm-8">
+                            <select name="room_type"  class="form-control" id="room_type">
+                                <option value="Single">------</option>
+                                <option value="Single">Single</option>
+                                <option value="Double">Double</option>
+                                <option value="Deluxe">Deluxe</option>
+                            </select>
+
+                        </div>
+                      </div>
 
                         <p id="notifications" style="color: red"></p>
                         <hr>
@@ -212,12 +229,15 @@
     <script type="text/javascript">
       {% if event_registered_user %}
             $("#detailForm").show();
+            $('#balance_div').show();
             $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
             $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
             $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
             $('#id_email').val('{{event_registered_user.event_user.email}}')
             $('#id_amount_paid').val('{{event_registered_user.amount_paid}}')
             $('#radio_select').val('{{event_registered_user.amount_paid}}')
+            $('#id_balance').val('{{event_registered_user.balance_amount}}')
+
             $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
             {% ifequal event_registered_user.event_status "Couple" %}
                 $('#radio_status_1').prop('checked',true)

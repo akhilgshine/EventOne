@@ -79,7 +79,6 @@ class RegisterEvent(TemplateView):
 
 		context['form'] = EventRegisterForm()
 		context['tables'] = Table.objects.all() #.order_by('table_order')
-		
 		return render(request, self.template_name, context)
 
 	def check_balance(self, amount):
@@ -105,6 +104,10 @@ class RegisterEvent(TemplateView):
 
 			payment = request.POST.get('payment', '')
 			amount_paid = request.POST.get('amount_paid', '')
+
+			hotel_name = request.POST.get('hotel_name','')
+			hotel_room_number = request.POST.get('hotel_room_number','')
+			room_type = request.POST.get('room_type','')
 
 			event = Event.objects.filter()[0]
 
@@ -150,7 +153,7 @@ class RegisterEvent(TemplateView):
 						if qrcode_updated_length == 1:
 							qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
 						if qrcode_updated_length == 2:
-							qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
+							qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
 				except:
 					qrcode = 'QRT8001'
 
@@ -179,6 +182,15 @@ class RegisterEvent(TemplateView):
 					event_reg.amount_paid = tottal_paid
 					event_reg.balance_amount = balance_amount
 					event_reg.save()
+
+				hotel, created = Hotels.objects.get_or_create(registered_users=event_reg)
+
+				hotel.hotel_name = hotel_name
+				hotel.room_number = hotel_room_number
+				hotel.room_type = room_type
+				hotel.save()
+
+
 
 
 			except Exception as e:
