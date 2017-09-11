@@ -113,9 +113,7 @@ class RegisterEvent(TemplateView):
 			try:				
 				new_table = request.POST.get('other_table', '')				
 				if not new_table:
-					message = "Please provide a table name"
-					messages.success(self.request, message)
-					return HttpResponseRedirect(reverse('register_event'))
+					new_table = request.POST.get('table_val', '')
 			except:
 				new_table = ''
 
