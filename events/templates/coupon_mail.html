@@ -18,9 +18,11 @@
 	</style>
 </head>
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body">
-
-
 			<!-- Content -->
+			Hello {{event_register.event_user.first_name }} {{event_register.event_user.last_name }} <br>
+			<br>
+			Please find your coupon here. <br>
+			<br>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td align="center">
@@ -50,12 +52,18 @@
 									                      <td class="td_right"></td>
 									                    </tr>
 									                    <tr>
+									                      <td class="table_main_tbody_td"></td>
+									                      <td >&nbsp;</td>
+																				<td >&nbsp;</td>
+									                      <td class="td_right"></td>
+									                    </tr>
+									                    <tr>
 									                      <td class="table_main_tbody_td">Name</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
 									                    </tr>
 														<tr>
-															<td class="table_main_tbody_td"> Registration Type</td>
+															<td class="table_main_tbody_td"> Register Type</td>
 															<td>:</td>
 															<td class="td_right">{{event_register.event_status}}</td>
 														</tr>
@@ -67,7 +75,7 @@
 														<tr>
 															<td class="table_main_tbody_td">Amount Paid</td>
 															<td>:</td>
-															<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date}}</td>
+															<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
 														</tr>
 														<!--<tr>-->
 															<!--<td class="table_main_tbody_td"></td>-->
@@ -80,12 +88,12 @@
 															<td class="td_right">{{event_register.payment}}</td>
 														</tr>
 									                    <tr>
-									                      <td class="table_main_tbody_td">Email Address</td>
+									                      <td class="table_main_tbody_td">Email </td>
 									                      <td>:</td>
 									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.event_user.email}}</a></td>
 									                    </tr>
 									                    <tr>
-									                      <td class="table_main_tbody_td">Phone Number</td>
+									                      <td class="table_main_tbody_td">Phone</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
 									                    </tr>
@@ -95,7 +103,7 @@
 									                </table>
                                                     <table>
 
-									                      <tr style=" height: 62px;">
+									                      <tr style=" height: 72px;">
 									                          <td align="left" class="sorting_element reg_dttails_td1" style="color: #fff" >
 									                              Registration Number:<span class="reg_code_number">&nbsp;&nbsp;{{event_register.qrcode}}</span>
 									                          </td>
@@ -127,7 +135,10 @@
 -->
 			<!-- END Bottom Content -->
 			<!-- Footer -->			<!-- END Footer -->
-
+<br>
+<br>
+Yours faithfully,<br>
+<br> <b>QRT 85 Registration Team</b>
 
 </body>
 </html>
