@@ -18,17 +18,22 @@
 	</style>
 </head>
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body">
+
+        <table>
+            <tr align="left" style="text-align: center" >
+                <td align="left">Hello,</td>
+            </tr>
+                <tr align="center" style="text-align: center">
+                <td align="center">Please find your coupon here.</td>
+            </tr>
+        </table>
 			<!-- Content -->
-			Hello {{event_register.event_user.first_name }} {{event_register.event_user.last_name }} <br>
-			<br>
-			Please find your coupon here. <br>
-			<br>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td align="center">
+					
 
-
-						<table width="785" height="250px;" border="0" cellspacing="0" cellpadding="0" style="background-image:url('https://image.ibb.co/hb9AJa/lets_go_bg.png');">
+						<table width="785" height="250px;" border="0" cellspacing="0" cellpadding="0" style="background-image:url('https://image.ibb.co/gdUS4F/lets_go_bg.png');">
 
 							<tr>
 								<td valign="top" width="250" align="left">
@@ -39,7 +44,7 @@
 									</table>
 								</td>
 								<td valign="top"  class="featured" style="color:#7e8c95; font-family:Tahoma; font-size:12px; line-height:17px; text-align:left">
-									<table id="bodyTable" style="width: 87%;margin-top: 7px;padding-left: -23px;font-size: 14px;line-height: auto;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
+									<table id="bodyTable" style="width: 87%;margin-top: 37px;padding-left: -23px;font-size: 14px;line-height: auto;    margin-left: 43px;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
 									    <tbody>
 									        <tr>
 									            <td valign="top" class="columnContainer">
@@ -56,35 +61,27 @@
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
 									                    </tr>
-														<tr>
-															<td class="table_main_tbody_td"> Register Type</td>
-															<td>:</td>
-															<td class="td_right">{{event_register.event_status}}</td>
-														</tr>
-									                    <tr>
+																			<tr>
+																				<td class="table_main_tbody_td"> Registration Type</td>
+																				<td>:</td>
+																				<td class="td_right">{{event_register.event_status}}</td>
+																			</tr>
+									              
+                                                  
+                                                            <tr>
 									                      <td class="table_main_tbody_td">Table</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.table.table_name}}</td>
 									                    </tr>
-														<tr>
-															<td class="table_main_tbody_td">Amount Paid</td>
-															<td>:</td>
-															<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
-														</tr>
-														<!--<tr>-->
-															<!--<td class="table_main_tbody_td"></td>-->
-															<!--<td>:</td>-->
-															<!--<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date}}</td>-->
-														<!--</tr>-->
-														<tr>
-															<td class="table_main_tbody_td">Payment Mode</td>
-															<td>:</td>
-															<td class="td_right">{{event_register.payment}}</td>
-														</tr>
+																			<tr>
+																				<td class="table_main_tbody_td">Amount Paid</td>
+																				<td>:</td>
+																				<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
+																			</tr>
 									                    <tr>
-									                      <td class="table_main_tbody_td">Email </td>
+									                      <td class="table_main_tbody_td">Email</td>
 									                      <td>:</td>
-									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.event_user.email}}</a></td>
+									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.payment}}</a></td>
 									                    </tr>
 									                    <tr>
 									                      <td class="table_main_tbody_td">Phone</td>
@@ -93,16 +90,17 @@
 									                    </tr>
 									                  </tbody>
 									                    <!-- <hr class="dotted_line"> -->
-
+									                
 									                </table>
                                                     <table>
-
-									                      <tr style=" height: 100px;">
-									                          <td align="left" class="sorting_element reg_dttails_td1" style="color: #fff" >
-									                              Registration Number:<span class="reg_code_number">&nbsp;&nbsp;{{event_register.qrcode}}</span>
-									                          </td>
-									                      </tr>
-
+                                                  
+									                    <tr style=" height: 62px;">
+									                        <td align="left" class="sorting_element reg_dttails_td1"style="color: #fff;font-size:13px;" >
+									                           <b> Registration Number : </b>
+									                            <span class="reg_code_number" style="letter-spacing:1px;">&nbsp;&nbsp;<b>{{event_register.qrcode}}</b></span>
+									                        </td>
+									                    </tr>
+									                   
                                                     </table>
 									            </td>
 									        </tr>
@@ -115,24 +113,15 @@
 							</tr>
 			</table>
 			<!-- END Content -->
-			<!-- Bottom Content -->
-<!--
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff">
-				<tr>
-					<td align="center"  style="padding-left: 6px;">
-						<div class="img-center" style="font-size:0pt; line-height:0pt; text-align:center"><img src="https://image.ibb.co/nmW7SQ/content_bottom.jpg" alt="" border="0" width="800" height="40" /></div>
-						<div style="font-size:0pt; line-height:0pt; height:30px"><img src="https://image.ibb.co/f3xE7Q/empty.gif" width="1" height="30" style="height:30px" alt="" /></div>
+        <table>
+            <tr align="left" style="text-align: center">
+                <td align="left">Thanks,</td>
+            </tr>
+                <tr align="left" style="text-align: center">
+                <td align="left"><b>QRT 85 Registration Team</b></td>
+            </tr>
+        </table>
 
-					</td>
-				</tr>
-			</table>
--->
-			<!-- END Bottom Content -->
-			<!-- Footer -->			<!-- END Footer -->
-<br>
-<br>
-Thanks,<br>
-<br> <b>QRT 85 Registration Team</b>
 
 </body>
 </html>
