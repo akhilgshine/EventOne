@@ -66,12 +66,24 @@ class PaymentDetails(models.Model):
 	reg_event = models.ForeignKey(RegisteredUsers, null=True)
 	amount = models.CharField(max_length=20)
 	created_date = models.DateTimeField(auto_now_add=True)
+
+
+class RoomType(models.Model):
+	room_type = models.CharField(max_length=50,null=True)
+	rooms_available = models.IntegerField(blank=True, null=True)
+	net_rate = models.IntegerField(blank=True, null=True)
+
+	def __str__(self):
+		return self.room_type
 		
 class Hotels(models.Model):
-	registered_users = models.ForeignKey(RegisteredUsers,null=True)
+	registered_users = models.ForeignKey(RegisteredUsers,null=True,related_name='hotel')
 	hotel_name = models.CharField(max_length=50,null=True)
 	room_number = models.CharField(max_length=20,null=True)
-	room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
+	tottal_rent = models.IntegerField(blank=True, null=True)	
+	# room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
+	book_friday = models.BooleanField(default=False)
+	room_type = models.ForeignKey(RoomType,null=True,blank=True)
 
 	def __str__(self):
 		return self.hotel_name

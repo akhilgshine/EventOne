@@ -1,36 +1,34 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 {% load static %}
+{% load template_tags %}
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Lets Go Nuts - QRT 85</title>
-
-    <!-- Bootstrap Core CSS -->
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lets Go Nuts - QRT 85</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
+  <!-- Bootstrap Core CSS -->
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'css/user_list.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'css/data-table-responsive.css' %}" rel="stylesheet" type="text/css">
+  <style type="text/css" class="init">
+  </style>
 
-    <!-- Custom css style -->
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
-    <!-- <link href="{% static 'css/media_queries.css' %}" rel="stylesheet" type="text/css"> -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <!-- <script src="{% static 'js/custom.js' %}"></script> -->
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+  <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
+  </script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+  </script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js">
+  </script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
+  </script>
 
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/fixedheader/3.1.2/js/dataTables.fixedHeader.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
-
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <style>
   body {
       background: url('/static/images/bg-pink-dark.jpg') repeat-y;
@@ -42,10 +40,18 @@
   }
 </style>
 
+  <script type="text/javascript" class="init">
+    // $(document).ready(function() {
+    //   var table = $('#user_lists').DataTable( {
+    //     "paging":   false,
+    //     "info":     false,
+    //     responsive: true
+    //   } );
+    // } );
+  </script>
 </head>
-
-<body id="page-top">
-
+<body id="page-top">  
+  
   <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
@@ -56,7 +62,7 @@
     </div>
   </div>
 
-  <div class="wraper-user_list">
+  <div class="wraper-user_list" style="margin-bottom: 1%;">
 
     <div class="container-fluid bg-3 text-center">
       <div class="row">
@@ -107,67 +113,100 @@
 
       </div>
     </div><br>
-    
-      <div class="container-fluid col-md-12 table_div_main">
-        
-        <table class="table_list_main" id="user_lists">
+
+    <div class="fw-container">
+    <div class="fw-body">
+      <div class="content">
+        <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
           <thead>
-          <tr>
-          <th>No.</th>
-          <th>Name</th>
-          <th>Registration code</th>
-          <th>Table</th>
-          <th>Email</th>
-          <th>Phone number</th>
-          <th>Paid Amount </th>
-          <th>Status </th>
-          <th>Created Date </th>
-          <th>Coupon</th>
-          <th>Edit</th>
-          </tr>
+            <tr>
+              <th></th>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Phone number</th>
+              <th>Registration code</th>
+              <th>Table</th>
+              <th>Email</th>
+              <th>Paid Amount </th>
+              <th>Status </th>
+              <th>Created Date </th>
+              <th>Coupon</th>
+              <th>Room Type & Date</th>
+            </tr>
           </thead>
-          <tbody style="font-size: 12px;">
+          <!-- <tfoot>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Phone number</th>
+              <th>Registration code</th>
+              <th>Table</th>
+              <th>Email</th>
+              <th>Paid Amount </th>
+              <th>Status </th>
+              <th>Created Date </th>
+              <th>Coupon</th>
+              <th>Room Type & Date</th>
+            </tr>
+          </tfoot> -->
+          <tbody>
 
           {% for user in users  %}
-          <tr class="table_diivider_mobile">
-            <td>{{ forloop.counter }}</td>  
-            <td> {{ user.event_user.first_name }} {{ user.event_user.last_name}} </td>
+          <tr>
+            <td>
+              &nbsp <a href="/edit_user_registered/{{ user.id }}" title="update">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>                
+              </a>
+            </td>
+            <td>
+              
+              &nbsp&nbsp {{ forloop.counter }}              
+            </td>  
+            <td> 
+              {{ user.event_user.first_name }} {{ user.event_user.last_name }}              
+            </td>
+            <td> {{ user.event_user.mobile }} </td>
             <td> {{ user.qrcode }} </td>
             <td> {{ user.table.table_name }}</td>
             <td> {{ user.event_user.email }}</td>
-            <td> {{ user.event_user.mobile }} </td>
             <td> {{ user.amount_paid }}</td>
             <td> {{ user.event_status }} </td>
             <td> {{ user.created_date|date:"D d M Y" }} </td>
-            <td><a style="color: #fff;" href="/invoice/{{ user.id }}" target="_blank"> View </a></td>
-          <td><a style="color: #fff;" href="/edit_user_registered/{{ user.id }}"> Update </a></td>
+            <td><a style="" href="/invoice/{{ user.id }}" title="view">
+                  <!-- <i class="fa fa-eye" aria-hidden="true" style="font-size: 22px; color:#07c;" ></i> -->
+                  view
+                </a>
+            </td>
+            <!-- <td><a style="" href="/edit_user_registered/{{ user.id }}"> 
+                  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                  update
+                </a>
+            </td> -->
+            <td> {{ user.id| get_hotel_details }}
+            </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
-
-      </div>
-
+             
     </div>
+  </div>
+  </div>
 </div>
-  <!--table section starts here-->
-
-<!-- table section ends here-->
-  <!-- jQuery -->
-
   <script type="text/javascript">
     function openNav() {
-    document.getElementById("myNav").style.height = "100%";
-      }
+      document.getElementById("myNav").style.height = "100%";
+    }
 
-      function closeNav() {
-          document.getElementById("myNav").style.height = "0%";
-      }
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
 
       $(document).ready(function() {
         $('#user_lists').DataTable({
           "paging":   false,
           "info":     false,
+          responsive: true
         });
         $("#user_lists_filter").hide();
       });
@@ -188,5 +227,4 @@
       })
   </script>
 </body>
-
 </html>

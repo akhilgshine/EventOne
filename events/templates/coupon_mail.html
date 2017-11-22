@@ -44,56 +44,63 @@
 									</table>
 								</td>
 								<td valign="top"  class="featured" style="color:#7e8c95; font-family:Tahoma; font-size:12px; line-height:17px; text-align:left">
-									<table id="bodyTable" style="width: 87%;margin-top: 37px;padding-left: -23px;font-size: 14px;line-height: auto;    margin-left: 43px;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
+									<table id="bodyTable" style="width: 87%;margin-top: 18px;padding-left: -23px;font-size: 14px;line-height: auto;    margin-left: 43px;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
 									    <tbody>
 									        <tr>
 									            <td valign="top" class="columnContainer">
 									                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="color:#fff">
 									                  <tbody class="table_main_tbody">
-																			<tr>
+														<tr>
 									                      <td class="table_main_tbody_td"></td>
 									                      <td >&nbsp;</td>
 																				<td >&nbsp;</td>
 									                      <td class="td_right"></td>
 									                    </tr>
+									                    
 									                    <tr>
 									                      <td class="table_main_tbody_td">Name</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
 									                    </tr>
-																			<tr>
-																				<td class="table_main_tbody_td"> Registration Type</td>
-																				<td>:</td>
-																				<td class="td_right">{{event_register.event_status}}</td>
-																			</tr>
-									              
-                                                  
-                                                            <tr>
+														
+														<tr>
+															<td class="table_main_tbody_td"> Registration Type</td>
+															<td>:</td>
+															<td class="td_right">{{event_register.event_status}}</td>
+														</tr>
+
+														<tr>
 									                      <td class="table_main_tbody_td">Table</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.table.table_name}}</td>
 									                    </tr>
-																			<tr>
-																				<td class="table_main_tbody_td">Amount Paid</td>
-																				<td>:</td>
-																				<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
-																			</tr>
+														
+														<tr>
+															<td class="table_main_tbody_td">Amount Paid</td>
+															<td>:</td>
+															<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
+														</tr>
+									                    
+									                    {% if hotel %}
 									                    <tr>
-									                      <td class="table_main_tbody_td">Email</td>
+									                      <td class="table_main_tbody_td">Hotel Details</td>
 									                      <td>:</td>
-									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.payment}}</a></td>
+									                      <td class="td_right">
+									                      	{{ hotel }}
+									                      </td>
 									                    </tr>
+									                    {% endif %}
+									                    
 									                    <tr>
 									                      <td class="table_main_tbody_td">Phone</td>
 									                      <td>:</td>
 									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
 									                    </tr>
+									                    
 									                  </tbody>
 									                    <!-- <hr class="dotted_line"> -->
-									                
-									                </table>
-                                                    <table>
-                                                  
+									                  </table>
+                                                      <table>
 									                    <tr style=" height: 62px;">
 									                        <td align="left" class="sorting_element reg_dttails_td1"style="color: #fff;font-size:13px;" >
 									                           <b> Registration Number : </b>

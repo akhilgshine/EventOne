@@ -10,7 +10,7 @@ from events.models import *
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status
+from events.utils import send_email, set_status, hotelDetails
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
@@ -67,9 +67,7 @@ class LoginView(View):
             else:
             	return render(self.request,self.template_name,{'form':form})
 
-
-class RegisterEvent(TemplateView):
-	
+class RegisterEvent(TemplateView):	
 	template_name = 'register.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -78,6 +76,7 @@ class RegisterEvent(TemplateView):
 			return HttpResponseRedirect(reverse('login'))
 
 		context['form'] = EventRegisterForm()
+		context['room_types'] = RoomType.objects.all()
 		context['tables'] = Table.objects.all() #.order_by('table_order')
 		return render(request, self.template_name, context)
 
@@ -93,7 +92,6 @@ class RegisterEvent(TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = {}
 		message = ''
-
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -102,14 +100,20 @@ class RegisterEvent(TemplateView):
 			table = request.POST.get('table_val', '')
 
 			payment = request.POST.get('payment', '')
-			amount_paid = request.POST.get('amount_paid', '')
+			amount_paid = request.POST.get('amount_paid', 0)
 
 			hotel_name = request.POST.get('hotel_name','')
-			hotel_room_number = request.POST.get('hotel_room_number','')
+			room_rent = request.POST.get('room_rent','')
 			room_type = request.POST.get('room_type','')
+			book_friday = request.POST.get('book_friday','')
+			if book_friday:
+				book_friday = True
+				text = " for two days"
+			else:
+				book_friday = False
+				text =" for a day"
 
-			event = Event.objects.filter()[0]
-
+			event = Event.objects.filter()[0]			
 			try:				
 				new_table = request.POST.get('other_table', '')				
 				if not new_table:
@@ -185,12 +189,19 @@ class RegisterEvent(TemplateView):
 					PaymentDetails.objects.create(reg_event=event_reg,
 						amount = amount_paid
 						)
+				if room_type:
+					room = RoomType.objects.get(id=room_type)
+					hotel, created = Hotels.objects.get_or_create(registered_users=event_reg)
+					hotel.hotel_name = hotel_name
+					hotel.tottal_rent = room_rent
+					hotel.book_friday = book_friday
+					hotel.room_type = room
+					hotel.save()
+					room.rooms_available = room.rooms_available - 1
+					room.save()
+					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+					message_hotel += text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
 
-				hotel, created = Hotels.objects.get_or_create(registered_users=event_reg)
-				hotel.hotel_name = hotel_name
-				hotel.room_number = hotel_room_number
-				hotel.room_type = room_type
-				hotel.save()
 
 			except Exception as e:
 
@@ -200,16 +211,16 @@ class RegisterEvent(TemplateView):
 
 			if event_reg:
 				set_status(event_reg)
-				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"
+				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"				
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 				try:
 					send_email(email,message,event_reg)
 				except:
 					pass
-
 				context['event_register'] = event_reg
 				context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
-				return render(request, 'invoice.html', context)
+				return HttpResponseRedirect("/register/success/"+str(event_reg.id))
+				# return render(request, 'invoice.html', context)
 			else:
 				message = "There is an issue with your registration. Please try again"
 				
@@ -218,6 +229,18 @@ class RegisterEvent(TemplateView):
 			messages.success(self.request, message)
 			return HttpResponseRedirect(reverse('register_event'))
 
+class RegSuccessView(TemplateView):
+	# template_name = 'invoice.html'
+	# template_name = 'coupon_mail.html'
+	template_name = 'invoice.html'
+	def get(self, request, *args, **kwargs):
+		context = {}
+		pk = kwargs.pop('pk')
+		event_reg = RegisteredUsers.objects.get(id=pk)
+		context['hotel'] = hotelDetails(event_reg)
+		context['event_register'] = event_reg
+		context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
+		return render(request, self.template_name, context)
 
 class GetName(TemplateView):
 
@@ -241,7 +264,7 @@ class GetName(TemplateView):
 
 			data = json.dumps(results)
 
-			mimetype = 'application/json'
+			mimetype = 'application/json'	
 
 			return HttpResponse(data , mimetype)
 
@@ -273,7 +296,6 @@ class GetUserData(TemplateView):
     	django_messages = []
     	data['user_exist'] = ''
     	try:
-
     		username = request.GET['username']
     		selected_table = request.GET.get('selected_table', '')
     		new_table = request.GET.get('new_table', '')
@@ -339,6 +361,14 @@ class ListUsers(TemplateView):
 	def get(self, request, *args, **kwargs):
 		context ={}
 		registered_users = RegisteredUsers.objects.all()
+		hotels = []
+		for user in registered_users :
+			try:
+				hotels.append(user.hotel.all().first())
+			except:
+				hotels.append('Not Booked')
+		print(hotels)
+		context['hotels'] = hotels
 		context['users'] = registered_users
 		# user_list = []
 		# for user in registered_users:
@@ -355,6 +385,7 @@ class InvoiceView(TemplateView):
 		context = {}
 		pk = kwargs.pop('pk')
 		event_reg = RegisteredUsers.objects.get(id=pk)
+		context['hotel'] = hotelDetails(event_reg)
 		context['event_register'] = event_reg
 		context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
 		return render(request, self.template_name, context)
@@ -371,12 +402,15 @@ class UserRegisterUpdate(TemplateView):
 		except:
 			hotel_obj = None
 
+		context['room_types'] = RoomType.objects.all()
 		context['event_registered_user'] = event_registered_user
 		context['hotel_obj'] = hotel_obj
 		return render(request, self.template_name, context)
 
 	def post(self,request,*args,**kwargs):
 		try:
+			room_updates = False
+			message_hotel = ''
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
 			email = request.POST.get('email', '')
@@ -386,10 +420,17 @@ class UserRegisterUpdate(TemplateView):
 
 			payment = request.POST.get('payment', '')
 			amount_paid = request.POST.get('amount_paid', '')
-
-			hotel_name = request.POST.get('hotel_name','')
-			hotel_room_number = request.POST.get('hotel_room_number','')
 			room_type = request.POST.get('room_type','')
+			hotel_name = request.POST.get('hotel_name', '')
+			room_rent = request.POST.get('room_rent','')
+			book_friday = request.POST.get('book_friday', '')
+			
+			if book_friday:
+				book_friday = True
+				text = " for two days"
+			else:
+				text = " for a day"
+				book_friday = False
 
 			reg_user_obj  = RegisteredUsers.objects.get(id=update_id)
 
@@ -397,16 +438,41 @@ class UserRegisterUpdate(TemplateView):
 
 			if amount_paid :
 				PaymentDetails.objects.create(reg_event=reg_user_obj,
-					amount = amount_paid)
+					amount = amount_paid)		
 			try:
-				hotel_obj = Hotels.objects.get(registered_users=reg_user_obj)
-				hotel_obj.hotel_name = hotel_name
-				hotel_obj.room_number = hotel_room_number
-				hotel_obj.room_type = room_type
-				hotel_obj.save()
+				room = RoomType.objects.get(id=room_type)
+				hotel_obj, created = Hotels.objects.get_or_create(registered_users=reg_user_obj)
+				if created:
+					hotel_obj.hotel_name = hotel_name
+					# hotel_obj.room_number = hotel_room_number	
+					hotel_obj.tottal_rent = int(room_rent)
+					hotel_obj.book_friday = book_friday
+					hotel_obj.room_type = room
+					hotel_obj.save()
+					room.rooms_available = room.rooms_available - 1
+					room.save()
+					room_updates = True
+					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+					message_hotel = text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
+				else :
+					hotel_obj.hotel_name = hotel_name
+					# hotel_obj.room_number = hotel_room_number
+					hotel_obj.tottal_rent = room_rent		
+					hotel_obj.book_friday = book_friday
+					if not hotel_obj.room_type == room:
+						room_type_obj = hotel_obj.room_type
+						room_type_obj.rooms_available = room_type_obj.rooms_available + 1
+						
+						room_type_obj.save()
+						room.rooms_available = room.rooms_available - 1
+						room.save()
+						hotel_obj.room_type = room
+						room_updates = True
+						message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						message_hotel += text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
+					hotel_obj.save()
 			except:
 				hotel_obj = None
-
 			if name:
 				user.first_name = name
 			if last_name:
@@ -416,19 +482,22 @@ class UserRegisterUpdate(TemplateView):
 			if phone:
 				user.phone = phone
 			user.save()
-
-			reg_user_obj.payment = payment
-			last_pay = reg_user_obj.amount_paid
-			tottal_paid = int(last_pay) + int(amount_paid)
-			reg_user_obj.amount_paid = tottal_paid
-			reg_user_obj.save()
-
+			if amount_paid:
+				reg_user_obj.payment = payment
+				last_pay = reg_user_obj.amount_paid
+				tottal_paid = int(last_pay) + int(amount_paid)
+				reg_user_obj.amount_paid = tottal_paid
+				reg_user_obj.save()
+				
+			set_status(reg_user_obj)
 			message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+reg_user_obj.qrcode+ " And your tottal payment is Rs."+str(reg_user_obj.amount_paid)+"/-"
 			message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 			try:
-				send_email(email,message,event_reg)
+				send_email(email,message,reg_user_obj)
 			except:
 				pass
+			if room_updates:
+				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message_hotel)
 			return HttpResponseRedirect('/users/')
 		except:
 			message = "There is an issue with your registration. Please try again."

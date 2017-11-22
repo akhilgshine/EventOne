@@ -7,11 +7,23 @@ from django.template import Context
 from django.template.loader import render_to_string
 import pdfkit
 from django.core.files import File
+from events.models import *
 
+def hotelDetails(event_obj):
+	try:
+		hotel_obj = Hotels.objects.get(registered_users=event_obj)
+		if hotel_obj.book_friday:
+			data = hotel_obj.room_type.room_type+","+" (2018.08.03 & 2018.08.04)"
+		else:
+			data = hotel_obj.room_type.room_type+","+" (2018.08.04)"
+	except:
+		data = ''
+	return data
 
 def send_email(to_email, message, event_obj):
-	subject = 'QRT 85 Registration'
 	cxt = {'event_register': event_obj }
+	cxt['hotel'] = hotelDetails(event_obj)
+	subject = 'QRT 85 Registration'	
 	content = render_to_string('coupon_mail.html', cxt)	
 	from_email = settings.DEFAULT_FROM_EMAIL
 	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email])

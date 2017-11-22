@@ -32,7 +32,7 @@
 								<td valign="top" width="250" align="left">
 									<table border="0" cellspacing="0" cellpadding="1">
 										<tr>
-											<td class="img" style="font-size:0pt; line-height:0pt; text-align:left"><a href="#" target="_blank"><img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0" width="300" height="250" /></a></td>
+											<td class="img" style="font-size:0pt; line-height:0pt; text-align:left"><a href="/users/" title="user list" ><img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0" width="300" height="250" /></a></td>
 										</tr>
 									</table>
 								</td>
@@ -82,11 +82,21 @@
 															<!--<td>:</td>-->
 															<!--<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date}}</td>-->
 														<!--</tr>-->
-														<tr>
+														<!-- <tr>
 															<td class="table_main_tbody_td">Payment Mode</td>
 															<td>:</td>
 															<td class="td_right">{{event_register.payment}}</td>
-														</tr>
+														</tr> -->
+
+														{% if hotel %}
+						                                    <tr>
+						                                      <td class="table_main_tbody_td">Hotel Details</td>
+						                                      <td>:</td>
+						                                      <td class="td_right">
+						                                        {{ hotel }}
+						                                      </td>
+						                                    </tr>
+						                                {% endif %}
 									                    <tr>
 									                      <td class="table_main_tbody_td">Email Address</td>
 									                      <td>:</td>
