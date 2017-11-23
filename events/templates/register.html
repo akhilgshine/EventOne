@@ -175,8 +175,8 @@
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                           <div class="col-sm-8">
-                            <select name="room_type"  class="form-control" id="room_type"onchange="selectRoomType()" >
-                              <option value="">--- select type ---</option>
+                            <select name="room_type"  class="form-control" id="room_type" onchange="selectRoomType()" >
+                              <option value="0">--- select type ---</option>
                               {% for room in room_types %}
                                 <option value="{{room.id}}">{{room.room_type}} ({{room.rooms_available}})</option>
                               {% endfor %}
@@ -239,14 +239,11 @@
             $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
             $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
             $('#id_email').val('{{event_registered_user.event_user.email}}')
-            // $('#id_amount_paid').val('{{event_registered_user.amount_paid}}')
-            // $('#radio_select').val('{{event_registered_user.amount_paid}}')
             $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
 
             {% if hotel_obj %}
               $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
               $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
-              $("#room_type").val('{{hotel_obj.room_type}}');
               $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
               {% if hotel_obj.book_friday %}
                 $('#bookFriday').prop('checked',true)
@@ -280,6 +277,10 @@
       
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
+      $("#id_hotel_name").val('');
+      $("#id_room_rent").val('');
+      $('#bookFriday').prop('checked',false);
+      $('#room_type option[value="0"]').attr('selected','selected');
       $("#id_email").val('');
       $("#id_phone").val('');
       $("#id_first_name").val('');
@@ -323,8 +324,13 @@
                   $("#balance_div").show();
                   $("#paid_ampount_id").val(data.paid_amount);
                   $("#id_hotel_name").val(data.hotel_name);
-                  $("#id_room_number").val(data.hotel_room_number);
+                  $("#id_room_rent").val(data.tottal_rent);
                   $("#room_type").val(data.hotel_type);
+
+                  $('#room_type option[value="'+data.room_type_id+'"]').attr('selected','selected');
+                  if ( data.book_friday == true ){
+                    $('#bookFriday').prop('checked',true)
+                  }
 
                   if ( data.payment_type == 'cash'){
                     $("#radioId_1").prop("checked", true);
@@ -347,8 +353,6 @@
                   }
                 }
                 else{
-                  // console.log("no user")
-                  // $("#id_balance").val(-1);
                   $("#balance_div").hide();
                 }           
               }
@@ -363,86 +367,11 @@
     });
 
 
-    // $('#id_first_name').focusout(function(){
-    //   var input = $('#id_first_name').val()
-    //   var selected_table = $("#selectId option:selected").val(); 
-    //   var new_table = $("#id_other_table").val();    
-    //   $.ajax({
-    //     url: '/get_user_dataa/',
-    //     type:'GET',
-    //     data:{
-    //       'username':input,
-    //       'selected_table': selected_table,
-    //       'new_table': new_table,
-    //     },
-    //     success: function (data){
-    //       if (data.success == 'True'){
-    //         console.log(data);
-    //         $("#id_email").val(data.email);
-    //         $("#id_phone").val(data.mobile);
-    //         $("#id_first_name").val(data.first_name);
-    //         $("#id_last_name").val(data.last_name);
-
-    //         if (data.user_exist == 'true'){
-    //           // $("#paid_ampount_id").val(data.balance);
-    //           $("#balance_div").show();
-    //           $("#paid_ampount_id").val(data.paid_amount);
-    //           $("#id_hotel_name").val(data.hotel_name);
-    //           $("#id_room_number").val(data.hotel_room_number);
-    //           $("#room_type").val(data.hotel_type);
-
-    //           if ( data.payment_type == 'cash'){
-    //             $("#radioId_1").prop("checked", true);
-    //           }
-    //           else if (data.payment_type == 'paytm'){
-    //             $("#radioId_2").prop("checked", true);
-    //           }
-    //           else{
-    //             $("#radioId_3").prop("checked", true);
-    //           }
-
-    //           if ( data.paid_amount >= 6000){
-    //             $("#radio_status_1").prop("checked", true);
-    //           }
-    //           else if (data.paid_amount >= 5000){
-    //             $("#radio_status_2").prop("checked", true);
-    //           }
-    //           else{
-    //             $("#radio_status_3").prop("checked", true);
-    //           }
-    //         }
-    //         else{
-    //           // console.log("no user")
-    //           // $("#id_balance").val(-1);
-    //           $("#balance_div").hide();
-    //         }           
-    //       }
-    //       else{
-    //         // $("#id_balance").val(-1);
-    //         console.log("No Data")
-    //       }
-    //     }
-    //   });
-    // });
-
     $('#amount_added_id').on('change', function(){
       var amount_added = $('#amount_added_id').val()
       var amount_paid = $('#paid_ampount_id').val()
       var total_amount = +amount_added +  +amount_paid;
-      // console.log("amount : ", amount);
-      // console.log("balance : ", balance);
 
-      // if ( balance > 0 ){
-      //   total_amount = +amount +  (5000 - +balance);
-      //   console.log("total : ", total_amount);
-      // }
-      // else if( balance == 0){
-      //   total_amount = +amount + 5000;
-      //   console.log("0 bal : ", total_amount);
-      // }
-      // else{
-      //   total_amount = amount;
-      // }
       if ( total_amount >= 6000){
         $("#radio_status_1").prop("checked", true);
       }
@@ -453,27 +382,6 @@
         $("#radio_status_3").prop("checked", true);
       }
     });
-    
-    // $("#DetailForm").submit(function(){
-    //   var email = $("#id_email").val();
-    //   var phone = $("#id_phone").val();      
-    //   $.ajax({
-    //       url: '/check_mail_phone/',
-    //       type:'GET',
-    //       data:{
-    //         'email':email,
-    //         'phone': phone,
-    //       },
-    //       success: function (data){
-    //         alert();
-    //         return 'false'
-    //         console.log("Data : ", data);
-
-    //         if (data.success == 'false'){
-    //           update_messages(data.message);              
-    //         }
-    //       }
-    //     });
 
     $("#DetailForm").submit(function(){
       if($('input[name=payment]:checked').length<=0)
@@ -497,7 +405,6 @@
           location.reload();
       }, 3000);
     }
-
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
@@ -529,8 +436,7 @@
         }
     });
 
-
-    </script>
+  </script>
 </body>
 
 </html>

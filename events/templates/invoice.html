@@ -14,7 +14,7 @@
     }
         .table_td_second
     {
-        float: left;
+           display: inherit;
         font-size: 16px;
     }
 
@@ -61,6 +61,14 @@
         right: 45px;
         font-size: 30px;
     }
+
+
+@media screen and (max-width: 766px) {
+    .re-table td {    font-size: 11px !important;}
+}
+
+
+
 </style>
 
 </head>
@@ -109,7 +117,7 @@
                     <div class="col-sm-12 sidenav">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                       <table class="" border="0" cellpadding="0" cellspacing="0" width="" style=" color: #fff;margin-bottom: 25px; "  width="800px" height="100%">
+                       <table class="re-table" border="0" cellpadding="0" cellspacing="0" width="" style=" color: #fff;margin-bottom: 25px; "  width="800px" height="100%">
                             <tbody>
                 <!--                 <tr>
                                     <td colspan="3" align="center" style="padding-top: 24px; padding-bottom: 14px;" onclick="openNav()" >
@@ -136,7 +144,7 @@
                                 </tr>
                                 <tr>
                                     <td align="right" class="table_td_first">
-                                        Email Address   
+                                        Email   
                                     </td>
                                     <td> : </td>
                                     <td align="right" class="table_td_second"> 
@@ -145,7 +153,7 @@
                                 </tr>
                                 <tr>
                                     <td align="right" class="table_td_first">
-                                        Phone Number
+                                        Phone
                                     </td>
                                     <td> : </td>
                                     <td align="left" class="table_td_second"> 
@@ -154,20 +162,20 @@
                                 </tr>
                                 <tr>
                                     <td align="right" class="table_td_first">
-                                        Paid Amount
+                                        Payment
                                     </td>
                                     <td> : </td>
                                     {% for dat in  payment_details %}
                                     <td align="left" class="table_td_second"> 
-                                       {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date|date:"D d M Y" }}
-                                    </td>
+                                       {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date|date:"D d M Y" }}  
+                                       <br>
                                     {% empty %}
-                                    <td align="left" class="table_td_second"> 
                                         {{ event_register.amount_paid }}
                                     </td>
                                     {% endfor %}
                                 </tr>
-                                    <tr>
+
+                                <tr>
                                     <td align="right" class="table_td_first">
                                         Payment Mode
                                     </td>
@@ -176,12 +184,21 @@
                                        {{event_register.payment}}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td align="right" class="table_td_first">
+                                        Hotel
+                                    </td>
+                                    <td> : </td>
+                                    <td align="left" class="table_td_second">
+                                       {{ hotel }}
+                                    </td>
+                                </tr>
                                 <tr style="height: 10px;">
                                     
                                 </tr>
                                 <tr>
-                                    <td align="left" style="font-size: 14px; padding-right: 10px;">
-                                        Registration Number : {{ event_register.qrcode }}   
+                                    <td align="left" style="font-size: 14px; padding-right: 10px;letter-spacing: 1px;">
+                                        Registration Number : <b>{{ event_register.qrcode }}  </b>
                                     </td>
                                     <td></td>
                                     <td align="right" style="font-size: 14px; padding-right: 10px;" >

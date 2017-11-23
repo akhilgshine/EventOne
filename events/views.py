@@ -16,6 +16,11 @@ import requests
 from django.contrib.auth import logout
 import re
 
+
+
+"""
+    Home
+    """
 class IndexPage(TemplateView):
 
 	template_name = 'index.html'
@@ -67,6 +72,9 @@ class LoginView(View):
             else:
             	return render(self.request,self.template_name,{'form':form})
 
+"""
+    Register View
+    """
 class RegisterEvent(TemplateView):	
 	template_name = 'register.html'
 	
@@ -189,22 +197,40 @@ class RegisterEvent(TemplateView):
 					PaymentDetails.objects.create(reg_event=event_reg,
 						amount = amount_paid
 						)
+
 				if room_type:
 					room = RoomType.objects.get(id=room_type)
-					hotel, created = Hotels.objects.get_or_create(registered_users=event_reg)
-					hotel.hotel_name = hotel_name
-					hotel.tottal_rent = room_rent
-					hotel.book_friday = book_friday
-					hotel.room_type = room
-					hotel.save()
-					room.rooms_available = room.rooms_available - 1
-					room.save()
-					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
-					message_hotel += text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
+					hotel_obj, created = Hotels.objects.get_or_create(registered_users=event_reg)
 
+					if created:
+						hotel_obj.hotel_name = hotel_name
+						hotel_obj.tottal_rent = int(room_rent)
+						hotel_obj.book_friday = book_friday
+						hotel_obj.room_type = room
+						hotel_obj.save()
+						room.rooms_available = room.rooms_available - 1
+						room.save()
+						message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						message_hotel += text
+						message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+					else :
+						hotel_obj.hotel_name = hotel_name
+						hotel_obj.tottal_rent = room_rent		
+						hotel_obj.book_friday = book_friday
+						if not hotel_obj.room_type == room:
+							room_type_obj = hotel_obj.room_type
+							room_type_obj.rooms_available = room_type_obj.rooms_available + 1
+							
+							room_type_obj.save()
+							room.rooms_available = room.rooms_available - 1
+							room.save()
+							hotel_obj.room_type = room
+							message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+							message_hotel += text
+							message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+						hotel_obj.save()
 
 			except Exception as e:
-
 				if created and event_reg:
 					event_reg.delete()				
 				event_reg = None
@@ -217,21 +243,20 @@ class RegisterEvent(TemplateView):
 					send_email(email,message,event_reg)
 				except:
 					pass
-				context['event_register'] = event_reg
-				context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
+
+				if message_hotel:
+					message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message_hotel)
 				return HttpResponseRedirect("/register/success/"+str(event_reg.id))
-				# return render(request, 'invoice.html', context)
 			else:
-				message = "There is an issue with your registration. Please try again"
-				
+				message = " There is an issue with your registration. Please try again"
+				messages.success(self.request, message)
+				return HttpResponseRedirect(reverse('register_event'))				
 		except:
-			message = "There is an issue with your registration. Please try again."
+			message = "Exception : There is an issue with your registration. Please try again."
 			messages.success(self.request, message)
 			return HttpResponseRedirect(reverse('register_event'))
 
 class RegSuccessView(TemplateView):
-	# template_name = 'invoice.html'
-	# template_name = 'coupon_mail.html'
 	template_name = 'invoice.html'
 	def get(self, request, *args, **kwargs):
 		context = {}
@@ -287,10 +312,10 @@ class GetName(TemplateView):
 # 		data['success'] = "False"	
 # 	return HttpResponse(json.dumps(data), content_type='application/json')
 
-
-
+"""
+    Get user data
+    """
 class GetUserData(TemplateView):
-
     def get(self, request):
     	data = {}
     	django_messages = []
@@ -327,9 +352,11 @@ class GetUserData(TemplateView):
     			data['payment_type'] = registered_user.payment
     			data['user_exist'] = 'true'
     			data['hotel_name'] = hotel_obj.hotel_name
-    			data['hotel_room_number'] = hotel_obj.room_number
-    			data['hotel_type'] = hotel_obj.room_type
-    			print("TYPE : "+ str(hotel_obj.room_type))
+    			data['tottal_rent'] = hotel_obj.tottal_rent
+    			data['hotel_type'] = hotel_obj.room_type.room_type
+    			data['book_friday'] = hotel_obj.book_friday
+    			data['room_type_id'] = hotel_obj.room_type.id
+    			print("TYPE : "+ str(hotel_obj.room_type.room_type))
     			print("User exist")
     		except:
     			print("user not exist")
@@ -351,10 +378,15 @@ class GetUserData(TemplateView):
 
     	return HttpResponse(json.dumps(data), content_type='application/json')
 
+
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
+
+"""
+    User List View
+    """
 class ListUsers(TemplateView):
 	template_name = 'user_list.html'
 
@@ -367,19 +399,14 @@ class ListUsers(TemplateView):
 				hotels.append(user.hotel.all().first())
 			except:
 				hotels.append('Not Booked')
-		print(hotels)
 		context['hotels'] = hotels
 		context['users'] = registered_users
-		# user_list = []
-		# for user in registered_users:
-		# 	data = {}
-		# 	data['name'] = user.event_user.first_name+' '+user.event_user.last_name
-		# 	user_list.append(data)
 		return render(request, self.template_name, context)
 
+"""
+    Coupon View
+    """
 class InvoiceView(TemplateView):
-	# template_name = 'invoice.html'
-	# template_name = 'coupon_mail.html'
 	template_name = 'coupon.html'
 	def get(self, request, *args, **kwargs):
 		context = {}
@@ -390,6 +417,9 @@ class InvoiceView(TemplateView):
 		context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
 		return render(request, self.template_name, context)
 
+"""
+    User Update View
+    """
 class UserRegisterUpdate(TemplateView):
 	template_name = 'register.html'
 
@@ -409,7 +439,7 @@ class UserRegisterUpdate(TemplateView):
 
 	def post(self,request,*args,**kwargs):
 		try:
-			room_updates = False
+			# room_updates = False
 			message_hotel = ''
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -444,19 +474,17 @@ class UserRegisterUpdate(TemplateView):
 				hotel_obj, created = Hotels.objects.get_or_create(registered_users=reg_user_obj)
 				if created:
 					hotel_obj.hotel_name = hotel_name
-					# hotel_obj.room_number = hotel_room_number	
 					hotel_obj.tottal_rent = int(room_rent)
 					hotel_obj.book_friday = book_friday
 					hotel_obj.room_type = room
 					hotel_obj.save()
 					room.rooms_available = room.rooms_available - 1
 					room.save()
-					room_updates = True
 					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
-					message_hotel = text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
+					message_hotel += text
+					message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
 				else :
 					hotel_obj.hotel_name = hotel_name
-					# hotel_obj.room_number = hotel_room_number
 					hotel_obj.tottal_rent = room_rent		
 					hotel_obj.book_friday = book_friday
 					if not hotel_obj.room_type == room:
@@ -467,9 +495,9 @@ class UserRegisterUpdate(TemplateView):
 						room.rooms_available = room.rooms_available - 1
 						room.save()
 						hotel_obj.room_type = room
-						room_updates = True
 						message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
-						message_hotel += text+ " And your tottal rent is Rs."+str(room_rent)+"/-"
+						message_hotel += text
+						message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
 					hotel_obj.save()
 			except:
 				hotel_obj = None
@@ -496,7 +524,7 @@ class UserRegisterUpdate(TemplateView):
 				send_email(email,message,reg_user_obj)
 			except:
 				pass
-			if room_updates:
+			if message_hotel:
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message_hotel)
 			return HttpResponseRedirect('/users/')
 		except:

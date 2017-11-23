@@ -612,18 +612,18 @@ only screen and (max-width: 760px),
   Label the data
   */
   td:nth-of-type(1):before { content: ""; }
-  td:nth-of-type(2):before { content: "No."; }
+  td:nth-of-type(2):before { content: "Edit"; }
   td:nth-of-type(3):before { content: "Name"; }
-  td:nth-of-type(4):before { content: "Registration code"; }
-  td:nth-of-type(5):before { content: "Table"; }
-  td:nth-of-type(6):before { content: "Email"; }
-  td:nth-of-type(7):before { content: "Phone number"; }
+  td:nth-of-type(4):before { content: "Phone number"; }
+  td:nth-of-type(5):before { content: "Registration code"; }
+  td:nth-of-type(6):before { content: "Table"; }
+  td:nth-of-type(7):before { content: "Email"; }
   td:nth-of-type(8):before { content: "Paid Amount"; }
   td:nth-of-type(9):before { content: "Status"; }
-  td:nth-of-type(10):before { content: "Created Date "; }
+  td:nth-of-type(10):before { content: "Date "; }
   td:nth-of-type(11):before { content: "Coupon"; }
-  td:nth-of-type(12):before { content: "Edit"; }
-  td:nth-of-type(13):before { content: "Hotel"; }
+  td:nth-of-type(12):before { content: "Hotel"; }
+  td:nth-of-type(13):before { content: "Order"; }
 }
 
 /* Smartphones (portrait and landscape) ----------- */
