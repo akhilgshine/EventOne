@@ -137,21 +137,21 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "Media")
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'developer.realtordaddy@gmail.com'
-# EMAIL_HOST_PASSWORD = 'dfvyubjkcjppdtvd'
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = 'developer.realtordaddy@gmail.com'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.zoho.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'noreply@letsgonuts2018.com'
-EMAIL_HOST_PASSWORD = 'techversant!@'
-EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'noreply@letsgonuts2018.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'developer.realtordaddy@gmail.com'
+EMAIL_HOST_PASSWORD = 'dfvyubjkcjppdtvd'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'developer.realtordaddy@gmail.com'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.zoho.com'
+# EMAIL_PORT = 465
+# EMAIL_HOST_USER = 'noreply@letsgonuts2018.com'
+# EMAIL_HOST_PASSWORD = 'techversant!@'
+# EMAIL_USE_SSL = True
+# DEFAULT_FROM_EMAIL = 'noreply@letsgonuts2018.com'
 
 import logging
 logging.basicConfig()
