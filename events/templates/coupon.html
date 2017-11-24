@@ -81,14 +81,14 @@
 															{% for dat in  payment_details %}
 
 						                                    :&nbsp; {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
-							                                    {% if partial %}
-							                                    <span style="color:#928f8b;margin-left:20px;">
-																	&nbsp;&nbsp;&nbsp;{{ partial }}
-																</span>
-							                                    {% endif %}                         
 						                                    {% empty %}
 						                                        {{ event_register.amount_paid }}
 						                                    {% endfor %}
+						                                    {% if partial %}
+							                                    <span style="color:#928f8b;margin-left:20px;">
+																	&nbsp;&nbsp;&nbsp;{{ partial }}
+																</span>
+						                                    {% endif %} 
 						                                    </td>
 														</tr>
 														<!--<tr>-->
