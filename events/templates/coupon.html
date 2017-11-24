@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<meta content="telephone=no" name="format-detection" />
-	<title>Email Template</title>
+	<title>Coupon</title>
 
 
 	<style type="text/css" media="screen">
@@ -65,7 +65,9 @@
 														<tr>
 															<td class="table_main_tbody_td"> Registration Type</td>
 															<td>:</td>
-															<td class="td_right">{{event_register.event_status}}</td>
+															<td class="td_right">
+																{{event_register.event_status}}
+															</td>
 														</tr>
 									                    <tr>
 									                      <td class="table_main_tbody_td">Table</td>
@@ -79,7 +81,11 @@
 															{% for dat in  payment_details %}
 
 						                                    :&nbsp; {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
-
+							                                    {% if partial %}
+							                                    <span style="color:#928f8b;margin-left:20px;">
+																	&nbsp;&nbsp;&nbsp;{{ partial }}
+																</span>
+							                                    {% endif %}                         
 						                                    {% empty %}
 						                                        {{ event_register.amount_paid }}
 						                                    {% endfor %}
@@ -120,13 +126,11 @@
 
 									                </table>
                                                     <table>
-
-									                      <tr style=" height: 62px;">
-									                          <td align="left" class="sorting_element reg_dttails_td1" style="color: #fff" >
-									                              Registration Number:<span class="reg_code_number">&nbsp;&nbsp;{{event_register.qrcode}}</span>
-									                          </td>
-									                      </tr>
-
+								                      	<tr style=" height: 62px;">
+								                          <td align="left" class="sorting_element reg_dttails_td1" style="color: #fff" >
+								                              Registration Number:<span class="reg_code_number">&nbsp;&nbsp;{{event_register.qrcode}}</span>
+								                          </td>
+								                      	</tr>
                                                     </table>
 									            </td>
 									        </tr>

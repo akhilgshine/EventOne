@@ -15,6 +15,9 @@
 
 		/* Campaign Monitor wraps the text in editor in paragraphs. In order to preserve design spacing we remove the padding/margin */
 		p { padding:0 !important; margin:0 !important }
+
+		/*remove download icon from image*/
+		.a5q {display: none !important;}
 	</style>
 </head>
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body">
@@ -40,7 +43,7 @@
 								<td valign="top" width="250" align="left">
 									<table border="0" cellspacing="0" cellpadding="1">
 										<tr>
-											<td class="img" style="font-size:0pt; line-height:0pt; text-align:left"><img src="http://letsgonuts2018.com/static/images/mail/featured_img.png" alt="alt" title="image" border="0" width="300" height="250" /></td>
+											<td class="img" style="font-size:0pt; line-height:0pt; text-align:left"><img src="http://letsgonuts2018.com/static/images/mail/featured_img.png" alt="" title="image" border="0" width="300" height="250" /></td>
 										</tr>
 									</table>
 								</td>
@@ -79,10 +82,16 @@
 														<tr>
 															<td class="table_main_tbody_td">Amount Paid</td>
 															<td>:</td>
-															<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}</td>
+															<td class="td_right">
+																{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}
+																{% if partial %}
+							                                   	<br><span style="color:#928f8b;margin-left:20px;">
+																	&nbsp;&nbsp;&nbsp;{{ partial }}
+																</span>
+							                                    {% endif %}
+															</td>
 														</tr>
 									                    
-									                    {% if hotel %}
 									                    <tr>
 									                      <td class="table_main_tbody_td">Hotel Details</td>
 									                      <td>:</td>
@@ -90,7 +99,6 @@
 									                      	{{ hotel }}
 									                      </td>
 									                    </tr>
-									                    {% endif %}
 									                    
 									                    <tr>
 									                      <td class="table_main_tbody_td">Phone</td>
@@ -102,7 +110,7 @@
 									                    <!-- <hr class="dotted_line"> -->
 									                  </table>
                                                       <table>
-									                    <tr style=" height: 62px;">
+									                    <tr style=" height: 70px;">
 									                        <td align="left" class="sorting_element reg_dttails_td1"style="color: #fff;font-size:13px;" >
 									                           <b> Registration Number : </b>
 									                            <span class="reg_code_number" style="letter-spacing:1px;">&nbsp;&nbsp;<b>{{event_register.qrcode}}</b></span>

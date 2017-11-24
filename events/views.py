@@ -99,7 +99,10 @@ class RegisterEvent(TemplateView):
 
 	def post(self, request, *args, **kwargs):
 		context = {}
+		message_hotel = ''
 		message = ''
+		room = ''
+
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -197,11 +200,13 @@ class RegisterEvent(TemplateView):
 					PaymentDetails.objects.create(reg_event=event_reg,
 						amount = amount_paid
 						)
-
 				if room_type:
-					room = RoomType.objects.get(id=room_type)
+					try:
+						room = RoomType.objects.get(id=room_type)
+					except:
+						room = None
+				if room:
 					hotel_obj, created = Hotels.objects.get_or_create(registered_users=event_reg)
-
 					if created:
 						hotel_obj.hotel_name = hotel_name
 						hotel_obj.tottal_rent = int(room_rent)
@@ -212,7 +217,7 @@ class RegisterEvent(TemplateView):
 						room.save()
 						message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 						message_hotel += text
-						message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 					else :
 						hotel_obj.hotel_name = hotel_name
 						hotel_obj.tottal_rent = room_rent		
@@ -227,7 +232,7 @@ class RegisterEvent(TemplateView):
 							hotel_obj.room_type = room
 							message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 							message_hotel += text
-							message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+							message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 						hotel_obj.save()
 
 			except Exception as e:
@@ -412,6 +417,10 @@ class InvoiceView(TemplateView):
 		context = {}
 		pk = kwargs.pop('pk')
 		event_reg = RegisteredUsers.objects.get(id=pk)
+		
+		if event_reg.amount_paid < 5000 :
+			context['partial'] = 'Partial'
+
 		context['hotel'] = hotelDetails(event_reg)
 		context['event_register'] = event_reg
 		context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
@@ -454,7 +463,6 @@ class UserRegisterUpdate(TemplateView):
 			hotel_name = request.POST.get('hotel_name', '')
 			room_rent = request.POST.get('room_rent','')
 			book_friday = request.POST.get('book_friday', '')
-			
 			if book_friday:
 				book_friday = True
 				text = " for two days"
@@ -482,7 +490,7 @@ class UserRegisterUpdate(TemplateView):
 					room.save()
 					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 					message_hotel += text
-					message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+					message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 				else :
 					hotel_obj.hotel_name = hotel_name
 					hotel_obj.tottal_rent = room_rent		
@@ -497,7 +505,7 @@ class UserRegisterUpdate(TemplateView):
 						hotel_obj.room_type = room
 						message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 						message_hotel += text
-						message_hotel += " And your tottal rent is Rs."+str(room_rent)+"/-"
+						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 					hotel_obj.save()
 			except:
 				hotel_obj = None
@@ -518,7 +526,7 @@ class UserRegisterUpdate(TemplateView):
 				reg_user_obj.save()
 				
 			set_status(reg_user_obj)
-			message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+reg_user_obj.qrcode+ " And your tottal payment is Rs."+str(reg_user_obj.amount_paid)+"/-"
+			message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+reg_user_obj.qrcode+ " And your total payment is Rs."+str(reg_user_obj.amount_paid)+"/-"
 			message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 			try:
 				send_email(email,message,reg_user_obj)

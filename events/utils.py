@@ -8,14 +8,16 @@ from django.template.loader import render_to_string
 import pdfkit
 from django.core.files import File
 from events.models import *
+from datetime import datetime, timedelta
 
 def hotelDetails(event_obj):
 	try:
 		hotel_obj = Hotels.objects.get(registered_users=event_obj)
+		event = Event.objects.filter()[0]
 		if hotel_obj.book_friday:
-			data = hotel_obj.room_type.room_type+","+" (2018.08.03 & 2018.08.04)"
+			data = hotel_obj.room_type.room_type+", ("+str(event.date - timedelta(days=1))+", "+str(event.date)+")"
 		else:
-			data = hotel_obj.room_type.room_type+","+" (2018.08.04)"
+			data = hotel_obj.room_type.room_type+", ("+str(event.date)+")"
 	except:
 		data = ''
 	return data
@@ -23,12 +25,18 @@ def hotelDetails(event_obj):
 def send_email(to_email, message, event_obj):
 	cxt = {'event_register': event_obj }
 	cxt['hotel'] = hotelDetails(event_obj)
-	subject = 'QRT 85 Registration'	
-	content = render_to_string('coupon_mail.html', cxt)	
+	
+	# if event_obj.amount_paid < 5000:
+	# 	cxt['partial'] = 'Partial'
+	
+	subject = 'QRT 85 Registration'
+	content = render_to_string('coupon_mail.html', cxt)		
 	from_email = settings.DEFAULT_FROM_EMAIL
+
 	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email])
 	msg.attach_alternative(content, "text/html")
 	msg.send()
+	
 	print("mail --> ",to_email)
 
 def set_status(event_reg):
