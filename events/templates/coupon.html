@@ -26,13 +26,21 @@
 					<td align="center">
 
 
-						<table width="785" height="250px;" border="0" cellspacing="0" cellpadding="0" style="background-image:url('https://image.ibb.co/hb9AJa/lets_go_bg.png');">
+						<table width="785" height="275px;" border="0" cellspacing="0" cellpadding="0" style="background-image:url('http://letsgonuts2018.com/static/images/lets_go_bg_coupon.png');">
 
 							<tr>
 								<td valign="top" width="250" align="left">
 									<table border="0" cellspacing="0" cellpadding="1">
-										<tr>
-											<td class="img" style="font-size:0pt; line-height:0pt; text-align:left"><a href="/users/" title="user list" ><img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0" width="300" height="250" /></a></td>
+									<tr>
+										<td class="img" style="font-size:0pt; line-height:0pt; text-align:left">
+											{% if request.user.is_authenticated %}
+											<a href="/users/" title="user list" >
+											<img src="http://letsgonuts2018.com/static/images/mail/featured_img.png" alt="" border="0" width="300" height="250" />
+											</a>
+											{% else %}
+											<img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0" width="300" height="250" />
+											{% endif %}
+										</td>
 										</tr>
 									</table>
 								</td>
