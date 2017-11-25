@@ -102,7 +102,7 @@ class RegisterEvent(TemplateView):
 		message_hotel = ''
 		message = ''
 		room = ''
-		
+
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -492,7 +492,11 @@ class UserRegisterUpdate(TemplateView):
 					message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 				else :
 					hotel_obj.hotel_name = hotel_name
-					hotel_obj.tottal_rent = room_rent		
+					hotel_obj.tottal_rent = room_rent
+					if not hotel_obj.book_friday == book_friday:
+						message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						message_hotel += text
+						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 					hotel_obj.book_friday = book_friday
 					if not hotel_obj.room_type == room:
 						room_type_obj = hotel_obj.room_type
