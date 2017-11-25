@@ -15,9 +15,9 @@ def hotelDetails(event_obj):
 		hotel_obj = Hotels.objects.get(registered_users=event_obj)
 		event = Event.objects.filter()[0]
 		if hotel_obj.book_friday:
-			data = hotel_obj.room_type.room_type+","+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date - timedelta(days=1))+", Raviz Kollam."
+			data = hotel_obj.room_type.room_type+","+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date)+", Raviz Kollam."
 		else:
-			data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date - timedelta(days=1))+", Raviz Kollam."
+			data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date)+", Raviz Kollam."
 	except:
 		data = ''
 	return data
