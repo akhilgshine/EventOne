@@ -198,7 +198,7 @@
                           </div>
                         </div>
 
-                        <div class="form-group" style="display: none;">
+                        <div class="form-group">
                           <label class="control-label col-sm-4" for=""> Do You want to book for friday as well : </label>
                           <div class="col-sm-2"> 
                             <input type="checkbox" name="book_friday" id="bookFriday" value="True"> Tick to book for friday
@@ -418,7 +418,7 @@
       var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
       var value = $('#room_type').val();
       $('#id_room_rent').val(room_rates[+value-1]);
-      $('#id_hotel_name').val('Raviz Kollam');
+      $('#id_hotel_name').val('Hotel Raviz Kollam');
       $('#bookFriday').attr('checked', false);    
     }
 

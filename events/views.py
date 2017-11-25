@@ -102,7 +102,7 @@ class RegisterEvent(TemplateView):
 		message_hotel = ''
 		message = ''
 		room = ''
-
+		
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -119,10 +119,10 @@ class RegisterEvent(TemplateView):
 			book_friday = request.POST.get('book_friday','')
 			if book_friday:
 				book_friday = True
-				text = " for two days"
+				text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
 			else:
 				book_friday = False
-				text =" for a day"
+				text = " for 4th Aug 2018 to 5th Aug 2018 (one nights)"
 
 			event = Event.objects.filter()[0]			
 			try:				
@@ -141,7 +141,6 @@ class RegisterEvent(TemplateView):
 						table.table_order = table_order
 						table.save()
 					except:
-						table.table_order = ''
 						table.save()
 			else:
 				table = Table.objects.get(table_name=table)
@@ -215,7 +214,7 @@ class RegisterEvent(TemplateView):
 						hotel_obj.save()
 						room.rooms_available = room.rooms_available - 1
 						room.save()
-						message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 						message_hotel += text
 						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 					else :
@@ -230,7 +229,7 @@ class RegisterEvent(TemplateView):
 							room.rooms_available = room.rooms_available - 1
 							room.save()
 							hotel_obj.room_type = room
-							message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+							message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 							message_hotel += text
 							message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 						hotel_obj.save()
@@ -242,7 +241,7 @@ class RegisterEvent(TemplateView):
 
 			if event_reg:
 				set_status(event_reg)
-				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"				
+				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"
 				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
 				try:
 					send_email(email,message,event_reg)
@@ -465,9 +464,9 @@ class UserRegisterUpdate(TemplateView):
 			book_friday = request.POST.get('book_friday', '')
 			if book_friday:
 				book_friday = True
-				text = " for two days"
+				text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
 			else:
-				text = " for a day"
+				text = " for 4th Aug 2018 to 5th Aug 2018 (one night)"
 				book_friday = False
 
 			reg_user_obj  = RegisteredUsers.objects.get(id=update_id)
@@ -488,7 +487,7 @@ class UserRegisterUpdate(TemplateView):
 					hotel_obj.save()
 					room.rooms_available = room.rooms_available - 1
 					room.save()
-					message_hotel = "You have successfully booked room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+					message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 					message_hotel += text
 					message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 				else :
@@ -503,7 +502,7 @@ class UserRegisterUpdate(TemplateView):
 						room.rooms_available = room.rooms_available - 1
 						room.save()
 						hotel_obj.room_type = room
-						message_hotel = "You have successfully updated room in Raviz Restaurant for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
 						message_hotel += text
 						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
 					hotel_obj.save()
