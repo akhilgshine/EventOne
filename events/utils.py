@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.template import Context
 from django.template.loader import render_to_string
-import pdfkit
+# import pdfkit
 from django.core.files import File
 from events.models import *
 from datetime import datetime, timedelta
@@ -15,9 +15,9 @@ def hotelDetails(event_obj):
 		hotel_obj = Hotels.objects.get(registered_users=event_obj)
 		event = Event.objects.filter()[0]
 		if hotel_obj.book_friday:
-			data = hotel_obj.room_type.room_type+", ("+str(event.date - timedelta(days=1))+", "+str(event.date)+")"
+			data = hotel_obj.room_type.room_type+","+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date - timedelta(days=1))+", Raviz Kollam."
 		else:
-			data = hotel_obj.room_type.room_type+", ("+str(event.date)+")"
+			data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-,  "+str(event.date - timedelta(days=1))+", Raviz Kollam."
 	except:
 		data = ''
 	return data
