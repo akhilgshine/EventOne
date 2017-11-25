@@ -48,7 +48,7 @@
 									</table>
 								</td>
 								<td valign="top"  class="featured" style="color:#7e8c95; font-family:Tahoma; font-size:12px; line-height:17px; text-align:left">
-									<table id="bodyTable" style="width: 87%;margin-top: 18px;padding-left: -23px;font-size: 14px;line-height: auto;    margin-left: 43px;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
+									<table id="bodyTable" style="width: 87%;margin-top: 14px;padding-left: -23px;font-size: 14px;line-height: auto;    margin-left: 43px;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
 									    <tbody>
 									        <tr>
 									            <td valign="top" class="columnContainer">
@@ -86,7 +86,7 @@
 									                    </tr>
 														
 														<tr>
-															<td class="table_main_tbody_td">Paid</td>
+															<td class="table_main_tbody_td">Reg.Amount</td>
 															<td> </td>
 															<td class="td_right">
 																{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}
@@ -97,7 +97,11 @@
 							                                    {% endif %}
 															</td>
 														</tr>
-									                    
+									                    <tr>
+									                    	<td></td>
+									                    	<td></td>
+									                    	<td>&nbsp;</td>
+									                    </tr>
 									                    <tr>
 									                      <td class="table_main_tbody_td">Hotel-Info</td>
 									                      <td> </td>
@@ -112,7 +116,7 @@
 									                    <!-- <hr class="dotted_line"> -->
 									                  </table>
                                                       <table>
-									                    <tr style=" height: 70px;">
+									                    <tr style=" height: 50px;">
 									                        <td align="left" class="sorting_element reg_dttails_td1"style="color: #fff;font-size:13px;" >
 									                           <b> Registration Number : </b>
 									                            <span class="reg_code_number" style="letter-spacing:1px;">&nbsp;&nbsp;<b>{{event_register.qrcode}}</b></span>
