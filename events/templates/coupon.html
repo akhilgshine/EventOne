@@ -59,28 +59,38 @@
 									                    </tr>
 									                    <tr>
 									                      <td class="table_main_tbody_td">Name</td>
-									                      <td>:</td>
+									                      <td></td>
 									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
+									                    </tr>
+									                    <tr>
+									                      <td class="table_main_tbody_td">Email</td>
+									                      <td> </td>
+									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.event_user.email}}</a></td>
+									                    </tr>
+									                    <tr>
+									                      <td class="table_main_tbody_td">Phone</td>
+									                      <td> </td>
+									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
 									                    </tr>
 														<tr>
 															<td class="table_main_tbody_td">Type</td>
-															<td>:</td>
+															<td></td>
 															<td class="td_right">
 																{{event_register.event_status}}
 															</td>
 														</tr>
 									                    <tr>
 									                      <td class="table_main_tbody_td">Table</td>
-									                      <td>:</td>
+									                      <td> </td>
 									                      <td class="td_right">{{event_register.table.table_name}}</td>
 									                    </tr>
 														<tr>
-															<td class="table_main_tbody_td">Amount Paid</td>
-															<td></td>
+															<td class="table_main_tbody_td">Amount-Paid</td>
+															<td> </td>
 															<td align="left" class="table_td_second">
 															{% for dat in  payment_details %}
 
-						                                    :&nbsp; {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
+						                                    &nbsp; {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
 						                                    {% empty %}
 						                                        {{ event_register.amount_paid }}
 						                                    {% endfor %}
@@ -105,22 +115,12 @@
 														{% if hotel %}
 						                                    <tr>
 						                                      <td class="table_main_tbody_td">Hotel Details</td>
-						                                      <td>:</td>
+						                                      <td> </td>
 						                                      <td class="td_right">
 						                                        {{ hotel }}
 						                                      </td>
 						                                    </tr>
-						                                {% endif %}
-									                    <tr>
-									                      <td class="table_main_tbody_td">Email</td>
-									                      <td>:</td>
-									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.event_user.email}}</a></td>
-									                    </tr>
-									                    <tr>
-									                      <td class="table_main_tbody_td">Phone</td>
-									                      <td>:</td>
-									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
-									                    </tr>
+						                                {% endif %}									                   
 									                  </tbody>
 									                    <!-- <hr class="dotted_line"> -->
 

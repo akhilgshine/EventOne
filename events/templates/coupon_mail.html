@@ -63,25 +63,31 @@
 									                    
 									                    <tr>
 									                      <td class="table_main_tbody_td">Name</td>
-									                      <td>:</td>
+									                      <td></td>
 									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
 									                    </tr>
-														
+
 														<tr>
-															<td class="table_main_tbody_td"> Registration Type</td>
-															<td>:</td>
+									                      <td class="table_main_tbody_td">Phone</td>
+									                      <td> </td>
+									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
+									                    </tr>
+
+														<tr>
+															<td class="table_main_tbody_td">Type</td>
+															<td> </td>
 															<td class="td_right">{{event_register.event_status}}</td>
 														</tr>
 
 														<tr>
 									                      <td class="table_main_tbody_td">Table</td>
-									                      <td>:</td>
+									                      <td> </td>
 									                      <td class="td_right">{{event_register.table.table_name}}</td>
 									                    </tr>
 														
 														<tr>
-															<td class="table_main_tbody_td">Amount Paid</td>
-															<td>:</td>
+															<td class="table_main_tbody_td">Paid</td>
+															<td> </td>
 															<td class="td_right">
 																{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date|date:"D d M Y"}}
 																{% if partial %}
@@ -94,17 +100,13 @@
 									                    
 									                    <tr>
 									                      <td class="table_main_tbody_td">Hotel Details</td>
-									                      <td>:</td>
+									                      <td> </td>
 									                      <td class="td_right">
 									                      	{{ hotel }}
 									                      </td>
 									                    </tr>
 									                    
-									                    <tr>
-									                      <td class="table_main_tbody_td">Phone</td>
-									                      <td>:</td>
-									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
-									                    </tr>
+									                    
 									                    
 									                  </tbody>
 									                    <!-- <hr class="dotted_line"> -->
