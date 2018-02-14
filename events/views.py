@@ -405,10 +405,11 @@ class ListUsers(TemplateView):
 				hotels.append('Not Booked')
 		context['hotels'] = hotels
 		context['users'] = registered_users
+		context['tables'] = Table.objects.all()
 		return render(request, self.template_name, context)
 
 """
-    Coupon View
+   Coupon View
     """
 class InvoiceView(TemplateView):
 	template_name = 'coupon.html'
@@ -527,7 +528,7 @@ class UserRegisterUpdate(TemplateView):
 				tottal_paid = int(last_pay) + int(amount_paid)
 				reg_user_obj.amount_paid = tottal_paid
 				reg_user_obj.save()
-				
+
 			set_status(reg_user_obj)
 			message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+reg_user_obj.qrcode+ " And your total payment is Rs."+str(reg_user_obj.amount_paid)+"/-"
 			message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
