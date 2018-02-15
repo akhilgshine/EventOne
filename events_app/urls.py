@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from events.views import *
 from django.conf import settings
@@ -32,5 +32,7 @@ urlpatterns = [
     url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view'),
     url(r'^register/success/(?P<pk>\d+)$',RegSuccessView.as_view(), name='invoice_view'),
     url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api/v1/', include('letsgonuts_api.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
