@@ -96,7 +96,15 @@
         </div>
 
         <div class="col-md-6 user_list_inputs">
-                  
+          <select id="sortTable" class="btn btn-primary btn_sort" place>
+            <option value="" disabled selected>Select Table</option>
+              <option value="all">All</option>
+              {% for table in tables  %}
+              <option value={{table.table_name|cut:" "}}>
+                  {{table.table_name}}              
+              </option>
+              {% endfor %}
+          </select>       
         </div>
 
         <div class="col-md-2 user_list_inputs">
@@ -110,7 +118,7 @@
         </div>
 
         <div class="col-md-2 user_list_inputs">
-          <div class="input-group" >
+          <div class="input-group">
             <input id="seachDataTable" type="text" class="form-control form_serch" placeholder="Search for...">
           </div>  
         </div>
@@ -171,7 +179,7 @@
             </td>
             <td> {{ user.event_user.mobile }} </td>
             <td> {{ user.qrcode }} </td>
-            <td> {{ user.table.table_name }}</td>
+            <td> {{ user.table.table_name|cut:" " }}</td>
             <td> {{ user.event_user.email }}</td>
             <td> {{ user.amount_paid }}</td>
             <td> {{ user.event_status }} </td>
@@ -214,7 +222,7 @@
           "order": [[ 0, 'asc' ]],
           "paging":   false,
           "info":     false,
-          responsive: true,        
+          responsive: true,       
         });
         $("#user_lists_filter").hide();
       
@@ -245,6 +253,20 @@
          var table = $('#user_lists').DataTable();
         table.search($(this).val()).draw();
       })
+
+
+      $('#sortTable').on('change', function(){
+        var table = $('#user_lists').DataTable();
+        var selected_table = $("#sortTable option:selected").val();
+        
+        if(selected_table == 'all'){
+          location.reload();
+        }
+        else{        
+          regExSearch ='"'+selected_table+'"';
+          table.column(5).search(regExSearch).draw();
+        }
+      });
   </script>
 </body>
 </html>
