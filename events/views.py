@@ -407,7 +407,6 @@ def logout_view(request):
 
 
 class ListUsers(TemplateView):
-<<<<<<< HEAD
     template_name = 'user_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -464,8 +463,6 @@ class InvoiceView(TemplateView):
 """
     User Update View
     """
-<<<<<<< HEAD
-=======
 class UserRegisterUpdate(TemplateView):
 	template_name = 'register.html'
 
@@ -582,7 +579,6 @@ class UserRegisterUpdate(TemplateView):
 			return HttpResponseRedirect(reverse('register_event'))
 
 
->>>>>>> a8a4b02ae51c71edc420341c20d36f7c5189fdc5
 
 
 class UserRegisterUpdate(TemplateView):
