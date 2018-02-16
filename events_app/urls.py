@@ -33,6 +33,6 @@ urlpatterns = [
     url(r'^register/success/(?P<pk>\d+)$',RegSuccessView.as_view(), name='invoice_view'),
     url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
     url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^api/v1/', include('letsgonuts_api.urls')),
+    url(r'^api/', include('letsgonuts_api.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
