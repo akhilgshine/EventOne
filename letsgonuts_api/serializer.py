@@ -24,7 +24,7 @@ class FilterNameSerializer(ModelSerializer):
 class NameDetailsSerializer(ModelSerializer):
     class Meta:
         model = EventUsers
-        fields = ['mobile', 'email']
+        fields = ['mobile', 'email', 'first_name', 'last_name' ]
 
 
 class RegisterEventSerializer(ModelSerializer):
