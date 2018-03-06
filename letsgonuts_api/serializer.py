@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES
+from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType
 
 
 class TableListSerializer(ModelSerializer):
@@ -70,3 +70,8 @@ class RegisteredUsersSerializer(ModelSerializer):
 
     def get_registration_type(self, obj):
         return obj.event_status
+
+class RoomTypeSerializer(ModelSerializer):
+    class Meta:
+        model = RoomType
+        fields = ['id','room_type']

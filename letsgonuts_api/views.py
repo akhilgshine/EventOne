@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 
 from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType
-from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, RegisteredUsersSerializer
+from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, RegisteredUsersSerializer, RoomTypeSerializer
 
 # Create your views here.
 
@@ -130,6 +130,10 @@ class RegisterEventViewSet(ModelViewSet):
 class RegisteredUsersViewSet(ModelViewSet):
     queryset = RegisteredUsers.objects.all()
     serializer_class = RegisteredUsersSerializer
+
+class RoomTypeListViewSet(ModelViewSet):
+    queryset = RoomType.objects.all()
+    serializer_class = RoomTypeSerializer
 
 
 
