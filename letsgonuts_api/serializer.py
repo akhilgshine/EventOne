@@ -74,4 +74,4 @@ class RegisteredUsersSerializer(ModelSerializer):
 class RoomTypeSerializer(ModelSerializer):
     class Meta:
         model = RoomType
-        fields = ['id','room_type']
+        fields = ['id','room_type','rooms_available','net_rate']
