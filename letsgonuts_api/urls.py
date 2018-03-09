@@ -5,7 +5,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'tablelist', TableListViewSet, base_name='table-list')
-router.register(r'filtername/(?P<table_id>(\d+))/(?P<input_char>[a-zA-Z])', FilterNameViewSet, base_name='filter-name')
+router.register(r'filtername/(?P<table_id>(\d+))/(?P<input_char>[\w\+]+)', FilterNameViewSet, base_name='filter-name')
 router.register(r'namedetails', NameDetailsViewSet, base_name='name-details')
 router.register(r'myregistration/(?P<table_id>(\d+))', RegisterEventViewSet, base_name='register-event')
 router.register(r'registeredusers', RegisteredUsersViewSet, base_name='register-users')

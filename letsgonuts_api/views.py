@@ -6,9 +6,10 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_201_CREATED
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
+from rest_framework.status import HTTP_204_NO_CONTENT
 
 from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, RegisteredUsersSerializer, RoomTypeSerializer
@@ -50,10 +51,16 @@ class FilterNameViewSet(ModelViewSet):
     serializer_class = FilterNameSerializer
 
     def get_queryset(self):
-        table_id = self.kwargs.get('table_id')
-        input_char = self.kwargs.get('input_char')
+        table_id = self.kwargs.get('table_id','')
+        input_char = self.kwargs.get('input_char','')
         filter_names = EventUsers.objects.filter(table__id=table_id, first_name__icontains=input_char)
         return filter_names
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset:
+            return Response('No data found', status=HTTP_400_BAD_REQUEST)
+        return super(FilterNameViewSet, self).list(request, *args, **kwargs)
 
 
 class NameDetailsViewSet(ModelViewSet):
