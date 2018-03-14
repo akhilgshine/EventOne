@@ -85,6 +85,8 @@ class Hotels(models.Model):
 	# room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
 	book_friday = models.BooleanField(default=False)
 	room_type = models.ForeignKey(RoomType,null=True,blank=True)
-
+	checkin_date = models.DateTimeField(null=True, blank=True)
+	checkout_date = models.DateTimeField(null=True, blank=True)
+	
 	def __str__(self):
 		return self.hotel_name
