@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import dateparser
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.db.models import Q
+from datetime import date, timedelta,datetime
 
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -9,9 +12,9 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT,HTTP_201_CREATED
 
-from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType
+from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType, Event
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, RegisteredUsersSerializer, RoomTypeSerializer
 
 # Create your views here.
@@ -75,6 +78,8 @@ class NameDetailsViewSet(ModelViewSet):
         except EventUsers.DoesNotExist:
             name_details = None
         instance = name_details
+        if not instance:
+            return Response('No data found', status=HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -141,6 +146,36 @@ class RegisteredUsersViewSet(ModelViewSet):
 class RoomTypeListViewSet(ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
+
+    # def get_queryset(self):
+    #     start_date = dateparser.parse(self.request.GET.get('start_date'))
+    #     end_date = dateparser.parse(self.request.GET.get('end_date'))
+    #     rel_hotels = Hotels.objects.exclude(Q(checkin_date__gte=start_date, checkout_date__lte=start_date)|
+    #                           Q(checkin_date__gte=end_date, checkout_date__lte=end_date))
+    #     RoomType.objects.filter()
+    #     data = rel_hotels.values_list('room_type__id', flat=True)
+    #     return RoomType.objects.filter(id__in=data)
+    #
+    def get_queryset(self):
+        start_date = dateparser.parse(self.request.GET.get('start_date'))
+        end_date = dateparser.parse(self.request.GET.get('end_date'))
+        event_date =  Event.objects.get(id=1).date
+        day_before_event = event_date - timedelta(1)
+        day_before_event_with_time = datetime.combine(day_before_event, datetime.min.time())
+        day_after_event = event_date + timedelta(1)
+        day_before_after_with_time = datetime.combine(day_after_event, datetime.min.time())
+        if start_date < day_before_event_with_time or end_date > day_before_after_with_time:
+            return []
+        return self.queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if not queryset:
+            return Response('No rooms found', status=HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 
 
 

@@ -23,7 +23,7 @@ class Event(models.Model):
     event_image = models.ImageField(upload_to='event_images/', blank=True)
     price = models.IntegerField(blank=True)
     total_seats = models.IntegerField(blank=False, null=True)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(null=True)
 
     def __str__(self):
         return self.title
