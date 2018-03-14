@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
 import re
+import datetime
 
 """
     Home
@@ -81,192 +82,200 @@ class LoginView(View):
     """
 
 
-class RegisterEvent(TemplateView):
-    template_name = 'register.html'
 
-    def get(self, request, *args, **kwargs):
-        context = {}
-        if not request.user.is_authenticated():
-            return HttpResponseRedirect(reverse('login'))
+class RegisterEvent(TemplateView):	
+	template_name = 'register.html'
+	
+	def get(self, request, *args, **kwargs):
+		context = {}
+		if not request.user.is_authenticated():
+			return HttpResponseRedirect(reverse('login'))
 
-        context['form'] = EventRegisterForm()
-        context['room_types'] = RoomType.objects.all()
-        context['tables'] = Table.objects.all()  # .order_by('table_order')
-        return render(request, self.template_name, context)
+		context['form'] = EventRegisterForm()
+		context['room_types'] = RoomType.objects.all()
+		context['tables'] = Table.objects.all() #.order_by('table_order')
+		return render(request, self.template_name, context)
 
-    def check_balance(self, amount):
+	def check_balance(self, amount):
 
-        balance_amount = 0
-        if int(amount) < 5000:
-            balance_amount = 5000 - int(amount)
-            if balance_amount > 0:
-                return balance_amount
-        return 0
+		balance_amount = 0
+		if int(amount) < 5000:
+			balance_amount = 5000 - int(amount)
+			if balance_amount > 0:
+				return balance_amount
+		return 0
 
-    def post(self, request, *args, **kwargs):
-        context = {}
-        message_hotel = ''
-        message = ''
-        room = ''
+	def post(self, request, *args, **kwargs):
+		context = {}
+		message_hotel = ''
+		message = ''
+		room = ''
+		import pdb; pdb.set_trace()
+		try:
+			name = request.POST.get('first_name', '')
+			last_name = request.POST.get('last_name', '')
+			email = request.POST.get('email', '')
+			phone = request.POST.get('phone', '')
+			table = request.POST.get('table_val', '')
 
-        try:
-            name = request.POST.get('first_name', '')
-            last_name = request.POST.get('last_name', '')
-            email = request.POST.get('email', '')
-            phone = request.POST.get('phone', '')
-            table = request.POST.get('table_val', '')
+			payment = request.POST.get('payment', '')
+			amount_paid = request.POST.get('amount_paid', 0)
 
-            payment = request.POST.get('payment', '')
-            amount_paid = request.POST.get('amount_paid', 0)
+			hotel_name = request.POST.get('hotel_name','')
+			room_rent = request.POST.get('room_rent','')
+			room_type = request.POST.get('room_type','')
+			# book_friday = request.POST.get('book_friday','')
+			checkin = request.POST.get('checkin_date', '')
+			checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y").strftime("%Y-%m-%d")
+			checkout = request.POST.get('checkout_date', '')
+			checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y").strftime("%Y-%m-%d")
 
-            hotel_name = request.POST.get('hotel_name', '')
-            room_rent = request.POST.get('room_rent', '')
-            room_type = request.POST.get('room_type', '')
-            book_friday = request.POST.get('book_friday', '')
-            if book_friday:
-                book_friday = True
-                text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
-            else:
-                book_friday = False
-                text = " for 4th Aug 2018 to 5th Aug 2018 (one nights)"
+			# if book_friday:
+			# 	book_friday = True
+			# 	text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
+			# else:
+			# 	book_friday = False
+			# 	text = " for 4th Aug 2018 to 5th Aug 2018 (one nights)"
 
-            event = Event.objects.filter()[0]
-            try:
-                new_table = request.POST.get('other_table', '')
-                if not new_table:
-                    new_table = request.POST.get('table_val', '')
-            except:
-                new_table = ''
+			event = Event.objects.filter()[0]			
+			try:				
+				new_table = request.POST.get('other_table', '')				
+				if not new_table:
+					new_table = request.POST.get('table_val', '')
+			except:
+				new_table = ''
 
-            if new_table:
-                table, created = Table.objects.get_or_create(table_name=new_table,
-                                                             event=event)
-                if created:
-                    try:
-                        table_order = int(re.search(r'\d+', new_table).group())
-                        table.table_order = table_order
-                        table.save()
-                    except:
-                        table.save()
-            else:
-                table = Table.objects.get(table_name=table)
+			if new_table:
+				table, created = Table.objects.get_or_create(table_name=new_table,
+					event=event)
+				if created:
+					try:
+						table_order = int(re.search(r'\d+', new_table).group())
+						table.table_order = table_order
+						table.save()
+					except:
+						table.save()
+			else:
+				table = Table.objects.get(table_name=table)
 
-            event_user, created = EventUsers.objects.get_or_create(table=table,
-                                                                   email=email)
+			event_user, created = EventUsers.objects.get_or_create(table=table,
+				email=email)
 
-            if created:
-                event_user.first_name = name
-                event_user.last_name = last_name
-                event_user.mobile = phone
-                event_user.save()
-            try:
-                event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
-                                                                           event=event,
-                                                                           table=table)
+			if created:
+				event_user.first_name = name
+				event_user.last_name = last_name
+				event_user.mobile = phone
+				event_user.save()
+			try:
+				event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
+					event=event,
+					table= table)
 
-                if created:
-                    try:
-                        qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
-                        if not qrcode.split('QRT')[1].startswith('8'):
-                            qrcode = 'QRT8001'
-                        else:
-                            qrcode_updated = qrcode[-3:]
-                            qrcode_updated_increment = int(qrcode_updated) + 1
-                            qrcode_updated_length = len(str(qrcode_updated_increment))
-                            if qrcode_updated_length == 1:
-                                qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
-                            if qrcode_updated_length == 2:
-                                qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
-                    except:
-                        qrcode = 'QRT8001'
+				if created:
+					try:
+						qrcode =  RegisteredUsers.objects.latest('qrcode').qrcode
+						if not qrcode.split('QRT')[1].startswith('8'):
+							qrcode = 'QRT8001'
+						else:
+							qrcode_updated = qrcode[-3:]
+							qrcode_updated_increment = int(qrcode_updated) + 1
+							qrcode_updated_length = len(str(qrcode_updated_increment))
+							if qrcode_updated_length == 1:
+								qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
+							if qrcode_updated_length == 2:
+								qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
+					except:
+						qrcode = 'QRT8001'
 
-                    print("amount_paid : ", amount_paid)
-                    balance_amount = self.check_balance(amount_paid)
+					print("amount_paid : ", amount_paid)
+					balance_amount = self.check_balance(amount_paid)
 
-                    event_reg.payment = payment
-                    event_reg.amount_paid = amount_paid
-                    event_reg.balance_amount = balance_amount
-                    event_reg.qrcode = qrcode
-                    event_reg.save()
+					event_reg.payment = payment
+					event_reg.amount_paid = amount_paid
+					event_reg.balance_amount = balance_amount
+					event_reg.qrcode = qrcode
+					event_reg.save()
 
-                else:
-                    last_pay = event_reg.amount_paid
-                    if not last_pay:
-                        last_pay = 0
-                    tottal_paid = int(last_pay) + int(amount_paid)
+				else:					
+					last_pay = event_reg.amount_paid
+					if not last_pay:
+						last_pay = 0
+					tottal_paid = int(last_pay) + int(amount_paid)
 
-                    balance_amount = self.check_balance(tottal_paid)
-                    event_reg.payment = payment
-                    event_reg.amount_paid = tottal_paid
-                    event_reg.balance_amount = balance_amount
-                    event_reg.save()
+					balance_amount = self.check_balance(tottal_paid)
+					event_reg.payment = payment
+					event_reg.amount_paid = tottal_paid
+					event_reg.balance_amount = balance_amount
+					event_reg.save()
+				
+				if amount_paid :
+					PaymentDetails.objects.create(reg_event=event_reg,
+						amount = amount_paid
+						)
+				if room_type:
+					try:
+						room = RoomType.objects.get(id=room_type)
+					except:
+						room = None
+				if room:
+					hotel_obj, created = Hotels.objects.get_or_create(registered_users=event_reg)
+					if created:
+						hotel_obj.hotel_name = hotel_name
+						hotel_obj.tottal_rent = int(room_rent)
+						# hotel_obj.book_friday = book_friday
+						# hotel_obj.checkin_date = checkin_date
 
-                if amount_paid:
-                    PaymentDetails.objects.create(reg_event=event_reg,
-                                                  amount=amount_paid
-                                                  )
-                if room_type:
-                    try:
-                        room = RoomType.objects.get(id=room_type)
-                    except:
-                        room = None
-                if room:
-                    hotel_obj, created = Hotels.objects.get_or_create(registered_users=event_reg)
-                    if created:
-                        hotel_obj.hotel_name = hotel_name
-                        hotel_obj.tottal_rent = int(room_rent)
-                        hotel_obj.book_friday = book_friday
-                        hotel_obj.room_type = room
-                        hotel_obj.save()
-                        room.rooms_available = room.rooms_available - 1
-                        room.save()
-                        message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                        message_hotel += text
-                        message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                    else:
-                        hotel_obj.hotel_name = hotel_name
-                        hotel_obj.tottal_rent = room_rent
-                        hotel_obj.book_friday = book_friday
-                        if not hotel_obj.room_type == room:
-                            room_type_obj = hotel_obj.room_type
-                            room_type_obj.rooms_available = room_type_obj.rooms_available + 1
+						hotel_obj.checkout_date = checkout_date
+						hotel_obj.room_type = room
+						hotel_obj.save()
+						room.rooms_available = room.rooms_available - 1
+						room.save()
+						message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+						# message_hotel += text
+						message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
+					else :
+						hotel_obj.hotel_name = hotel_name
+						hotel_obj.tottal_rent = room_rent
+						hotel_obj.checkin_date = checkin_date
+						hotel_obj.checkout_date = checkout_date
+						if not hotel_obj.room_type == room:
+							room_type_obj = hotel_obj.room_type
+							room_type_obj.rooms_available = room_type_obj.rooms_available + 1
+							
+							room_type_obj.save()
+							room.rooms_available = room.rooms_available - 1
+							room.save()
+							hotel_obj.room_type = room
+							message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '"+room.room_type+"'"
+							# message_hotel += text
+							message_hotel += " And your total rent is Rs."+str(room_rent)+"/-"
+						hotel_obj.save()
 
-                            room_type_obj.save()
-                            room.rooms_available = room.rooms_available - 1
-                            room.save()
-                            hotel_obj.room_type = room
-                            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                            message_hotel += text
-                            message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                        hotel_obj.save()
+			except Exception as e:
+				if created and event_reg:
+					event_reg.delete()				
+				event_reg = None
 
-            except Exception as e:
-                if created and event_reg:
-                    event_reg.delete()
-                event_reg = None
-            if event_reg:
-                set_status(event_reg)
-                message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
-                    event_reg.amount_paid) + "/-"
-                message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
-                try:
-                    send_email(email, message, event_reg)
-                except:
-                    pass
+			if event_reg:
+				set_status(event_reg)
+				message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : "+event_reg.qrcode+ " And you have paid Rs."+str(event_reg.amount_paid)+"/-"
+				message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
+				try:
+					send_email(email,message,event_reg)
+				except:
+					pass
 
-                if message_hotel:
-                    message_status = requests.get(
-                        'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
-                return HttpResponseRedirect("/register/success/" + str(event_reg.id))
-            else:
-                message = " There is an issue with your registration. Please try again"
-                messages.success(self.request, message)
-                return HttpResponseRedirect(reverse('register_event'))
-        except:
-            message = "Exception : There is an issue with your registration. Please try again."
-            messages.success(self.request, message)
-            return HttpResponseRedirect(reverse('register_event'))
+				if message_hotel:
+					message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message_hotel)
+					return HttpResponseRedirect("/register/success/"+str(event_reg.id))
+			else:
+				message = " There is an issue with your registration. Please try again"
+				messages.success(self.request, message)
+				return HttpResponseRedirect(reverse('register_event'))				
+		except:
+			message = "Exception : There is an issue with your registration. Please try again."
+			messages.success(self.request, message)
+			return HttpResponseRedirect(reverse('register_event'))
 
 
 class RegSuccessView(TemplateView):
@@ -464,125 +473,6 @@ class InvoiceView(TemplateView):
 """
     User Update View
     """
-
-
-class UserRegisterUpdate(TemplateView):
-    template_name = 'register.html'
-
-    def get(self, request, *args, **kwargs):
-        context = {}
-        pk = kwargs.pop('pk')
-        event_registered_user = RegisteredUsers.objects.get(id=pk)
-        try:
-            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
-        except:
-            hotel_obj = None
-
-        context['room_types'] = RoomType.objects.all()
-        context['event_registered_user'] = event_registered_user
-        context['hotel_obj'] = hotel_obj
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            # room_updates = False
-            message_hotel = ''
-            name = request.POST.get('first_name', '')
-            last_name = request.POST.get('last_name', '')
-            email = request.POST.get('email', '')
-            phone = request.POST.get('phone', '')
-            # table = request.POST.get('table_val', '')
-            update_id = request.POST.get('update_id', '')
-
-            payment = request.POST.get('payment', '')
-            amount_paid = request.POST.get('amount_paid', '')
-            room_type = request.POST.get('room_type', '')
-            hotel_name = request.POST.get('hotel_name', '')
-            room_rent = request.POST.get('room_rent', '')
-            book_friday = request.POST.get('book_friday', '')
-            if book_friday:
-                book_friday = True
-                text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
-            else:
-                text = " for 4th Aug 2018 to 5th Aug 2018 (one night)"
-                book_friday = False
-
-            reg_user_obj = RegisteredUsers.objects.get(id=update_id)
-
-            user = EventUsers.objects.get(id=reg_user_obj.event_user.id)
-
-            if amount_paid:
-                PaymentDetails.objects.create(reg_event=reg_user_obj,
-                                              amount=amount_paid)
-            try:
-                room = RoomType.objects.get(id=room_type)
-                hotel_obj, created = Hotels.objects.get_or_create(registered_users=reg_user_obj)
-                if created:
-                    hotel_obj.hotel_name = hotel_name
-                    hotel_obj.tottal_rent = int(room_rent)
-                    hotel_obj.book_friday = book_friday
-                    hotel_obj.room_type = room
-                    hotel_obj.save()
-                    room.rooms_available = room.rooms_available - 1
-                    room.save()
-                    message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                    message_hotel += text
-                    message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                else:
-                    hotel_obj.hotel_name = hotel_name
-                    hotel_obj.tottal_rent = room_rent
-                    if not hotel_obj.book_friday == book_friday:
-                        message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                        message_hotel += text
-                        message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                    hotel_obj.book_friday = book_friday
-                    if not hotel_obj.room_type == room:
-                        room_type_obj = hotel_obj.room_type
-                        room_type_obj.rooms_available = room_type_obj.rooms_available + 1
-
-                        room_type_obj.save()
-                        room.rooms_available = room.rooms_available - 1
-                        room.save()
-                        hotel_obj.room_type = room
-                        message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                        message_hotel += text
-                        message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                    hotel_obj.save()
-            except:
-                hotel_obj = None
-            if name:
-                user.first_name = name
-            if last_name:
-                user.last_name = last_name
-            if email:
-                user.email = email
-            if phone:
-                user.phone = phone
-            user.save()
-            if amount_paid:
-                reg_user_obj.payment = payment
-                last_pay = reg_user_obj.amount_paid
-                tottal_paid = int(last_pay) + int(amount_paid)
-                reg_user_obj.amount_paid = tottal_paid
-                reg_user_obj.save()
-
-            set_status(reg_user_obj)
-            message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + reg_user_obj.qrcode + " And your total payment is Rs." + str(
-                reg_user_obj.amount_paid) + "/-"
-            message_status = requests.get(
-                'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
-            try:
-                send_email(email, message, reg_user_obj)
-            except:
-                pass
-            if message_hotel:
-                message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
-            return HttpResponseRedirect('/users/')
-        except:
-            message = "There is an issue with your registration. Please try again."
-            messages.success(self.request, message)
-            return HttpResponseRedirect(reverse('register_event'))
 
 
 class UserRegisterUpdate(TemplateView):

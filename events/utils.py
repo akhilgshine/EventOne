@@ -28,6 +28,7 @@ def send_email(to_email, message, event_obj):
 	
 	# if event_obj.amount_paid < 5000:
 	# 	cxt['partial'] = 'Partial'
+	
 	subject = 'QRT 85 Registration'
 	content = render_to_string('coupon_mail.html', cxt)		
 	from_email = settings.DEFAULT_FROM_EMAIL

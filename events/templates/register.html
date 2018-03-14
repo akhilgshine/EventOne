@@ -19,8 +19,15 @@
     
     <!-- Custom css style -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
-    
 
+<style>
+
+    .datepicker{
+
+        color:red;
+    }
+
+</style>
 </head>
 
 <body id="page-top">
@@ -44,22 +51,22 @@
         {% else %}
           <div class="message alert alert-success message"  style="display: none;">
           <a class="close" data-dismiss="alert" href="#">&times;</a>
-            
+
           </div>
         {% endif %}
-        
+
         <div class="container-fluid">
             <div class="row">
                 <div class="logo-wrap">
                     <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
                 </div>
-                
+
                 <div class="col-sm-12 wrap-form-submit" >
                       <form class="form-horizontal form-nuts">
                       <h3>Enter Details</h3>
                       <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Table :</label>
-                        <div class="col-sm-8">                  
+                        <div class="col-sm-8">
                             <select name=""  class="form-control" id="selectId">
                                 <option value=" ">Select Table</option>
                                 {% for val in tables %}
@@ -72,41 +79,41 @@
                       </div>
                       </form>
 
-                      <div  id="detailForm" style="display: none;">                        
+                      <div  id="detailForm" style="display: none;">
                         <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
                          {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
 
                         <div class="form-group" id="other_table_div" style="color: #fff; display: none">
                           <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                           <input type="text" class="form-control" id="id_other_table" placeholder="For New Table Only" name='other_table'>
                           </div>
                         </div>
 
                         <div class="form-group" style="color: #fff">
                           <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="text" class="form-control" id="id_first_name" placeholder="Enter your First Name" name='first_name' required="">
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_last_name">Last Name :</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your Last Name" >
                           </div>
                         </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_phone">Phone Number :</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="text" class="form-control" id="id_phone" placeholder="Enter your Phone Number" name="phone"  required="" pattern='^\+?\d{0,13}'>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_email">Email:</label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="email" class="form-control" id="id_email" placeholder="Enter your Email" name="email"  required="">
                           </div>
                         </div>
@@ -122,21 +129,21 @@
 
                         <div class="form-group" id="balance_div" style="display: none;">
                           <label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Amount to be added : </label>
-                          <div class="col-sm-8"> 
+                          <div class="col-sm-8">
                             <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
-                          <div class="col-sm-2"> 
+                          <div class="col-sm-2">
                               <label>
                                   <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
                               </label>
@@ -155,16 +162,16 @@
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="">Registration Type : </label>
-                          <div class="col-sm-2"> 
+                          <div class="col-sm-2">
                             <label>
                                 <input id="radio_status_1" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
                             </label>
-                          </div>                          
+                          </div>
                           <div class="col-sm-2">
                             <label>
                               <input id="radio_status_2" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
                             </label>
-                          </div>                          
+                          </div>
                           <div class="col-sm-2">
                             <label>
                               <input id="radio_status_3" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Not Mentioned
@@ -182,7 +189,7 @@
                               {% endfor %}
                             </select>
                           </div>
-                        </div>                        
+                        </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
@@ -190,7 +197,7 @@
                             <input type="text" class="form-control" id="id_hotel_name" placeholder="Enter Hotel Name" name="hotel_name" >
                           </div>
                         </div>
-                        
+
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
                           <div class="col-sm-8">
@@ -198,16 +205,25 @@
                           </div>
                         </div>
 
+                        <!--<div class="form-group">-->
+                          <!--<label class="control-label col-sm-4" for=""> Do You want to book for 3rd August 2018 as well : </label>-->
+                          <!--<div class="col-sm-2">-->
+                            <!--<input type="checkbox" name="book_friday" id="bookFriday" value="True"> Tick to book from 3rd August 2018-->
+                          <!--</div>-->
+                        <!--</div>-->
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for=""> Do You want to book for 3rd August 2018 as well : </label>
-                          <div class="col-sm-2"> 
-                            <input type="checkbox" name="book_friday" id="bookFriday" value="True"> Tick to book from 3rd August 2018
+                          <label class="control-label col-sm-4" for=""> Date : </label>
+                          <div class="col-sm-3">
+                            Check In:<input type="text" name="checkin_date" class="datepicker form-control" id="checkIn" >
                           </div>
-                        </div>                        
+                        <div class="col-sm-3">
+                           Check Out:<input type="text" name="checkout_date" class="datepicker form-control" id="checkOut">
+                          </div>
+                        </div>
 
                         <p id="notifications" style="color: red"></p>
                         <hr>
-                        <div class="form-group"> 
+                        <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-8">
                             <button type="submit" class="btn btn-default nuts-sub"> Confirm Register </button>
                           </div>
@@ -218,7 +234,7 @@
 
             </div>
         </div>
-    </div>  
+    </div>
 
 
     <!-- jQuery -->
@@ -230,6 +246,8 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
 
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
+
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script type="text/javascript">
       {% if event_registered_user %}
@@ -274,7 +292,7 @@
             {% endifequal %}
 
       {%endif%}
-      
+
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
       $("#id_hotel_name").val('');
@@ -302,7 +320,7 @@
         select: function (event, ui) {
           // var input = $('#id_first_name').val();
           var input = ui.item.value;
-          var selected_table = $("#selectId option:selected").val(); 
+          var selected_table = $("#selectId option:selected").val();
           var new_table = $("#id_other_table").val();
           $.ajax({
             url: '/get_user_data/',
@@ -354,7 +372,7 @@
                 }
                 else{
                   $("#balance_div").hide();
-                }           
+                }
               }
               else{
                 // $("#id_balance").val(-1);
@@ -388,9 +406,9 @@
       {
         $("#notifications").text('Please Select a payment mode !');
         return false;
-      }else{        
+      }else{
         return true;
-      }    
+      }
     });
 
     function update_messages(messages){
@@ -398,7 +416,7 @@
       $(".message").html("");
       $.each(messages, function (i, m) {
           $(".message").append(m.message);
-      });  
+      });
       $('.message').show();
       setTimeout(function() {
           $('.message').fadeOut('slow');
@@ -413,29 +431,83 @@
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
+    var selected_rent;
 
     function selectRoomType(){
       var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
       var value = $('#room_type').val();
-      $('#id_room_rent').val(room_rates[+value-1]);
-      $('#id_hotel_name').val('Hotel Raviz Kollam');
-      $('#bookFriday').attr('checked', false);    
-    }
 
-    $("#bookFriday").change(function() {
-        var ischecked= $(this).is(':checked');
-        if(ischecked){
-          var rent = $('#id_room_rent').val();
-          var tottal = 2*rent
-          $('#id_room_rent').val(tottal);
+      $('#id_room_rent').val('');
+      $('#id_room_rent').val(room_rates[+value-1]);
+
+      selected_rent = room_rates[+value-1];
+
+      $('#id_hotel_name').val('Hotel Raviz Kollam');
+
+      var rent = $('#id_room_rent').val();
+      var checkin = $('#checkIn').val();
+        var checkout = $('#checkOut').val();
+        if (checkin != '' && checkout != ''){
+            calculate_rent(rent);
         }
-        else{
-          var rent = $('#id_room_rent').val();
-          var tottal = rent/2
-          $('#id_room_rent').val(tottal);
+    }
+    
+    $("#checkOut").change(function(){
+        console.log("OnChange checkOut");
+        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
+        var value = $('#room_type').val();
+        var selected_rent = room_rates[+value-1]
+        var checkin = $('#checkIn').val();
+        var checkout = $('#checkOut').val();
+        if (checkin != '' && checkout != ''){
+            calculate_rent(selected_rent);
         }
     });
 
+    function changeCheckinDate(){
+        console.log("OnChange checkIn");
+        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
+        var value = $('#room_type').val();
+        var selected_rent = room_rates[+value-1]
+        var checkin = $('#checkIn').val();
+        var checkout = $('#checkOut').val();
+        if (checkin != '' && checkout != ''){
+            calculate_rent(selected_rent);
+        }
+    };
+
+    function calculate_rent(one_day_rent){
+        console.log('one_day_rent', one_day_rent)
+         checkInDate=$('#checkIn').val().split('/')[1]
+         checkOutDate=$('#checkOut').val().split('/')[1]
+         console.log('outdate',checkInDate)
+         diffDays = checkOutDate-checkInDate;
+         console.log('indate',$('#checkIn').val())
+         console.log('outdate',checkOutDate)
+         console.log('dayss',diffDays);
+         if(diffDays == 0 || diffDays == 1){
+                var one_day_rent = one_day_rent;
+            }
+         else{
+            var rent = $('#id_room_rent').val();
+            var tottal = diffDays*one_day_rent;
+            $('#id_room_rent').val(tottal);
+         }
+    }
+    
+    $("#checkIn").datepicker({
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-01")),
+        onSelect: function(selected) {
+          $("#checkOut").datepicker("option","minDate", selected)
+          changeCheckinDate();
+        }
+    });
+    
+    $("#checkOut").datepicker({
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-01")),
+    }); 
   </script>
 </body>
 
