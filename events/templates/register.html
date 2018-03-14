@@ -251,45 +251,44 @@
 
     <script type="text/javascript">
       {% if event_registered_user %}
-            $("#detailForm").show();
-            $('#balance_div').show();
-            $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
-            $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
-            $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
-            $('#id_email').val('{{event_registered_user.event_user.email}}')
-            $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
+        $("#detailForm").show();
+        $('#balance_div').show();
+        $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
+        $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
+        $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
+        $('#id_email').val('{{event_registered_user.event_user.email}}')
+        $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
 
-            {% if hotel_obj %}
-              $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
-              $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
-              $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
-              {% if hotel_obj.book_friday %}
-                $('#bookFriday').prop('checked',true)
-              {% endif %}
-            {% endif %}
+        {% if hotel_obj %}
+          $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
+          $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
+          $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
+          $("#checkOut").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
+          $("#checkIn").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+        {% endif %}
 
-            $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
-            {% ifequal event_registered_user.event_status "Couple" %}
-                $('#radio_status_1').prop('checked',true)
-            {% endifequal %}
-            {% ifequal event_registered_user.event_status "Stag" %}
-                $('#radio_status_2').prop('checked',true)
-            {% endifequal %}
-            {% ifequal event_registered_user.event_status "Not Mentioned" %}
-                $('#radio_status_3').prop('checked',true)
-            {% endifequal %}
+        $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
+        {% ifequal event_registered_user.event_status "Couple" %}
+            $('#radio_status_1').prop('checked',true)
+        {% endifequal %}
+        {% ifequal event_registered_user.event_status "Stag" %}
+            $('#radio_status_2').prop('checked',true)
+        {% endifequal %}
+        {% ifequal event_registered_user.event_status "Not Mentioned" %}
+            $('#radio_status_3').prop('checked',true)
+        {% endifequal %}
 
-            {% ifequal event_registered_user.payment 'cash' %}
-              $("#radioId_1").prop("checked", true);
-            {% endifequal %}
+        {% ifequal event_registered_user.payment 'cash' %}
+          $("#radioId_1").prop("checked", true);
+        {% endifequal %}
 
-           {% ifequal event_registered_user.payment 'paytm' %}
-              $("#radioId_2").prop("checked", true);
-            {% endifequal %}
+       {% ifequal event_registered_user.payment 'paytm' %}
+          $("#radioId_2").prop("checked", true);
+        {% endifequal %}
 
-            {% ifequal event_registered_user.payment 'card' %}
-              $("#radioId_3").prop("checked", true);
-            {% endifequal %}
+        {% ifequal event_registered_user.payment 'card' %}
+          $("#radioId_3").prop("checked", true);
+        {% endifequal %}
 
       {%endif%}
 
@@ -478,8 +477,8 @@
 
     function calculate_rent(one_day_rent){
         console.log('one_day_rent', one_day_rent)
-         checkInDate=$('#checkIn').val().split('/')[1]
-         checkOutDate=$('#checkOut').val().split('/')[1]
+         checkInDate=$('#checkIn').val().split('/')[0]
+         checkOutDate=$('#checkOut').val().split('/')[0]
          console.log('outdate',checkInDate)
          diffDays = checkOutDate-checkInDate;
          console.log('indate',$('#checkIn').val())
@@ -487,15 +486,18 @@
          console.log('dayss',diffDays);
          if(diffDays == 0 || diffDays == 1){
                 var one_day_rent = one_day_rent;
+                $('#id_room_rent').val(one_day_rent);
             }
          else{
             var rent = $('#id_room_rent').val();
             var tottal = diffDays*one_day_rent;
+
             $('#id_room_rent').val(tottal);
          }
     }
     
     $("#checkIn").datepicker({
+        dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
         defaultDate: new Date(Date.parse("2018-08-01")),
         onSelect: function(selected) {
@@ -505,6 +507,7 @@
     });
     
     $("#checkOut").datepicker({
+        dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
         defaultDate: new Date(Date.parse("2018-08-01")),
     }); 

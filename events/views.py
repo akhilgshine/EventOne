@@ -110,7 +110,6 @@ class RegisterEvent(TemplateView):
 		message_hotel = ''
 		message = ''
 		room = ''
-		import pdb; pdb.set_trace()
 		try:
 			name = request.POST.get('first_name', '')
 			last_name = request.POST.get('last_name', '')
@@ -223,8 +222,7 @@ class RegisterEvent(TemplateView):
 						hotel_obj.hotel_name = hotel_name
 						hotel_obj.tottal_rent = int(room_rent)
 						# hotel_obj.book_friday = book_friday
-						# hotel_obj.checkin_date = checkin_date
-
+						hotel_obj.checkin_date = checkin_date
 						hotel_obj.checkout_date = checkout_date
 						hotel_obj.room_type = room
 						hotel_obj.save()
@@ -267,7 +265,7 @@ class RegisterEvent(TemplateView):
 
 				if message_hotel:
 					message_status = requests.get('http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message_hotel)
-					return HttpResponseRedirect("/register/success/"+str(event_reg.id))
+				return HttpResponseRedirect("/register/success/"+str(event_reg.id))
 			else:
 				message = " There is an issue with your registration. Please try again"
 				messages.success(self.request, message)
@@ -429,23 +427,8 @@ class ListUsers(TemplateView):
                 hotels.append('Not Booked')
         context['hotels'] = hotels
         context['users'] = registered_users
+        context['tables'] = Table.objects.all()
         return render(request, self.template_name, context)
-
-        template_name = 'user_list.html'
-
-        def get(self, request, *args, **kwargs):
-            context = {}
-            registered_users = RegisteredUsers.objects.all()
-            hotels = []
-            for user in registered_users:
-                try:
-                    hotels.append(user.hotel.all().first())
-                except:
-                    hotels.append('Not Booked')
-            context['hotels'] = hotels
-            context['users'] = registered_users
-            context['tables'] = Table.objects.all()
-            return render(request, self.template_name, context)
 
 
 """
@@ -508,13 +491,22 @@ class UserRegisterUpdate(TemplateView):
             room_type = request.POST.get('room_type', '')
             hotel_name = request.POST.get('hotel_name', '')
             room_rent = request.POST.get('room_rent', '')
-            book_friday = request.POST.get('book_friday', '')
-            if book_friday:
-                book_friday = True
-                text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
-            else:
-                text = " for 4th Aug 2018 to 5th Aug 2018 (one night)"
-                book_friday = False
+            # book_friday = request.POST.get('book_friday', '')
+            
+            checkin = request.POST.get('checkin_date', '')
+            print("Date In : ",checkin )
+            checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
+            
+            checkout = request.POST.get('checkout_date', '')
+            print("Date Out : ",checkout )
+            checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
+            text = str(checkin_date)+" to "+str(checkout_date)
+            # if book_frida y:
+            #     book_friday = True
+            #     text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
+            # else:
+            #     text = " for 4th Aug 2018 to 5th Aug 2018 (one night)"
+            #     book_friday = False
 
             reg_user_obj = RegisteredUsers.objects.get(id=update_id)
 
@@ -529,7 +521,9 @@ class UserRegisterUpdate(TemplateView):
                 if created:
                     hotel_obj.hotel_name = hotel_name
                     hotel_obj.tottal_rent = int(room_rent)
-                    hotel_obj.book_friday = book_friday
+                    # hotel_obj.book_friday = book_friday
+                    hotel_obj.checkin_date = checkin_date
+                    hotel_obj.checkout_date = checkout_date
                     hotel_obj.room_type = room
                     hotel_obj.save()
                     room.rooms_available = room.rooms_available - 1
@@ -539,12 +533,15 @@ class UserRegisterUpdate(TemplateView):
                     message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                 else:
                     hotel_obj.hotel_name = hotel_name
+                    hotel_obj.checkin_date = checkin_date
+                    hotel_obj.checkout_date = checkout_date
                     hotel_obj.tottal_rent = room_rent
-                    if not hotel_obj.book_friday == book_friday:
+
+                    if not hotel_obj.checkout_date == checkout_date or hotel_obj.checkout_date == checkout_date:
                         message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
                         message_hotel += text
                         message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
-                    hotel_obj.book_friday = book_friday
+
                     if not hotel_obj.room_type == room:
                         room_type_obj = hotel_obj.room_type
                         room_type_obj.rooms_available = room_type_obj.rooms_available + 1

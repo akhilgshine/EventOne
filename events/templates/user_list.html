@@ -10,10 +10,10 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
   <!-- Bootstrap Core CSS -->
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+  <!-- Custom Fonts -->
+  <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'css/user_list.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'css/data-table-responsive.css' %}" rel="stylesheet" type="text/css">
   <style type="text/css" class="init">
@@ -146,6 +146,7 @@
               <th> Date </th>
               <th>Coupon</th>
               <th>Hotel</th>
+              <th>Hotel Rent</th>
               <th>Order</th>
             </tr>
           </thead>
@@ -197,6 +198,7 @@
                 </a>
             </td> -->
             <td> {{ user.id| get_hotel_details }}</td>
+            <td> {{ user.id| get_hotel_rent }}</td>
             <td>{{ forloop.counter }}</td>
           </tr>
           {% endfor %}

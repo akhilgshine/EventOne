@@ -14,10 +14,11 @@ def hotelDetails(event_obj):
 	try:
 		hotel_obj = Hotels.objects.get(registered_users=event_obj)
 		event = Event.objects.filter()[0]
-		if hotel_obj.book_friday:
-			data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, 3rd Aug 2018 to 5th Aug 2018 (two nights)."
-		else:
-			data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, 4th Aug 2018 to 5th Aug 2018 (one night)."
+		data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, "+str(hotel_obj.checkin_date)+" to "+str(hotel_obj.checkout_date)
+		# if hotel_obj.book_friday:
+		# 	data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, "+str(hotel_obj.checkin_date)+" to "++str(hotel_obj.checkout_date)
+		# else:
+		# 	data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, 4th Aug 2018 to 5th Aug 2018 (one night)."
 	except:
 		data = ''
 	return data
@@ -28,7 +29,7 @@ def send_email(to_email, message, event_obj):
 	
 	# if event_obj.amount_paid < 5000:
 	# 	cxt['partial'] = 'Partial'
-	
+
 	subject = 'QRT 85 Registration'
 	content = render_to_string('coupon_mail.html', cxt)		
 	from_email = settings.DEFAULT_FROM_EMAIL
