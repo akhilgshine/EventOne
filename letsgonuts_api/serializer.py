@@ -5,6 +5,7 @@ from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, Ro
 
 
 class TableListSerializer(ModelSerializer):
+    event_date = serializers.CharField(source='event.date')
     class Meta:
         model = Table
         exclude = ['table_order', 'event']
