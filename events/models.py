@@ -63,7 +63,7 @@ class RegisteredUsers(models.Model):
     balance_amount = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return self.event.title
+        return ("{}, {}").format(self.event_user.first_name, self.event_user.last_name)
 
 
 class PaymentDetails(models.Model):

@@ -125,9 +125,9 @@ class RegisterEvent(TemplateView):
 			room_type = request.POST.get('room_type','')
 			# book_friday = request.POST.get('book_friday','')
 			checkin = request.POST.get('checkin_date', '')
-			checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y").strftime("%Y-%m-%d")
+			checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
 			checkout = request.POST.get('checkout_date', '')
-			checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y").strftime("%Y-%m-%d")
+			checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
 
 			# if book_friday:
 			# 	book_friday = True
