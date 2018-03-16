@@ -651,3 +651,26 @@ class UpdateHotelView(FormView):
         hotel_obj.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateRegPaymentView(UpdateView):
+    template_name = 'update_reg_payment.html'
+    form_class = UpdatePaymentForm
+    success_url = '/users'
+    queryset = RegisteredUsers.objects.all()
+
+    def get_initial(self):
+        initial = super(UpdateRegPaymentView, self).get_initial()
+        initial['amount_paid'] = 0
+        return initial
+
+    def form_valid(self, form):
+        obj = self.get_object()
+        current = obj.amount_paid
+        obj = form.save(commit=False)
+        obj.amount_paid = current+ form.cleaned_data.get('amount_paid')
+        obj.save()
+        return super(UpdateRegPaymentView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(UpdateRegPaymentView, self).form_invalid()

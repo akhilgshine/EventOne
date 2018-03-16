@@ -64,50 +64,18 @@
                       <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
                         {% csrf_token %}
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="room_type">Room Type :</label>
+                          <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
                           <div class="col-sm-8" style="color: black">
-                            <select name="room_type"  class="form-control" id="id_room_type" onchange="selectRoomType()"  required="">
-                              <option value="">--- select type ---</option>
-                              {% for room in room_types %}
-                                <option value="{{room.id}}">{{room.room_type}} ({{room.rooms_available}})</option>
-                              {% endfor %}
-                            </select>
+                            {{form.amount_paid}}
                           </div>
                         </div>
 
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
-                          <div class="col-sm-8">
-                            {{ form.hotel_name }}
-                          </div>
-                        </div>
 
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
-                          <div class="col-sm-8">
-                            {{ form.tottal_rent }}
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for=""> Date : </label>
-                          <div class="col-sm-4">
-                          Check IN:
-                          {{ form.checkin_date }}
-                          </div>
-                        <div class="col-sm-4">
-                          Check Out:
-                          {{ form.checkout_date }}
-                          </div>
-                        </div>
-                        <div class="col-sm-4">
-                          Validation:
-                          {{ form.errors }}
-                          </div>
                         <p id="notifications" style="color: red"></p>
                         <hr>
                         <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-8">
-                            <button type="submit" class="btn btn-default nuts-sub"> Confirm Booking</button>
+                            <button type="submit" class="btn btn-default nuts-sub"> Pay Now</button>
                           </div>
                         </div>
                       </form>

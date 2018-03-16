@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^register/success/(?P<pk>\d+)$',RegSuccessView.as_view(), name='invoice_view'),
     url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
     url(r'^update_hotel/(?P<pk>\d+)$',UpdateHotelView.as_view(), name='update_hotel_view'),
+    url(r'^update-reg-payment/(?P<pk>\d+)$',UpdateRegPaymentView.as_view(), name='update_reg_payment'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

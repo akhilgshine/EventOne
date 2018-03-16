@@ -135,7 +135,6 @@
           <thead>
             <tr>
               <th></th>
-              <th>Edit</th>
               <th>Name</th>
               <th>Phone number</th>
               <th>Registration code</th>
@@ -170,11 +169,7 @@
           {% for user in users  %}
           <tr>
             <td></td>
-            <td>
-              &nbsp <a href="/edit_user_registered/{{ user.id }}" title="update">
-                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>                
-              </a>
-            </td>  
+
             <td> 
               {{ user.event_user.first_name }} {{ user.event_user.last_name }}              
             </td>
@@ -182,7 +177,7 @@
             <td> {{ user.qrcode }} </td>
             <td> {{ user.table.table_name|cut:" " }}</td>
             <td> {{ user.event_user.email }}</td>
-            <td> {{ user.amount_paid }}</td>
+            <td> {{ user.amount_paid }}<a href="{% url 'update_reg_payment' user.id %}"> | Pay Now</a></td>
             <td> {{ user.event_status }} </td>
             <td> {{ user.created_date }} </td>
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->

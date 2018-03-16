@@ -62,3 +62,14 @@ class HotelForm(forms.ModelForm):
 
         self.fields['checkin_date'].widget.attrs['class'] = 'datepicker form-control'
         self.fields['checkout_date'].widget.attrs['class'] = 'datepicker form-control'
+
+
+class UpdatePaymentForm(forms.ModelForm):
+
+    class Meta:
+        model = RegisteredUsers
+        fields = ('amount_paid', )
+
+    def __init__(self, *args, **kwargs):
+        super(UpdatePaymentForm, self).__init__(*args, **kwargs)
+        self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
