@@ -588,3 +588,45 @@ class UserRegisterUpdate(TemplateView):
             message = "There is an issue with your registration. Please try again."
             messages.success(self.request, message)
             return HttpResponseRedirect(reverse('register_event'))
+
+
+class UpdateHotelView(FormView):
+    template_name = "update_hotel.html"
+    form_class = HotelForm
+    success_url = '/users/' 
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        pk = kwargs.pop('pk')
+        event_registered_user = RegisteredUsers.objects.get(id=pk)
+        
+        try:
+            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
+        except:
+            hotel_obj = ''
+
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('login'))
+        
+        context['form'] = HotelForm()
+        context['room_types'] = RoomType.objects.all()
+        context['hotel_obj'] = hotel_obj
+        return render(request, self.template_name, context)
+
+    def form_valid(self, form):
+        registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
+        checkin = form.cleaned_data['checkin_date']
+        checkout = form.cleaned_data['checkout_date']
+        checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
+        checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
+        try:            
+            hotel_obj = Hotels.objects.get(registered_users=registered_user_obj)
+        except Hotels.DoesNotExist :
+            hotel_obj = Hotels.objects.create(registered_users=registered_user_obj)
+        hotel_obj.hotel_name = form.cleaned_data['hotel_name']
+        hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
+        hotel_obj.checkin_date = checkin_date
+        hotel_obj.checkout_date = checkout_date
+        hotel_obj.save()
+
+        return HttpResponseRedirect(self.get_success_url())

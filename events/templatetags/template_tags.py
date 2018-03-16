@@ -5,6 +5,7 @@ register = template.Library()
 
 @register.filter
 def get_hotel_details(user_id):
+	print("\n Template Tag:- 'get_hotel_details' \n")
 	try:
 		user = RegisteredUsers.objects.get(id=user_id)
 		hotel = Hotels.objects.get(registered_users=user)

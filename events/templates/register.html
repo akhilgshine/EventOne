@@ -65,6 +65,15 @@
                       <form class="form-horizontal form-nuts">
                       <h3>Enter Details</h3>
                       <div class="form-group">
+                        <label class="control-label col-sm-4" for="email">Select Member Type :</label>
+                        <div class="col-sm-8">
+                            <select name=""  class="form-control" id="memberType">
+                                <option value="Tabular">Tabler</option>
+                                <option value="Square_Leg">Square Leg</option>
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Table :</label>
                         <div class="col-sm-8">
                             <select name=""  class="form-control" id="selectId">
@@ -79,11 +88,11 @@
                       </div>
                       </form>
 
-                      <div  id="detailForm" style="display: none;">
-                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
+                      <div id="detailForm" style="display: none;">
+                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
                          {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
-
+                        <input type="hidden" id="id_member_type" name="member_type">
                         <div class="form-group" id="other_table_div" style="color: #fff; display: none">
                           <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
                           <div class="col-sm-8">
@@ -132,6 +141,33 @@
                           <div class="col-sm-8">
                             <input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>
                           </div>
+                        </div>                        
+
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="">Registration Type : </label>
+                          
+                          <div class="col-sm-2" id="stag_type">
+                            <label>
+                              <input id="radio_status_2" value="stag"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
+                            </label>
+                          </div>
+                          <div class="col-sm-2" id="couple_type">
+                            <label>
+                                <input id="radio_status_1" value="couples" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
+                            </label>
+                          </div>
+                          
+                          <div class="col-sm-2" id="informal_stag_type">
+                            <label>
+                              <input id="radio_status_3" value="informal_stag" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Stag
+                            </label>
+                          </div>  
+                          <div class="col-sm-2" id="informal_couple_type">
+                            <label>
+                              <input id="radio_status_4" value="informal_couples"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Couples
+                            </label>
+                          </div>
+
                         </div>
 
                         <div class="form-group">
@@ -158,26 +194,7 @@
                                   <input id="radioId_3" type="radio" class="payment-mode" name="payment" > <span class="radio-change" value="card"></span> Card
                               </label>
                           </div>
-                        </div>
-
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="">Registration Type : </label>
-                          <div class="col-sm-2">
-                            <label>
-                                <input id="radio_status_1" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
-                            </label>
-                          </div>
-                          <div class="col-sm-2">
-                            <label>
-                              <input id="radio_status_2" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
-                            </label>
-                          </div>
-                          <div class="col-sm-2">
-                            <label>
-                              <input id="radio_status_3" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Not Mentioned
-                            </label>
-                          </div>
-                        </div>
+                        </div>                        
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="room_type">Room Type :</label>
@@ -384,6 +401,23 @@
     });
 
 
+    $('#memberType').on('change', function(e){
+      var memberType = $(this).val();
+      $('#id_member_type').val('memberType');
+      if(memberType == 'Square_Leg'){
+
+        $('#informal_stag_type').show();  
+        $('#informal_couple_type').show();
+      }
+      else{
+        $('#informal_stag_type').hide();  
+        $('#informal_couple_type').hide(); 
+      }
+      
+    });
+  
+
+
     $('#amount_added_id').on('change', function(){
       var amount_added = $('#amount_added_id').val()
       var amount_paid = $('#paid_ampount_id').val()
@@ -495,11 +529,14 @@
             $('#id_room_rent').val(tottal);
          }
     }
-    
+    $('#informal_stag_type').hide();  
+    $('#informal_couple_type').hide();   
     $("#checkIn").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
         defaultDate: new Date(Date.parse("2018-08-01")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
         onSelect: function(selected) {
           $("#checkOut").datepicker("option","minDate", selected)
           changeCheckinDate();
@@ -509,7 +546,9 @@
     $("#checkOut").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
-        defaultDate: new Date(Date.parse("2018-08-01")),
+        defaultDate: new Date(Date.parse("2018-08-04")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
     }); 
   </script>
 </body>

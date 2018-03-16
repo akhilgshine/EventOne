@@ -38,3 +38,25 @@ class EventRegisterForm(forms.Form):
     # 	initial='bank',
     # 	widget=RadioSelect(renderer=TabRadioRenderer),
     # 	choices=(('cash','Cash'),('paytm','PayTm'),('credit/debit','Credit/Debit')))
+
+
+class HotelForm(forms.ModelForm):
+    
+    checkin_date = forms.CharField(required=True)
+    checkout_date = forms.CharField(required=True)
+
+    class Meta:
+        model = Hotels
+        fields = ('room_type','hotel_name', 'tottal_rent')
+
+    def __init__(self, *args, **kwargs):
+        super(HotelForm, self).__init__(*args, **kwargs)
+        self.fields['room_type'].widget.attrs['class'] = 'form-control'
+        self.fields['hotel_name'].widget.attrs['placeholder'] = 'Hotel Name'
+        self.fields['hotel_name'].widget.attrs['class'] = 'form-control'
+        
+        self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
+        self.fields['tottal_rent'].widget.attrs['placeholder'] = 'tottal rent amount'
+        
+        self.fields['checkin_date'].widget.attrs['class'] = 'datepicker form-control'
+        self.fields['checkout_date'].widget.attrs['class'] = 'datepicker form-control'

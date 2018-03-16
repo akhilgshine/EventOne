@@ -197,7 +197,17 @@
                   update
                 </a>
             </td> -->
-            <td> {{ user.id| get_hotel_details }}</td>
+            <td> 
+              {% with user.id|get_hotel_details as hotel_detail %}
+                
+                {% if hotel_detail %}
+                  {{hotel_detail}}<br>
+                  <a href="/update_hotel/{{user.id}}"> Update Booking </a>
+                {% else %}
+                  <a href="/update_hotel/{{user.id}}"> Book Hotel </a>
+                {% endif %}
+                {% endwith %}
+            </td>
             <td> {{ user.id| get_hotel_rent }}</td>
             <td>{{ forloop.counter }}</td>
           </tr>

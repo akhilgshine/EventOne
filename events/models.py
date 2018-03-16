@@ -7,15 +7,18 @@ from django.utils.translation import ugettext_lazy as _
 STATUS_CHOICES = (
     ('Couple', _('Couple')),
     ('Stag', _('Stag')),
-    ('Not Mentioned', _('Not Mentioned')),
+    ('Couple_Informal', _('Couple Informal')),
+    ('Stag_Informal', _('Stag Informal')),
 )
-
 ROOM_CHOICES = (
     ('Single', _('Single')),
     ('Double', _('Double')),
     ('Deluxe', _('Deluxe')),
 )
-
+MEMBER_CHOICES = (
+    ('Tabular', _('Tabular')),
+    ('Square_Leg', _('Square Leg'))
+)
 
 class Event(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
@@ -39,6 +42,7 @@ class Table(models.Model):
 
 
 class EventUsers(models.Model):
+    member_type = models.CharField(choices=MEMBER_CHOICES, max_length=50, blank=True, null=True)
     table = models.ForeignKey(Table)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
@@ -61,6 +65,8 @@ class RegisteredUsers(models.Model):
     confirm_image = models.ImageField(upload_to='confirm_images/', blank=True)
     event_status = models.CharField(choices=STATUS_CHOICES, max_length=30, blank=True, null=True)
     balance_amount = models.IntegerField(blank=True, null=True)
+    reciept_number = models.CharField(blank=True, null=True, max_length=100)
+    reciept_file = models.FileField(blank=True, null=True, upload_to='reciepts')
 
     def __str__(self):
         return ("{}, {}").format(self.event_user.first_name, self.event_user.last_name)
