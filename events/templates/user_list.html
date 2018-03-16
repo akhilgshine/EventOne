@@ -141,7 +141,7 @@
               <th>Registration code</th>
               <th>Table</th>
               <th>Email</th>
-              <th>Paid Amount </th>
+              <th>Registration Fee </th>
               <th>Status </th>
               <th> Date </th>
               <th>Coupon</th>
@@ -198,15 +198,12 @@
                 </a>
             </td> -->
             <td> 
-              {% with user.id|get_hotel_details as hotel_detail %}
-                
-                {% if hotel_detail %}
-                  {{hotel_detail}}<br>
+                {% if user.hotel.all %}
+                  <br>
                   <a href="/update_hotel/{{user.id}}"> Update Booking </a>
                 {% else %}
                   <a href="/update_hotel/{{user.id}}"> Book Hotel </a>
                 {% endif %}
-                {% endwith %}
             </td>
             <td> {{ user.id| get_hotel_rent }}</td>
             <td>{{ forloop.counter }}</td>

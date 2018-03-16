@@ -108,7 +108,7 @@
                         <hr>
                         <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-8">
-                            <button type="submit" class="btn btn-default nuts-sub"> Confirm Register </button>
+                            <button type="submit" class="btn btn-default nuts-sub"> Confirm Booking</button>
                           </div>
                         </div>
                       </form>
@@ -160,10 +160,8 @@
     function selectRoomType(){
       var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
       var value = $('#id_room_type').val();
-
       $('#id_tottal_rent').val('');
       $('#id_tottal_rent').val(room_rates[+value-1]);
-
       selected_rent = room_rates[+value-1];
 
       $('#id_hotel_name').val('Hotel Raviz Kollam');
@@ -215,15 +213,20 @@
             }
          else{
             var rent = $('#id_tottal_rent').val();
-            var tottal = diffDays*one_day_rent;
-
+            if(one_day_rent)
+                var tottal = diffDays * one_day_rent;
+            else
+                var tottal = rent;
             $('#id_tottal_rent').val(tottal);
          }
+         // alert(tottal)
     }
-    
+
     $("#id_checkin_date").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
         defaultDate: new Date(Date.parse("2018-08-01")),
         onSelect: function(selected) {
           $("#id_checkout_date").datepicker("option","minDate", selected)
@@ -234,6 +237,8 @@
     $("#id_checkout_date").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
         defaultDate: new Date(Date.parse("2018-08-01")),
     });
 
@@ -242,8 +247,8 @@
       $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
       $("#id_tottal_rent").val('{{hotel_obj.tottal_rent}}');
       $('#id_room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
-      $("#id_checkin_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
-      $("#id_checkout_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+      $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+      $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
     {% endif %}
 
   </script>

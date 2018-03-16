@@ -136,49 +136,49 @@
                         </div>
                         {% endif %}
 
-                        <div class="form-group" id="balance_div" style="display: none;">
-                          <label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>
-                          <div class="col-sm-8">
-                            <input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>
-                          </div>
-                        </div>                        
+                        <!--<div class="form-group" id="balance_div" style="display: none;">-->
+                          <!--<label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>-->
+                          <!--<div class="col-sm-8">-->
+                            <!--<input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>-->
+                          <!--</div>-->
+                        <!--</div>                        -->
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="">Registration Type : </label>
                           
                           <div class="col-sm-2" id="stag_type">
                             <label>
-                              <input id="radio_status_2" value="stag"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
+                              <input id="radio_status_2" value="Stag"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
                             </label>
                           </div>
                           <div class="col-sm-2" id="couple_type">
                             <label>
-                                <input id="radio_status_1" value="couples" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
+                                <input id="radio_status_1" value="Couple" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
                             </label>
                           </div>
                           
                           <div class="col-sm-2" id="informal_stag_type">
                             <label>
-                              <input id="radio_status_3" value="informal_stag" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Stag
+                              <input id="radio_status_3" value="Stag_Informal" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Stag
                             </label>
                           </div>  
                           <div class="col-sm-2" id="informal_couple_type">
                             <label>
-                              <input id="radio_status_4" value="informal_couples"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Couples
+                              <input id="radio_status_4" value="Couple_Informal"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Couples
                             </label>
                           </div>
 
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_amount_paid">Amount to be added : </label>
+                          <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
                           <div class="col-sm-8">
-                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
+                            <input type="number" readonly class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="pwd">Mode Of Payment :</label>
+                          <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                           <div class="col-sm-2">
                               <label>
                                   <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
@@ -195,7 +195,18 @@
                               </label>
                           </div>
                         </div>                        
-
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" id="id_reciept_number" placeholder="Receipt number" name="reciept_number">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
+                          <div class="col-sm-8">
+                              <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt" name="reciept_file">
+                          </div>
+                        </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                           <div class="col-sm-8">
@@ -238,6 +249,18 @@
                           </div>
                         </div>
 
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_room_rent"> Total Amount :</label>
+                          <div class="col-sm-8">
+                            <h4>
+                                Registration Amount: <span id="reg_amount_final">0</span><br>
+                                Hotel Booking Amount: <span id="hotel_amount_final">0</span><br>
+                                Total Amount: <span id="total_amount_final"></span><br>
+                            </h4>
+                          </div>
+                        </div>
+
+
                         <p id="notifications" style="color: red"></p>
                         <hr>
                         <div class="form-group">
@@ -275,9 +298,11 @@
         $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
         $('#id_email').val('{{event_registered_user.event_user.email}}')
         $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
+        $('#reg_amount_final').html('{{event_registered_user.amount_paid}}')
 
         {% if hotel_obj %}
           $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
+          $("#hotel_amount_final").html('{{hotel_obj.tottal_rent}}');
           $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
           $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
           $("#checkOut").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
@@ -309,6 +334,28 @@
 
       {%endif%}
 
+      function calcalateTotal(){
+            $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()));
+      }
+        function getAmount(member_type, status){
+            if(member_type == 'Tabular'){
+                if(status == 'Stag')
+                    return 5000;
+                else if(status == 'Couple')
+                    return 6000;
+            }
+            else{
+                if(status == 'Stag')
+                    return 4000;
+                else if(status == 'Couple')
+                    return 5000;
+                else if(status == 'Stag_Informal')
+                    return 2500;
+                else if(status == 'Couple_Informal')
+                    return 3500;
+            }
+            return 0;
+        }
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
       $("#id_hotel_name").val('');
@@ -342,7 +389,7 @@
             url: '/get_user_data/',
             type:'GET',
             data:{
-              'username': input,
+              'user_id': input,
               'selected_table': selected_table,
               'new_table': new_table,
             },
@@ -356,11 +403,28 @@
                 if (data.user_exist == 'true'){
                   // $("#paid_ampount_id").val(data.balance);
                   $("#balance_div").show();
+                  var amount = getAmount(memberType, status);
+                  $('#amount_added_id').val(data.paid_amount);
+                  $('#reg_amount_final').html(data.paid_amount);
                   $("#paid_ampount_id").val(data.paid_amount);
                   $("#id_hotel_name").val(data.hotel_name);
                   $("#id_room_rent").val(data.tottal_rent);
                   $("#room_type").val(data.hotel_type);
+                  $('#checkIn').datepicker('setDate', data.checkin_date);
+                  $('#checkOut').datepicker('setDate', data.checkout_date);
 
+                  if ( data.status == 'Couple'){
+                    $("#radio_status_1").prop("checked", true);
+                  }
+                  else if (data.status == 'Stag'){
+                    $("#radio_status_2").prop("checked", true);
+                  }
+                  else if (data.status == 'Couple_Informal'){
+                    $("#radio_status_4").prop("checked", true);
+                  }
+                  else{
+                    $("#radio_status_3").prop("checked", true);
+                  }
                   $('#room_type option[value="'+data.room_type_id+'"]').attr('selected','selected');
                   if ( data.book_friday == true ){
                     $('#bookFriday').prop('checked',true)
@@ -374,16 +438,6 @@
                   }
                   else{
                     $("#radioId_3").prop("checked", true);
-                  }
-
-                  if ( data.paid_amount >= 6000){
-                    $("#radio_status_1").prop("checked", true);
-                  }
-                  else if (data.paid_amount >= 5000){
-                    $("#radio_status_2").prop("checked", true);
-                  }
-                  else{
-                    $("#radio_status_3").prop("checked", true);
                   }
                 }
                 else{
@@ -403,7 +457,7 @@
 
     $('#memberType').on('change', function(e){
       var memberType = $(this).val();
-      $('#id_member_type').val('memberType');
+      $('#id_member_type').val(memberType);
       if(memberType == 'Square_Leg'){
 
         $('#informal_stag_type').show();  
@@ -413,26 +467,39 @@
         $('#informal_stag_type').hide();  
         $('#informal_couple_type').hide(); 
       }
-      
+      var amount = getAmount(memberType, status);
+      $('#amount_added_id').val(amount);
+      $('#reg_amount_final').html(amount);
+      calcalateTotal();
     });
-  
 
+  $('input[type=radio][name=status]').on('change', function(e){
+      var memberType = $('#memberType').val();
+      status = $(this).val();
+      var amount = getAmount(memberType, status);
+      $('#amount_added_id').val(amount);
+      $('#reg_amount_final').html(amount);
+      calcalateTotal();
 
-    $('#amount_added_id').on('change', function(){
-      var amount_added = $('#amount_added_id').val()
-      var amount_paid = $('#paid_ampount_id').val()
-      var total_amount = +amount_added +  +amount_paid;
-
-      if ( total_amount >= 6000){
-        $("#radio_status_1").prop("checked", true);
-      }
-      else if (total_amount >= 5000){
-        $("#radio_status_2").prop("checked", true);
-      }
-      else{
-        $("#radio_status_3").prop("checked", true);
-      }
     });
+
+
+
+    // $('#amount_added_id').on('change', function(){
+    //   var amount_added = $('#amount_added_id').val()
+    //   var amount_paid = $('#paid_ampount_id').val()
+    //   var total_amount = +amount_added +  +amount_paid;
+    //
+    //   if ( total_amount >= 6000){
+    //     $("#radio_status_1").prop("checked", true);
+    //   }
+    //   else if (total_amount >= 5000){
+    //     $("#radio_status_2").prop("checked", true);
+    //   }
+    //   else{
+    //     $("#radio_status_3").prop("checked", true);
+    //   }
+    // });
 
     $("#DetailForm").submit(function(){
       if($('input[name=payment]:checked').length<=0)
@@ -481,10 +548,16 @@
       var checkin = $('#checkIn').val();
         var checkout = $('#checkOut').val();
         if (checkin != '' && checkout != ''){
-            calculate_rent(rent);
+            rent = calculate_rent(rent);
+
         }
+        $('#hotel_amount_final').html(rent);
+        $('#id_room_rent').val(rent);
+        calcalateTotal();
+
+
     }
-    
+
     $("#checkOut").change(function(){
         console.log("OnChange checkOut");
         var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
@@ -493,7 +566,10 @@
         var checkin = $('#checkIn').val();
         var checkout = $('#checkOut').val();
         if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
+            var rent = calculate_rent(selected_rent);
+            $('#id_room_rent').val(rent);
+            $('#hotel_amount_final').html(rent);
+            calcalateTotal();
         }
     });
 
@@ -505,31 +581,34 @@
         var checkin = $('#checkIn').val();
         var checkout = $('#checkOut').val();
         if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
+            var rent = calculate_rent(selected_rent);
+            $('#id_room_rent').val(rent);
+            $('#hotel_amount_final').html(rent);
+            calcalateTotal();
         }
+
     };
 
     function calculate_rent(one_day_rent){
-        console.log('one_day_rent', one_day_rent)
          checkInDate=$('#checkIn').val().split('/')[0]
          checkOutDate=$('#checkOut').val().split('/')[0]
-         console.log('outdate',checkInDate)
+         var rent = 0;
          diffDays = checkOutDate-checkInDate;
-         console.log('indate',$('#checkIn').val())
-         console.log('outdate',checkOutDate)
-         console.log('dayss',diffDays);
          if(diffDays == 0 || diffDays == 1){
-                var one_day_rent = one_day_rent;
-                $('#id_room_rent').val(one_day_rent);
-            }
+            var one_day_rent = one_day_rent;
+            $('#id_room_rent').val(one_day_rent);
+            rent = one_day_rent;
+        }
          else{
             var rent = $('#id_room_rent').val();
             var tottal = diffDays*one_day_rent;
-
-            $('#id_room_rent').val(tottal);
+            rent = tottal;
          }
+      return rent;
     }
-    $('#informal_stag_type').hide();  
+    var status, memberType;
+    calcalateTotal();
+    $('#informal_stag_type').hide();
     $('#informal_couple_type').hide();   
     $("#checkIn").datepicker({
         dateFormat: 'dd/mm/yy',
