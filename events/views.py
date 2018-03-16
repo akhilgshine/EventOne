@@ -375,9 +375,12 @@ class GetUserData(TemplateView):
         try:
             user = EventUsers.objects.get(id=user_id)
         except EventUsers.DoesNotExist:
-            data['success'] = "False"
-            data['error_msg'] = "something went WRONG"
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            try:
+                user = EventUsers.objects.get(user_id.split(' ')[0], user_id.split(' ')[1])
+            except EventUsers.DoesNotExist:
+                data['success'] = "False"
+                data['error_msg'] = "something went WRONG"
+                return HttpResponse(json.dumps(data), content_type='application/json')
 
         try:
             registered_user = RegisteredUsers.objects.get(event_user=user, table=table)

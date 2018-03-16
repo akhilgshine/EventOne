@@ -147,7 +147,7 @@
               <th>Coupon</th>
               <th>Hotel</th>
               <th>Hotel Rent</th>
-              <th>Order</th>
+              <th>Total Paid amount</th>
             </tr>
           </thead>
           <!-- <tfoot>
@@ -206,7 +206,7 @@
                 {% endif %}
             </td>
             <td> {{ user.id| get_hotel_rent }}</td>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ user.total_paid }}</td>
           </tr>
           {% endfor %}
           </tbody>

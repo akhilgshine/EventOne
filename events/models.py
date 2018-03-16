@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
@@ -70,6 +71,14 @@ class RegisteredUsers(models.Model):
 
     def __str__(self):
         return ("{}, {}").format(self.event_user.first_name, self.event_user.last_name)
+
+    @property
+    def total_paid(self):
+        rent = 0
+        if self.hotel.all():
+            rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]
+        return self.amount_paid + rent
+
 
 
 class PaymentDetails(models.Model):
