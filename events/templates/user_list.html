@@ -303,13 +303,12 @@
       $('#sortTable').on('change', function(){
         var table = $('#user_lists').DataTable();
         var selected_table = $("#sortTable option:selected").val();
-        
         if(selected_table == 'all'){
           location.reload();
         }
-        else{        
+        else{
           regExSearch ='"'+selected_table+'"';
-          table.column(5).search(regExSearch).draw();
+          table.column(4).search(regExSearch).draw();
         }
       });
   </script>
