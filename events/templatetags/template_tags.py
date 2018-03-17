@@ -24,6 +24,32 @@ def get_hotel_rent(user_id):
     except:
         return ''
 
+@register.filter
+def no_of_night(user_id):
+    try:
+        user = RegisteredUsers.objects.get(id=user_id)
+        hotel = Hotels.objects.get(registered_users=user)
+        nights = hotel.checkout_date - hotel.checkin_date
+        return nights.days
+    except:
+        return 0
+
+@register.filter
+def payment_status(user_id):
+    user = RegisteredUsers.objects.get(id=user_id)
+    if user.event_user.member_type == 'Square Leg':
+        if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+            return 'Partial'
+        elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+            return 'Partial'
+        else:
+            return 'Completely Paid'
+    else:
+        if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+            return 'Partial'
+        else:
+            return 'Completely Paid'
+
 # @register.filter
 # def get_booked_date(user_id):
 # 	try:
