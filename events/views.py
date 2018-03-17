@@ -385,11 +385,15 @@ class GetUserData(TemplateView):
         try:
             registered_user = RegisteredUsers.objects.get(event_user=user, table=table)
             # data['balance'] = int(registered_user.balance_amount)
+            message = "This user is already registered for this event. Please see the details here."
+            messages.success(self.request, message)
 
             data['paid_amount'] = registered_user.amount_paid
             data['payment_type'] = registered_user.payment
             data['user_exist'] = 'true'
             data['status'] = registered_user.event_status
+            #return HttpResponseRedirect(reverse('list_users'))
+
         except (RegisteredUsers.DoesNotExist):
             print("user not exist")
             data['user_exist'] = 'false'

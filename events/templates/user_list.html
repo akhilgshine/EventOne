@@ -85,7 +85,20 @@
         <div class="col-sm-4">
         </div>
       </div>
-    </div><br> 
+    </div><br>
+    {% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="message alert alert-success message"  style="display: none;">
+          <a class="close" data-dismiss="alert" href="#">&times;</a>
+
+          </div>
+    {% endif %}
 
 
     <div class="container-fluid">
