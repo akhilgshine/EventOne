@@ -403,6 +403,9 @@
                 $("#id_last_name").val(data.last_name);
 
                 if (data.user_exist == 'true'){
+                    alert('This already registered for this event. Please see the details');
+                    window.location.href = '/users/'
+
                   // $("#paid_ampount_id").val(data.balance);
                   $("#balance_div").show();
                   var amount = getAmount(memberType, status);

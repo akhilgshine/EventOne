@@ -81,6 +81,30 @@ class RegisteredUsers(models.Model):
             rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]
         return self.amount_paid + rent
 
+    @property
+    def hotel_name(self):
+        if self.hotel.all():
+            hotel = self.hotel.all()[0].hotel_name
+        return hotel
+
+    @property
+    def hotel_room_type(self):
+        if self.hotel.all():
+            room_type = self.hotel.all()[0].room_type
+            return room_type
+
+    @property
+    def checkin_date(self):
+        if self.hotel.all():
+            checkin_date = self.hotel.all()[0].checkin_date
+            return checkin_date
+
+    @property
+    def checkout_date(self):
+        if self.hotel.all():
+            checkout_date = self.hotel.all()[0].checkout_date
+            return checkout_date
+
 
 
 class PaymentDetails(models.Model):
@@ -99,15 +123,17 @@ class RoomType(models.Model):
 
 
 class Hotels(models.Model):
-	registered_users = models.ForeignKey(RegisteredUsers,null=True,related_name='hotel')
-	hotel_name = models.CharField(max_length=50,null=True)
-	room_number = models.CharField(max_length=20,null=True)
-	tottal_rent = models.IntegerField(blank=True, null=True)	
-	# room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
-	book_friday = models.BooleanField(default=False)
-	room_type = models.ForeignKey(RoomType,null=True,blank=True)
-	checkin_date = models.DateTimeField(null=True, blank=True)
-	checkout_date = models.DateTimeField(null=True, blank=True)
-	
-	def __str__(self):
-		return self.hotel_name
+    registered_users = models.ForeignKey(RegisteredUsers,null=True,related_name='hotel')
+    hotel_name = models.CharField(max_length=50,null=True)
+    room_number = models.CharField(max_length=20,null=True)
+    tottal_rent = models.IntegerField(blank=True, null=True)
+    # room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
+    book_friday = models.BooleanField(default=False)
+    room_type = models.ForeignKey(RoomType,null=True,blank=True)
+    checkin_date = models.DateTimeField(null=True, blank=True)
+    checkout_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.hotel_name
+
+

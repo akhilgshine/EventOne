@@ -85,7 +85,20 @@
         <div class="col-sm-4">
         </div>
       </div>
-    </div><br> 
+    </div><br>
+    {% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="message alert alert-success message"  style="display: none;">
+          <a class="close" data-dismiss="alert" href="#">&times;</a>
+
+          </div>
+    {% endif %}
 
 
     <div class="container-fluid">
@@ -140,11 +153,18 @@
               <th>Registration code</th>
               <th>Table</th>
               <th>Email</th>
-              <th>Registration Fee </th>
               <th>Status </th>
-              <th> Date </th>
+              <th>Payment Status</th>
+
+              <th>Registration Fee </th>
+              <th>Registration Date </th>
               <th>Coupon</th>
               <th>Hotel</th>
+              <th>Room Type</th>
+              <th>Checkin Date</th>
+              <th>Checkout Date</th>
+              <th>No of nights</th>
+
               <th>Hotel Rent</th>
               <th>Total Paid amount</th>
             </tr>
@@ -177,9 +197,10 @@
             <td> {{ user.qrcode }} </td>
             <td> {{ user.table.table_name|cut:" " }}</td>
             <td> {{ user.event_user.email }}</td>
-            <td> {{ user.amount_paid }}<a href="{% url 'update_reg_payment' user.id %}"> | Pay Now</a></td>
             <td> {{ user.event_status }} </td>
-            <td> {{ user.created_date }} </td>
+            <th> {{ user.id|payment_status}}</th>
+            <td> {{ user.amount_paid }}<a href="{% url 'update_reg_payment' user.id %}"> | Pay Now</a></td>
+            <td> {{ user.created_date|date }} </td>
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->
             <td>  
                 <a style="" href="/invoice/{{ user.id }}" title="view">
@@ -194,12 +215,32 @@
             </td> -->
             <td> 
                 {% if user.hotel.all %}
+
+              {{user.hotel_name}}
                   <br>
                   <a href="/update_hotel/{{user.id}}"> Update Booking </a>
                 {% else %}
                   <a href="/update_hotel/{{user.id}}"> Book Hotel </a>
                 {% endif %}
             </td>
+            <td>
+              {% if user.hotel.all %}
+                {{user.hotel_room_type}}
+              {% endif %}
+            </td>
+           <td>
+              {% if user.hotel.all %}
+                {{user.checkin_date|date}}
+              {% endif %}
+            </td>
+             <td>
+              {% if user.hotel.all %}
+                {{user.checkout_date|date}}
+              {% endif %}
+            </td>
+
+            <td>{{ user.id |no_of_night }}</td>
+
             <td> {{ user.id| get_hotel_rent }}</td>
             <td>{{ user.total_paid }}</td>
           </tr>
@@ -262,13 +303,12 @@
       $('#sortTable').on('change', function(){
         var table = $('#user_lists').DataTable();
         var selected_table = $("#sortTable option:selected").val();
-        
         if(selected_table == 'all'){
           location.reload();
         }
-        else{        
+        else{
           regExSearch ='"'+selected_table+'"';
-          table.column(5).search(regExSearch).draw();
+          table.column(4).search(regExSearch).draw();
         }
       });
   </script>
