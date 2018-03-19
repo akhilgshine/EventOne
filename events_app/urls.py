@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^update-reg-payment/(?P<pk>\d+)$',UpdateRegPaymentView.as_view(), name='update_reg_payment'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
