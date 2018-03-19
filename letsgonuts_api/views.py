@@ -102,6 +102,7 @@ class RegisterEventViewSet(ModelViewSet):
             event_user.last_name = serializer.validated_data.pop('last_name')
             event_user.mobile = serializer.validated_data.pop('mobile')
             event_user.email = serializer.validated_data.pop('email')
+            event_user.member_type = serializer.validated_data.pop('registration_type')
             room_type = serializer.validated_data.pop('room_type')
             hotel_name = serializer.validated_data.pop('hotel_name')
             tottal_rent = serializer.validated_data.pop('tottal_rent')

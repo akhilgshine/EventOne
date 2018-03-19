@@ -18,7 +18,17 @@ from import_export.admin import ImportExportModelAdmin
 # Register your models here.
 admin.site.register(Event)
 admin.site.register(Table)
-admin.site.register(RegisteredUsers)
+
+class RegsiteredUserAdmin(admin.ModelAdmin):
+
+    readonly_fields = ['get_total_paid']
+    def get_total_paid(self,obj,*args,**kwargs):
+        return str(obj.total_paid)
+    class Meta:
+        model = RegisteredUsers
+
+
+admin.site.register(RegisteredUsers,RegsiteredUserAdmin)
 admin.site.register(EventUsers)
 admin.site.register(Hotels)
 admin.site.register(RoomType)
