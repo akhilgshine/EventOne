@@ -36,6 +36,7 @@
     <div class="overlay-content">
       <a href="/">Home</a>
       <a href="/users/">Registered Users</a>
+      <a href="{% url 'dash_board' %}">DashBoard</a>
       <a href="/logout/">Logout</a>
     </div>
   </div>
@@ -633,6 +634,7 @@
         defaultDate: new Date(Date.parse("2018-08-04")),
         minDate: new Date(Date.parse("2018-08-03")),
         maxDate: new Date(Date.parse("2018-08-05")),
+
     }); 
   </script>
 </body>
