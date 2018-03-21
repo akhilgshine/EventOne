@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load template_tags %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Lets Go Nuts - QRT 85</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"  rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    
+    <!-- Custom css style -->
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
+
+<style>
+
+    .datepicker{
+        color:red;
+    }
+
+</style>
+</head>
+
+<body id="page-top">
+    <div id="myNav" class="overlay">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <div class="overlay-content">
+        <a href="/">Home</a>
+        <a href="/users/">Registered Users</a>
+        <a href="/logout/">Logout</a>
+      </div>
+    </div>
+    <div class="container-fluid wrap-nuts register">
+        {% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="message alert alert-success message"  style="display: none;">
+          <a class="close" data-dismiss="alert" href="#">&times;</a>
+
+          </div>
+        {% endif %}
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="logo-wrap">
+                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
+                </div>
+                <div class="col-sm-12 wrap-form-submit">                    
+                      <div  id="hotelForm">
+                      <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="amount_paid">Member Type : 
+                          </label>
+                          <div class="col-sm-8" style="color: #fff;">
+                            {{ object.event_user.member_type|replace_ }}  
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="amount_paid">Current Status : 
+                          </label>
+                          <div class="col-sm-8" style="color: #fff;">
+                            {{ object.event_status|replace_}}  
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="amount_paid">Paid Amount : 
+                          </label>
+                          <div class="col-sm-8" style="color: #fff;">
+                            {{ object.amount_paid}}  
+                          </div>
+                        </div>
+                        
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="">Upgrade Registration Type : </label>
+                          
+                          <div class="col-sm-2" id="stag_type" style="display: none;">
+                            <label>
+                              <input id="radio_status_2" value="Stag"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag
+                            </label>
+                          </div>
+                          <div class="col-sm-2" id="couple_type">
+                            <label>
+                                <input id="radio_status_1" value="Couple" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples
+                            </label>
+                          </div>
+                          
+                          <!-- <div class="col-sm-2" id="informal_stag_type">
+                            <label>
+                              <input id="radio_status_3" value="Stag_Informal" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Stag
+                            </label>
+                          </div>   -->
+                          <div class="col-sm-3" id="informal_couple_type">
+                            <label>
+                              <input id="radio_status_4" value="Couple_Informal"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Informal Couples
+                            </label>
+                          </div>
+                        </div>                  
+                    
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="amount_paid">Amount to Upgrade : 
+                          </label>
+                          <div class="col-sm-8" style="color: black">
+                            {{form.amount_to_upgrade}}  
+                          </div>
+                        </div>
+
+                        <p id="notifications" style="color: red"></p>
+                        <hr>
+                        <div class="form-group">
+                          <div class="col-sm-offset-4 col-sm-4">
+                            <button type="submit" class="btn btn-default nuts-sub"> UPDATE </button>
+                          </div>                          
+                          <div class="col-sm-4">
+                            <a href="/users/">
+                              <button type="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
+                            </a>
+                          </div> 
+                        </div>
+                      </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- jQuery -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css" >
+
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+
+    <script type="text/javascript" >
+
+    function openNav() {
+      document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+      document.getElementById("myNav").style.height = "0%";
+    }
+
+    var $radios = $('input:radio[name=status]');
+    $radios.filter("[value='{{object.event_status}}']").prop('checked', true);
+
+    $('input[type=radio][name=status]').on('change', function(e){
+      var memberType = '{{ object.event_user.member_type }}';
+      status = $(this).val();
+      var amount = getAmount(memberType, status);
+      var amount_paid = {{ object.amount_paid }}
+      $('#id_amount_to_upgrade').val(+amount-amount_paid);
+      // calcalateTotal();
+
+    });
+
+  function getAmount(member_type, status){
+      if(member_type == 'Tabular'){
+          if(status == 'Stag')
+              return 5000;
+          else if(status == 'Couple')
+              return 6000;
+      }
+      else{
+          if(status == 'Stag')
+              return 4000;
+          else if(status == 'Couple')
+              return 5000;
+          else if(status == 'Stag_Informal')
+              return 2500;
+          else if(status == 'Couple_Informal')
+              return 3500;
+      }
+      return 0;
+  }
+  
+  $(document).ready(function(){
+    var memberType = '{{ object.event_user.member_type }}';
+    var event_status = '{{ object.event_status }}';
+
+    // $('#id_member_type').val(memberType);
+    // alert(memberType)
+    if( memberType == 'Square_Leg'){
+      if( event_status == 'Stag'){
+        $('#informal_couple_type').hide();
+      }else{
+        $('#informal_couple_type').show();
+      }
+      if( event_status == 'Stag_Informal'){
+        $('#stag_type').show();
+      }
+    }
+    else{
+      $('#informal_couple_type').hide();  
+    }
+    // var amount = getAmount(memberType, status);
+    // $('#id_amount_paid').val(amount);
+    // $('#reg_amount_final').html(amount);
+    // calcalateTotal();
+  });
+
+  </script>
+</body>
+
+</html>

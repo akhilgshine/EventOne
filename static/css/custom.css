@@ -341,6 +341,26 @@
   padding: 10px 30px;
 }
 
+.nuts-sub-hotel-confirm{
+  background: #00baff;
+  border:0px;
+  border-radius: 0px;
+  color:#fff;
+  font-weight: bold;
+  min-width: 276px;
+  padding: 10px 30px;
+}
+
+.nuts-sub-hotel-cancel{
+  /*background: #00baff;*/
+  border:0px;
+  border-radius: 0px;
+  /*color:#fff;*/
+  font-weight: bold;
+  min-width: 276px;
+  padding: 10px 30px;
+}
+
 .form-nuts label.control-label{
   text-align: left;
 }

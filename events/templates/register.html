@@ -179,19 +179,19 @@
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
-                          <div class="col-sm-2">
+                          <!-- <div class="col-sm-2">
                               <label>
                                   <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
                               </label>
-                          </div>
+                          </div> -->
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="paytm"> <span class="radio-change"></span> Paytm
+                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"> <span class="radio-change"></span> POS
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_3" type="radio" class="payment-mode" name="payment" > <span class="radio-change" value="card"></span> Card
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" > <span class="radio-change" value="card"></span> Card
                               </label>
                           </div>
                         </div>                        
@@ -358,6 +358,7 @@
             }
             return 0;
         }
+        
       $('#selectId').on('change', function(){
       selected_id = $("#selectId option:selected").val();
       $("#id_hotel_name").val('');

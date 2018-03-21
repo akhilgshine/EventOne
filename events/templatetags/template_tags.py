@@ -24,6 +24,7 @@ def get_hotel_rent(user_id):
     except:
         return ''
 
+
 @register.filter
 def no_of_night(user_id):
     try:
@@ -33,6 +34,7 @@ def no_of_night(user_id):
         return nights.days
     except:
         return 0
+
 
 @register.filter
 def payment_status(user_id):
@@ -49,6 +51,22 @@ def payment_status(user_id):
             return 'Partial'
         else:
             return 'Completely Paid'
+
+
+@register.filter
+def check_event_status(user_id):
+    try:
+        # user = RegisteredUsers.objects.get(id=user_id)
+        # hotel = Hotels.objects.get(registered_users=user)
+        # nights = hotel.checkout_date - hotel.checkin_date
+        return True
+    except:
+        return False
+
+
+@register.filter
+def replace_(value):
+    return value.replace("_"," ")
 
 # @register.filter
 # def get_booked_date(user_id):

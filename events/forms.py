@@ -73,3 +73,17 @@ class UpdatePaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UpdatePaymentForm, self).__init__(*args, **kwargs)
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
+
+
+class UpgradeStatusForm(forms.ModelForm):
+    amount_to_upgrade = forms.IntegerField(required=True)
+
+    class Meta:
+        model = RegisteredUsers
+        fields = ('amount_paid', 'event_status')
+
+    def __init__(self, *args, **kwargs):
+        super(UpgradeStatusForm, self).__init__(*args, **kwargs)
+        self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
+        self.fields['event_status'].widget.attrs['class'] = 'form-control'
+        self.fields['amount_to_upgrade'].widget.attrs['class'] = 'form-control'

@@ -197,9 +197,22 @@
             <td> {{ user.qrcode }} </td>
             <td> {{ user.table.table_name|cut:" " }}</td>
             <td> {{ user.event_user.email }}</td>
-            <td> {{ user.event_status }} </td>
+            <td> 
+            <!-- |replace_ -->
+            {{ user.event_status }} 
+            {% if not user.event_status == 'Couple' %}
+              {% if not user.event_status == 'Couple_Informal' %}
+                <a href="{% url 'upgrade_reg_status' user.id %}" >
+                  Upgrade
+                </a>
+              {% endif %}
+            {% endif %}
+            </td>
             <th> {{ user.id|payment_status}}</th>
-            <td> {{ user.amount_paid }}<a href="{% url 'update_reg_payment' user.id %}"> | Pay Now</a></td>
+            <td> {{ user.amount_paid }}&nbsp|&nbsp
+              {% if not user.event_status == 'Couple' or user.event_status == 'Couple_Informal' %}
+                <a href="{% url 'update_reg_payment' user.id %}">Contribute Extra </a></td>
+              {% endif %}
             <td> {{ user.created_date|date }} </td>
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->
             <td>  
@@ -216,7 +229,7 @@
             <td> 
                 {% if user.hotel.all %}
 
-              {{user.hotel_name}}
+                {{user.hotel_name}}
                   <br>
                   <a href="/update_hotel/{{user.id}}"> Update Booking </a>
                 {% else %}
@@ -235,7 +248,7 @@
             </td>
              <td>
               {% if user.hotel.all %}
-                {{user.checkout_date|date}}
+                {{ user.checkout_date|date }}
               {% endif %}
             </td>
 

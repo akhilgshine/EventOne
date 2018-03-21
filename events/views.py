@@ -678,3 +678,27 @@ class UpdateRegPaymentView(UpdateView):
 
     def form_invalid(self, form):
         return super(UpdateRegPaymentView, self).form_invalid()
+
+
+class UpgradeStatusView(UpdateView):
+    template_name = 'upgrade_status.html'
+    form_class = UpgradeStatusForm
+    success_url = '/users'
+    queryset = RegisteredUsers.objects.all()
+
+    def get_initial(self):
+        initial = super(UpgradeStatusView, self).get_initial()
+        return initial
+
+    def form_valid(self, form):
+        obj = self.get_object()
+        current = obj.amount_paid
+        obj = form.save(commit=False)
+        if self.request.POST.get('status'):
+            obj.event_status = self.request.POST.get('status')
+        obj.amount_paid = current+ form.cleaned_data.get('amount_to_upgrade')
+        obj.save()
+        return super(UpgradeStatusView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(UpgradeStatusView, self).form_invalid()
