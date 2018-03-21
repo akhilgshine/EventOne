@@ -68,7 +68,7 @@ def check_event_status(user_id):
 def replace_(value):
     return value.replace("_"," ")
 
-
+@register.filter
 def completly_paid_count(count):
     users = RegisteredUsers.objects.all()
     count = 0
