@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 from events.models import *
+
+from .templatetags import *
 from import_export.admin import ImportExportModelAdmin
 
 # class EventUsersAdmin(ImportExportModelAdmin):

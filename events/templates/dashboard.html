@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html>
+{% load static %}
+{% load template_tags %}
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lets Go Nuts - QRT 85</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/user_list.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/data-table-responsive.css' %}" rel="stylesheet" type="text/css">
+    <style type="text/css" class="init">
+    </style>
+
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
+    </script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js">
+    </script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
+    </script>
+
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <style>
+        body {
+            background: url('/static/images/bg-pink-dark.jpg') repeat-y;
+            /*min-height: 100%;*/
+            padding: 1%
+        }
+        .user_list_inputs{
+            margin-top: 10px;
+        }
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background : none;
+        }
+
+        .box {    background: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 14px;
+}
+
+        .box h2 {    margin-top: 6px; color: #595d98; font-size: 18px;}
+
+        .box h1 {margin-top: 0px;
+            font-weight: bold;
+        font-size: 20px
+        }
+        .box h4 span {color: #31bf33;}
+    </style>
+</head>
+<body id="page-top">
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+        <a href="/">Home</a>
+        <a href="/users/">Registered Users</a>
+        <a href="/register/">Register Event </a>
+        <a href="{% url 'dash_board' %}">DashBoard </a>
+        <a href="/logout/">Logout</a>
+    </div>
+</div>
+
+<div class="wraper-user_list" style="margin-bottom: 1%;">
+
+    <div class="container-fluid bg-3 text-center">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()" style="width: 110px;">
+            </div>
+            <div class="col-sm-2" >
+                <div class="container text-center">
+                    <h2 style="color: #fff;">DashBoard</h2>
+                </div>
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
+            </div>
+        </div>
+    </div><br>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-user" aria-hidden="true"></i> Registered users</h2>
+                <h1>{{registered_user.count}}</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-bed" aria-hidden="true"></i> Hotel Rooms Booked Users </h2>
+                <h1>{{hotels_booked.count}}</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-user" aria-hidden="true"></i> Stag Users </h2>
+                <h1>{{stag_user.count}}</h1>
+            </div>
+
+    </div>
+         <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-users" aria-hidden="true"></i> Couple Users </h2>
+                <h1>{{couple_user.count}}</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Completely Paid Users </h2>
+                <h1>{{ count|completly_paid_count }}</h1>
+            </div>
+        </div>
+         <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Partially Paid Users </h2>
+                <h1>{{count|partly_paid_count}}</h1>
+            </div>
+        </div>
+         <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Total amount received</h2>
+                <h1>Rs {{total_amount_paid}}/-</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Registration Booking Amount</h2>
+                <h1>Rs {{total_paid_registration}}/-</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Hotel booking Amount </h2>
+                <h1>Rs {{total_paid_hotel}}/-</h1>
+            </div>
+        </div>
+         <div class="col-sm-3">
+            <div class="box">
+                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                {% for booked_room_type in booked_room_types %}
+                <h1>{{booked_room_type.room_type }} : {{ booked_room_type|get_roomtype_count }}</h1>
+                {% endfor %}
+            </div>
+        </div>
+</div>
+</div>
+</body>
+ <script type="text/javascript">
+    function openNav() {
+      document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
+    </script>
+</html>

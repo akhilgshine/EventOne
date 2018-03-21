@@ -68,6 +68,50 @@ def check_event_status(user_id):
 def replace_(value):
     return value.replace("_"," ")
 
+
+def completly_paid_count(count):
+    users = RegisteredUsers.objects.all()
+    count = 0
+    for user in users:
+        if user.event_user.member_type == 'Square Leg':
+            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+                pass
+            elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+                pass
+            else:
+                count=count+1
+        else:
+            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+                pass
+            else:
+                count = count+1
+    return count
+
+@register.filter
+def partly_paid_count(count):
+    users = RegisteredUsers.objects.all()
+    count = 0
+    for user in users:
+        if user.event_user.member_type == 'Square Leg':
+            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+                count = count + 1
+            elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+                count = count + 1
+            else:
+                pass
+        else:
+            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+                count = count + 1
+            else:
+                pass
+    return count
+
+@register.filter
+def get_roomtype_count(booked_room_type):
+    booked_room_type = Hotels.objects.filter(room_type=booked_room_type).count()
+    return booked_room_type
+
+
 # @register.filter
 # def get_booked_date(user_id):
 # 	try:
