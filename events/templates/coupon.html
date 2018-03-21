@@ -90,7 +90,7 @@
 															<td align="left" class="table_td_second">
 															{% for dat in  payment_details %}
 
-						                                    &nbsp; {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
+						                                    &nbsp; {{  event_register.amount_paid }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
 						                                    {% empty %}
 						                                        {{ event_register.amount_paid }}
 						                                    {% endfor %}

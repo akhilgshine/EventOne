@@ -671,6 +671,8 @@ class UpdateRegPaymentView(UpdateView):
     def form_valid(self, form):
         obj = self.get_object()
         current = obj.amount_paid
+        if not current :
+            current = 0
         obj = form.save(commit=False)
         obj.amount_paid = current+ form.cleaned_data.get('amount_paid')
         obj.save()
@@ -702,3 +704,7 @@ class UpgradeStatusView(UpdateView):
 
     def form_invalid(self, form):
         return super(UpgradeStatusView, self).form_invalid()
+
+class DashBoardView(TemplateView):
+    template_name = "dashboard.html"
+    pass

@@ -74,6 +74,8 @@ class RegisteredUsers(models.Model):
 
     @property
     def total_paid(self):
+        if not self.amount_paid:
+            self.amount_paid = 0
         rent = 0
         if self.hotel.all():
             rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]

@@ -3,6 +3,6 @@
 db.sqlite3
 Log/
 .idea/
-staticfiles/
 *~
 Media/
+static/

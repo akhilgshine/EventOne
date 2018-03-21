@@ -29,6 +29,7 @@ urlpatterns = [
     # url(r'^check_mail_phone/$',checkRegform, name='check_mail_phone'),
     url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
     url(r'^users/$',ListUsers.as_view(), name='list_users'),
+    url(r'^dashboard/$',DashBoardView.as_view(), name='dash_board'),
     url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view'),
     url(r'^register/success/(?P<pk>\d+)$',RegSuccessView.as_view(), name='invoice_view'),
     url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
@@ -37,5 +38,7 @@ urlpatterns = [
     url(r'^upgrade-reg-status/(?P<pk>\d+)$',UpgradeStatusView.as_view(), name='upgrade_reg_status'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 
-from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType
+from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType,MEMBER_CHOICES
 
 
 class TableListSerializer(ModelSerializer):
@@ -35,14 +35,14 @@ class RegisterEventSerializer(ModelSerializer):
     email = serializers.CharField()
     room_type = serializers.IntegerField()
     event_status = serializers.ChoiceField(choices=STATUS_CHOICES)
+    registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
     hotel_name = serializers.CharField()
     tottal_rent = serializers.CharField()
 
     class Meta:
         model = RegisteredUsers
-        fields = ['event', 'event_user', 'table', 'first_name', 'last_name', 'mobile', 'email', 'room_type',
-                  'hotel_name', 'tottal_rent', 'payment',
-                  'amount_paid', 'event_status', ]
+        fields = ['first_name','last_name','mobile','email','room_type','event_status','registration_type','hotel_name','tottal_rent','event', 'event_user', 'table','payment',
+                  'amount_paid', 'event_status', 'registration_type']
 
 
 class RegisteredUsersSerializer(ModelSerializer):
@@ -73,6 +73,13 @@ class RegisteredUsersSerializer(ModelSerializer):
         return obj.event_status
 
 class RoomTypeSerializer(ModelSerializer):
+    hotel_name = serializers.SerializerMethodField()
+
     class Meta:
         model = RoomType
-        fields = ['id','room_type','rooms_available','net_rate']
+        fields = ['id','room_type','rooms_available','net_rate','hotel_name']
+
+
+    def get_hotel_name(self, obj):
+        return "Hotel Raviz Kollam"
+

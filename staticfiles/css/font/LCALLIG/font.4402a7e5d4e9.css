@@ -1,0 +1,11 @@
+@font-face {
+	font-family: 'LCALLIG';
+	src: url("./LCALLIG.5db9325f6245.eot");
+	src: local('LCALLIG'), url("./LCALLIG.9c71ab77b322.woff") format('woff'), url("./LCALLIG.bf1d6cf1b2a3.ttf") format('truetype');
+}
+/* use this class to attach this font to any element i.e. <p class="fontsforweb_fontid_7705">Text with this font applied</p> */
+.fontsforweb_fontid_7705 {
+	font-family: 'LCALLIG' !important;
+}
+
+/* Font downloaded from FontsForWeb.com */
