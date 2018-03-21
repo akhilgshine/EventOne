@@ -130,13 +130,16 @@ class RegisterEventViewSet(ModelViewSet):
                     except:
                         registered_user.qrcode = 'QRT8001'
                     registered_user = serializer.save()
-
-            room_type = RoomType.objects.get(id=room_type)
-            #  TODO Validate room type
-            Hotels.objects.create(registered_users=registered_user,
-                                  hotel_name=hotel_name,
-                                  tottal_rent=tottal_rent,
-                                  room_type=room_type)
+            try:
+                room_type = RoomType.objects.get(id=room_type)
+                #  TODO Validate room type
+                hotel_obj,created = Hotels.objects.get_or_create(registered_users=registered_user)
+                hotel_obj.hotel_name=hotel_name
+                hotel_obj.tottal_rent=tottal_rent,
+                hotel_obj.room_type=room_type
+                hotel_obj.save()
+            except:
+                pass
         return Response({'status': True}, status=HTTP_201_CREATED)
 
 
