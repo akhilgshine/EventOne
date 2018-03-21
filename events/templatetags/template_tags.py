@@ -111,6 +111,12 @@ def get_roomtype_count(booked_room_type):
     booked_room_type = Hotels.objects.filter(room_type=booked_room_type).count()
     return booked_room_type
 
+@register.filter
+def hotels_booked_two_nights(hotels_book):
+    hotels_book = Hotels.objects.filter(checkin_date='2018-08-03',checkout_date ='2018-08-05').count()
+    return hotels_book
+
+
 
 # @register.filter
 # def get_booked_date(user_id):

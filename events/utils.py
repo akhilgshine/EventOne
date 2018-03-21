@@ -34,7 +34,7 @@ def send_email(to_email, message, event_obj):
 	content = render_to_string('coupon_mail.html', cxt)		
 	from_email = settings.DEFAULT_FROM_EMAIL
 
-	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email])
+	msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email,'registration@letsgonuts2018.com'])
 	msg.attach_alternative(content, "text/html")
 	msg.send()
 	

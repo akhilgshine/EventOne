@@ -151,7 +151,13 @@
                 <h1>Rs {{total_paid_hotel}}/-</h1>
             </div>
         </div>
-         <div class="col-sm-3">
+        <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-bed" aria-hidden="true"></i> Hotels Booked for 3rd,4th and 5th </h2>
+                <h1>{{hotels_book|hotels_booked_two_nights}}</h1>
+            </div>
+        </div>
+        <div class="col-sm-3">
             <div class="box">
                  <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
                 {% for booked_room_type in booked_room_types %}
