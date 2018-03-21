@@ -26,7 +26,9 @@
 
         color:red;
     }
-
+    .close_btn{
+      float:right;
+    }
 </style>
 </head>
 
@@ -617,25 +619,57 @@
     calcalateTotal();
     $('#informal_stag_type').hide();
     $('#informal_couple_type').hide();   
-    $("#checkIn").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        defaultDate: new Date(Date.parse("2018-08-01")),
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        onSelect: function(selected) {
-          $("#checkOut").datepicker("option","minDate", selected)
-          changeCheckinDate();
-        }
-    });
     
-    $("#checkOut").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        defaultDate: new Date(Date.parse("2018-08-04")),
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
+    $("#checkIn").datepicker({
+      dateFormat: 'dd/mm/yy',
+      numberOfMonths: 1,
+      defaultDate: new Date(Date.parse("2018-08-01")),
+      minDate: new Date(Date.parse("2018-08-03")),
+      maxDate: new Date(Date.parse("2018-08-05")),
+      onSelect: function(selected) {
+        $("#checkOut").datepicker("option","minDate", selected)
+        changeCheckinDate();
+      },
+      beforeShow: function( input ) {
+        setTimeout(function() {
+            var headerPane = $( input )
+            .datepicker( "widget" )
+            .find( ".ui-datepicker-header" );
 
+            $( "<button>", {
+                text: "X",
+                class : 'close_btn',
+                click: function() {
+                  $("#checkIn").val('');
+                  $("#checkIn").datepicker( "hide");
+                }
+            }).appendTo( headerPane );
+        }, 1 );
+      }
+    });
+
+    $( "#checkOut" ).datepicker({
+      dateFormat: 'dd/mm/yy',
+      numberOfMonths: 1,
+      defaultDate: new Date(Date.parse("2018-08-04")),
+      minDate: new Date(Date.parse("2018-08-03")),
+      maxDate: new Date(Date.parse("2018-08-05")),
+      beforeShow: function( input ) {
+          setTimeout(function() {
+              var headerPane = $( input )
+              .datepicker( "widget" )
+              .find( ".ui-datepicker-header" );
+
+              $( "<button>", {
+                  text: "X",
+                  class : 'close_btn',
+                  click: function() {
+                    $("#checkOut").val('');
+                    $("#checkOut").datepicker( "hide");
+                  }
+              }).appendTo( headerPane );
+          }, 1 );
+      }
     }); 
   </script>
 </body>
