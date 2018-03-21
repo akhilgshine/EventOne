@@ -79,7 +79,7 @@ class RegisteredUsers(models.Model):
         rent = 0
         if self.hotel.all():
             rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]
-        return self.amount_paid + rent
+        return int(self.amount_paid) + int(rent)
 
     @property
     def hotel_name(self):

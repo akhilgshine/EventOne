@@ -22,7 +22,7 @@ def get_hotel_rent(user_id):
         hotel = Hotels.objects.get(registered_users=user)
         return hotel.tottal_rent
     except:
-        return 0
+        return ''
 
 
 @register.filter
