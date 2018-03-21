@@ -715,7 +715,7 @@ class DashBoardView(TemplateView):
         context['couple_user'] = RegisteredUsers.objects.filter(event_status ='Couple')
         context['hotels_booked'] = Hotels.objects.all()
         context['booked_room_types'] = RoomType.objects.all()
-        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[0]or 0.00
+        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[0] or 0.00
         context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or  0.00
         return context
