@@ -89,7 +89,6 @@ class RegisterEventViewSet(ModelViewSet):
     serializer_class = RegisterEventSerializer
 
     def create(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         event_user = request.POST.get('event_user')
@@ -133,13 +132,14 @@ class RegisterEventViewSet(ModelViewSet):
             try:
                 room_type = RoomType.objects.get(id=room_type)
                 #  TODO Validate room type
-                hotel_obj,created = Hotels.objects.get_or_create(registered_users=registered_user)
-                hotel_obj.hotel_name=hotel_name
-                hotel_obj.tottal_rent=tottal_rent,
-                hotel_obj.room_type=room_type
-                hotel_obj.save()
             except:
-                pass
+                return Response({'status': False,'error-message':'Invalid Room type'}, status=400)
+            hotel_obj,created = Hotels.objects.get_or_create(registered_users=registered_user)
+            hotel_obj.hotel_name=hotel_name
+            hotel_obj.tottal_rent=tottal_rent
+            hotel_obj.room_type=room_type
+            hotel_obj.save()
+
         return Response({'status': True}, status=HTTP_201_CREATED)
 
 

@@ -37,13 +37,29 @@ class RegisterEventSerializer(ModelSerializer):
     event_status = serializers.ChoiceField(choices=STATUS_CHOICES)
     registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
     hotel_name = serializers.CharField()
-    tottal_rent = serializers.CharField()
+    tottal_rent = serializers.CharField(required=False)
+
+
 
     class Meta:
         model = RegisteredUsers
         fields = ['first_name','last_name','mobile','email','room_type','event_status','registration_type','hotel_name','tottal_rent','event', 'event_user', 'table','payment',
                   'amount_paid', 'event_status', 'registration_type']
 
+
+
+    def validate(self, data):
+        error_flag = True
+        errors = []
+        if not data['tottal_rent'].isdigit():
+            errors.append({'tottal rent' : "Rent must be a number"})
+            error_flag = False
+        if data['hotel_name'] is None:
+            errors.append({'hotel_name': "Hotel Name should not be blank"})
+            error_flag = False
+        if not error_flag:
+            raise serializers.ValidationError(errors)
+        return data
 
 class RegisteredUsersSerializer(ModelSerializer):
     name = serializers.SerializerMethodField()
