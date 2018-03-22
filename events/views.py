@@ -110,12 +110,16 @@ class RegisterEvent(TemplateView):
         message = ''
         room = ''
         try:
+            print("\n")
+            print(request.POST) 
+            print("\n")
             name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             email = request.POST.get('email', '')
             phone = request.POST.get('phone', '')
             table = request.POST.get('table_val', '')
             member_type = request.POST.get('member_type')
+            print("------------------> Reg post member_type : ", member_type)
             status = request.POST.get('status')
             payment = request.POST.get('payment', '')
             amount_paid = request.POST.get('amount_paid', 0)
@@ -125,15 +129,19 @@ class RegisterEvent(TemplateView):
             room_type = request.POST.get('room_type', '')
             # book_friday = request.POST.get('book_friday','')
             checkin = request.POST.get('checkin_date')
-
+            print("------------------> Reg post checkin : ", checkin)
             reciept_number = request.POST.get('reciept_number')
             reciept_file = request.FILES.get('reciept_file')
 
             if checkin:
                 checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
             checkout = request.POST.get('checkout_date')
+            print("------------------> Reg post checkout : ", checkout)
             if checkout:
                 checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
+
+            print("------------------> Hotel Update Form checkin_date : ", checkin_date)
+            print("------------------> Hotel Update Form checkout_date : ", checkout_date)
 
             # if book_friday:
             # 	book_friday = True
@@ -203,10 +211,12 @@ class RegisterEvent(TemplateView):
                 event_reg.amount_paid = amount_paid
                 event_reg.balance_amount = balance_amount
                 event_reg.event_status = status
-                if checkin:
-                    event_reg.checkin_date = checkin_date
-                if checkout:
-                    event_reg.checkout_date = checkout_date
+                
+                # if checkin:
+                #     event_reg.checkin_date = checkin_date
+                # if checkout:
+                #     event_reg.checkout_date = checkout_date
+
                 event_reg.reciept_number = reciept_number
                 event_reg.reciept_file = reciept_file
                 event_reg.save()
@@ -640,8 +650,12 @@ class UpdateHotelView(FormView):
         registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
         checkin = form.cleaned_data['checkin_date']
         checkout = form.cleaned_data['checkout_date']
+        print("\n Hotel Update Form checkin : ", checkin,"\n")
+        print("\n Hotel Update Form checkout : ", checkout,"\n")
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
+        print("\n Hotel Update Form checkin_date : ", checkin_date,"\n")
+        print("\n Hotel Update Form checkout_date : ", checkout_date,"\n")
         try:
             hotel_obj = Hotels.objects.get(registered_users=registered_user_obj)
         except Hotels.DoesNotExist:

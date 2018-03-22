@@ -71,7 +71,7 @@
                         <label class="control-label col-sm-4" for="email">Select Member Type :</label>
                         <div class="col-sm-8">
                             <select name=""  class="form-control" id="memberType">
-                                <option value="Tabular">Tabler</option>
+                                <option value="Tabler">Tabler</option>
                                 <option value="Square_Leg">Square Leg</option>
                             </select>
                         </div>
@@ -660,7 +660,6 @@
               var headerPane = $( input )
               .datepicker( "widget" )
               .find( ".ui-datepicker-header" );
-
               $( "<button>", {
                   text: "X",
                   class : 'close_btn',
@@ -671,7 +670,12 @@
               }).appendTo( headerPane );
           }, 1 );
       }
-    }); 
+    });
+
+  $(document).ready(function(){
+    var memberType = $('#memberType').val();
+    $('#id_member_type').val(memberType);
+  }) 
   </script>
 </body>
 
