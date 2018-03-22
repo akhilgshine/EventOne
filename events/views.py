@@ -119,7 +119,6 @@ class RegisterEvent(TemplateView):
             phone = request.POST.get('phone', '')
             table = request.POST.get('table_val', '')
             member_type = request.POST.get('member_type')
-            print("------------------> Reg post member_type : ", member_type)
             status = request.POST.get('status')
             payment = request.POST.get('payment', '')
             amount_paid = request.POST.get('amount_paid', 0)
@@ -129,19 +128,14 @@ class RegisterEvent(TemplateView):
             room_type = request.POST.get('room_type', '')
             # book_friday = request.POST.get('book_friday','')
             checkin = request.POST.get('checkin_date')
-            print("------------------> Reg post checkin : ", checkin)
             reciept_number = request.POST.get('reciept_number')
             reciept_file = request.FILES.get('reciept_file')
 
             if checkin:
                 checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
             checkout = request.POST.get('checkout_date')
-            print("------------------> Reg post checkout : ", checkout)
             if checkout:
                 checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
-
-            print("------------------> Hotel Update Form checkin_date : ", checkin_date)
-            print("------------------> Hotel Update Form checkout_date : ", checkout_date)
 
             # if book_friday:
             # 	book_friday = True
@@ -270,20 +264,20 @@ class RegisterEvent(TemplateView):
                 event_reg = None
 
             if event_reg:
-                # set_status(event_reg)
+                # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid) + "/-"
-                message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
+                # message_status = requests.get(
+                #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:
                     print(e, "Exception at send mail")
                     pass
 
-                if message_hotel:
-                    message_status = requests.get(
-                        'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
+                # if message_hotel:
+                #     message_status = requests.get(
+                #         'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
                 return HttpResponseRedirect("/register/success/" + str(event_reg.id))
             else:
                 message = " There is an issue with your registration. Please try again"
@@ -607,15 +601,16 @@ class UserRegisterUpdate(TemplateView):
             set_status(reg_user_obj)
             message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + reg_user_obj.qrcode + " And your total payment is Rs." + str(
                 reg_user_obj.amount_paid) + "/-"
-            message_status = requests.get(
-                'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
+            # message_status = requests.get(
+            #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
             try:
                 send_email(email, message, reg_user_obj)
             except:
                 pass
-            if message_hotel:
-                message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
+                
+            # if message_hotel:
+            #     message_status = requests.get(
+            #         'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
             return HttpResponseRedirect('/users/')
         except:
             message = "There is an issue with your registration. Please try again."

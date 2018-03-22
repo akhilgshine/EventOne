@@ -20,12 +20,14 @@
     <!-- Custom css style -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
+
 <style>
-
     .datepicker{
-        color:red;
+        color:#555;
     }
-
+    .close_btn{
+      float:right;
+    }
 </style>
 </head>
 
@@ -228,25 +230,85 @@
          // alert(tottal)
     }
 
-    $("#id_checkin_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
-        onSelect: function(selected) {
-          $("#id_checkout_date").datepicker("option","minDate", selected)
-          changeCheckinDate();
-        }
-    });
+    // $("#id_checkin_date").datepicker({
+    //     dateFormat: 'dd/mm/yy',
+    //     numberOfMonths: 1,
+    //     minDate: new Date(Date.parse("2018-08-03")),
+    //     maxDate: new Date(Date.parse("2018-08-05")),
+    //     defaultDate: new Date(Date.parse("2018-08-01")),
+    //     onSelect: function(selected) {
+    //       $("#id_checkout_date").datepicker("option","minDate", selected)
+    //       changeCheckinDate();
+    //     }
+    // });
     
-    $("#id_checkout_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
+    // $("#id_checkout_date").datepicker({
+    //     dateFormat: 'dd/mm/yy',
+    //     numberOfMonths: 1,
+    //     minDate: new Date(Date.parse("2018-08-03")),
+    //     maxDate: new Date(Date.parse("2018-08-05")),
+    //     defaultDate: new Date(Date.parse("2018-08-01")),
+    // });
+
+
+
+    $("#id_checkin_date").datepicker({
+      dateFormat: 'dd/mm/yy',
+      numberOfMonths: 1,
+      defaultDate: new Date(Date.parse("2018-08-01")),
+      minDate: new Date(Date.parse("2018-08-03")),
+      maxDate: new Date(Date.parse("2018-08-05")),
+      onSelect: function(selected) {
+        $("#checkOut").datepicker("option","minDate", selected)
+        changeCheckinDate();
+      },
+      beforeShow: function( input ) {
+        setTimeout(function() {
+            var headerPane = $( input )
+            .datepicker( "widget" )
+            .find( ".ui-datepicker-header" );
+
+            $( "<button>", {
+                text: "X",
+                class : 'close_btn',
+                click: function() {
+                  $("#checkIn").val('');
+                  $("#checkIn").datepicker( "hide");
+                }
+            }).appendTo( headerPane );
+        }, 1 );
+      }
     });
+
+
+    $( "#id_checkout_date" ).datepicker({
+      dateFormat: 'dd/mm/yy',
+      numberOfMonths: 1,
+      defaultDate: new Date(Date.parse("2018-08-04")),
+      minDate: new Date(Date.parse("2018-08-03")),
+      maxDate: new Date(Date.parse("2018-08-05")),
+      beforeShow: function( input ) {
+          setTimeout(function() {
+              var headerPane = $( input )
+              .datepicker( "widget" )
+              .find( ".ui-datepicker-header" );
+              $( "<button>", {
+                  text: "X",
+                  class : 'close_btn',
+                  click: function() {
+                    $("#checkOut").val('');
+                    $("#checkOut").datepicker( "hide");
+                  }
+              }).appendTo( headerPane );
+          }, 1 );
+      }
+    });
+
+
+
+
+
+
 
 
     {% if hotel_obj %}
