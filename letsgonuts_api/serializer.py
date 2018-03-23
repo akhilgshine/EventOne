@@ -55,20 +55,13 @@ class RegisterEventSerializer(ModelSerializer):
         if data['hotel_name'] is None:
             errors.append({'hotel_name': "Hotel Name should not be blank"})
             error_flag = False
-        # if data['amount_paid'] is None:
-        #     errors.append({'amount_paid': "Amount Paid should not be blank"})
-        #     error_flag = False
+        if not data['amount_paid'].isdigit():
+            errors.append({'amount_paid': "Amount Paid should not be blank"})
+            error_flag = False
         if not error_flag:
             raise serializers.ValidationError(errors)
         return data
 
-    def validate_amount_paid(self, value):
-        """
-        Check that value is a valid name.
-        """
-        if not value:  # check name has more than 1 word
-            raise serializers.ValidationError("Please enter full name")  # raise ValidationError
-        return value
 
 class RegisteredUsersSerializer(ModelSerializer):
     name = serializers.SerializerMethodField()
