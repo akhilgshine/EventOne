@@ -39,10 +39,10 @@ def no_of_night(user_id):
 @register.filter
 def payment_status(user_id):
     user = RegisteredUsers.objects.get(id=user_id)
-    if user.event_user.member_type == 'Square Leg':
+    if user.event_user.member_type == 'Square_Leg':
         if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
             return 'Partial'
-        elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+        elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
             return 'Partial'
         else:
             return 'Completely Paid'
@@ -77,10 +77,10 @@ def completly_paid_count(count):
     users = RegisteredUsers.objects.all()
     count = 0
     for user in users:
-        if user.event_user.member_type == 'Square Leg':
+        if user.event_user.member_type == 'Square_Leg':
             if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
                 pass
-            elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
                 pass
             else:
                 count=count+1
@@ -96,10 +96,10 @@ def partly_paid_count(count):
     users = RegisteredUsers.objects.all()
     count = 0
     for user in users:
-        if user.event_user.member_type == 'Square Leg':
+        if user.event_user.member_type == 'Square_Leg':
             if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
                 count = count + 1
-            elif (user.event_status == 'Stag Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple Informal' and user.amount_paid < 3500) :
+            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
                 count = count + 1
             else:
                 pass

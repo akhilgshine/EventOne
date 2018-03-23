@@ -162,6 +162,16 @@ class RegisterEvent(TemplateView):
             event_user, created = EventUsers.objects.get_or_create(table=table,
                                                                    email=email)
 
+            # event_user, created = EventUsers.objects.get_or_create(email=email)
+            
+            # if created:
+            #     event_user.table=table
+            # else:
+            #     if event_user.table != table:
+            #         message = "User with this MailID '"+ str(event_user.email)+"' already exist in table '"+str(event_user.table.table_name)+"'"
+            #         messages.success(self.request, message)
+            #         return HttpResponseRedirect(reverse('register_event'))
+
             event_user.member_type = member_type
             event_user.first_name = name
             event_user.last_name = last_name
@@ -657,16 +667,9 @@ class UpdateHotelView(FormView):
         registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
         checkin = form.cleaned_data['checkin_date']
         checkout = form.cleaned_data['checkout_date']
-        print("\n Hotel Update Form checkin : ", checkin,"\n")
-        print("\n Hotel Update Form checkout : ", checkout,"\n")
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
-        print("\n Hotel Update Form checkin_date : ", checkin_date,"\n")
-        print("\n Hotel Update Form checkout_date : ", checkout_date,"\n")
-        try:
-            hotel_obj = Hotels.objects.get(registered_users=registered_user_obj)
-        except Hotels.DoesNotExist:
-            hotel_obj = Hotels.objects.create(registered_users=registered_user_obj)
+        hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)        
         hotel_obj.hotel_name = form.cleaned_data['hotel_name']
         hotel_obj.hotel_name = form.cleaned_data['hotel_name']
         hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
@@ -674,6 +677,13 @@ class UpdateHotelView(FormView):
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
         hotel_obj.save()
+
+        if created:
+            message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + hotel_obj.room_type + "' "
+            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
+        else:
+            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + hotel_obj.room_type + "' "
+            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
         return HttpResponseRedirect(self.get_success_url())
 
