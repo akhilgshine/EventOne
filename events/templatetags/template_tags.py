@@ -66,7 +66,11 @@ def check_event_status(user_id):
 
 @register.filter
 def replace_(value):
-    return value.replace("_"," ")
+    try:
+        return value.replace("_"," ")
+    except Exception as e:
+        print(e, "Exception template tag(72) Replace '_'" )
+        return value
 
 @register.filter
 def completly_paid_count(count):

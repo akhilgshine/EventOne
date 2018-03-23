@@ -267,17 +267,20 @@ class RegisterEvent(TemplateView):
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid) + "/-"
-                # message_status = requests.get(
-                #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
+                
+                message_status = requests.get(
+                    "http://unifiedbuzz.com/api/insms/format/json/?mobile="+phone+"&text="+ message +"&flash=0&type=1&sender=QrtReg", headers={"X-API-Key":"918e0674e62e01ec16ddba9a0cea447b"})
+                
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:
                     print(e, "Exception at send mail")
                     pass
 
-                # if message_hotel:
-                #     message_status = requests.get(
-                #         'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
+                if message_hotel:
+                    message_status = requests.get(
+                        "http://unifiedbuzz.com/api/insms/format/json/?mobile="+phone+"&text="+ message_hotel +"&flash=0&type=1&sender=QrtReg", headers={"X-API-Key":"918e0674e62e01ec16ddba9a0cea447b"})
+
                 return HttpResponseRedirect("/register/success/" + str(event_reg.id))
             else:
                 message = " There is an issue with your registration. Please try again"
@@ -599,18 +602,27 @@ class UserRegisterUpdate(TemplateView):
                 reg_user_obj.amount_paid = tottal_paid
                 reg_user_obj.save()
             set_status(reg_user_obj)
+
             message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + reg_user_obj.qrcode + " And your total payment is Rs." + str(
                 reg_user_obj.amount_paid) + "/-"
+
+            message_status = requests.get(
+                "http://unifiedbuzz.com/api/insms/format/json/?mobile="+phone+"&text="+ message +"&flash=0&type=1&sender=QrtReg", headers={"X-API-Key":"918e0674e62e01ec16ddba9a0cea447b"})
+
             # message_status = requests.get(
             #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
+            # message_status = requests.get(
+            #     "http://unifiedbuzz.com/api/insms/format/json/?mobile="+ phone +"&api_key="+'11111'+"&text="+message+"&flash=0&type=1&sender=QrtReg")
+            
             try:
                 send_email(email, message, reg_user_obj)
             except:
                 pass
                 
-            # if message_hotel:
-            #     message_status = requests.get(
-            #         'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message_hotel)
+            if message_hotel:                
+                message_status = requests.get(
+                    "http://unifiedbuzz.com/api/insms/format/json/?mobile="+phone+"&text="+ message +"&flash=0&type=1&sender=QrtReg", headers={"X-API-Key":"918e0674e62e01ec16ddba9a0cea447b"})
+
             return HttpResponseRedirect('/users/')
         except:
             message = "There is an issue with your registration. Please try again."
