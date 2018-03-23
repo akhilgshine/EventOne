@@ -46,8 +46,6 @@ class RegisterEventSerializer(ModelSerializer):
         fields = ['first_name','last_name','mobile','email','room_type','event_status','registration_type','hotel_name','tottal_rent','event', 'event_user', 'table','payment',
                   'amount_paid', 'event_status', 'registration_type']
 
-
-
     def validate(self, data):
         error_flag = True
         errors = []
@@ -56,6 +54,9 @@ class RegisterEventSerializer(ModelSerializer):
             error_flag = False
         if data['hotel_name'] is None:
             errors.append({'hotel_name': "Hotel Name should not be blank"})
+            error_flag = False
+        if not data['amount_paid']:
+            errors.append({'amount_paid': "Amount Paid should not be blank"})
             error_flag = False
         if not error_flag:
             raise serializers.ValidationError(errors)
