@@ -55,7 +55,7 @@ class RegisterEventSerializer(ModelSerializer):
         if data['hotel_name'] is None:
             errors.append({'hotel_name': "Hotel Name should not be blank"})
             error_flag = False
-        if not data['amount_paid']:
+        if data['amount_paid'] is None:
             errors.append({'amount_paid': "Amount Paid should not be blank"})
             error_flag = False
         if not error_flag:
