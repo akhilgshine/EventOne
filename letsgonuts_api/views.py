@@ -108,8 +108,10 @@ class RegisterEventViewSet(ModelViewSet):
             event_user.save()
             if RegisteredUsers.objects.filter(event_user=event_user).exists():
                 registered_user = RegisteredUsers.objects.get(event_user=event_user)
+                previous_amount_paid = RegisteredUsers.objects.get(event_user=event_user).amount_paid
                 for (key, value) in serializer.validated_data.items():
                     setattr(registered_user, key, value)
+                    registered_user.amount_paid+= previous_amount_paid
                 registered_user.save()
             else:
                 registered_user = serializer.save()
@@ -151,15 +153,6 @@ class RoomTypeListViewSet(ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
 
-    # def get_queryset(self):
-    #     start_date = dateparser.parse(self.request.GET.get('start_date'))
-    #     end_date = dateparser.parse(self.request.GET.get('end_date'))
-    #     rel_hotels = Hotels.objects.exclude(Q(checkin_date__gte=start_date, checkout_date__lte=start_date)|
-    #                           Q(checkin_date__gte=end_date, checkout_date__lte=end_date))
-    #     RoomType.objects.filter()
-    #     data = rel_hotels.values_list('room_type__id', flat=True)
-    #     return RoomType.objects.filter(id__in=data)
-    #
     def get_queryset(self):
         start_date = dateparser.parse(self.request.GET.get('start_date'))
         end_date = dateparser.parse(self.request.GET.get('end_date'))
@@ -178,9 +171,6 @@ class RoomTypeListViewSet(ModelViewSet):
             return Response('No rooms found', status=HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-
 
 
 
