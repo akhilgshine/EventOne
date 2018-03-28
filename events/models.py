@@ -21,6 +21,7 @@ MEMBER_CHOICES = (
     ('Square_Leg', _('Square Leg'))
 )
 
+
 class Event(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField()
@@ -107,6 +108,24 @@ class RegisteredUsers(models.Model):
             checkout_date = self.hotel.all()[0].checkout_date
             return checkout_date
 
+    @property
+    def registered_amount(self):
+        if self.event_user.member_type == 'Tabler':
+            if self.event_status == 'Stag':
+                return 5000
+            return 6000
+        else:
+            if self.event_status == 'Stag':
+                return 4000
+            elif self.event_status == 'Couple':
+                return 5000
+            elif self.event_status == 'Stag_Informal':
+                return 2500
+            return 3500
+
+    @property
+    def contributed_amount(self):
+        return self.amount_paid - self.registered_amount
 
 
 class PaymentDetails(models.Model):
@@ -125,17 +144,14 @@ class RoomType(models.Model):
 
 
 class Hotels(models.Model):
-    registered_users = models.ForeignKey(RegisteredUsers,null=True,related_name='hotel')
-    hotel_name = models.CharField(max_length=50,null=True)
-    room_number = models.CharField(max_length=20,null=True)
+    registered_users = models.ForeignKey(RegisteredUsers, null=True, related_name='hotel')
+    hotel_name = models.CharField(max_length=50, null=True)
+    room_number = models.CharField(max_length=20, null=True)
     tottal_rent = models.IntegerField(blank=True, null=True)
-    # room_type = models.CharField(choices=ROOM_CHOICES,max_length=30,null=True,blank=True)
     book_friday = models.BooleanField(default=False)
-    room_type = models.ForeignKey(RoomType,null=True,blank=True)
+    room_type = models.ForeignKey(RoomType, null=True, blank=True)
     checkin_date = models.DateTimeField(null=True, blank=True)
     checkout_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.hotel_name
-
-

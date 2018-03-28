@@ -41,13 +41,12 @@ class EventRegisterForm(forms.Form):
 
 
 class HotelForm(forms.ModelForm):
-    
     checkin_date = forms.CharField(required=True)
     checkout_date = forms.CharField(required=True)
 
     class Meta:
         model = Hotels
-        fields = ('room_type','hotel_name', 'tottal_rent')
+        fields = ('room_type', 'hotel_name', 'tottal_rent')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)
@@ -65,10 +64,9 @@ class HotelForm(forms.ModelForm):
 
 
 class UpdatePaymentForm(forms.ModelForm):
-
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid', )
+        fields = ('amount_paid',)
 
     def __init__(self, *args, **kwargs):
         super(UpdatePaymentForm, self).__init__(*args, **kwargs)

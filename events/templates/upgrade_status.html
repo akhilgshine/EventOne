@@ -86,7 +86,7 @@
                           <label class="control-label col-sm-4" for="amount_paid">Paid Amount : 
                           </label>
                           <div class="col-sm-8" style="color: #fff;">
-                            {{ object.amount_paid}}  
+                            {{ object.registered_amount}}
                           </div>
                         </div>
                         
@@ -174,14 +174,14 @@
       var memberType = '{{ object.event_user.member_type }}';
       status = $(this).val();
       var amount = getAmount(memberType, status);
-      var amount_paid = {{ object.amount_paid }}
-      $('#id_amount_to_upgrade').val(+amount-amount_paid);
+      var amount_paid = {{ object.registered_amount }}
+      $('#id_amount_to_upgrade').val(amount-amount_paid);
       // calcalateTotal();
 
     });
 
   function getAmount(member_type, status){
-      if(member_type == 'Tabular'){
+      if(member_type == 'Tabler'){
           if(status == 'Stag')
               return 5000;
           else if(status == 'Couple')

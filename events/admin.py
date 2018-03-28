@@ -21,16 +21,24 @@ from import_export.admin import ImportExportModelAdmin
 admin.site.register(Event)
 admin.site.register(Table)
 
-class RegsiteredUserAdmin(admin.ModelAdmin):
 
-    readonly_fields = ['get_total_paid']
-    def get_total_paid(self,obj,*args,**kwargs):
+class RegisteredUserAdmin(admin.ModelAdmin):
+    readonly_fields = ['get_total_paid', 'get_contributed_amount', 'get_registered_amount']
+
+    def get_total_paid(self, obj, *args, **kwargs):
         return str(obj.total_paid)
+
+    def get_contributed_amount(self, obj, *args, **kwargs):
+        return str(obj.contributed_amount)
+
+    def get_registered_amount(self, obj, *args, **kwargs):
+        return str(obj.registered_amount)
+
     class Meta:
         model = RegisteredUsers
 
 
-admin.site.register(RegisteredUsers,RegsiteredUserAdmin)
+admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers)
 admin.site.register(Hotels)
 admin.site.register(RoomType)

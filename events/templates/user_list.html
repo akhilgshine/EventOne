@@ -107,6 +107,7 @@
 
         <div class="col-md-2 user_list_inputs">           
           <button class='btn btn-primary' onclick="window.print();">Print</button>
+          <a href="{% url 'download_csv' %}"><button class='btn btn-primary'>Download</button></a>
         </div>
 
         <div class="col-md-6 user_list_inputs">
@@ -167,6 +168,7 @@
               <th>No of nights</th>
 
               <th>Hotel Rent</th>
+              <th>Total Contributions</th>
               <th>Total Paid amount</th>
             </tr>
           </thead>
@@ -200,7 +202,7 @@
             <td> {{ user.event_user.email }}</td>
             <td> 
             <!-- |replace_ -->
-            {{ user.event_status }} 
+            {{ user.get_event_status_display }}
             {% if not user.event_status == 'Couple' %}
               {% if not user.event_status == 'Couple_Informal' %}
                 <a href="{% url 'upgrade_reg_status' user.id %}" >
@@ -211,10 +213,8 @@
             </td>
             <th> {{ user.id|payment_status}}</th>
             
-            <td> {{ user.amount_paid }}&nbsp|&nbsp
-              {% if not user.event_status == 'Couple' or user.event_status == 'Couple_Informal' %}
+            <td> {{ user.registered_amount }}&nbsp|&nbsp
                 <a href="{% url 'update_reg_payment' user.id %}">Contribute Extra </a></td>
-              {% endif %}
             <td> {{ user.created_date|date }} </td>
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->
             <td>  
@@ -257,6 +257,7 @@
             <td>{{ user.id |no_of_night }}</td>
 
             <td> {{ user.id| get_hotel_rent }}</td>
+            <td>{{ user.contributed_amount }}</td>
             <td>{{ user.total_paid }}</td>
           </tr>
           {% endfor %}

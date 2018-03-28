@@ -21,24 +21,24 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',IndexPage.as_view(), name='index_page'),
+    url(r'^$', IndexPage.as_view(), name='index_page'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
     # url(r'^check_mail_phone/$',checkRegform, name='check_mail_phone'),
-    url(r'^register/$',RegisterEvent.as_view(), name='register_event'),
-    url(r'^users/$',ListUsers.as_view(), name='list_users'),
-    url(r'^dashboard/$',DashBoardView.as_view(), name='dash_board'),
-    url(r'^invoice/(?P<pk>\d+)$',InvoiceView.as_view(), name='invoice_view'),
-    url(r'^register/success/(?P<pk>\d+)$',RegSuccessView.as_view(), name='invoice_view'),
-    url(r'^edit_user_registered/(?P<pk>\d+)$',UserRegisterUpdate.as_view(),name='edit_user'),
-    url(r'^update_hotel/(?P<pk>\d+)$',UpdateHotelView.as_view(), name='update_hotel_view'),
-    url(r'^update-reg-payment/(?P<pk>\d+)$',UpdateRegPaymentView.as_view(), name='update_reg_payment'),
-    url(r'^upgrade-reg-status/(?P<pk>\d+)$',UpgradeStatusView.as_view(), name='upgrade_reg_status'),
+    url(r'^register/$', RegisterEvent.as_view(), name='register_event'),
+    url(r'^users/$', ListUsers.as_view(), name='list_users'),
+    url(r'^dashboard/$', DashBoardView.as_view(), name='dash_board'),
+    url(r'^download-csv/$', DownloadCSVView.as_view(), name='download_csv'),
+    url(r'^invoice/(?P<pk>\d+)$', InvoiceView.as_view(), name='invoice_view'),
+    url(r'^register/success/(?P<pk>\d+)$', RegSuccessView.as_view(), name='invoice_view'),
+    url(r'^edit_user_registered/(?P<pk>\d+)$', UserRegisterUpdate.as_view(), name='edit_user'),
+    url(r'^update_hotel/(?P<pk>\d+)$', UpdateHotelView.as_view(), name='update_hotel_view'),
+    url(r'^update-reg-payment/(?P<pk>\d+)$', UpdateRegPaymentView.as_view(), name='update_reg_payment'),
+    url(r'^upgrade-reg-status/(?P<pk>\d+)$', UpgradeStatusView.as_view(), name='upgrade_reg_status'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

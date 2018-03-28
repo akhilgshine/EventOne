@@ -122,6 +122,8 @@ def hotels_booked_two_nights(hotels_book_date):
 
 
 
+
+
 # @register.filter
 # def get_booked_date(user_id):
 # 	try:
