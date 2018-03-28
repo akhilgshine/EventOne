@@ -774,13 +774,21 @@ class DownloadCSVView(TemplateView):
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Phone number', 'Registration Code', 'Table', 'Email', 'Status', 'Payment Status',
-                             'Registration Fee'])
+                             'Registration Fee','Registration Date', 'Room Type'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
+                    try:
+                        user_hotel = users.hotel.all()[0]
+                    except IndexError:
+                        user_hotel = None
+                    if user_hotel:
+                        room_type = user_hotel.room_type.room_type
+                    else:
+                        room_type = ''
                     writer.writerow(
                         [users.event_user.first_name, users.event_user.mobile, users.qrcode, users.table.table_name,
-                         users.event_user.email, payment_status, users.event_status, users.registered_amount])
+                         users.event_user.email, payment_status, users.event_status, users.registered_amount, users.created_date, room_type])
                 except Exception as e:
                     print e
             return response
