@@ -774,7 +774,8 @@ class DownloadCSVView(TemplateView):
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Phone number', 'Registration Code', 'Table', 'Email', 'Status', 'Payment Status',
-                             'Registration Fee','Registration Date', 'Room Type'])
+                             'Registration Fee', 'Registration Date', 'Hotel Name', 'Room Type', 'Check-In',
+                             'Check-Out', 'Hotel Rent'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -784,11 +785,20 @@ class DownloadCSVView(TemplateView):
                         user_hotel = None
                     if user_hotel:
                         room_type = user_hotel.room_type.room_type
+                        hotel_name = user_hotel.hotel_name
+                        check_in_date = user_hotel.checkin_date
+                        check_out_date = user_hotel.checkout_date
+                        tottal_rent = user_hotel.tottal_rent
                     else:
                         room_type = ''
+                        hotel_name = ''
+                        check_in_date = ''
+                        check_out_date = ''
+                        tottal_rent = ''
                     writer.writerow(
                         [users.event_user.first_name, users.event_user.mobile, users.qrcode, users.table.table_name,
-                         users.event_user.email, payment_status, users.event_status, users.registered_amount, users.created_date, room_type])
+                         users.event_user.email, payment_status, users.event_status, users.registered_amount,
+                         users.created_date, hotel_name, room_type, check_in_date, check_out_date, tottal_rent])
                 except Exception as e:
                     print e
             return response
