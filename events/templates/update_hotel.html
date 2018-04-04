@@ -107,6 +107,15 @@
                           </div>
                         <p id="notifications" style="color: red"></p>
                         <hr>
+                          <div class="form-group">
+                          <label class="control-label col-sm-4" > Total Amount :</label>
+                          <div class="col-sm-8">
+                            <h4>
+                               Total  Hotel Booking Amount: Rs <span id="hotel_amount_final"></span> /-<br>
+                            </h4>
+                          </div>
+                        </div>
+
                         <div class="form-group">
                           <label class="control-label col-sm-4" for=""></label>
                           <div class="col-sm-4">
@@ -141,6 +150,11 @@
 
     <script type="text/javascript">
      
+    $( document ).ready(function() {
+            $('#hotel_amount_final').text($('#id_tottal_rent').val());
+
+
+});
 
 
     // function update_messages(messages){
@@ -173,14 +187,14 @@
 
       $('#id_hotel_name').val('Hotel Raviz Kollam');
 
-      var rent = $('#id_room_rent').val();
+      var rent = $('#id_room_rent').val(selected_rent);
       var checkin = $('#id_checkin_date').val();
         var checkout = $('#id_checkout_date').val();
         if (checkin != '' && checkout != ''){
-            calculate_rent(rent);
+            calculate_rent(selected_rent);
+             $('#hotel_amount_final').text($('#id_tottal_rent').val());
         }
     }
-    
     $("#id_checkout_date").change(function(){
         console.log("OnChange checkOut");
         var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
@@ -190,6 +204,7 @@
         var checkout = $('#id_checkout_date').val();
         if (checkin != '' && checkout != ''){
             calculate_rent(selected_rent);
+            $('#hotel_amount_final').text($('#id_tottal_rent').val());
         }
     });
 
@@ -202,6 +217,7 @@
         var checkout = $('#id_checkout_date').val();
         if (checkin != '' && checkout != ''){
             calculate_rent(selected_rent);
+            $('#hotel_amount_final').text($('#id_tottal_rent').val());
         }
     };
 
@@ -217,14 +233,20 @@
          if(diffDays == 0 || diffDays == 1){
                 var one_day_rent = one_day_rent;
                 $('#id_tottal_rent').val(one_day_rent);
+
+
             }
          else{
             var rent = $('#id_tottal_rent').val();
             if(one_day_rent)
                 var tottal = diffDays * one_day_rent;
+
+
+
             else
                 var tottal = rent;
             $('#id_tottal_rent').val(tottal);
+           $('#hotel_amount_final').text(rent);
          }
          // alert(tottal)
     }
@@ -258,7 +280,7 @@
       minDate: new Date(Date.parse("2018-08-03")),
       maxDate: new Date(Date.parse("2018-08-05")),
       onSelect: function(selected) {
-        $("#checkOut").datepicker("option","minDate", selected)
+        $("#id_checkout_date").datepicker("option","minDate", selected)
         changeCheckinDate();
       },
       beforeShow: function( input ) {
@@ -271,8 +293,8 @@
                 text: "X",
                 class : 'close_btn',
                 click: function() {
-                  $("#checkIn").val('');
-                  $("#checkIn").datepicker( "hide");
+                  $("#id_checkin_date").val('');
+                  $("#id_checkin_date").datepicker( "hide");
                 }
             }).appendTo( headerPane );
         }, 1 );
@@ -295,8 +317,8 @@
                   text: "X",
                   class : 'close_btn',
                   click: function() {
-                    $("#checkOut").val('');
-                    $("#checkOut").datepicker( "hide");
+                    $("#id_checkout_date").val('');
+                    $("#id_checkout_date").datepicker( "hide");
                   }
               }).appendTo( headerPane );
           }, 1 );

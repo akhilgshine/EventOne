@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 import csv
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -17,11 +16,9 @@ import requests
 from django.contrib.auth import logout
 import re
 import datetime
-
 """
     Home
     """
-
 
 class IndexPage(TemplateView):
     template_name = 'index.html'
@@ -635,7 +632,6 @@ class UserRegisterUpdate(TemplateView):
                 send_email(email, message, reg_user_obj)
             except:
                 pass
-
             if message_hotel:
                 message_status = requests.get(
                     "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
@@ -782,11 +778,13 @@ class DownloadCSVView(TemplateView):
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
-                    hotel_days = template_tags.no_of_night(users.id)
                     try:
                         user_hotel = users.hotel.all()[0]
+                        hotel_days = template_tags.no_of_night(users.id)
+
                     except IndexError:
                         user_hotel = None
+                        hotel_days = 'None'
                     if user_hotel:
                         room_type = user_hotel.room_type.room_type
                         hotel_name = user_hotel.hotel_name
@@ -794,11 +792,11 @@ class DownloadCSVView(TemplateView):
                         check_out_date = user_hotel.checkout_date
                         total_rent = user_hotel.tottal_rent
                     else:
-                        room_type = ''
-                        hotel_name = ''
-                        check_in_date = ''
-                        check_out_date = ''
-                        total_rent = ''
+                        room_type = 'None'
+                        hotel_name = 'None'
+                        check_in_date = 'None'
+                        check_out_date = 'None'
+                        total_rent = 'None'
                     writer.writerow(
                         [users.event_user.first_name, users.event_user.mobile, users.qrcode, users.table.table_name,
                          users.event_user.email, payment_status, users.event_status, users.registered_amount,
