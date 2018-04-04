@@ -8,8 +8,6 @@ from django.views.generic import FormView, TemplateView, View, UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from events.templatetags import template_tags
-from events.models import *
-# Create your views here.
 import json
 from events.forms import *
 from events.models import *
@@ -133,7 +131,7 @@ class RegisterEvent(TemplateView):
             checkin = request.POST.get('checkin_date')
             reciept_number = request.POST.get('reciept_number')
             reciept_file = request.FILES.get('reciept_file')
-            other_contribution = request.POST.get('other_contribution', 0)
+            other_contribution = request.POST.get('other_contribution')
 
             if checkin:
                 checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
@@ -216,6 +214,8 @@ class RegisterEvent(TemplateView):
 
                     balance_amount = self.check_balance(tottal_paid)
                 event_reg.payment = payment
+                if not other_contribution:
+                    other_contribution = 0
                 event_reg.amount_paid = int(amount_paid) + int(other_contribution)
                 event_reg.balance_amount = balance_amount
                 event_reg.event_status = status
@@ -715,7 +715,10 @@ class UpdateRegPaymentView(UpdateView):
         if not current:
             current = 0
         obj = form.save(commit=False)
-        obj.amount_paid = current + form.cleaned_data.get('amount_paid')
+        updated_amount = form.cleaned_data.get('amount_paid')
+        if not updated_amount:
+            updated_amount = 0
+        obj.amount_paid = current + updated_amount
         obj.save()
         return super(UpdateRegPaymentView, self).form_valid(form)
 
@@ -775,10 +778,11 @@ class DownloadCSVView(TemplateView):
             writer = csv.writer(response)
             writer.writerow(['Name', 'Phone number', 'Registration Code', 'Table', 'Email', 'Status', 'Payment Status',
                              'Registration Fee', 'Registration Date', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'Hotel Rent'])
+                             'Check-Out', 'No of Days', 'Hotel Rent'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
+                    hotel_days = template_tags.no_of_night(users.id)
                     try:
                         user_hotel = users.hotel.all()[0]
                     except IndexError:
@@ -788,17 +792,17 @@ class DownloadCSVView(TemplateView):
                         hotel_name = user_hotel.hotel_name
                         check_in_date = user_hotel.checkin_date
                         check_out_date = user_hotel.checkout_date
-                        tottal_rent = user_hotel.tottal_rent
+                        total_rent = user_hotel.tottal_rent
                     else:
                         room_type = ''
                         hotel_name = ''
                         check_in_date = ''
                         check_out_date = ''
-                        tottal_rent = ''
+                        total_rent = ''
                     writer.writerow(
                         [users.event_user.first_name, users.event_user.mobile, users.qrcode, users.table.table_name,
                          users.event_user.email, payment_status, users.event_status, users.registered_amount,
-                         users.created_date, hotel_name, room_type, check_in_date, check_out_date, tottal_rent])
+                         users.created_date, hotel_name, room_type, check_in_date, check_out_date, hotel_days, total_rent])
                 except Exception as e:
                     print e
             return response

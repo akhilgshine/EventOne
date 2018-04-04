@@ -85,3 +85,4 @@ class UpgradeStatusForm(forms.ModelForm):
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
         self.fields['event_status'].widget.attrs['class'] = 'form-control'
         self.fields['amount_to_upgrade'].widget.attrs['class'] = 'form-control'
+        self.fields['amount_to_upgrade'].widget.attrs['readonly'] = 'readonly'

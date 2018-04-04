@@ -25,6 +25,10 @@
     .datepicker{
         color:red;
     }
+    #amount_error_div{
+
+        color:red;
+    }
 
 </style>
 </head>
@@ -67,7 +71,9 @@
                           <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
                           <div class="col-sm-8" style="color: black">
                             {{form.amount_paid}}
+                              <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
                           </div>
+
                         </div>
 
 
@@ -75,7 +81,7 @@
                         <hr>
                         <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-4">
-                            <button type="submit" class="btn btn-default nuts-sub"> Pay Now</button>
+                            <button type="submit" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
                           </div>
                           <div class="col-sm-4">
                             <a href="/users/">
@@ -225,6 +231,16 @@
       $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
     {% endif %}
 
+$('#id_amount_paid').on('keyup change',function() {
+        var entered_values = $(this).val();
+        if (entered_values<0){
+                $('#id_pay_now').attr('disabled',true);
+                $('#amount_error_div').show();
+        } else{
+            $('#id_pay_now').attr('disabled',false);
+            $('#amount_error_div').hide();
+        }
+    });
   </script>
 </body>
 

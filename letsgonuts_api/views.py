@@ -4,7 +4,7 @@ import dateparser
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db.models import Q
-from datetime import date, timedelta,datetime
+from datetime import date, timedelta, datetime
 
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -12,10 +12,12 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
-from rest_framework.status import HTTP_204_NO_CONTENT,HTTP_201_CREATED
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 
 from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType, Event
-from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, RegisteredUsersSerializer, RoomTypeSerializer
+from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
+    RegisteredUsersSerializer, RoomTypeSerializer
+
 
 # Create your views here.
 
@@ -54,8 +56,8 @@ class FilterNameViewSet(ModelViewSet):
     serializer_class = FilterNameSerializer
 
     def get_queryset(self):
-        table_id = self.kwargs.get('table_id','')
-        input_char = self.kwargs.get('input_char','')
+        table_id = self.kwargs.get('table_id', '')
+        input_char = self.kwargs.get('input_char', '')
         filter_names = EventUsers.objects.filter(table__id=table_id, first_name__icontains=input_char)
         return filter_names
 
@@ -111,7 +113,7 @@ class RegisterEventViewSet(ModelViewSet):
                 previous_amount_paid = RegisteredUsers.objects.get(event_user=event_user).amount_paid
                 for (key, value) in serializer.validated_data.items():
                     setattr(registered_user, key, value)
-                    registered_user.amount_paid+= previous_amount_paid
+                    registered_user.amount_paid += previous_amount_paid
                 registered_user.save()
             else:
                 registered_user = serializer.save()
@@ -135,11 +137,11 @@ class RegisterEventViewSet(ModelViewSet):
                 room_type = RoomType.objects.get(id=room_type)
                 #  TODO Validate room type
             except:
-                return Response({'status': False,'error-message':'Invalid Room type'}, status=400)
-            hotel_obj,created = Hotels.objects.get_or_create(registered_users=registered_user)
-            hotel_obj.hotel_name=hotel_name
-            hotel_obj.tottal_rent=tottal_rent
-            hotel_obj.room_type=room_type
+                return Response({'status': False, 'error-message': 'Invalid Room type'}, status=400)
+            hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user)
+            hotel_obj.hotel_name = hotel_name
+            hotel_obj.tottal_rent = tottal_rent
+            hotel_obj.room_type = room_type
             hotel_obj.save()
 
         return Response({'status': True}, status=HTTP_201_CREATED)
@@ -149,6 +151,7 @@ class RegisteredUsersViewSet(ModelViewSet):
     queryset = RegisteredUsers.objects.all()
     serializer_class = RegisteredUsersSerializer
 
+
 class RoomTypeListViewSet(ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
@@ -156,7 +159,7 @@ class RoomTypeListViewSet(ModelViewSet):
     def get_queryset(self):
         start_date = dateparser.parse(self.request.GET.get('start_date'))
         end_date = dateparser.parse(self.request.GET.get('end_date'))
-        event_date =  Event.objects.get(id=1).date
+        event_date = Event.objects.get(id=1).date
         day_before_event = event_date - timedelta(1)
         day_before_event_with_time = datetime.combine(day_before_event, datetime.min.time())
         day_after_event = event_date + timedelta(1)
@@ -171,8 +174,3 @@ class RoomTypeListViewSet(ModelViewSet):
             return Response('No rooms found', status=HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-
-
-
