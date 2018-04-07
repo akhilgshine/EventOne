@@ -174,17 +174,17 @@
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
                           <div class="col-sm-8">
-                            <input type="number" readonly class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
+                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
-                          <!-- <div class="col-sm-2">
+                          <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
+                                  <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
                               </label>
-                          </div> -->
+                          </div>
                           <div class="col-sm-2">
                               <label>
                                   <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"> <span class="radio-change"></span> POS
@@ -192,7 +192,7 @@
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" > <span class="radio-change" value="card"></span> Card
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card"> <span class="radio-change"></span> Card
                               </label>
                           </div>
                         </div>                        
@@ -236,7 +236,7 @@
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
                           <div class="col-sm-8">
-                            <input type="text" class="form-control" id="id_room_rent" placeholder="" name="room_rent"  readonly>
+                            <input type="text" class="form-control" id="id_room_rent" placeholder="" name="room_rent">
                           </div>
                         </div>
 
@@ -330,15 +330,14 @@
         {% endifequal %}
 
         {% ifequal event_registered_user.payment 'cash' %}
+          $("#radioId_0").prop("checked", true);
+        {% endifequal %}
+        {% ifequal event_registered_user.payment 'POS' %}
           $("#radioId_1").prop("checked", true);
         {% endifequal %}
 
-       {% ifequal event_registered_user.payment 'paytm' %}
+       {% ifequal event_registered_user.payment 'card' %}
           $("#radioId_2").prop("checked", true);
-        {% endifequal %}
-
-        {% ifequal event_registered_user.payment 'card' %}
-          $("#radioId_3").prop("checked", true);
         {% endifequal %}
 
       {%endif%}
@@ -445,13 +444,13 @@
                   }
 
                   if ( data.payment_type == 'cash'){
+                    $("#radioId_0").prop("checked", true);
+                  }
+                  else if ( data.payment_type == 'POS'){
                     $("#radioId_1").prop("checked", true);
                   }
-                  else if (data.payment_type == 'paytm'){
+                  else if (data.payment_type == 'card'){
                     $("#radioId_2").prop("checked", true);
-                  }
-                  else{
-                    $("#radioId_3").prop("checked", true);
                   }
                 }
                 else{
