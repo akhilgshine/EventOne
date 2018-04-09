@@ -44,7 +44,7 @@ class Table(models.Model):
 
 
 class EventUsers(models.Model):
-    member_type = models.CharField(choices=MEMBER_CHOICES, max_length=50, blank=True, null=True)
+    member_type = models.CharField(choices=MEMBER_CHOICES, max_length=50, default='Tabler')
     table = models.ForeignKey(Table)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
