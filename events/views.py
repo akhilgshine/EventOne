@@ -20,6 +20,7 @@ import datetime
     Home
     """
 
+
 class IndexPage(TemplateView):
     template_name = 'index.html'
 
@@ -170,7 +171,6 @@ class RegisterEvent(TemplateView):
             #         message = "User with this MailID '"+ str(event_user.email)+"' already exist in table '"+str(event_user.table.table_name)+"'"
             #         messages.success(self.request, message)
             #         return HttpResponseRedirect(reverse('register_event'))
-
             event_user.member_type = member_type
             event_user.first_name = name
             event_user.last_name = last_name

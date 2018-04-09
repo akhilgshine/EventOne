@@ -17,7 +17,7 @@ ROOM_CHOICES = (
     ('Deluxe', _('Deluxe')),
 )
 MEMBER_CHOICES = (
-    ('Tabular', _('Tabular')),
+    ('Tabler', _('Tabler')),
     ('Square_Leg', _('Square Leg'))
 )
 
