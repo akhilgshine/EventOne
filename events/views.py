@@ -207,13 +207,14 @@ class RegisterEvent(TemplateView):
                     last_pay = event_reg.amount_paid
                     if not last_pay:
                         last_pay = 0
-                    tottal_paid = int(last_pay) + int(amount_paid)
+                    tottal_paid = amount_paid
 
                     balance_amount = self.check_balance(tottal_paid)
                 event_reg.payment = payment
+                
                 if not other_contribution:
                     other_contribution = 0
-                event_reg.amount_paid = int(amount_paid) + int(other_contribution)
+                event_reg.contributed_amount = int(other_contribution)
                 event_reg.balance_amount = balance_amount
                 event_reg.event_status = status
 
@@ -224,6 +225,7 @@ class RegisterEvent(TemplateView):
 
                 event_reg.reciept_number = reciept_number
                 event_reg.reciept_file = reciept_file
+                event_reg.amount_paid = amount_paid
                 event_reg.save()
                 if amount_paid:
                     PaymentDetails.objects.create(reg_event=event_reg,
@@ -708,13 +710,28 @@ class UpdateRegPaymentView(UpdateView):
     def form_valid(self, form):
         obj = self.get_object()
         current = obj.amount_paid
+        balance = obj.balance_amount
         if not current:
             current = 0
         obj = form.save(commit=False)
+
         updated_amount = form.cleaned_data.get('amount_paid')
+        
         if not updated_amount:
             updated_amount = 0
-        obj.amount_paid = current + updated_amount
+        
+        if balance > updated_amount :
+            balance = balance - updated_amount
+            updated_amount = current + updated_amount
+            contributed_amount = 0
+        else :
+            updated_amount = current + balance
+            balance = 0
+            contributed_amount = updated_amount - balance
+
+        obj.contributed_amount = contributed_amount
+        obj.amount_paid = updated_amount
+        obj.balance_amount = balance
         obj.save()
         return super(UpdateRegPaymentView, self).form_valid(form)
 
@@ -772,9 +789,9 @@ class DownloadCSVView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
-            writer.writerow(['Name', 'Phone number', 'Registration Code', 'Table', 'Email', 'Status', 'Payment Status',
-                             'Registration Fee', 'Registration Date', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Days', 'Hotel Rent'])
+            writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
+                             'Amount Paid', 'Amount Due', 'Hotel Name', 'Room Type', 'Check-In',
+                             'Check-Out', 'No of Nights', 'Amount Paid', 'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -790,7 +807,8 @@ class DownloadCSVView(TemplateView):
                         hotel_name = user_hotel.hotel_name
                         check_in_date = user_hotel.checkin_date
                         check_out_date = user_hotel.checkout_date
-                        total_rent = user_hotel.tottal_rent
+                        hotel_rent = user_hotel.tottal_rent
+                        
                     else:
                         room_type = 'None'
                         hotel_name = 'None'
@@ -798,9 +816,9 @@ class DownloadCSVView(TemplateView):
                         check_out_date = 'None'
                         total_rent = 'None'
                     writer.writerow(
-                        [users.event_user.first_name, users.event_user.mobile, users.qrcode, users.table.table_name,
-                         users.event_user.email, payment_status, users.event_status, users.registered_amount,
-                         users.created_date, hotel_name, room_type, check_in_date, check_out_date, hotel_days, total_rent])
+                        [users.event_user.first_name, users.table.table_name, users.qrcode, users.event_user.mobile,  
+                         users.event_user.email, users.event_status, payment_status, users.registered_amount, users.balance_amount,
+                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.total_paid, users.balance_amount])
                 except Exception as e:
                     print e
             return response

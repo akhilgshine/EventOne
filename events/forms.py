@@ -33,6 +33,7 @@ class EventRegisterForm(forms.Form):
     phone = forms.CharField(max_length=255, required=True)
     payment = forms.CharField(max_length=255, required=True)
     amount_paid = forms.FloatField(required=True)
+    contributed_amount = forms.IntegerField(initial=0)
 
     # payment = ChoiceField(label='',
     # 	initial='bank',

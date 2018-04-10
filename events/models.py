@@ -69,6 +69,7 @@ class RegisteredUsers(models.Model):
     balance_amount = models.IntegerField(blank=True, null=True)
     reciept_number = models.CharField(blank=True, null=True, max_length=100)
     reciept_file = models.FileField(blank=True, null=True, upload_to='reciepts')
+    contributed_amount = models.IntegerField(default=0)
 
     def __str__(self):
         return ("{}, {}").format(self.event_user.first_name, self.event_user.last_name)
@@ -82,7 +83,10 @@ class RegisteredUsers(models.Model):
             rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]
         if not rent:
             rent = 0
-        return self.amount_paid + int(rent)
+            
+        if not self.contributed_amount:
+            self.contributed_amount = 0
+        return self.amount_paid + int(rent) + int(self.contributed_amount)
 
     @property
     def hotel_name(self):
@@ -122,10 +126,10 @@ class RegisteredUsers(models.Model):
             elif self.event_status == 'Stag_Informal':
                 return 2500
             return 3500
-
-    @property
-    def contributed_amount(self):
-        return self.amount_paid - self.registered_amount
+    
+    # @property
+    # def contributed_amount(self):
+    #     return self.amount_paid - self.registered_amount
 
 
 class PaymentDetails(models.Model):

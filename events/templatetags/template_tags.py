@@ -33,7 +33,7 @@ def no_of_night(user_id):
         nights = hotel.checkout_date - hotel.checkin_date
         return nights.days
     except:
-        return 0
+        return ''
 
 
 @register.filter

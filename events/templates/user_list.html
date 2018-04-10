@@ -125,9 +125,9 @@
         <div class="col-md-2 user_list_inputs">
           <select id="sortOption" class="btn btn-primary btn_sort">
            <option>Select one</option>
-           <option value=2>Name</option>
-           <option value=5>Table</option>
-           <option value=9>Date</option>
+           <option value=1>Name</option>
+           <option value=3>Table</option>
+           <!-- <option value=9>Date</option> -->
            <option value=12 >Order</option>
          </select>
         </div>
@@ -151,25 +151,30 @@
             <tr>
               <th></th>
               <th>Name</th>
-              <th>Phone number</th>
-              <th>Registration code</th>
               <th>Table</th>
+              <th>Registration code</th>
+              <th>Phone</th>              
               <th>Email</th>
-              <th>Status </th>
-              <th>Payment Status</th>
+              
+              <th>Reg Type</th> <!-- Status -->
+              <th>Partial/Completely </th><!-- Payment Status -->
 
-              <th>Registration Fee </th>
-              <th>Registration Date </th>
-              <th>Coupon</th>
-              <th>Hotel</th>
+              <th>Amount Paid </th>
+              <th>Amount Due </th>
+              <!-- <th>Registration Date </th> -->
+              <!-- <th>Coupon</th> -->
+              <th style="background-color: green;">Room</th>
+
+              <th>Hotel Name</th>
               <th>Room Type</th>
               <th>Checkin Date</th>
               <th>Checkout Date</th>
-              <th>No of nights</th>
-
-              <th>Hotel Rent</th>
-              <th>Contributions</th>
-              <th>Total Paid amount</th>
+              <th>No of Nights</th>
+              <th>Amount Paid</th>
+              <th style="background-color: green;"></th>
+              <th> Contribution </th>
+              <th>Total Payment</th>
+              <th>Total Due</th>
             </tr>
           </thead>
           <!-- <tfoot>
@@ -195,13 +200,13 @@
 
             <td> 
               {{ user.event_user.first_name }} {{ user.event_user.last_name }}              
-            </td>
-            <td> {{ user.event_user.mobile }} </td>
-            <td> {{ user.qrcode }} </td>
+            </td>            
             <td> {{ user.table.table_name|cut:" " }}</td>
+            <td> {{ user.qrcode }} </td>
+            <td> {{ user.event_user.mobile }} </td>             
             <td> {{ user.event_user.email }}</td>
+            
             <td> 
-            <!-- |replace_ -->
             {{ user.get_event_status_display }}
             {% if not user.event_status == 'Couple' %}
               {% if not user.event_status == 'Couple_Informal' %}
@@ -211,23 +216,27 @@
               {% endif %}
             {% endif %}
             </td>
-            <th> {{ user.id|payment_status}}</th>
+            <td> {{ user.id|payment_status}}</td>
             
-            <td> {{ user.registered_amount }}&nbsp|&nbsp
+            <td> {{ user.amount_paid }}&nbsp|&nbsp
                 <a href="{% url 'update_reg_payment' user.id %}">Contribute Extra </a></td>
-            <td> {{ user.created_date|date }} </td>
+            <!-- <td> {{ user.created_date|date }} </td> -->
+            <td> <!-- due amount -->{{ user.balance_amount }}</td>            
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->
-            <td>  
-                <a style="" href="/invoice/{{ user.id }}" title="view">
-                  <!-- <i class="fa fa-eye" aria-hidden="true" style="font-size: 22px; color:#07c;" ></i> -->
+            
+            <!-- <td>  
+                <a style="" href="/invoice/{{ user.id }}" title="view">                  
                   view
                 </a>
-            </td>
+            </td> -->
+
             <!-- <td><a style="" href="/edit_user_registered/{{ user.id }}"> 
                   <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                   update
                 </a>
             </td> -->
+
+            <td style="background-color: green;"> <!-- Room --></td>
             <td> 
                 {% if user.hotel.all %}
 
@@ -248,17 +257,20 @@
                 {{user.checkin_date|date}}
               {% endif %}
             </td>
-             <td>
+            <td>
               {% if user.hotel.all %}
                 {{ user.checkout_date|date }}
               {% endif %}
             </td>
 
             <td>{{ user.id |no_of_night }}</td>
+            <td> {{ user.id| get_hotel_rent }}</td>            
+            <td style="background-color: green;"></td>
 
-            <td> {{ user.id| get_hotel_rent }}</td>
+            <!-- TOTAL PAYMENT  -->
             <td>{{ user.contributed_amount }}</td>
             <td>{{ user.total_paid }}</td>
+            <td><!--Total Due --> {{ user.balance_amount }}</td>
           </tr>
           {% endfor %}
           </tbody>
@@ -283,7 +295,8 @@
           "order": [[ 0, 'asc' ]],
           "paging":   false,
           "info":     false,
-          responsive: true,       
+          // responsive: true,   
+          "scrollX": true,
         });
         $("#user_lists_filter").hide();
       
@@ -324,7 +337,7 @@
         }
         else{
           regExSearch ='"'+selected_table+'"';
-          table.column(4).search(regExSearch).draw();
+          table.column(2).search(regExSearch).draw();
         }
       });
   </script>
