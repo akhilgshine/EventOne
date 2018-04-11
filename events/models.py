@@ -130,6 +130,9 @@ class RegisteredUsers(models.Model):
     # @property
     # def contributed_amount(self):
     #     return self.amount_paid - self.registered_amount
+    @property
+    def due_amount(self):
+        return self.registered_amount - self.amount_paid
 
 
 class PaymentDetails(models.Model):
