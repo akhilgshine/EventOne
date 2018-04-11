@@ -790,7 +790,7 @@ class DownloadCSVView(TemplateView):
             writer = csv.writer(response)
             writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
                              'Registration Amount ', 'Amount Due', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Total Payment', 'Total Due'])
+                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Contribution', 'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -800,7 +800,7 @@ class DownloadCSVView(TemplateView):
 
                     except IndexError:
                         user_hotel = None
-                        hotel_days = ''
+                        hotel_days = '-'
                     if user_hotel:
                         room_type = user_hotel.room_type.room_type
                         hotel_name = user_hotel.hotel_name
@@ -809,17 +809,17 @@ class DownloadCSVView(TemplateView):
                         hotel_rent = user_hotel.tottal_rent
 
                     else:
-                        room_type = ''
-                        hotel_name = ''
-                        check_in_date = ''
-                        check_out_date = ''
-                        hotel_rent = ''
+                        room_type = '-'
+                        hotel_name = '-'
+                        check_in_date = '-'
+                        check_out_date = '-'
+                        hotel_rent = '-'
                     writer.writerow(
                         [users.event_user.first_name, users.table.table_name, users.qrcode, users.event_user.mobile,
-                         users.event_user.email, users.event_status, payment_status, users.registered_amount,
-                         users.balance_amount,
-                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.total_paid,
-                         users.balance_amount])
+                         users.event_user.email, users.event_status, payment_status, users.amount_paid,
+                         users.due_amount,
+                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent,users.contributed_amount, users.total_paid,
+                         users.due_amount])
                 except Exception as e:
                     print e
             return response
