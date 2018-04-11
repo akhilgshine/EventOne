@@ -23,13 +23,10 @@ admin.site.register(Table)
 
 
 class RegisteredUserAdmin(admin.ModelAdmin):
-    readonly_fields = ['get_total_paid', 'get_contributed_amount', 'get_registered_amount']
+    readonly_fields = ['get_total_paid','get_registered_amount', 'created_date']
 
     def get_total_paid(self, obj, *args, **kwargs):
         return str(obj.total_paid)
-
-    def get_contributed_amount(self, obj, *args, **kwargs):
-        return str(obj.contributed_amount)
 
     def get_registered_amount(self, obj, *args, **kwargs):
         return str(obj.registered_amount)
