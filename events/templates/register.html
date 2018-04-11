@@ -168,16 +168,21 @@
                               <input id="radio_status_4" value="Couple_Informal"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples (Saturday Only)
                             </label>
                           </div>
-
                         </div>
-
+                            <div class="form-group">
+                          <label class="control-label col-sm-4" for="partial_payment_id"></label>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Pyment
+                              </label>
+                          </div>
+                            </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
                           <div class="col-sm-8">
-                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
+                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid" readonly>
                           </div>
                         </div>
-
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                           <div class="col-sm-2">
@@ -239,13 +244,6 @@
                             <input type="text" class="form-control" id="id_room_rent" placeholder="" name="room_rent">
                           </div>
                         </div>
-
-                        <!--<div class="form-group">-->
-                          <!--<label class="control-label col-sm-4" for=""> Do You want to book for 3rd August 2018 as well : </label>-->
-                          <!--<div class="col-sm-2">-->
-                            <!--<input type="checkbox" name="book_friday" id="bookFriday" value="True"> Tick to book from 3rd August 2018-->
-                          <!--</div>-->
-                        <!--</div>-->
                         <div class="form-group">
                           <label class="control-label col-sm-4" for=""> Date : </label>
                           <div class="col-sm-3">
@@ -493,10 +491,33 @@
       $('#amount_added_id').val(amount);
       $('#reg_amount_final').html(amount);
       calcalateTotal();
+    });
+    $('#id_partial_payment').on('change', function(e){
+      var status = $('input[type=radio][name=status]:checked').val();
+      if(status && $(this).is(":checked")) {
+          $("#amount_added_id").attr("readonly", false);
+          $("#amount_added_id").focus();
+          var partial_amount = $('#amount_added_id').val();
+          console.log('hhh',partial_amount);
+          calcalateTotal();
+      }
+      else{
+           var memberType = $('#memberType').val();
+      status = $('input[type=radio][name=status]:checked').val();
+      var amount = getAmount(memberType, status);
+      $('#amount_added_id').val(amount);
+      $('#reg_amount_final').html(amount);
+      calcalateTotal();
+          $("#amount_added_id").attr("readonly", true);
+      }
+    });
+    $('#amount_added_id').on('change', function(e){
+          var partial_amount = $('#amount_added_id').val();
+          $('#reg_amount_final').html(partial_amount);
+            calcalateTotal();
+
 
     });
-
-
 
     // $('#amount_added_id').on('change', function(){
     //   var amount_added = $('#amount_added_id').val()

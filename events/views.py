@@ -164,13 +164,13 @@ class RegisterEvent(TemplateView):
 
             # event_user, created = EventUsers.objects.get_or_create(email=email)
 
-            # if created:
-            #     event_user.table=table
-            # else:
-            #     if event_user.table != table:
-            #         message = "User with this MailID '"+ str(event_user.email)+"' already exist in table '"+str(event_user.table.table_name)+"'"
-            #         messages.success(self.request, message)
-            #         return HttpResponseRedirect(reverse('register_event'))
+            if created:
+                event_user.table = table
+            else:
+                if event_user.table != table:
+                    message = "User with this MailID '"+ str(event_user.email)+"' already exist in table '"+str(event_user.table.table_name)+"'"
+                    messages.success(self.request, message)
+                    return HttpResponseRedirect(reverse('register_event'))
             event_user.member_type = member_type
             event_user.first_name = name
             event_user.last_name = last_name
@@ -704,34 +704,33 @@ class UpdateRegPaymentView(UpdateView):
 
     def get_initial(self):
         initial = super(UpdateRegPaymentView, self).get_initial()
-        initial['amount_paid'] = 0
+        initial['contributed_amount'] = 0
         return initial
 
     def form_valid(self, form):
         obj = self.get_object()
-        current = obj.amount_paid
-        balance = obj.balance_amount
-        if not current:
-            current = 0
+        current_contribution = obj.contributed_amount
+        # balance = obj.balance_amount
+        if not current_contribution:
+            current_contribution = 0
+
         obj = form.save(commit=False)
 
-        updated_amount = form.cleaned_data.get('amount_paid')
-        
-        if not updated_amount:
-            updated_amount = 0
-        
-        if balance > updated_amount :
-            balance = balance - updated_amount
-            updated_amount = current + updated_amount
-            contributed_amount = 0
-        else :
-            updated_amount = current + balance
-            balance = 0
-            contributed_amount = updated_amount - balance
+        updated_contribution = form.cleaned_data.get('contributed_amount')
 
-        obj.contributed_amount = contributed_amount
-        obj.amount_paid = updated_amount
-        obj.balance_amount = balance
+        if not updated_contribution:
+            updated_contribution = 0
+        #
+        # if balance > updated_amount:
+        #     balance = balance - updated_amount
+        #     updated_amount = current + updated_amount
+        #     contributed_amount = 0
+        # else:
+        #     updated_amount = current + balance
+        #     balance = 0
+        #     contributed_amount = updated_amount - balance
+
+        obj.contributed_amount = int(current_contribution) + int(updated_contribution)
         obj.save()
         return super(UpdateRegPaymentView, self).form_valid(form)
 
@@ -790,8 +789,8 @@ class DownloadCSVView(TemplateView):
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
-                             'Amount Paid', 'Amount Due', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Nights', 'Amount Paid', 'Total Payment', 'Total Due'])
+                             'Registration Amount ', 'Amount Due', 'Hotel Name', 'Room Type', 'Check-In',
+                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -801,24 +800,26 @@ class DownloadCSVView(TemplateView):
 
                     except IndexError:
                         user_hotel = None
-                        hotel_days = 'None'
+                        hotel_days = ''
                     if user_hotel:
                         room_type = user_hotel.room_type.room_type
                         hotel_name = user_hotel.hotel_name
                         check_in_date = user_hotel.checkin_date
                         check_out_date = user_hotel.checkout_date
                         hotel_rent = user_hotel.tottal_rent
-                        
+
                     else:
-                        room_type = 'None'
-                        hotel_name = 'None'
-                        check_in_date = 'None'
-                        check_out_date = 'None'
-                        total_rent = 'None'
+                        room_type = ''
+                        hotel_name = ''
+                        check_in_date = ''
+                        check_out_date = ''
+                        hotel_rent = ''
                     writer.writerow(
-                        [users.event_user.first_name, users.table.table_name, users.qrcode, users.event_user.mobile,  
-                         users.event_user.email, users.event_status, payment_status, users.registered_amount, users.balance_amount,
-                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.total_paid, users.balance_amount])
+                        [users.event_user.first_name, users.table.table_name, users.qrcode, users.event_user.mobile,
+                         users.event_user.email, users.event_status, payment_status, users.registered_amount,
+                         users.balance_amount,
+                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.total_paid,
+                         users.balance_amount])
                 except Exception as e:
                     print e
             return response
