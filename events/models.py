@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.db.models import Sum
-from django.contrib.auth.models import User
+
 from django.utils.translation import ugettext_lazy as _
 
 STATUS_CHOICES = (
@@ -134,6 +134,21 @@ class RegisteredUsers(models.Model):
     def due_amount(self):
         return self.registered_amount - self.amount_paid
 
+    @property
+    def hotel_rent(self):
+        if self.hotel.all():
+            hotel_rent = 0
+            hotel_rent = self.hotel.all()[0].room_type.net_rate
+            checkout = self.hotel.all()[0].checkout_date
+            checkin = self.hotel.all()[0].checkin_date
+            difference = checkout - checkin
+            return hotel_rent * difference.days
+
+    @property
+    def hotel_due(self):
+        if self.hotel.all():
+            return  self.hotel_rent - self.hotel.all()[0].tottal_rent
+
 
 class PaymentDetails(models.Model):
     reg_event = models.ForeignKey(RegisteredUsers, null=True)
@@ -161,4 +176,4 @@ class Hotels(models.Model):
     checkout_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.hotel_name
+        return self.registered_users.event_user.first_name

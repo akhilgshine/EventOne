@@ -23,13 +23,16 @@ admin.site.register(Table)
 
 
 class RegisteredUserAdmin(admin.ModelAdmin):
-    readonly_fields = ['get_total_paid','get_registered_amount', 'created_date']
+    readonly_fields = ['get_total_paid','get_registered_amount', 'created_date','get_hotel_rent',]
 
     def get_total_paid(self, obj, *args, **kwargs):
         return str(obj.total_paid)
 
     def get_registered_amount(self, obj, *args, **kwargs):
         return str(obj.registered_amount)
+
+    def get_hotel_rent(self,obj,*args,**kwargs):
+        return str(obj.hotel_rent)
 
     class Meta:
         model = RegisteredUsers

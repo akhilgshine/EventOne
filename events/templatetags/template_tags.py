@@ -45,12 +45,12 @@ def payment_status(user_id):
         elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
             return 'Partial'
         else:
-            return 'Completely Paid'
+            return 'Complete'
     else:
         if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
             return 'Partial'
         else:
-            return 'Completely Paid'
+            return 'Complete'
 
 
 @register.filter

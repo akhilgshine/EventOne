@@ -91,6 +91,10 @@ class RegisterEvent(TemplateView):
 
         context['form'] = EventRegisterForm()
         context['room_types'] = RoomType.objects.all()
+        room_type_dict = []
+        for room in RoomType.objects.all():
+            room_type_dict.append({'id': room.id, 'rent': room.net_rate})
+        context['room_type_dict'] = json.dumps(room_type_dict)
         context['tables'] = Table.objects.all()  # .order_by('table_order')
         return render(request, self.template_name, context)
 

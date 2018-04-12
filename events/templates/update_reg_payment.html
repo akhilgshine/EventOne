@@ -12,108 +12,109 @@
     <title>Lets Go Nuts - QRT 85</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"  rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    
+
     <!-- Custom css style -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
-<style>
+    <style>
 
-    .datepicker{
-        color:red;
-    }
-    #amount_error_div{
+        .datepicker {
+            color: red;
+        }
 
-        color:red;
-    }
+        #amount_error_div {
 
-</style>
+            color: red;
+        }
+
+    </style>
 </head>
 
 <body id="page-top">
-    <div id="myNav" class="overlay">
+<div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
-      <a href="/">Home</a>
-      <a href="/users/">Registered Users</a>
-      <a href="/logout/">Logout</a>
+        <a href="/">Home</a>
+        <a href="/users/">Registered Users</a>
+        <a href="/logout/">Logout</a>
     </div>
-  </div>
-    <div class="container-fluid wrap-nuts register">
+</div>
+<div class="container-fluid wrap-nuts register">
 
-        {% if messages %}
-          {% for message in messages %}
-            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
-              <a class="close" data-dismiss="alert" href="#">&times;</a>
-              {{ message }}
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="message alert alert-success message"  style="display: none;">
-          <a class="close" data-dismiss="alert" href="#">&times;</a>
+    {% if messages %}
+    {% for message in messages %}
+    <div
+    {% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %} style='margin-top: 50px;'>
+    <a class="close" data-dismiss="alert" href="#">&times;</a>
+    {{ message }}
+</div>
+{% endfor %}
+{% else %}
+<div class="message alert alert-success message" style="display: none;">
+    <a class="close" data-dismiss="alert" href="#">&times;</a>
 
-          </div>
-        {% endif %}
+</div>
+{% endif %}
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="logo-wrap">
-                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
-                </div>
-                <div class="col-sm-12 wrap-form-submit">                    
-                      <div  id="hotelForm">
-                      <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
-                        {% csrf_token %}
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
-                          <div class="col-sm-8" style="color: black">
+<div class="container-fluid">
+    <div class="row">
+        <div class="logo-wrap">
+            <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
+        </div>
+        <div class="col-sm-12 wrap-form-submit">
+            <div id="hotelForm">
+                <form method="POST" class="form-horizontal form-nuts" id="DetailForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
+                        <div class="col-sm-8" style="color: black">
                             {{form.contributed_amount}}
-                              <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
-                          </div>
-
+                            <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
                         </div>
 
-
-                        <p id="notifications" style="color: red"></p>
-                        <hr>
-                        <div class="form-group">
-                          <div class="col-sm-offset-4 col-sm-4">
-                            <button type="submit" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
-                          </div>
-                          <div class="col-sm-4">
-                            <a href="/users/">
-                              <button typ="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
-                            </a>
-                          </div> 
-                        </div>
-
-                          
-                      </form>
                     </div>
-                </div>
 
+
+                    <p id="notifications" style="color: red"></p>
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-4">
+                            <button type="submit" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <a href="/users/">
+                                <button typ="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
+                            </a>
+                        </div>
+                    </div>
+
+
+                </form>
             </div>
         </div>
+
     </div>
+</div>
+</div>
 
 
-    <!-- jQuery -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- jQuery -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
 
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
-     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <script type="text/javascript">
-     
+<script type="text/javascript">
 
 
     // function update_messages(messages){
@@ -136,70 +137,48 @@
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
+
     var selected_rent;
-    function selectRoomType(){
-      var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-      var value = $('#id_room_type').val();
-      $('#id_tottal_rent').val('');
-      $('#id_tottal_rent').val(room_rates[+value-1]);
-      selected_rent = room_rates[+value-1];
 
-      $('#id_hotel_name').val('Hotel Raviz Kollam');
+    function selectRoomType() {
 
-      var rent = $('#id_room_rent').val();
-      var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(rent);
-        }
+        $('#id_hotel_name').val('Hotel Raviz Kollam');
+
+        calculate_rent();
+
     }
-    
-    $("#id_checkout_date").change(function(){
-        console.log("OnChange checkOut");
-        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-        var value = $('#id_room_type').val();
-        var selected_rent = room_rates[+value-1]
-        var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
-        }
+
+    $("#id_checkout_date").change(function () {
+        calculate_rent();
     });
 
-    function changeCheckinDate(){
-        console.log("OnChange checkIn");
-        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-        var value = $('#id_room_type').val();
-        var selected_rent = room_rates[+value-1]
-        var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
-        }
+    function changeCheckinDate() {
+        calculate_rent();
     };
 
-    function calculate_rent(one_day_rent){
-        console.log('one_day_rent', one_day_rent)
-         checkInDate=$('#id_checkin_date').val().split('/')[0]
-         checkOutDate=$('#id_checkout_date').val().split('/')[0]
-         console.log('outdate',checkInDate)
-         diffDays = checkOutDate-checkInDate;
-         console.log('indate',$('#id_checkin_date').val())
-         console.log('outdate',checkOutDate)
-         console.log('dayss',diffDays);
-         if(diffDays == 0 || diffDays == 1){
+    function calculate_rent() {
+
+        var one_day_rent = $('#id_room_rent').val();
+        var checkin = $('#id_checkin_date').val();
+        var checkout = $('#id_checkout_date').val();
+        if (checkin != '' && checkout != '') {
+            checkInDate = checkin.split('/')[0];
+            checkOutDate = checkout.split('/')[0];
+            diffDays = checkOutDate - checkInDate;
+
+            if (diffDays == 0 || diffDays == 1) {
                 var one_day_rent = one_day_rent;
                 $('#id_tottal_rent').val(one_day_rent);
             }
-         else{
-            var rent = $('#id_tottal_rent').val();
-            if(one_day_rent)
-                var tottal = diffDays * one_day_rent;
-            else
-                var tottal = rent;
-            $('#id_tottal_rent').val(tottal);
-         }
-         // alert(tottal)
+            else {
+                var rent = $('#id_tottal_rent').val();
+                if (one_day_rent)
+                    var tottal = diffDays * one_day_rent;
+                else
+                    var tottal = rent;
+                $('#id_tottal_rent').val(tottal);
+            }
+        }
     }
 
     $("#id_checkin_date").datepicker({
@@ -208,12 +187,12 @@
         minDate: new Date(Date.parse("2018-08-03")),
         maxDate: new Date(Date.parse("2018-08-05")),
         defaultDate: new Date(Date.parse("2018-08-01")),
-        onSelect: function(selected) {
-          $("#id_checkout_date").datepicker("option","minDate", selected)
-          changeCheckinDate();
+        onSelect: function (selected) {
+            $("#id_checkout_date").datepicker("option", "minDate", selected)
+            changeCheckinDate();
         }
     });
-    
+
     $("#id_checkout_date").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
@@ -223,25 +202,28 @@
     });
 
 
-    {% if hotel_obj %}
-      $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
-      $("#id_tottal_rent").val('{{hotel_obj.tottal_rent}}');
-      $('#id_room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
-      $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
-      $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
-    {% endif %}
+    {%
+        if hotel_obj %}
+    $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
+    $("#id_tottal_rent").val('{{hotel_obj.tottal_rent}}');
+    $('#id_room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected', 'selected');
+    $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+    $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
+    {%
+        endif %
+    }
 
-$('#id_amount_paid').on('keyup change',function() {
+    $('#id_amount_paid').on('keyup change', function () {
         var entered_values = $(this).val();
-        if (entered_values<0){
-                $('#id_pay_now').attr('disabled',true);
-                $('#amount_error_div').show();
-        } else{
-            $('#id_pay_now').attr('disabled',false);
+        if (entered_values < 0) {
+            $('#id_pay_now').attr('disabled', true);
+            $('#amount_error_div').show();
+        } else {
+            $('#id_pay_now').attr('disabled', false);
             $('#amount_error_div').hide();
         }
     });
-  </script>
+</script>
 </body>
 
 </html>

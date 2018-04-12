@@ -43,6 +43,12 @@
   table.dataTable thead .sorting_desc {
       background : none;
   }
+
+ .dataTables_scrollBody {
+  position: relative;
+    overflow: auto !important;
+    width: 100%;
+    height: 70vh !important;}
 </style>
 
   <script type="text/javascript" class="init">
@@ -171,6 +177,7 @@
               <th>Checkout Date</th>
               <th>No of Nights</th>
               <th>Hotel Amount Paid</th>
+              <th>Hotel Dues</th>
               <th style="background-color: green;"></th>
               <th> Contribution </th>
               <th>Total Payment</th>
@@ -271,6 +278,8 @@
 
             <td>{{ user.id |no_of_night }}</td>
             <td> {{ user.id| get_hotel_rent }}</td>            
+            <td> {{user.hotel_due}}&nbsp|&nbsp
+                <a href=".">Pay Pending</a></td>
             <td style="background-color: green;"></td>
 
             <!-- TOTAL PAYMENT  -->
@@ -280,6 +289,7 @@
             <td><!--Total Due --> {{ user.due_amount }}</td>
           </tr>
           {% endfor %}
+
           </tbody>
         </table>
              
@@ -304,6 +314,7 @@
           "info":     false,
           // responsive: true,   
           "scrollX": true,
+          fixedHeader: true,
         });
         $("#user_lists_filter").hide();
       
