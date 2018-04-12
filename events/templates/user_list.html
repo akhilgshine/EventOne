@@ -159,7 +159,7 @@
               <th>Reg Type</th> <!-- Status -->
               <th>Partial/Completely </th><!-- Payment Status -->
 
-              <th>Amount Paid </th>
+              <th>Registration Amount </th>
               <th>Amount Due </th>
               <!-- <th>Registration Date </th> -->
               <!-- <th>Coupon</th> -->
@@ -170,7 +170,7 @@
               <th>Checkin Date</th>
               <th>Checkout Date</th>
               <th>No of Nights</th>
-              <th>Amount Paid</th>
+              <th>Hotel Amount Paid</th>
               <th style="background-color: green;"></th>
               <th> Contribution </th>
               <th>Total Payment</th>
@@ -218,10 +218,15 @@
             </td>
             <td> {{ user.id|payment_status}}</td>
             
-            <td> {{ user.amount_paid }}&nbsp|&nbsp
-                <a href="{% url 'update_reg_payment' user.id %}">Contribute Extra </a></td>
+            <td> {{ user.amount_paid }}</td>
             <!-- <td> {{ user.created_date|date }} </td> -->
-            <td> <!-- due amount -->{{ user.balance_amount }}</td>            
+            {% if not user.due_amount %}
+            <td> {{ user.due_amount }}</td>
+          {% else %}
+            <td> {{ user.due_amount }}&nbsp|&nbsp
+                <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
+            </td>
+              {% endif %}
             <!-- <td> {{ user.created_date|date:"D d M Y" }} </td> -->
             
             <!-- <td>  
@@ -244,6 +249,7 @@
                   <br>
                   <a href="/update_hotel/{{user.id}}"> Update Booking </a>
                 {% else %}
+              -<br>
                   <a href="/update_hotel/{{user.id}}"> Book Hotel </a>
                 {% endif %}
             </td>
@@ -269,8 +275,9 @@
 
             <!-- TOTAL PAYMENT  -->
             <td>{{ user.contributed_amount }}</td>
-            <td>{{ user.total_paid }}</td>
-            <td><!--Total Due --> {{ user.balance_amount }}</td>
+            <td>{{ user.total_paid }}&nbsp|&nbsp
+                <a href="{% url 'update_reg_payment' user.id %}">Contribute Extra </a></td>
+            <td><!--Total Due --> {{ user.due_amount }}</td>
           </tr>
           {% endfor %}
           </tbody>

@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^edit_user_registered/(?P<pk>\d+)$', UserRegisterUpdate.as_view(), name='edit_user'),
     url(r'^update_hotel/(?P<pk>\d+)$', UpdateHotelView.as_view(), name='update_hotel_view'),
     url(r'^update-reg-payment/(?P<pk>\d+)$', UpdateRegPaymentView.as_view(), name='update_reg_payment'),
+    url(r'^update-due-payment/(?P<pk>\d+)$', DuePaymentView.as_view(), name='due_payment_update'),
     url(r'^upgrade-reg-status/(?P<pk>\d+)$', UpgradeStatusView.as_view(), name='upgrade_reg_status'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),

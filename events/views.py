@@ -824,3 +824,23 @@ class DownloadCSVView(TemplateView):
                     print e
             return response
         return super(DownloadCSVView, self).get(request, *args, **kwargs)
+
+
+class DuePaymentView(UpdateView):
+    template_name = 'update_due.html'
+    form_class = UpdateDuePaymentForm
+    success_url = '/users'
+    queryset = RegisteredUsers.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        init_val = self.object.amount_paid
+        amount = int(request.POST.get('amount_paid'))
+        self.object.amount_paid = init_val + amount
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_initial(self):
+        initial = super(DuePaymentView, self).get_initial()
+        initial['amount_paid'] = self.object.due_amount
+        return initial

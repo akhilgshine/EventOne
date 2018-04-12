@@ -16,7 +16,7 @@
 
     <!-- Custom Fonts -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    
+
     <!-- Custom css style -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css">
 
@@ -63,14 +63,14 @@
                 <div class="logo-wrap">
                     <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
                 </div>
-                <div class="col-sm-12 wrap-form-submit">                    
+                <div class="col-sm-12 wrap-form-submit">
                       <div  id="hotelForm">
                       <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
                         {% csrf_token %}
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
                           <div class="col-sm-8" style="color: black">
-                            {{form.contributed_amount}}
+                            {{form.amount_paid}}
                               <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
                           </div>
 
@@ -87,10 +87,10 @@
                             <a href="/users/">
                               <button typ="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
                             </a>
-                          </div> 
+                          </div>
                         </div>
 
-                          
+
                       </form>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script type="text/javascript">
-     
+
 
 
     // function update_messages(messages){
@@ -136,111 +136,7 @@
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
-    var selected_rent;
-    function selectRoomType(){
-      var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-      var value = $('#id_room_type').val();
-      $('#id_tottal_rent').val('');
-      $('#id_tottal_rent').val(room_rates[+value-1]);
-      selected_rent = room_rates[+value-1];
 
-      $('#id_hotel_name').val('Hotel Raviz Kollam');
-
-      var rent = $('#id_room_rent').val();
-      var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(rent);
-        }
-    }
-    
-    $("#id_checkout_date").change(function(){
-        console.log("OnChange checkOut");
-        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-        var value = $('#id_room_type').val();
-        var selected_rent = room_rates[+value-1]
-        var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
-        }
-    });
-
-    function changeCheckinDate(){
-        console.log("OnChange checkIn");
-        var room_rates = [5500, 6000, 6000, 6500, 10000, 13500, 15500]
-        var value = $('#id_room_type').val();
-        var selected_rent = room_rates[+value-1]
-        var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != ''){
-            calculate_rent(selected_rent);
-        }
-    };
-
-    function calculate_rent(one_day_rent){
-        console.log('one_day_rent', one_day_rent)
-         checkInDate=$('#id_checkin_date').val().split('/')[0]
-         checkOutDate=$('#id_checkout_date').val().split('/')[0]
-         console.log('outdate',checkInDate)
-         diffDays = checkOutDate-checkInDate;
-         console.log('indate',$('#id_checkin_date').val())
-         console.log('outdate',checkOutDate)
-         console.log('dayss',diffDays);
-         if(diffDays == 0 || diffDays == 1){
-                var one_day_rent = one_day_rent;
-                $('#id_tottal_rent').val(one_day_rent);
-            }
-         else{
-            var rent = $('#id_tottal_rent').val();
-            if(one_day_rent)
-                var tottal = diffDays * one_day_rent;
-            else
-                var tottal = rent;
-            $('#id_tottal_rent').val(tottal);
-         }
-         // alert(tottal)
-    }
-
-    $("#id_checkin_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
-        onSelect: function(selected) {
-          $("#id_checkout_date").datepicker("option","minDate", selected)
-          changeCheckinDate();
-        }
-    });
-    
-    $("#id_checkout_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
-    });
-
-
-    {% if hotel_obj %}
-      $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
-      $("#id_tottal_rent").val('{{hotel_obj.tottal_rent}}');
-      $('#id_room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
-      $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
-      $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
-    {% endif %}
-
-$('#id_amount_paid').on('keyup change',function() {
-        var entered_values = $(this).val();
-        if (entered_values<0){
-                $('#id_pay_now').attr('disabled',true);
-                $('#amount_error_div').show();
-        } else{
-            $('#id_pay_now').attr('disabled',false);
-            $('#amount_error_div').hide();
-        }
-    });
   </script>
 </body>
 

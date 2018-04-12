@@ -67,11 +67,11 @@ class HotelForm(forms.ModelForm):
 class UpdatePaymentForm(forms.ModelForm):
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid',)
+        fields = ('contributed_amount',)
 
     def __init__(self, *args, **kwargs):
         super(UpdatePaymentForm, self).__init__(*args, **kwargs)
-        self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
+        self.fields['contributed_amount'].widget.attrs['class'] = 'form-control'
 
 
 class UpgradeStatusForm(forms.ModelForm):
@@ -87,3 +87,14 @@ class UpgradeStatusForm(forms.ModelForm):
         self.fields['event_status'].widget.attrs['class'] = 'form-control'
         self.fields['amount_to_upgrade'].widget.attrs['class'] = 'form-control'
         self.fields['amount_to_upgrade'].widget.attrs['readonly'] = 'readonly'
+
+
+class UpdateDuePaymentForm(forms.ModelForm):
+    class Meta:
+        model = RegisteredUsers
+        fields = ('amount_paid',)
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateDuePaymentForm, self).__init__(*args, **kwargs)
+        self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
+        self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
