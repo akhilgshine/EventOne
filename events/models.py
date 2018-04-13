@@ -145,8 +145,6 @@ class RegisteredUsers(models.Model):
                 return hotel_rent * difference.days
         return 0
 
-
-
     @property
     def hotel_due(self):
         if self.hotel.all():
