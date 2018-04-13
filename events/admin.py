@@ -8,19 +8,6 @@ from events.models import *
 from .templatetags import *
 from import_export.admin import ImportExportModelAdmin
 
-# class EventUsersAdmin(ImportExportModelAdmin):
-# 	list_display = ('first_name', 'last_name', 'mobile', 'email')
-
-# class RegisteredUsersAdmin(ImportExportModelAdmin):
-# 	list_display = ('event_user', 'table', 'event', 'amount_paid', 'event_status')
-
-# class TableAdmin(ImportExportModelAdmin):
-# 	list_display = ('table_name', 'table_order', 'event')
-
-# Register your models here.
-admin.site.register(Event)
-admin.site.register(Table)
-
 
 class RegisteredUserAdmin(admin.ModelAdmin):
 
@@ -39,6 +26,8 @@ class RegisteredUserAdmin(admin.ModelAdmin):
                        'created_date',
                        'get_hotel_rent']
 
+    search_fields = ['event_user__first_name', 'event_user__last_name']
+
     def get_total_paid(self, obj, *args, **kwargs):
         return str(obj.total_paid)
 
@@ -50,8 +39,10 @@ class RegisteredUserAdmin(admin.ModelAdmin):
 
     def get_due_amount(self, obj, *args, **kwargs):
         return str(obj.due_amount)
+
     def get_hotel_due(self, obj, *args, **kwargs):
         return str(obj.hotel_due)
+
     def get_total_due(self, obj, *args, **kwargs):
         return str(obj.total_due)
 
@@ -71,3 +62,5 @@ admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers)
 admin.site.register(Hotels, BookedHotelAdmin)
 admin.site.register(RoomType)
+admin.site.register(Event)
+admin.site.register(Table)

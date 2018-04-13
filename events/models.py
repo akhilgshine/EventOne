@@ -55,6 +55,10 @@ class EventUsers(models.Model):
     def __str__(self):
         return "{} {}".format(self.first_name, self.last_name)
 
+    class Meta:
+        verbose_name = 'Event User'
+        verbose_name_plural = 'Event Users'
+
 
 class RegisteredUsers(models.Model):
     event_user = models.ForeignKey(EventUsers)
@@ -73,6 +77,10 @@ class RegisteredUsers(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.event_user.first_name, self.event_user.last_name)
+
+    class Meta:
+        verbose_name = 'Registered User'
+        verbose_name_plural = 'Registered Users'
 
     @property
     def total_paid(self):
