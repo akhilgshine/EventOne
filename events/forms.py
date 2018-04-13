@@ -58,7 +58,7 @@ class HotelForm(forms.ModelForm):
 
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['placeholder'] = 'Rent'
-        self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
+        # self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
 
         self.fields['checkin_date'].widget.attrs['class'] = 'datepicker form-control'
         self.fields['checkout_date'].widget.attrs['class'] = 'datepicker form-control'

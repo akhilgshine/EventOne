@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import csv
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import FormView, TemplateView, View, UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -91,10 +91,6 @@ class RegisterEvent(TemplateView):
 
         context['form'] = EventRegisterForm()
         context['room_types'] = RoomType.objects.all()
-        room_type_dict = []
-        for room in RoomType.objects.all():
-            room_type_dict.append({'id': room.id, 'rent': room.net_rate})
-        context['room_type_dict'] = json.dumps(room_type_dict)
         context['tables'] = Table.objects.all()  # .order_by('table_order')
         return render(request, self.template_name, context)
 
@@ -473,6 +469,13 @@ class ListUsers(TemplateView):
         context['hotels'] = hotels
         context['users'] = registered_users
         context['tables'] = Table.objects.all()
+        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
+                                                 0] or 0.00
+        context['total_registration_due'] = sum(item.due_amount for item in RegisteredUsers.objects.all())
+        context['total_hotel_due'] = sum(item.hotel_due for item in RegisteredUsers.objects.all())
+        context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
+        context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
         return render(request, self.template_name, context)
 
 
@@ -483,6 +486,12 @@ class ListUsers(TemplateView):
 
 class InvoiceView(TemplateView):
     template_name = 'coupon.html'
+
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(InvoiceView, self).get_context_data(**kwargs)
+    #     context['event_user'] = RegisteredUsers.objects.all()
+    #     return context
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -650,28 +659,28 @@ class UserRegisterUpdate(TemplateView):
             return HttpResponseRedirect(reverse('register_event'))
 
 
-class UpdateHotelView(FormView):
+class UpdateHotelView(UpdateView):
     template_name = "update_hotel.html"
     form_class = HotelForm
     success_url = '/users/'
+    queryset = RegisteredUsers.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        context = {}
-        pk = kwargs.pop('pk')
-        event_registered_user = RegisteredUsers.objects.get(id=pk)
-
+    def get_initial(self):
+        initial = super(UpdateHotelView, self).get_initial()
         try:
-            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
-        except:
-            hotel_obj = ''
+            self.hotel_obj = Hotels.objects.get(registered_users=self.object)
+        except Hotels.DoesNotExist:
+            self.hotel_obj = ''
+        else:
+            initial['tottal_rent'] = self.hotel_obj.registered_users.hotel_due
+        return initial
 
-        if not request.user.is_authenticated():
-            return HttpResponseRedirect(reverse('login'))
-
+    def get_context_data(self, **kwargs):
+        context = super(UpdateHotelView, self).get_context_data(**kwargs)
         context['form'] = HotelForm()
         context['room_types'] = RoomType.objects.all()
-        context['hotel_obj'] = hotel_obj
-        return render(request, self.template_name, context)
+        context['hotel_obj'] = self.hotel_obj
+        return context
 
     def form_valid(self, form):
         registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
@@ -680,9 +689,15 @@ class UpdateHotelView(FormView):
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
         hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
+        print(hotel_obj.tottal_rent, "total rent ippo")
         hotel_obj.hotel_name = form.cleaned_data['hotel_name']
-        hotel_obj.hotel_name = form.cleaned_data['hotel_name']
-        hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
+        if hotel_obj.registered_users.hotel_due > 0:
+            print("has due")
+            current_rent = hotel_obj.tottal_rent
+            hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
+            print("after add", hotel_obj.tottal_rent)
+        else:
+            hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
         hotel_obj.room_type = form.cleaned_data['room_type']
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
@@ -700,14 +715,14 @@ class UpdateHotelView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UpdateRegPaymentView(UpdateView):
+class UpdateContributionPaymentView(UpdateView):
     template_name = 'update_reg_payment.html'
     form_class = UpdatePaymentForm
     success_url = '/users'
     queryset = RegisteredUsers.objects.all()
 
     def get_initial(self):
-        initial = super(UpdateRegPaymentView, self).get_initial()
+        initial = super(UpdateContributionPaymentView, self).get_initial()
         initial['contributed_amount'] = 0
         return initial
 
@@ -736,10 +751,10 @@ class UpdateRegPaymentView(UpdateView):
 
         obj.contributed_amount = int(current_contribution) + int(updated_contribution)
         obj.save()
-        return super(UpdateRegPaymentView, self).form_valid(form)
+        return super(UpdateContributionPaymentView, self).form_valid(form)
 
     def form_invalid(self, form):
-        return super(UpdateRegPaymentView, self).form_invalid()
+        return super(UpdateContributionPaymentView, self).form_invalid()
 
 
 class UpgradeStatusView(UpdateView):
@@ -763,7 +778,7 @@ class UpgradeStatusView(UpdateView):
         return super(UpgradeStatusView, self).form_valid(form)
 
     def form_invalid(self, form):
-        return super(UpgradeStatusView, self).form_invalid()
+        return super(UpgradeStatusView, self).form_invalid(form)
 
 
 class DashBoardView(TemplateView):
@@ -787,14 +802,22 @@ class DownloadCSVView(TemplateView):
     template_name = 'user_list.html'
 
     def get(self, request, *args, **kwargs):
+        context = {}
         get_user_registered = RegisteredUsers.objects.all()
+        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
+                                                 0] or 0.00
+        context['total_registration_due'] = sum(item.due_amount for item in RegisteredUsers.objects.all())
+        context['total_hotel_due'] = sum(item.hotel_due for item in RegisteredUsers.objects.all())
+        context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
+        context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
         if get_user_registered:
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
-                             'Registration Amount ', 'Amount Due', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Contribution', 'Total Payment', 'Total Due'])
+                             'Registration Amount ', 'Amount Due','Room', 'Hotel Name', 'Room Type', 'Check-In',
+                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution', 'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -819,13 +842,21 @@ class DownloadCSVView(TemplateView):
                         check_out_date = '-'
                         hotel_rent = '-'
                     writer.writerow(
-                        [users.event_user.first_name, users.table.table_name, users.qrcode, users.event_user.mobile,
+                        [users.event_user.first_name +''+users.event_user.last_name, users.table.table_name, users.qrcode, users.event_user.mobile,
                          users.event_user.email, users.event_status, payment_status, users.amount_paid,
-                         users.due_amount,
-                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent,users.contributed_amount, users.total_paid,
-                         users.due_amount])
+                         users.due_amount,'',
+                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent,users.hotel_due,'',users.contributed_amount, users.total_paid,
+                         users.total_due])
                 except Exception as e:
                     print e
+            writer.writerow(
+                [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name, users.qrcode,
+                 users.event_user.mobile,
+                 users.event_user.email, users.event_status, payment_status, users.amount_paid,
+                 users.due_amount, '',
+                 hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due, '',
+                 users.contributed_amount, users.total_paid,
+                 users.total_due])
             return response
         return super(DownloadCSVView, self).get(request, *args, **kwargs)
 
@@ -848,3 +879,12 @@ class DuePaymentView(UpdateView):
         initial = super(DuePaymentView, self).get_initial()
         initial['amount_paid'] = self.object.due_amount
         return initial
+
+
+class AddContributionListPage(TemplateView):
+    template_name = 'add_contirbution_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AddContributionListPage, self).get_context_data(**kwargs)
+        context['registered_users'] = RegisteredUsers.objects.all()
+        return context

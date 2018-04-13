@@ -137,17 +137,28 @@ class RegisteredUsers(models.Model):
     @property
     def hotel_rent(self):
         if self.hotel.all():
-            hotel_rent = 0
-            hotel_rent = self.hotel.all()[0].room_type.net_rate
-            checkout = self.hotel.all()[0].checkout_date
-            checkin = self.hotel.all()[0].checkin_date
-            difference = checkout - checkin
-            return hotel_rent * difference.days
+            if self.hotel.all()[0].room_type:
+                hotel_rent = self.hotel.all()[0].room_type.net_rate
+                checkout = self.hotel.all()[0].checkout_date
+                checkin = self.hotel.all()[0].checkin_date
+                difference = checkout - checkin
+                return hotel_rent * difference.days
+        return 0
+
+
 
     @property
     def hotel_due(self):
         if self.hotel.all():
-            return  self.hotel_rent - self.hotel.all()[0].tottal_rent
+            return self.hotel_rent - self.hotel.all()[0].tottal_rent
+        return 0
+
+    @property
+    def total_due(self):
+        due = 0
+        if self.hotel_due:
+            due = self.hotel_due
+        return self.due_amount + due
 
 
 class PaymentDetails(models.Model):
@@ -169,7 +180,7 @@ class Hotels(models.Model):
     registered_users = models.ForeignKey(RegisteredUsers, null=True, related_name='hotel')
     hotel_name = models.CharField(max_length=50, null=True)
     room_number = models.CharField(max_length=20, null=True)
-    tottal_rent = models.IntegerField(blank=True, null=True)
+    tottal_rent = models.IntegerField(default=0)
     book_friday = models.BooleanField(default=False)
     room_type = models.ForeignKey(RoomType, null=True, blank=True)
     checkin_date = models.DateTimeField(null=True, blank=True)
@@ -177,3 +188,7 @@ class Hotels(models.Model):
 
     def __str__(self):
         return self.registered_users.event_user.first_name
+
+    class Meta:
+        verbose_name = 'Booked Hotel'
+        verbose_name_plural = 'Booked Hotels'

@@ -39,6 +39,7 @@
     <div class="overlay-content">
       <a href="/">Home</a>
       <a href="/users/">Registered Users</a>
+      <a href="{%  url 'add-contribution-list' %}">Contirbute Extra </a>
       <a href="{% url 'dash_board' %}">DashBoard</a>
       <a href="/logout/">Logout</a>
     </div>
@@ -176,7 +177,7 @@
                           <label class="control-label col-sm-4" for="partial_payment_id"></label>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Pyment
+                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment
                               </label>
                           </div>
                             </div>
@@ -185,42 +186,6 @@
                           <div class="col-sm-8">
                             <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid" readonly>
                               <div id="payment_error_div" style="display: none;"></div>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
-                              </label>
-                          </div>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"> <span class="radio-change"></span> POS
-                              </label>
-                          </div>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card"> <span class="radio-change"></span> Card
-                              </label>
-                          </div>
-                        </div>                        
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
-                          <div class="col-sm-8">
-                              <input type="text" class="form-control" id="id_reciept_number" placeholder="Receipt number" name="reciept_number">
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
-                          <div class="col-sm-8">
-                              <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt" name="reciept_file">
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_other_contribution">Other Contribution</label>
-                          <div class="col-sm-8">
-                              <input type="number" class="form-control" id="id_other_contribution" placeholder="Other Contribution" name="other_contribution">
                           </div>
                         </div>
                         <div class="form-group">
@@ -256,6 +221,42 @@
                           </div>
                         <div class="col-sm-3">
                            Check Out:<input type="text" name="checkout_date" class="datepicker form-control" id="checkOut">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash" > <span class="radio-change"></span> Cash
+                              </label>
+                          </div>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"> <span class="radio-change"></span> POS
+                              </label>
+                          </div>
+                          <div class="col-sm-2">
+                              <label>
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card"> <span class="radio-change"></span> Card
+                              </label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" id="id_reciept_number" placeholder="Receipt number" name="reciept_number">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
+                          <div class="col-sm-8">
+                              <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt" name="reciept_file">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_other_contribution">Other Contribution</label>
+                          <div class="col-sm-8">
+                              <input type="number" class="form-control" id="id_other_contribution" placeholder="Other Contribution" name="other_contribution">
                           </div>
                         </div>
 

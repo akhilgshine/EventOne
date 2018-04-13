@@ -166,12 +166,12 @@
                                     </td>
                                     <td> : </td>
                                     {% for dat in  payment_details %}
-                                    <td align="left" class="table_td_second"> 
-                                       {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date|date:"D d M Y" }}  
-                                       <br>
+                                        <td align="left" class="table_td_second">
+                                           {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date|date:"D d M Y" }}
+                                           <br>
                                     {% empty %}
-                                        {{ event_register.amount_paid }}
-                                    </td>
+                                            {{ event_register.amount_paid }}
+                                        </td>
                                     {% endfor %}
                                 </tr>
 
