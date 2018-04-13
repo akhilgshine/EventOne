@@ -38,8 +38,15 @@ class RegisteredUserAdmin(admin.ModelAdmin):
         model = RegisteredUsers
 
 
+class BookedHotelAdmin(admin.ModelAdmin):
+
+    search_fields = ['registered_users__event_user__first_name', 'registered_users__event_user__last_name']
+
+    class Meta:
+        model = Hotels
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers)
-admin.site.register(Hotels)
+admin.site.register(Hotels, BookedHotelAdmin)
 admin.site.register(RoomType)
-admin.site.register(PaymentDetails)

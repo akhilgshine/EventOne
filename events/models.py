@@ -53,7 +53,7 @@ class EventUsers(models.Model):
     post = models.CharField(max_length=30, blank=True)
 
     def __str__(self):
-        return self.first_name
+        return "{} {}".format(self.first_name, self.last_name)
 
 
 class RegisteredUsers(models.Model):
@@ -72,7 +72,7 @@ class RegisteredUsers(models.Model):
     contributed_amount = models.IntegerField(default=0)
 
     def __str__(self):
-        return ("{}, {}").format(self.event_user.first_name, self.event_user.last_name)
+        return "{} {}".format(self.event_user.first_name, self.event_user.last_name)
 
     @property
     def total_paid(self):
@@ -187,7 +187,8 @@ class Hotels(models.Model):
     checkout_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.registered_users.event_user.first_name
+        return "{} {}".format(self.registered_users.event_user.first_name,
+                               self.registered_users.event_user.last_name)
 
     class Meta:
         verbose_name = 'Booked Hotel'
