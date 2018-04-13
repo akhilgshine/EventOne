@@ -173,18 +173,18 @@
                             </label>
                           </div>
                         </div>
-                            <div class="form-group">
-                          <label class="control-label col-sm-4" for="partial_payment_id"></label>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment
-                              </label>
-                          </div>
-                            </div>
+{#                            <div class="form-group">#}
+{#                          <label class="control-label col-sm-4" for="partial_payment_id"></label>#}
+{#                          <div class="col-sm-2">#}
+{#                              <label>#}
+{#                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment#}
+{#                              </label>#}
+{#                          </div>#}
+{#                            </div>#}
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
                           <div class="col-sm-8">
-                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid" readonly>
+                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid">
                               <div id="payment_error_div" style="display: none;"></div>
                           </div>
                         </div>
@@ -539,7 +539,7 @@
         console.log('amount',amount)
         var partial_amount = $('#amount_added_id').val();
         console.log('partial',partial_amount);
-        if(partial_amount>amount){
+        /*if(partial_amount>amount){
              $('#payment_error_div').show();
              $('#payment_error_div').html('Amount Should be within '+amount );
              $('#id_confirm_register').attr('disabled',true);
@@ -548,7 +548,7 @@
             $('#payment_error_div').hide();
             $('#id_confirm_register').attr('disabled',false);
 
-        }
+        }*/
         $('#reg_amount_final').html(partial_amount);
         calcalateTotal();
 

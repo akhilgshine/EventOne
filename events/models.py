@@ -140,7 +140,7 @@ class RegisteredUsers(models.Model):
     #     return self.amount_paid - self.registered_amount
     @property
     def due_amount(self):
-        return self.registered_amount - self.amount_paid
+        return 0 if self.registered_amount - self.amount_paid < 0 else self.registered_amount - self.amount_paid
 
     @property
     def hotel_rent(self):

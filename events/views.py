@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import csv
+import traceback
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import FormView, TemplateView, View, UpdateView
@@ -104,6 +105,20 @@ class RegisterEvent(TemplateView):
                 return balance_amount
         return 0
 
+    def get_reg_amt(self, member_type, status):
+        if member_type == 'Tabler':
+            if status == 'Stag':
+                return 5000
+            return 6000
+        else:
+            if status == 'Stag':
+                return 4000
+            elif status == 'Couple':
+                return 5000
+            elif status == 'Stag_Informal':
+                return 2500
+            return 3500
+
     def post(self, request, *args, **kwargs):
         context = {}
         message_hotel = ''
@@ -121,7 +136,7 @@ class RegisterEvent(TemplateView):
             member_type = request.POST.get('member_type')
             status = request.POST.get('status')
             payment = request.POST.get('payment', '')
-            amount_paid = request.POST.get('amount_paid', 0)
+            amount_paid = int(request.POST.get('amount_paid'))
 
             hotel_name = request.POST.get('hotel_name', '')
             room_rent = request.POST.get('room_rent', '')
@@ -131,6 +146,15 @@ class RegisterEvent(TemplateView):
             reciept_number = request.POST.get('reciept_number')
             reciept_file = request.FILES.get('reciept_file')
             other_contribution = request.POST.get('other_contribution')
+            if not other_contribution:
+                other_contribution = 0
+            else:
+                other_contribution = int(other_contribution)
+
+            if not amount_paid:
+                amount_paid = 0
+            else:
+                amount_paid = int(amount_paid)
 
             if checkin:
                 checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
@@ -216,14 +240,16 @@ class RegisterEvent(TemplateView):
 
                 if not other_contribution:
                     other_contribution = 0
+                reg_amt = self.get_reg_amt(member_type, status)
+                if reg_amt < amount_paid:
+                    other_contribution = other_contribution + (amount_paid - reg_amt)
+                    amount_paid = reg_amt
+                    print(other_contribution, "other_contribution")
+                    print(amount_paid, "amount_paid")
+
                 event_reg.contributed_amount = int(other_contribution)
                 event_reg.balance_amount = balance_amount
                 event_reg.event_status = status
-
-                # if checkin:
-                #     event_reg.checkin_date = checkin_date
-                # if checkout:
-                #     event_reg.checkout_date = checkout_date
 
                 event_reg.reciept_number = reciept_number
                 event_reg.reciept_file = reciept_file
@@ -273,6 +299,7 @@ class RegisterEvent(TemplateView):
                         hotel_obj.save()
 
             except Exception as e:
+                print(traceback.format_exc())
                 print (e, "@@@EXCEPTION@@@")
                 if created and event_reg:
                     event_reg.delete()
@@ -284,9 +311,7 @@ class RegisterEvent(TemplateView):
                     event_reg.amount_paid) + "/-"
 
                 message_status = requests.get(
-                    "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
-                    headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-
+                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:
@@ -304,6 +329,7 @@ class RegisterEvent(TemplateView):
                 messages.success(self.request, message)
                 return HttpResponseRedirect(reverse('register_event'))
         except Exception as e:
+            print(traceback.format_exc())
             print (e, "@@@EXCEPTION@@@")
             message = "Exception : There is an issue with your registration. Please try again."
             messages.success(self.request, message)
@@ -853,8 +879,7 @@ class DownloadCSVView(TemplateView):
                 except Exception as e:
                     print e
             writer.writerow(
-                ['',
-                 '', '',
+                ['', '', '',
                  '',
                  '', '', '', total_paid_registration,
                  total_registration_due, '',
