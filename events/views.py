@@ -16,6 +16,7 @@ import requests
 from django.contrib.auth import logout
 import re
 import datetime
+
 """
     Home
     """
@@ -168,7 +169,8 @@ class RegisterEvent(TemplateView):
                 event_user.table = table
             else:
                 if event_user.table != table:
-                    message = "User with this MailID '"+ str(event_user.email)+"' already exist in table '"+str(event_user.table.table_name)+"'"
+                    message = "User with this MailID '" + str(event_user.email) + "' already exist in table '" + str(
+                        event_user.table.table_name) + "'"
                     messages.success(self.request, message)
                     return HttpResponseRedirect(reverse('register_event'))
             event_user.member_type = member_type
@@ -211,7 +213,7 @@ class RegisterEvent(TemplateView):
 
                     balance_amount = self.check_balance(tottal_paid)
                 event_reg.payment = payment
-                
+
                 if not other_contribution:
                     other_contribution = 0
                 event_reg.contributed_amount = int(other_contribution)
@@ -486,7 +488,6 @@ class ListUsers(TemplateView):
 
 class InvoiceView(TemplateView):
     template_name = 'coupon.html'
-
 
     # def get_context_data(self, **kwargs):
     #     context = super(InvoiceView, self).get_context_data(**kwargs)
@@ -802,22 +803,22 @@ class DownloadCSVView(TemplateView):
     template_name = 'user_list.html'
 
     def get(self, request, *args, **kwargs):
-        context = {}
         get_user_registered = RegisteredUsers.objects.all()
-        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
-                                                 0] or 0.00
-        context['total_registration_due'] = sum(item.due_amount for item in RegisteredUsers.objects.all())
-        context['total_hotel_due'] = sum(item.hotel_due for item in RegisteredUsers.objects.all())
-        context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
-        context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
+        total_paid_registration = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
+                                      0] or 0.00
+        total_registration_due = sum(item.due_amount for item in RegisteredUsers.objects.all())
+        total_hotel_due = sum(item.hotel_due for item in RegisteredUsers.objects.all())
+        total_due = total_registration_due + total_hotel_due
+        total_paid_hotel = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        total_amount_paid = total_paid_registration + total_paid_hotel or 0.00
         if get_user_registered:
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
-                             'Registration Amount ', 'Amount Due','Room', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution', 'Total Payment', 'Total Due'])
+                             'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
+                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
+                             'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -842,21 +843,24 @@ class DownloadCSVView(TemplateView):
                         check_out_date = '-'
                         hotel_rent = '-'
                     writer.writerow(
-                        [users.event_user.first_name +''+users.event_user.last_name, users.table.table_name, users.qrcode, users.event_user.mobile,
+                        [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
+                         users.qrcode, users.event_user.mobile,
                          users.event_user.email, users.event_status, payment_status, users.amount_paid,
-                         users.due_amount,'',
-                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent,users.hotel_due,'',users.contributed_amount, users.total_paid,
+                         users.due_amount, '',
+                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
+                         '', users.contributed_amount, users.total_paid,
                          users.total_due])
                 except Exception as e:
                     print e
             writer.writerow(
-                [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name, users.qrcode,
-                 users.event_user.mobile,
-                 users.event_user.email, users.event_status, payment_status, users.amount_paid,
-                 users.due_amount, '',
-                 hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due, '',
-                 users.contributed_amount, users.total_paid,
-                 users.total_due])
+                ['',
+                 '', '',
+                 '',
+                 '', '', '', total_paid_registration,
+                 total_registration_due, '',
+                 '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
+                 '', total_amount_paid,
+                 total_due])
             return response
         return super(DownloadCSVView, self).get(request, *args, **kwargs)
 
