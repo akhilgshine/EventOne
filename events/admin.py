@@ -23,7 +23,21 @@ admin.site.register(Table)
 
 
 class RegisteredUserAdmin(admin.ModelAdmin):
-    readonly_fields = ['get_total_paid','get_registered_amount', 'created_date','get_hotel_rent',]
+
+    list_display = ['event_user',
+                    'get_registered_amount',
+                    'get_due_amount',
+                    'get_hotel_rent',
+                    'get_hotel_due',
+                    'get_total_paid',
+                    'get_total_due',
+
+                    ]
+
+    readonly_fields = ['get_total_paid',
+                       'get_registered_amount',
+                       'created_date',
+                       'get_hotel_rent']
 
     def get_total_paid(self, obj, *args, **kwargs):
         return str(obj.total_paid)
@@ -31,8 +45,15 @@ class RegisteredUserAdmin(admin.ModelAdmin):
     def get_registered_amount(self, obj, *args, **kwargs):
         return str(obj.registered_amount)
 
-    def get_hotel_rent(self,obj,*args,**kwargs):
+    def get_hotel_rent(self, obj, *args, **kwargs):
         return str(obj.hotel_rent)
+
+    def get_due_amount(self, obj, *args, **kwargs):
+        return str(obj.due_amount)
+    def get_hotel_due(self, obj, *args, **kwargs):
+        return str(obj.hotel_due)
+    def get_total_due(self, obj, *args, **kwargs):
+        return str(obj.total_due)
 
     class Meta:
         model = RegisteredUsers
