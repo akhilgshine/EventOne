@@ -51,9 +51,7 @@
         transition: 0.3s;
     }
 
-    .overlay a:hover, .overlay a:focus {
-        color: #f1f1f1;
-    }
+
 
     .overlay .closebtn {
         position: absolute;
@@ -66,7 +64,9 @@
 @media screen and (max-width: 766px) {
     .re-table td {    font-size: 11px !important;}
 }
-
+#finishReg{
+    color:#8a3ea2;
+}
 
 
 </style>
@@ -85,7 +85,10 @@
     </div>
   </div>
 
-  <div class="container-fluid text-center" style="min-width:100%;min-height:450px;  background-image: url('/static/images/bg.jpg');">    
+  <div class="container-fluid text-center" style="    min-width: 100%;
+  min-height: 100vh;
+  background-image: url(/static/images/bg.jpg);
+  background-size: cover;">    
   <div class="row content">
     
     <div class="col-sm-1 sidenav">
@@ -208,7 +211,9 @@
                                     </td>                                
                                 </tr>
                             </tbody>                         
-                        </table>                      
+                        </table>      
+                        <div align="right">
+                            <a href="{% url 'register_event' %}"<button type="button" class="btn btn-primary">Finish Registration</button></a> </div>               
                     </div>
                     <div class="col-md-3"></div>
                         
