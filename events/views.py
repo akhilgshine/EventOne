@@ -4,7 +4,7 @@ import csv
 import traceback
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import FormView, TemplateView, View, UpdateView
+from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from events.templatetags import template_tags
@@ -729,6 +729,8 @@ class UpdateHotelView(UpdateView):
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
         hotel_obj.save()
+        hotel_obj.room_type.rooms_available -= 1
+        hotel_obj.room_type.save()
 
         if created:
             message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
@@ -740,7 +742,6 @@ class UpdateHotelView(UpdateView):
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
         return HttpResponseRedirect(self.get_success_url())
-
 
 class UpdateContributionPaymentView(UpdateView):
     template_name = 'update_reg_payment.html'
@@ -917,3 +918,21 @@ class AddContributionListPage(TemplateView):
         context = super(AddContributionListPage, self).get_context_data(**kwargs)
         context['registered_users'] = RegisteredUsers.objects.all()
         return context
+
+
+class DeleteHotelView(DeleteView):
+    model = Hotels
+    success_url = '/users'
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.room_type.rooms_available +=1
+        self.object.room_type.save()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
+
+    

@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^register/success/(?P<pk>\d+)$', RegSuccessView.as_view(), name='invoice_views'),
     url(r'^edit_user_registered/(?P<pk>\d+)$', UserRegisterUpdate.as_view(), name='edit_user'),
     url(r'^update_hotel/(?P<pk>\d+)$', UpdateHotelView.as_view(), name='update_hotel_view'),
+    url(r'^delete_hotel/(?P<pk>\d+)$', DeleteHotelView.as_view(), name='delete_hotel_view'),
     url(r'^update-contribute-payment/(?P<pk>\d+)$', UpdateContributionPaymentView.as_view(), name='update_contribute_payment'),
     url(r'^contribute-payment/$', AddContributionListPage.as_view(), name='add-contribution-list'),
     url(r'^update-due-payment/(?P<pk>\d+)$', DuePaymentView.as_view(), name='due_payment_update'),

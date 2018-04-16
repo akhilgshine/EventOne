@@ -28,6 +28,8 @@
     .close_btn{
       float:right;
     }
+
+    .btn-minwidth { min-width: auto !important;}
 </style>
 </head>
 
@@ -118,13 +120,20 @@
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for=""></label>
-                          <div class="col-sm-4">
-                            <button type="submit" class="btn btn-default nuts-sub-hotel-confirm"> Confirm Booking</button>
+                          <label class="control-label col-sm-3" for=""></label>
+                          <div class="col-sm-3">
+                            <button type="submit" class="btn btn-default nuts-sub-hotel-confirm btn-minwidth"> Confirm Booking</button>
                           </div>
-                          <div class="col-sm-4">
+                          {% if hotel_obj %}
+                          <div class="col-sm-3">
+                            <a href="{% url 'delete_hotel_view' hotel_obj.id %}"
+                            <button type="submit" class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth"> Delete Booking</button>
+                          </a>
+                          </div>
+                        {% endif %}
+                          <div class="col-sm-3">
                             <a href="/users/">
-                              <button type="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
+                              <button type="button" class="btn btn-danger nuts-sub-hotel-cancel btn-minwidth">Cancel</button>
                             </a>
                           </div>                         
                         </div>

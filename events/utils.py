@@ -41,6 +41,7 @@ def send_email(to_email, message, event_obj):
     msg.attach_alternative(content, "text/html")
     msg.send()
 
+
     print("mail --> ", to_email)
 
 
