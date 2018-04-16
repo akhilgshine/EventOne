@@ -729,8 +729,9 @@ class UpdateHotelView(UpdateView):
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
         hotel_obj.save()
-        hotel_obj.room_type.rooms_available -= 1
-        hotel_obj.room_type.save()
+        if created:
+            hotel_obj.room_type.rooms_available -= 1
+            hotel_obj.room_type.save()
 
         if created:
             message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
