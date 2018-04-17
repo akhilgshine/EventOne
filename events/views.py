@@ -497,13 +497,15 @@ class ListUsers(TemplateView):
         context['hotels'] = hotels
         context['users'] = registered_users
         context['tables'] = Table.objects.all()
-        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
-                                                 0] or 0.00
+        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[0] or 0.00
+        context['total_contributions'] = RegisteredUsers.objects.all().aggregate(Sum('contributed_amount')).values()[0] or 0.00
+
+                                                 
         context['total_registration_due'] = sum(item.due_amount for item in RegisteredUsers.objects.all())
         context['total_hotel_due'] = sum(item.hotel_due for item in RegisteredUsers.objects.all())
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
         context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
+        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context['total_contributions'] or 0.00
         return render(request, self.template_name, context)
 
 
@@ -834,11 +836,12 @@ class DownloadCSVView(TemplateView):
         get_user_registered = RegisteredUsers.objects.all()
         total_paid_registration = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
                                       0] or 0.00
+        total_contributions = RegisteredUsers.objects.all().aggregate(Sum('contributed_amount')).values()[0] or 0.00
         total_registration_due = sum(item.due_amount for item in RegisteredUsers.objects.all())
         total_hotel_due = sum(item.hotel_due for item in RegisteredUsers.objects.all())
         total_due = total_registration_due + total_hotel_due
         total_paid_hotel = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        total_amount_paid = total_paid_registration + total_paid_hotel or 0.00
+        total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
         if get_user_registered:
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
