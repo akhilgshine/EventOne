@@ -889,7 +889,7 @@ class DownloadCSVView(TemplateView):
                  '', '', '', total_paid_registration,
                  total_registration_due, '',
                  '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
-                 '', total_amount_paid,
+                 total_contributions, total_amount_paid,
                  total_due])
             return response
         return super(DownloadCSVView, self).get(request, *args, **kwargs)
