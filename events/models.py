@@ -74,6 +74,7 @@ class RegisteredUsers(models.Model):
     reciept_number = models.CharField(blank=True, null=True, max_length=100)
     reciept_file = models.FileField(blank=True, null=True, upload_to='reciepts')
     contributed_amount = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return "{} {}".format(self.event_user.first_name, self.event_user.last_name)

@@ -38,8 +38,8 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
       <a href="/">Home</a>
+        <a href="/register/">Register Event</a>
       <a href="/users/">Registered Users</a>
-        <a href="/users/?is_active=False">Deleted Users </a>
         <a href="{%  url 'add-contribution-list' %}">Contribute Extra </a>
       <a href="{% url 'dash_board' %}">DashBoard</a>
       <a href="/logout/">Logout</a>
@@ -47,55 +47,18 @@
   </div>
     <div class="container-fluid wrap-nuts register">
 
-        {% if messages %}
-          {% for message in messages %}
-            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
-              <a class="close" data-dismiss="alert" href="#">&times;</a>
-              {{ message }}
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="message alert alert-success message"  style="display: none;">
-          <a class="close" data-dismiss="alert" href="#">&times;</a>
-
-          </div>
-        {% endif %}
-
         <div class="container-fluid">
             <div class="row">
                 <div class="logo-wrap">
                     <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
                 </div>
                 <div class="col-sm-12 wrap-form-submit">
-                      <div  id="hotelForm">
-                      <form method= "POST" class="form-horizontal form-nuts" id="DetailForm">
-                        {% csrf_token %}
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
-                          <div class="col-sm-8" style="color: black">
-                            {{form.amount_paid}}
-                              <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
-                          </div>
-
-                        </div>
-
-
-                        <p id="notifications" style="color: red"></p>
-                        <hr>
-                        <div class="form-group">
-                          <div class="col-sm-offset-4 col-sm-4">
-                            <button type="submit" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
-                          </div>
-                          <div class="col-sm-4">
-                            <a href="/users/">
-                              <button typ="button" class="btn btn-danger nuts-sub-hotel-cancel">Cancel</button>
-                            </a>
-                          </div>
-                        </div>
-
-
-                      </form>
-                    </div>
+                      <form method="POST" action="{% url 'delete_user' object.id%}">
+                    {% csrf_token %}
+                    <div>Are You Sure You Want to Delete Registration Of {{ object.event_user.first_name }} {{ object.event_user.last_name }} ??</div>
+                    <div style="margin-top: 10px;"><input type="submit" class="btn btn-primary" value="DELETE">
+                    <a href="/users/"><button type="button" class="btn btn-warning">Cancel</button></a></div>
+                    </form>
                 </div>
 
             </div>
@@ -116,21 +79,6 @@
      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script type="text/javascript">
-
-
-
-    // function update_messages(messages){
-    //   console.log("update message");
-    //   $(".message").html("");
-    //   $.each(messages, function (i, m) {
-    //       $(".message").append(m.message);
-    //   });
-    //   $('.message').show();
-    //   setTimeout(function() {
-    //       $('.message').fadeOut('slow');
-    //       location.reload();
-    //   }, 3000);
-    // }
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";

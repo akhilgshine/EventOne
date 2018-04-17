@@ -42,6 +42,7 @@ def send_email(to_email, message, event_obj):
     msg.send()
 
 
+
     print("mail --> ", to_email)
 
 

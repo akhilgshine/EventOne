@@ -98,3 +98,16 @@ class UpdateDuePaymentForm(forms.ModelForm):
         super(UpdateDuePaymentForm, self).__init__(*args, **kwargs)
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
         self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
+
+
+class UpdateProfileForm(forms.ModelForm):
+    class Meta:
+        model = EventUsers
+        fields = ('first_name', 'last_name', 'mobile', 'email')
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateProfileForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['mobile'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'

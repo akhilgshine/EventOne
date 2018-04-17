@@ -40,14 +40,17 @@ def no_of_night(user_id):
 def payment_status(user_id):
     user = RegisteredUsers.objects.get(id=user_id)
     if user.event_user.member_type == 'Square_Leg':
-        if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+        if (user.event_status == 'Stag' and user.amount_paid < 4000) or (
+                user.event_status == 'Couple' and user.amount_paid < 5000):
             return 'Partial'
-        elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
+        elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (
+                user.event_status == 'Couple_Informal' and user.amount_paid < 3500):
             return 'Partial'
         else:
             return 'Complete'
     else:
-        if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+        if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (
+                user.event_status == 'Couple' and user.amount_paid < 6000):
             return 'Partial'
         else:
             return 'Complete'
@@ -67,62 +70,69 @@ def check_event_status(user_id):
 @register.filter
 def replace_(value):
     try:
-        return value.replace("_"," ")
+        return value.replace("_", " ")
     except Exception as e:
-        print(e, "Exception template tag(72) Replace '_'" )
+        print(e, "Exception template tag(72) Replace '_'")
         return value
+
 
 @register.filter
 def completly_paid_count(count):
-    users = RegisteredUsers.objects.all()
+    users = RegisteredUsers.objects.filter(is_active=True)
     count = 0
     for user in users:
         if user.event_user.member_type == 'Square_Leg':
-            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (
+                    user.event_status == 'Couple' and user.amount_paid < 5000):
                 pass
-            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
+            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (
+                    user.event_status == 'Couple_Informal' and user.amount_paid < 3500):
                 pass
             else:
-                count=count+1
+                count = count + 1
         else:
-            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (
+                    user.event_status == 'Couple' and user.amount_paid < 6000):
                 pass
             else:
-                count = count+1
+                count = count + 1
     return count
+
 
 @register.filter
 def partly_paid_count(count):
-    users = RegisteredUsers.objects.all()
+    users = RegisteredUsers.objects.filter(is_active=True)
     count = 0
     for user in users:
         if user.event_user.member_type == 'Square_Leg':
-            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (user.event_status == 'Couple' and user.amount_paid < 5000) :
+            if (user.event_status == 'Stag' and user.amount_paid < 4000) or (
+                    user.event_status == 'Couple' and user.amount_paid < 5000):
                 count = count + 1
-            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (user.event_status == 'Couple_Informal' and user.amount_paid < 3500) :
+            elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (
+                    user.event_status == 'Couple_Informal' and user.amount_paid < 3500):
                 count = count + 1
             else:
                 pass
         else:
-            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (user.event_status == 'Couple' and user.amount_paid < 6000) :
+            if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (
+                    user.event_status == 'Couple' and user.amount_paid < 6000):
                 count = count + 1
             else:
                 pass
     return count
 
+
 @register.filter
 def get_roomtype_count(booked_room_type):
-    booked_room_type = Hotels.objects.filter(room_type=booked_room_type).count()
+    booked_room_type = Hotels.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
     return booked_room_type
+
 
 @register.filter
 def hotels_booked_two_nights(hotels_book_date):
-    hotels_book = Hotels.objects.filter(checkin_date__lte=hotels_book_date,checkout_date__gte =hotels_book_date).count()
+    hotels_book = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte=hotels_book_date,
+                                        checkout_date__gte=hotels_book_date).count()
     return hotels_book
-
-
-
-
 
 # @register.filter
 # def get_booked_date(user_id):

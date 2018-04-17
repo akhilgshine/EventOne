@@ -4,7 +4,7 @@ import csv
 import traceback
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView
+from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from events.templatetags import template_tags
@@ -311,7 +311,7 @@ class RegisterEvent(TemplateView):
                     event_reg.amount_paid) + "/-"
 
                 message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to='+phone+'&sender=QrtReg&message='+message)
+                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:
@@ -482,12 +482,22 @@ def logout_view(request):
     """
 
 
-class ListUsers(TemplateView):
+class ListUsers(ListView):
     template_name = 'user_list.html'
+    queryset = RegisteredUsers.objects.filter(is_active=True)
 
-    def get(self, request, *args, **kwargs):
-        context = {}
-        registered_users = RegisteredUsers.objects.all()
+    # context_object_name = 'users'
+
+    def get_queryset(self):
+        if self.request.GET.get('is_active'):
+            self.queryset = RegisteredUsers.objects.filter(is_active=False)
+        else:
+            self.queryset = RegisteredUsers.objects.filter(is_active=True)
+        return self.queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ListUsers, self).get_context_data(**kwargs)
+        registered_users = self.queryset
         hotels = []
         for user in registered_users:
             try:
@@ -495,18 +505,20 @@ class ListUsers(TemplateView):
             except:
                 hotels.append('Not Booked')
         context['hotels'] = hotels
+        context['is_active'] = self.request.GET.get('is_active')
         context['users'] = registered_users
         context['tables'] = Table.objects.all()
-        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[0] or 0.00
-        context['total_contributions'] = RegisteredUsers.objects.all().aggregate(Sum('contributed_amount')).values()[0] or 0.00
+        context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[0] or 0.00
+        context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
 
-                                                 
-        context['total_registration_due'] = sum(item.due_amount for item in RegisteredUsers.objects.all())
-        context['total_hotel_due'] = sum(item.hotel_due for item in RegisteredUsers.objects.all())
+        context['total_registration_due'] = sum(item.due_amount for item in self.queryset)
+        context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
-        context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context['total_contributions'] or 0.00
-        return render(request, self.template_name, context)
+        context['total_paid_hotel'] = \
+            Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
+            'total_contributions'] or 0.00
+        return context
 
 
 """
@@ -746,6 +758,7 @@ class UpdateHotelView(UpdateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+
 class UpdateContributionPaymentView(UpdateView):
     template_name = 'update_reg_payment.html'
     form_class = UpdatePaymentForm
@@ -812,17 +825,21 @@ class UpgradeStatusView(UpdateView):
         return super(UpgradeStatusView, self).form_invalid(form)
 
 
-class DashBoardView(TemplateView):
+class DashBoardView(ListView):
     template_name = "dashboard.html"
+
+    def get_queryset(self):
+        self.queryset = RegisteredUsers.objects.filter(is_active=True)
+        return self.queryset
 
     def get_context_data(self, **kwargs):
         context = super(DashBoardView, self).get_context_data(**kwargs)
-        context['registered_user'] = RegisteredUsers.objects.all()
-        context['stag_user'] = RegisteredUsers.objects.filter(event_status='Stag')
-        context['couple_user'] = RegisteredUsers.objects.filter(event_status='Couple')
-        context['hotels_booked'] = Hotels.objects.all()
+        context['registered_user'] = self.queryset
+        context['stag_user'] = self.queryset.filter(event_status='Stag')
+        context['couple_user'] = self.queryset.filter(event_status='Couple')
+        context['hotels_booked'] = Hotels.objects.filter(registered_users__is_active=True)
         context['booked_room_types'] = RoomType.objects.all()
-        context['total_paid_registration'] = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
+        context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00
         context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
@@ -920,7 +937,7 @@ class AddContributionListPage(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddContributionListPage, self).get_context_data(**kwargs)
-        context['registered_users'] = RegisteredUsers.objects.all()
+        context['registered_users'] = RegisteredUsers.objects.filter(is_active=True)
         return context
 
 
@@ -934,9 +951,36 @@ class DeleteHotelView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
-        self.object.room_type.rooms_available +=1
+        self.object.room_type.rooms_available += 1
         self.object.room_type.save()
         self.object.delete()
         return HttpResponseRedirect(success_url)
 
-    
+
+class DeleteRegisteredUsers(DeleteView):
+    model = RegisteredUsers
+    template_name = 'registered_users_confirm_delete.html'
+    success_url = '/users'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.is_active = False
+        self.object.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+class AddToRegistrationView(View):
+
+    def get(self, request, *args, **kwargs):
+        user_id = RegisteredUsers.objects.get(id=self.kwargs['pk'])
+        user_id.is_active = True
+        user_id.save()
+        return HttpResponseRedirect('/users')
+
+
+class EditRegistrationView(UpdateView):
+    template_name = 'update_profile.html'
+    form_class = UpdateProfileForm
+    queryset = EventUsers.objects.all()
+    success_url = '/users/'
+

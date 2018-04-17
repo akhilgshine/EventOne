@@ -67,7 +67,8 @@
         <a href="/">Home</a>
         <a href="/users/">Registered Users</a>
         <a href="/register/">Register Event </a>
-        <a href="{%  url 'add-contribution-list' %}">Contirbute Extra </a>
+        <a href="/users/?is_active=False">Deleted Users </a>
+        <a href="{%  url 'add-contribution-list' %}">Contribute Extra </a>
         <a href="{% url 'dash_board' %}">DashBoard </a>
         <a href="/logout/">Logout</a>
     </div>

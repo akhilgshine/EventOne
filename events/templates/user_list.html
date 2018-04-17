@@ -72,7 +72,8 @@
         <a href="/">Home</a>
         <a href="/users/">Registered Users</a>
         <a href="/register/">Register Event </a>
-        <a href="{% url 'add-contribution-list' %}">Contirbute Extra </a>
+        <a href="/users/?is_active=False">Deleted Users </a>
+        <a href="{% url 'add-contribution-list' %}">Contribute Extra </a>
         <a href="{% url 'dash_board' %}">DashBoard </a>
         <a href="/logout/">Logout</a>
     </div>
@@ -124,7 +125,6 @@
                     <button class='btn btn-primary'>Download</button>
                 </a>
             </div>
-
             <div class="col-md-6 user_list_inputs">
                 <select id="sortTable" class="btn btn-primary btn_sort" place>
                     <option value="" disabled selected>Select Table</option>
@@ -192,6 +192,12 @@
                         <th>Total Payment</th>
                         <th>Total Due</th>
                         <th>Print Coupon</th>
+                        <th>Edit Registration</th>
+                        {% if is_active %}
+                        <th> Add to Registration</th>
+                        {% else %}
+                            <th> Delete Registration</th>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody>
@@ -272,8 +278,16 @@
                             <td><!--Total Due --> {{ user.total_due }}</td>
                             <td>
                                 <a href="{% url 'invoice_view' user.id %}">Click to Print Coupon</a></td>
+                            <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
+                        {% if user.is_active %}
+                            <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
+                        {% else %}
+                            <td><a href="{%  url 'add_to_registration' user.id %}">Add to Registration</a></td>
+                        {% endif %}
                         </tr>
+                    
                     {% endfor %}
+                    
                     <tr>
                         <td style="display: none;"></td>
                         <td></td>
@@ -298,6 +312,8 @@
                         <td>{{total_contributions}}</td>
                         <td>{{ total_amount_paid }}</td>
                         <td>{{ total_due }}</td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                     </tr>
                     </tbody>
