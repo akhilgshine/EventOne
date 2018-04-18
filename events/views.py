@@ -486,13 +486,42 @@ class ListUsers(ListView):
     template_name = 'user_list.html'
     queryset = RegisteredUsers.objects.filter(is_active=True)
 
-    # context_object_name = 'users'
-
     def get_queryset(self):
-        if self.request.GET.get('is_active'):
+        self.queryset = super(ListUsers, self).get_queryset()
+        if self.request.GET.get('is_active') == 'False':
             self.queryset = RegisteredUsers.objects.filter(is_active=False)
+        elif self.request.GET.get('hotel') == 'True':
+            hotels = Hotels.objects.filter(registered_users__is_active=True).values_list('registered_users__id', flat=True)
+            hotel_booked_users = self.queryset.filter(id__in=hotels)
+            self.queryset = hotel_booked_users
+        elif self.request.GET.get('stag') == 'True':
+            self.queryset = self.queryset.filter(event_status='Stag')
+        elif self.request.GET.get('couple') == 'True':
+            self.queryset = self.queryset.filter(event_status='Couple')
+        elif self.request.GET.get('complete') == 'True':
+            all_users = RegisteredUsers.objects.filter(is_active=True)
+            full_paid_relevant_users = []
+            for user in all_users:
+                completely_paid = template_tags.payment_status(user.id)
+                if completely_paid == 'Complete':
+                    full_paid_relevant_users.append(user.id)
+            self.queryset = self.queryset.filter(id__in=full_paid_relevant_users)
+        elif self.request.GET.get('partial') == 'True':
+            all_users = RegisteredUsers.objects.filter(is_active=True)
+            partial_paid_relevant_users = []
+            for users in all_users:
+                partially_paid = template_tags.payment_status(users.id)
+                if partially_paid == 'Partial':
+                    partial_paid_relevant_users.append(users.id)
+            self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
+        elif self.request.GET.get('date') == 'aug3':
+            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03', checkout_date__gte='2018-08-03').values_list('registered_users__id', flat=True)
+            self.queryset = self.queryset.filter(id__in=hotels)
+        elif self.request.GET.get('date') == 'aug4':
+            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04', checkout_date__gte='2018-08-04').values_list('registered_users__id', flat=True)
+            self.queryset = self.queryset.filter(id__in=hotels)
         else:
-            self.queryset = RegisteredUsers.objects.filter(is_active=True)
+            self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
 
     def get_context_data(self, **kwargs):
@@ -514,8 +543,7 @@ class ListUsers(ListView):
         context['total_registration_due'] = sum(item.due_amount for item in self.queryset)
         context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
-        context['total_paid_hotel'] = \
-            Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_paid_hotel'] = Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
         return context
@@ -838,11 +866,16 @@ class DashBoardView(ListView):
         context['stag_user'] = self.queryset.filter(event_status='Stag')
         context['couple_user'] = self.queryset.filter(event_status='Couple')
         context['hotels_booked'] = Hotels.objects.filter(registered_users__is_active=True)
+        context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+
         context['booked_room_types'] = RoomType.objects.all()
+        context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
+
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00
         context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] or 0.00
+        context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] \
+                                       + context['total_contributions'] or 0.00
         return context
 
 
@@ -983,4 +1016,3 @@ class EditRegistrationView(UpdateView):
     form_class = UpdateProfileForm
     queryset = EventUsers.objects.all()
     success_url = '/users/'
-

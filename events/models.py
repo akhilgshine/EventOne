@@ -92,7 +92,7 @@ class RegisteredUsers(models.Model):
             rent = self.hotel.all().aggregate(total=Sum("tottal_rent"))["total"]
         if not rent:
             rent = 0
-            
+
         if not self.contributed_amount:
             self.contributed_amount = 0
         return self.amount_paid + int(rent) + int(self.contributed_amount)
@@ -135,7 +135,7 @@ class RegisteredUsers(models.Model):
             elif self.event_status == 'Stag_Informal':
                 return 2500
             return 3500
-    
+
     # @property
     # def contributed_amount(self):
     #     return self.amount_paid - self.registered_amount
@@ -195,7 +195,7 @@ class Hotels(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.registered_users.event_user.first_name,
-                               self.registered_users.event_user.last_name)
+                              self.registered_users.event_user.last_name)
 
     class Meta:
         verbose_name = 'Booked Hotel'

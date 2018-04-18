@@ -101,38 +101,38 @@
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-user" aria-hidden="true"></i> Registered users</h2>
-                <h1>{{registered_user.count}}</h1>
+                <a href="{% url 'list_users' %}" ><h1>{{registered_user.count}}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Hotel Rooms Booked Users </h2>
-                <h1>{{hotels_booked.count}}</h1>
+                <a href="{% url 'list_users' %}?hotel=True"><h1>{{hotels_booked.count}}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-user" aria-hidden="true"></i> Stag Users </h2>
-                <h1>{{stag_user.count}}</h1>
+                <a href="{% url 'list_users' %}?stag=True" ><h1>{{stag_user.count}}</h1></a>
             </div>
 
     </div>
          <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-users" aria-hidden="true"></i> Couple Users </h2>
-                <h1>{{couple_user.count}}</h1>
+                <a href="{% url 'list_users' %}?couple=True" > <h1>{{couple_user.count}}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Completely Paid Users </h2>
-                <h1>{{ count|completly_paid_count }}</h1>
+                <a href="{% url 'list_users' %}?complete=True" ><h1>{{ count|completly_paid_count }}</h1></a>
             </div>
         </div>
          <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Partially Paid Users </h2>
-                <h1>{{count|partly_paid_count}}</h1>
+                <a href="{% url 'list_users' %}?partial=True" ><h1>{{count|partly_paid_count}}</h1></a>
             </div>
         </div>
          <div class="col-sm-3">
@@ -153,19 +153,29 @@
                 <h1>Rs {{total_paid_hotel}}/-</h1>
             </div>
         </div>
+    <div class="col-sm-3">
+            <div class="box">
+                <h2><i class="fa fa-money" aria-hidden="true"></i> Total Contributions </h2>
+                <h1>Rs {{total_contributions}}/-</h1>
+            </div>
+        </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Users Booked For Each Dates</h2>
-                <h1>August 3rd:{{'2018-08-03'|hotels_booked_two_nights}}</h1>
-                <h1>August 4th:{{'2018-08-04'|hotels_booked_two_nights}}</h1>
+                <a href="{% url 'list_users'%}?date=aug3"><h1>August 3rd:{{'2018-08-03'|hotels_booked_two_nights}}</h1></a>
+                <a href="{% url 'list_users'%}?date=aug4"><h1>August 4th:{{'2018-08-04'|hotels_booked_two_nights}}</h1></a>
                 {% comment %} <h1>August 5th:{{'2018-08-05'|hotels_booked_two_nights}}</h1> {% endcomment %}
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                  <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                <h2>Total Rooms Available:{{ room_count }}</h2>
                 {% for booked_room_type in booked_room_types %}
-                <h1>{{booked_room_type.room_type }} : {{ booked_room_type|get_roomtype_count }}</h1>
+                <h1>{{booked_room_type.room_type }}<br>
+                    Booked: {{ booked_room_type|get_roomtype_count }}<br>
+                    Availabe:{{booked_room_type.rooms_available }}
+                </h1>
                 {% endfor %}
             </div>
         </div>

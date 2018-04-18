@@ -61,6 +61,14 @@
         th {
             color: white;
         }
+@media print
+{
+  table { page-break-after:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  td    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+}
     </style>
 
 </head>
@@ -120,8 +128,8 @@
         <div class="row content">
 
             <div class="col-md-2 user_list_inputs">
-                <button class='btn btn-primary' onclick="window.print();">Print</button>
-                <a href="{% url 'download_csv' %}">
+                <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
+                <a href="{% url 'download_csv' %}" >
                     <button class='btn btn-primary'>Download</button>
                 </a>
             </div>
@@ -332,7 +340,20 @@
         document.getElementById("myNav").style.height = "0%";
     }
 
+
     $(document).ready(function () {
+        function printData()
+        {
+           var divToPrint=document.getElementById("printTable");
+           newWin= window.open("");
+           newWin.document.write(divToPrint.outerHTML);
+           newWin.print();
+           newWin.close();
+        }
+
+        $('#printPage').on('click',function(){
+        printData();
+        })
 
         var t = $('#user_lists').DataTable({
             "order": [[0, 'asc']],
