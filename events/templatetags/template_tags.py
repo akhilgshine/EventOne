@@ -134,14 +134,9 @@ def hotels_booked_two_nights(hotels_book_date):
                                         checkout_date__gte=hotels_book_date).count()
     return hotels_book
 
-# @register.filter
-# def get_booked_date(user_id):
-# 	try:
-# 		user = RegisteredUsers.objects.get(id=user_id)
-# 		hotel = Hotels.objects.get(registered_users=user)
 
-# 			return 'Booked for 2018.08.03 and 2018.08.04'
-# 		else:
-# 			return 'Booked for 2018.08.03'
-# 	except:
-# 		return ''
+@register.filter
+def total_room_count(booked_room_type):
+    obj = RoomType.objects.get(room_type=booked_room_type)
+    booked_room_type = get_roomtype_count(booked_room_type) + obj.rooms_available
+    return booked_room_type

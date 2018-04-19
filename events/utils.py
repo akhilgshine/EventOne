@@ -16,7 +16,7 @@ def hotelDetails(event_obj):
         hotel_obj = Hotels.objects.get(registered_users=event_obj)
         event = Event.objects.filter()[0]
         data = hotel_obj.room_type.room_type + ", " + str(hotel_obj.tottal_rent) + "/-, Hotel Raviz Kollam, " + str(
-            hotel_obj.checkin_date) + " to " + str(hotel_obj.checkout_date)
+            hotel_obj.checkin_date.strftime("%Y-%m-%d")) + " to " + str(hotel_obj.checkout_date.strftime("%Y-%m-%d"))
     # if hotel_obj.book_friday:
     # 	data = hotel_obj.room_type.room_type+", "+str(hotel_obj.tottal_rent)+"/-, Hotel Raviz Kollam, "+str(hotel_obj.checkin_date)+" to "++str(hotel_obj.checkout_date)
     # else:

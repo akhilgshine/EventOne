@@ -758,18 +758,18 @@ class UpdateHotelView(UpdateView):
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
         hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
-        print(hotel_obj.tottal_rent, "total rent ippo")
         hotel_obj.hotel_name = form.cleaned_data['hotel_name']
+        hotel_obj.mode_of_payment = form.cleaned_data['mode_of_payment']
         if hotel_obj.registered_users.hotel_due > 0:
-            print("has due")
             current_rent = hotel_obj.tottal_rent
             hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
-            print("after add", hotel_obj.tottal_rent)
         else:
             hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
         hotel_obj.room_type = form.cleaned_data['room_type']
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
+        hotel_obj.receipt_number = form.cleaned_data['receipt_number']
+        hotel_obj.receipt_file = form.cleaned_data['receipt_file']
         hotel_obj.save()
         if created:
             hotel_obj.room_type.rooms_available -= 1
@@ -840,6 +840,7 @@ class UpgradeStatusView(UpdateView):
         return initial
 
     def form_valid(self, form):
+        # import pdb;pdb.set_trace()
         obj = self.get_object()
         current = obj.amount_paid
         obj = form.save(commit=False)
@@ -847,6 +848,13 @@ class UpgradeStatusView(UpdateView):
             obj.event_status = self.request.POST.get('status')
         obj.amount_paid = current + form.cleaned_data.get('amount_to_upgrade')
         obj.save()
+
+        # message = "You are successfully updated your status of registration to " + obj.event_status + "for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + obj.qrcode + " And your  total payment is Rs." + str(
+        #     obj.amount_paid) + "/-"
+        # # send_email(obj.event_user.email, message, obj)
+        # message_status = requests.get(
+        #     "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.event_user.mobile + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
+        #     headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
         return super(UpgradeStatusView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -870,6 +878,8 @@ class DashBoardView(ListView):
 
         context['booked_room_types'] = RoomType.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
+        context['total_rooms'] = Hotels.objects.filter(registered_users__is_active=True).count() + context['room_count']
+        context['total_rooms_booked'] =  context['total_rooms'] - context['room_count']
 
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00

@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <style type="text/css">
 
+    .btn-finish {    color: #fff;
+    background: #01010152 !important;
+    border-color: #ffffff !important;
+    border-width: 2px;}
+
     .table_td_first
     {
         float: left;
@@ -212,8 +217,8 @@
                                 </tr>
                             </tbody>                         
                         </table>      
-                        <div align="right">
-                            <a href="{% url 'register_event' %}"<button type="button" class="btn btn-primary">Finish Registration</button></a> </div>               
+                        <div align="center">
+                            <a href="{% url 'register_event' %}"><button type="button" class="btn btn-primary btn-finish">Finish Registration</button></a> </div>
                     </div>
                     <div class="col-md-3"></div>
                         

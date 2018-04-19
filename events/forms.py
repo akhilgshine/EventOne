@@ -47,7 +47,7 @@ class HotelForm(forms.ModelForm):
 
     class Meta:
         model = Hotels
-        fields = ('room_type', 'hotel_name', 'tottal_rent')
+        fields = ('room_type', 'hotel_name', 'tottal_rent', 'mode_of_payment', 'receipt_number','receipt_file')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)

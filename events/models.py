@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.db.models import Sum
+from datetime import datetime
+
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,6 +21,13 @@ ROOM_CHOICES = (
 MEMBER_CHOICES = (
     ('Tabler', _('Tabler')),
     ('Square_Leg', _('Square Leg'))
+)
+
+PAYMENT_CHOICES = (
+    ('Cash', _("Cash")),
+    ('POS', _("POS")),
+    ('Card', _("Card")),
+    ('Bank Transfer', _("Bank Transfer")),
 )
 
 
@@ -192,6 +201,10 @@ class Hotels(models.Model):
     room_type = models.ForeignKey(RoomType, null=True, blank=True)
     checkin_date = models.DateTimeField(null=True, blank=True)
     checkout_date = models.DateTimeField(null=True, blank=True)
+    booked_date = models.DateTimeField(default=datetime.now, blank=True)
+    mode_of_payment = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
+    receipt_number = models.CharField(blank=True, null=True, max_length=100)
+    receipt_file = models.FileField(blank=True, null=True, upload_to='hotel_receipts')
 
     def __str__(self):
         return "{} {}".format(self.registered_users.event_user.first_name,

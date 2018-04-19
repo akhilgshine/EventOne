@@ -170,11 +170,15 @@
         <div class="col-sm-3">
             <div class="box">
                  <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                <h2>Total Rooms :{{ total_rooms }}</h2>
                 <h2>Total Rooms Available:{{ room_count }}</h2>
+                <h2>Total Rooms Booked:{{ total_rooms_booked }}</h2>
                 {% for booked_room_type in booked_room_types %}
                 <h1>{{booked_room_type.room_type }}<br>
+                    Rent: Rs {{booked_room_type.net_rate }} /-<br>
+                    Total Rooms:{{ booked_room_type|total_room_count }}<br>
                     Booked: {{ booked_room_type|get_roomtype_count }}<br>
-                    Availabe:{{booked_room_type.rooms_available }}
+                    Available:{{booked_room_type.rooms_available }}<br>
                 </h1>
                 {% endfor %}
             </div>
