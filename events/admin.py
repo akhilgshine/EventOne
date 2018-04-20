@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from events.models import *
-
-from .templatetags import *
+from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
+from events.models import *
 
 class RegisteredUserAdmin(admin.ModelAdmin):
 
@@ -50,9 +49,17 @@ class RegisteredUserAdmin(admin.ModelAdmin):
         model = RegisteredUsers
 
 
-class BookedHotelAdmin(admin.ModelAdmin):
+class BookedHotelResource(resources.ModelResource):
+
+    class Meta:
+        model = Hotels
+
+
+class BookedHotelAdmin(ImportExportModelAdmin):
 
     search_fields = ['registered_users__event_user__first_name', 'registered_users__event_user__last_name']
+    resource_class = BookedHotelResource
+    list_filter = ['room_type__room_type', 'registered_users__event_user__table__table_name']
 
     class Meta:
         model = Hotels

@@ -520,6 +520,13 @@ class ListUsers(ListView):
         elif self.request.GET.get('date') == 'aug4':
             hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04', checkout_date__gte='2018-08-04').values_list('registered_users__id', flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
+        elif self.request.GET.get('room_type'):
+            try:
+                room_type = RoomType.objects.get(room_type=self.request.GET.get('room_type'))
+            except RoomType.DoesNotExist:
+                room_type = None
+            relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type).values_list('registered_users__id', flat=True)
+            self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         else:
             self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
