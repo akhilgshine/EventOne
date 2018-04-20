@@ -59,6 +59,7 @@ class BookedHotelAdmin(ImportExportModelAdmin):
 
     search_fields = ['registered_users__event_user__first_name', 'registered_users__event_user__last_name']
     resource_class = BookedHotelResource
+    list_filter = ['room_type__room_type', 'registered_users__event_user__table__table_name']
 
     class Meta:
         model = Hotels
