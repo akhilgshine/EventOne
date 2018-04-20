@@ -883,7 +883,7 @@ class DashBoardView(ListView):
         context['hotels_booked'] = Hotels.objects.filter(registered_users__is_active=True)
         context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
 
-        context['booked_room_types'] = RoomType.objects.all()
+        context['room_types'] = RoomType.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
         context['total_rooms'] = Hotels.objects.filter(registered_users__is_active=True).count() + context['room_count']
         context['total_rooms_booked'] =  context['total_rooms'] - context['room_count']
@@ -1109,3 +1109,14 @@ class EditRegistrationView(UpdateView):
         if self.request.FILES.get('reciept_file'):
             registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
         registered_user_obj.save()
+
+
+# class GetRoomAvailability(View):
+#
+#     def post(self, request, *args, **kwargs):
+#         data = dict()
+#         room_type = self.request.POST.get('room_type')
+#         date = self.request.POST.get('date')
+#         data['total-rooms'] =
+#         hotels = Hotels.objects.filter(checkin_date=date)
+

@@ -90,7 +90,7 @@
 															<td align="left" class="table_td_second">
 															{% for dat in  payment_details %}
 
-						                                    &nbsp; {{  event_register.amount_paid }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date }} <br>
+						                                    &nbsp; {{  event_register.amount_paid }}/- @{{ dat.created_date }} <br>
 						                                    {% empty %}
 						                                        {{ event_register.amount_paid }}
 						                                    {% endfor %}
@@ -98,9 +98,19 @@
 							                                    <span style="color:#928f8b;margin-left:20px;">
 																	&nbsp;&nbsp;&nbsp;{{ partial }}
 																</span>
-						                                    {% endif %} 
+						                                    {% endif %}
+
 						                                    </td>
 														</tr>
+                                                        {% if event_register.due_amount %}
+                                                        <tr>
+                                                        <td class="table_main_tbody_td">Due Amount</td>
+                                                        <td></td>
+                                                        <td class="td_right">
+																{{event_register.due_amount}}
+															</td>
+                                                        </tr>
+                                                        {% endif %}
 
 									                    <tr>
 									                    	<td></td>

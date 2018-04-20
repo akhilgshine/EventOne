@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 {% load static %}
@@ -8,7 +7,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lets Go Nuts - QRT 85</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
@@ -21,11 +21,14 @@
 
     <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
     </script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
     </script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js">
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js">
     </script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
     </script>
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
@@ -35,28 +38,47 @@
             /*min-height: 100%;*/
             padding: 1%
         }
-        .user_list_inputs{
+
+        .user_list_inputs {
             margin-top: 10px;
         }
+
         table.dataTable thead .sorting,
         table.dataTable thead .sorting_asc,
         table.dataTable thead .sorting_desc {
-            background : none;
+            background: none;
         }
 
-        .box {    background: white;
+        .box {
+            background: white;
             border-radius: 4px;
             padding: 15px;
             margin-top: 14px;
-}
-
-        .box h2 {    margin-top: 6px; color: #595d98; font-size: 18px;}
-
-        .box h1 {margin-top: 0px;
-            font-weight: bold;
-        font-size: 14px
         }
-        .box h4 span {color: #31bf33;}
+
+        .box h2 {
+            margin-top: 6px;
+            color: #595d98;
+            font-size: 18px;
+        }
+
+        .box h1 {
+            margin-top: 0px;
+            font-weight: bold;
+            font-size: 14px
+        }
+
+        .box h4 span {
+            color: #31bf33;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        .p10 {
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body id="page-top">
@@ -68,7 +90,7 @@
         <a href="/users/">Registered Users</a>
         <a href="/register/">Register Event </a>
         <a href="/users/?is_active=False">Deleted Users </a>
-        <a href="{%  url 'add-contribution-list' %}">Contribute Extra </a>
+        <a href="{% url 'add-contribution-list' %}">Contribute Extra </a>
         <a href="{% url 'dash_board' %}">DashBoard </a>
         <a href="/logout/">Logout</a>
     </div>
@@ -80,9 +102,10 @@
         <div class="row">
 
             <div class="col-sm-2">
-                <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()" style="width: 110px;">
+                <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()"
+                     style="width: 110px;">
             </div>
-            <div class="col-sm-2" >
+            <div class="col-sm-2">
                 <div class="container text-center">
                     <h2 style="color: #fff;">DashBoard</h2>
                 </div>
@@ -92,7 +115,8 @@
             <div class="col-sm-4">
             </div>
         </div>
-    </div><br>
+    </div>
+    <br>
 </div>
 
 
@@ -101,98 +125,120 @@
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-user" aria-hidden="true"></i> Registered users</h2>
-                <a href="{% url 'list_users' %}" ><h1>{{registered_user.count}}</h1></a>
+                <a href="{% url 'list_users' %}"><h1>{{ registered_user.count }}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Hotel Rooms Booked Users </h2>
-                <a href="{% url 'list_users' %}?hotel=True"><h1>{{hotels_booked.count}}</h1></a>
+                <a href="{% url 'list_users' %}?hotel=True"><h1>{{ hotels_booked.count }}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-user" aria-hidden="true"></i> Stag Users </h2>
-                <a href="{% url 'list_users' %}?stag=True" ><h1>{{stag_user.count}}</h1></a>
+                <a href="{% url 'list_users' %}?stag=True"><h1>{{ stag_user.count }}</h1></a>
             </div>
 
-    </div>
-         <div class="col-sm-3">
+        </div>
+        <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-users" aria-hidden="true"></i> Couple Users </h2>
-                <a href="{% url 'list_users' %}?couple=True" > <h1>{{couple_user.count}}</h1></a>
+                <a href="{% url 'list_users' %}?couple=True"><h1>{{ couple_user.count }}</h1></a>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Completely Paid Users </h2>
-                <a href="{% url 'list_users' %}?complete=True" ><h1>{{ count|completly_paid_count }}</h1></a>
+                <a href="{% url 'list_users' %}?complete=True"><h1>{{ count|completly_paid_count }}</h1></a>
             </div>
         </div>
-         <div class="col-sm-3">
+        <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Partially Paid Users </h2>
-                <a href="{% url 'list_users' %}?partial=True" ><h1>{{count|partly_paid_count}}</h1></a>
+                <a href="{% url 'list_users' %}?partial=True"><h1>{{ count|partly_paid_count }}</h1></a>
             </div>
         </div>
-         <div class="col-sm-3">
+        <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Total amount received</h2>
-                <h1>Rs {{total_amount_paid}}/-</h1>
+                <h1>Rs {{ total_amount_paid }}/-</h1>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Registration Booking Amount</h2>
-                <h1>Rs {{total_paid_registration}}/-</h1>
+                <h1>Rs {{ total_paid_registration }}/-</h1>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Hotel booking Amount </h2>
-                <h1>Rs {{total_paid_hotel}}/-</h1>
+                <h1>Rs {{ total_paid_hotel }}/-</h1>
             </div>
         </div>
-    <div class="col-sm-3">
+        <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-money" aria-hidden="true"></i> Total Contributions </h2>
-                <h1>Rs {{total_contributions}}/-</h1>
+                <h1>Rs {{ total_contributions }}/-</h1>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="box">
                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Users Booked For Each Dates</h2>
-                <a href="{% url 'list_users'%}?date=aug3"><h1>August 3rd:{{'2018-08-03'|hotels_booked_two_nights}}</h1></a>
-                <a href="{% url 'list_users'%}?date=aug4"><h1>August 4th:{{'2018-08-04'|hotels_booked_two_nights}}</h1></a>
+                <a href="{% url 'list_users' %}?date=aug3"><h1>August
+                    3rd:{{ '2018-08-03'|hotels_booked_two_nights }}</h1></a>
+                <a href="{% url 'list_users' %}?date=aug4"><h1>August
+                    4th:{{ '2018-08-04'|hotels_booked_two_nights }}</h1></a>
                 {% comment %} <h1>August 5th:{{'2018-08-05'|hotels_booked_two_nights}}</h1> {% endcomment %}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-12">
             <div class="box">
-                 <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                <div class="col-sm-3 p0">
+                    <label>Date:</label>
+                    <select class="form-control">
+                        <option value="">August 3rd</option>
+                        <option value="" selected>August 4th</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label>Hotel</label>
+                    <select class="form-control">
+                        <option value="">Raviz</option>
+                    </select>
+                </div>
+                <div class="clearfix"></div>
+                <div class="row">
+                <div class="col-sm-3">
+                <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
                 <h1>Total Rooms :{{ total_rooms }}</h1>
                 <h1>Total Rooms Available:{{ room_count }}</h1>
                 <h1>Total Rooms Booked:{{ total_rooms_booked }}</h1>
-                {% for booked_room_type in booked_room_types %}
-                <h1><br>{{booked_room_type.room_type }}</h1>
-                    <span>Rent: Rs {{booked_room_type.net_rate }} /-</span><br>
-                   <span> Total Rooms:{{ booked_room_type|total_room_count }}</span><br>
-                    <a href="{% url 'list_users'%}?room_type={{ booked_room_type.room_type }}" ><span>Booked: {{ booked_room_type|get_roomtype_count }}</span></a><br>
-                    <span>Available:{{booked_room_type.rooms_available }}</span><br>
-
+                </div>
+                {% for room_type in room_types %}
+                <div class="col-sm-3">
+                    <h1><br>{{ room_type.room_type }}</h1>
+                    <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
+                    <span> Total Rooms:{{ room_type|total_room_count }}</span><br>
+                    <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
+                    <br>
+                    <span>Available:{{ room_type.rooms_available }}</span><br>
+                </div>
                 {% endfor %}
+
             </div>
         </div>
-</div>
+    </div>
 </div>
 </body>
- <script type="text/javascript">
+<script type="text/javascript">
     function openNav() {
-      document.getElementById("myNav").style.height = "100%";
+        document.getElementById("myNav").style.height = "100%";
     }
 
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
-    </script>
+</script>
 </html>
