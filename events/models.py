@@ -187,10 +187,13 @@ class RoomType(models.Model):
     room_type = models.CharField(max_length=50, null=True)
     rooms_available = models.IntegerField(blank=True, null=True)
     net_rate = models.IntegerField(blank=True, null=True)
+    sort_order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.room_type
-        ordering = ['room_type']
+
+    class Meta:
+        ordering = ['sort_order', ]
 
 
 class Hotels(models.Model):

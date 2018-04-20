@@ -66,9 +66,15 @@ class BookedHotelAdmin(ImportExportModelAdmin):
         model = Hotels
 
 
+class RoomTypeAdmin(admin.ModelAdmin):
+
+    list_display = ['room_type', 'sort_order']
+    list_editable = ['sort_order']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers)
 admin.site.register(Hotels, BookedHotelAdmin)
-admin.site.register(RoomType)
+admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)
 admin.site.register(Table)
