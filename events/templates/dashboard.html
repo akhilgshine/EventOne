@@ -170,16 +170,16 @@
         <div class="col-sm-3">
             <div class="box">
                  <h2><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
-                <h2>Total Rooms :{{ total_rooms }}</h2>
-                <h2>Total Rooms Available:{{ room_count }}</h2>
-                <h2>Total Rooms Booked:{{ total_rooms_booked }}</h2>
+                <h1>Total Rooms :{{ total_rooms }}</h1>
+                <h1>Total Rooms Available:{{ room_count }}</h1>
+                <h1>Total Rooms Booked:{{ total_rooms_booked }}</h1>
                 {% for booked_room_type in booked_room_types %}
-                <h1>{{booked_room_type.room_type }}<br>
-                    Rent: Rs {{booked_room_type.net_rate }} /-<br>
-                    Total Rooms:{{ booked_room_type|total_room_count }}<br>
-                    Booked: {{ booked_room_type|get_roomtype_count }}<br>
-                    Available:{{booked_room_type.rooms_available }}<br>
-                </h1>
+                <h1><br>{{booked_room_type.room_type }}</h1>
+                    <span>Rent: Rs {{booked_room_type.net_rate }} /-</span><br>
+                   <span> Total Rooms:{{ booked_room_type|total_room_count }}</span><br>
+                    <a href="{% url 'list_users'%}?room_type={{ booked_room_type.room_type }}" ><span>Booked: {{ booked_room_type|get_roomtype_count }}</span></a><br>
+                    <span>Available:{{booked_room_type.rooms_available }}</span><br>
+
                 {% endfor %}
             </div>
         </div>

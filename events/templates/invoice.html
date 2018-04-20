@@ -175,7 +175,7 @@
                                     <td> : </td>
                                     {% for dat in  payment_details %}
                                         <td align="left" class="table_td_second">
-                                           {{ dat.amount }}/-&nbsp;&nbsp;&nbsp;{{ dat.created_date|date:"D d M Y" }}
+                                           {{ dat.amount }}/- @{{ dat.created_date|date:"D d M Y" }}
                                            <br>
                                     {% empty %}
                                             {{ event_register.amount_paid }}
@@ -207,18 +207,21 @@
                                 <tr style="height: 10px;">
                                 </tr>
                                 <tr>
+
                                     <td align="left" style="font-size: 14px; padding-right: 10px;letter-spacing: 1px;">
                                         Registration Number : <b>{{ event_register.qrcode }}  </b>
                                     </td>
-                                    <td></td>
-                                    <td align="right" style="font-size: 14px; padding-right: 10px;" >
-                                        Date  :  {{ event_register.created_date }}
-                                    </td>                                
+{#                                    <td></td>#}
+{#                                    <td align="right" style="font-size: 14px; padding-right: 10px;" >#}
+{#                                        Date  :  {{ event_register.created_date }}#}
+{#                                    </td>                                #}
                                 </tr>
                             </tbody>                         
-                        </table>      
+                        </table>
+                    <div id="editor"></div>
                         <div align="center">
-                            <a href="{% url 'register_event' %}"><button type="button" class="btn btn-primary btn-finish">Finish Registration</button></a> </div>
+                            <a href="{% url 'register_event' %}"><button type="button" class="btn btn-primary btn-finish">Finish Registration</button></a>
+                        <a href="/"><button type="button" class="btn btn-primary btn-finish" id="download_coupon" >Download Coupon</button></a> </div>
                     </div>
                     <div class="col-md-3"></div>
                         
@@ -232,15 +235,17 @@
     <div class="col-sm-1 sidenav">
     </div>
 
+  </div>
+  </div>
 
-
-    <!-- <img width="0px" height="0px" style="visibility: hidden" src="http://campaign.yavun.com/yavunBeta/EmailOpen?recId=XXXRecipientID"> -->
 
     <!-- jQuery -->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
     <script>
       function openNav() {
           document.getElementById("myNav").style.height = "100%";
@@ -249,6 +254,20 @@
       function closeNav() {
           document.getElementById("myNav").style.height = "0%";
       }
+    var doc = new jsPDF();
+    var specialElementHandlers = {
+    '#editor': function (element, renderer) {
+        return true;
+    }
+};
+
+$('#download_coupon').click(function () {
+    doc.fromHTML($('.re-table').html(), 15, 15, {
+        'width': 170,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('sample-file.pdf');
+});
     </script>
 
 </body>
