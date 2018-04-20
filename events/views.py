@@ -11,7 +11,7 @@ from events.templatetags import template_tags
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status, hotelDetails
+from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
@@ -319,10 +319,7 @@ class RegisterEvent(TemplateView):
                     pass
 
                 if message_hotel:
-                    message_status = requests.get(
-                        "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message_hotel + "&flash=0&type=1&sender=QrtReg",
-                        headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-
+                    message_status = send_sms_message(phone, message_hotel, event_reg.id)
                 return HttpResponseRedirect("/register/success/" + str(event_reg.id))
             else:
                 message = " There is an issue with your registration. Please try again"
@@ -521,12 +518,22 @@ class ListUsers(ListView):
             hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04', checkout_date__gte='2018-08-04').values_list('registered_users__id', flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('room_type'):
-            try:
-                room_type = RoomType.objects.get(room_type=self.request.GET.get('room_type'))
-            except RoomType.DoesNotExist:
-                room_type = None
-            relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type).values_list('registered_users__id', flat=True)
-            self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+
+            type = self.request.GET.get('room_type')
+            if self.request.GET.get('date'):
+                try:
+                    room_type = RoomType.objects.get(room_type=type)
+                except RoomType.DoesNotExist:
+                    room_type = None
+                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type, checkin_date__gte=self.request.GET.get('date')).values_list('registered_users__id', flat=True)
+                self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+            else:
+                try:
+                    room_type = RoomType.objects.get(room_type=type)
+                except RoomType.DoesNotExist:
+                    room_type = None
+                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type).values_list('registered_users__id', flat=True)
+                self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         else:
             self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
@@ -562,22 +569,20 @@ class ListUsers(ListView):
 
 
 class InvoiceView(TemplateView):
-    template_name = 'coupon.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(InvoiceView, self).get_context_data(**kwargs)
-    #     context['event_user'] = RegisteredUsers.objects.all()
-    #     return context
+    template_name = 'coupon.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
         pk = kwargs.pop('pk')
-        event_reg = RegisteredUsers.objects.get(id=pk)
+        pk = decode_id(pk)
+        event_reg = get_object_or_404(RegisteredUsers, id=pk)
 
         if event_reg.amount_paid < 5000:
             context['partial'] = 'Partial'
 
         context['hotel'] = hotelDetails(event_reg)
+        context['relevant_hotel'] = Hotels.objects.get(registered_users=event_reg)
         context['event_register'] = event_reg
         context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
         return render(request, self.template_name, context)
@@ -585,7 +590,7 @@ class InvoiceView(TemplateView):
 
 """
     User Update View
-    """
+"""
 
 
 class UserRegisterUpdate(TemplateView):
@@ -710,9 +715,8 @@ class UserRegisterUpdate(TemplateView):
             message = "You are successfully updated your registration for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + reg_user_obj.qrcode + " And your total payment is Rs." + str(
                 reg_user_obj.amount_paid) + "/-"
 
-            message_status = requests.get(
-                "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
-                headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+            message_status = send_sms_message(phone, message, reg_user_obj.id)
+
 
             # message_status = requests.get(
             #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
@@ -724,9 +728,8 @@ class UserRegisterUpdate(TemplateView):
             except:
                 pass
             if message_hotel:
-                message_status = requests.get(
-                    "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
-                    headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+                message_status = send_sms_message(phone, message, reg_user_obj)
+
 
             return HttpResponseRedirect('/users/')
         except:
@@ -791,6 +794,8 @@ class UpdateHotelView(UpdateView):
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
+            message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj)
+            send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -847,7 +852,6 @@ class UpgradeStatusView(UpdateView):
         return initial
 
     def form_valid(self, form):
-        # import pdb;pdb.set_trace()
         obj = self.get_object()
         current = obj.amount_paid
         obj = form.save(commit=False)
@@ -856,12 +860,13 @@ class UpgradeStatusView(UpdateView):
         obj.amount_paid = current + form.cleaned_data.get('amount_to_upgrade')
         obj.save()
 
-        # message = "You are successfully updated your status of registration to " + obj.event_status + "for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + obj.qrcode + " And your  total payment is Rs." + str(
-        #     obj.amount_paid) + "/-"
-        # # send_email(obj.event_user.email, message, obj)
-        # message_status = requests.get(
-        #     "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.event_user.mobile + "&text=" + message + "&flash=0&type=1&sender=QrtReg",
-        #     headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+        message = "You are successfully updated your status of registration to " + obj.event_status + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + obj.qrcode +\
+                  " And your  total payment is Rs." + str(obj.amount_paid) + "/-"
+
+        send_sms_message(obj.event_user.mobile, message, obj.event_user.id)
+
+        send_email(obj.event_user.email, message, obj)
+
         return super(UpgradeStatusView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -974,6 +979,9 @@ class DuePaymentView(UpdateView):
         amount = int(request.POST.get('amount_paid'))
         self.object.amount_paid = init_val + amount
         self.object.save()
+        message = 'Your pending payment has been paid. Paid amount is %s' % self.object.amount_paid
+        send_sms_message(self.object.event_user.mobile, message, self.object.event_user.id)
+        send_email(self.object.event_user.email, message, self.object)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_initial(self):
@@ -1043,7 +1051,7 @@ class EditRegistrationView(UpdateView):
         except:
             hotel_obj = None
         context['event_registered_user'] = event_registered_user
-        context['room_types'] = RoomType.objects.all()
+        context['room_types'] = RoomType.objects.all().order_by('-sort_order')
         context['hotel_obj'] = hotel_obj
         return context
 
@@ -1109,14 +1117,3 @@ class EditRegistrationView(UpdateView):
         if self.request.FILES.get('reciept_file'):
             registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
         registered_user_obj.save()
-
-
-# class GetRoomAvailability(View):
-#
-#     def post(self, request, *args, **kwargs):
-#         data = dict()
-#         room_type = self.request.POST.get('room_type')
-#         date = self.request.POST.get('date')
-#         data['total-rooms'] =
-#         hotels = Hotels.objects.filter(checkin_date=date)
-

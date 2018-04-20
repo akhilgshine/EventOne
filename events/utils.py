@@ -1,14 +1,13 @@
-from django.core.mail import send_mail
+import requests
+import base64
 from django.conf import settings
-from django.template.loader import get_template
-# from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
-from django.template import Context
 from django.template.loader import render_to_string
-# import pdfkit
-from django.core.files import File
+from django.urls import reverse_lazy
+from django.contrib.sites.models import Site
+
 from events.models import *
-from datetime import datetime, timedelta
+
 
 
 def hotelDetails(event_obj):
@@ -27,6 +26,7 @@ def hotelDetails(event_obj):
 
 
 def send_email(to_email, message, event_obj):
+
     cxt = {'event_register': event_obj}
     cxt['hotel'] = hotelDetails(event_obj)
 
@@ -37,11 +37,9 @@ def send_email(to_email, message, event_obj):
     content = render_to_string('coupon_mail.html', cxt)
     from_email = settings.DEFAULT_FROM_EMAIL
 
-    msg = EmailMultiAlternatives(subject, 'hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
     msg.attach_alternative(content, "text/html")
     msg.send()
-
-
 
     print("mail --> ", to_email)
 
@@ -59,3 +57,20 @@ def set_status(event_reg):
         event_reg.save()
 
 
+# send sms to user
+def send_sms_message(mobile_number, message, user_id):
+    domain = Site.objects.get_current().domain
+    url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(user_id)}))
+    message_status = requests.get(
+        "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile_number + "&text=" + message +
+        '. You can see your coupon at ' + url + "&flash=0&type=1&sender=QrtReg",
+        headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+    return message_status
+
+
+def encoded_id(user_id):
+    return base64.b64encode(str(user_id))
+
+
+def decode_id(user_id):
+    return base64.b64decode(user_id)

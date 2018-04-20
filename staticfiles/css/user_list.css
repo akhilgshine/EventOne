@@ -94,6 +94,13 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 
 #user_lists { color: #fff; }
 
+.room_type_div{
+    margin-top: 10px;
+    border: solid 1px #cccccc;
+    border-radius: 5px;
+    padding: 10px;
+    min-height: 145px;
+}
 
 
 /*table custom styling ends here*/

@@ -1,165 +1,208 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta content="telephone=no" name="format-detection" />
-	<title>Coupon</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <title>Coupon</title>
 
 
-	<style type="text/css" media="screen">
-		/* Linked Styles */
-		body { padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body }
-		a { color:#007bc5; text-decoration:underline }
-		h2 a, .h2 a { color:#1e2735; text-decoration:none }
-		.footer a { color:#99a7b5; text-decoration:underline }
+    <style type="text/css" media="screen">
+        /* Linked Styles */
+        body {
+            padding: 0 !important;
+            margin: 0 !important;
+            display: block !important;
+            -webkit-text-size-adjust: none;
+            background: . background-body
+        }
 
-		/* Campaign Monitor wraps the text in editor in paragraphs. In order to preserve design spacing we remove the padding/margin */
-		p { padding:0 !important; margin:0 !important }
-	</style>
+        a {
+            color: #007bc5;
+            text-decoration: underline
+        }
+
+        h2 a, .h2 a {
+            color: #1e2735;
+            text-decoration: none
+        }
+
+        .footer a {
+            color: #99a7b5;
+            text-decoration: underline
+        }
+
+        /* Campaign Monitor wraps the text in editor in paragraphs. In order to preserve design spacing we remove the padding/margin */
+        p {
+            padding: 0 !important;
+            margin: 0 !important
+        }
+    </style>
 </head>
-<body class="body" style="padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body">
+<body class="body"
+      style="padding:0 !important; margin:0 !important; display:block !important; -webkit-text-size-adjust:none; background:.background-body">
 
 
-			<!-- Content -->
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td align="center">
+<!-- Content -->
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td align="center">
 
 
-						<table width="785" height="275px;" border="0" cellspacing="0" cellpadding="0" style="background-image:url('http://letsgonuts2018.com/static/images/lets_go_bg_coupon.png');">
+            <table width="785" height="275px;" border="0" cellspacing="0" cellpadding="0"
+                   style="padding: 15px;background-image: url('http://letsgonuts2018.com/static/images/lets_go_bg_coupon.png');background-repeat: no-repeat;background-size: cover;">
 
-							<tr>
-								<td valign="top" width="250" align="left">
-									<table border="0" cellspacing="0" cellpadding="1">
-									<tr>
-										<td class="img" style="font-size:0pt; line-height:0pt; text-align:left">
-											{% if request.user.is_authenticated %}
-											<a href="/users/" title="user list" >
-											<img src="http://letsgonuts2018.com/static/images/mail/featured_img.png" alt="" border="0" width="300" height="250" />
-											</a>
-											{% else %}
-											<img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0" width="300" height="250" />
-											{% endif %}
-										</td>
-										</tr>
-									</table>
-								</td>
-								<td valign="top"  class="featured" style="color:#7e8c95; font-family:Tahoma; font-size:12px; line-height:17px; text-align:left">
-									<table id="bodyTable" style="width: 87%;margin-top: 7px;padding-left: -23px;font-size: 14px;line-height: auto;" align="center"   border="0" cellpadding="0" cellspacing="0"  height="100%">
-									    <tbody>
-									        <tr>
-									            <td valign="top" class="columnContainer">
-									                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="color:#fff">
-									                  <tbody class="table_main_tbody">
-																			<tr>
-									                      <td class="table_main_tbody_td"></td>
-									                      <td >&nbsp;</td>
-																				<td >&nbsp;</td>
-									                      <td class="td_right"></td>
-									                    </tr>
-									                    <tr>
-									                      <td class="table_main_tbody_td">Name</td>
-									                      <td></td>
-									                      <td class="td_right">{{event_register.event_user.first_name }} {{event_register.event_user.last_name }}</td>
-									                    </tr>
-									                    <tr>
-									                      <td class="table_main_tbody_td">Email</td>
-									                      <td> </td>
-									                      <td class="td_right"><a style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{event_register.event_user.email}}</a></td>
-									                    </tr>
-									                    <tr>
-									                      <td class="table_main_tbody_td">Phone</td>
-									                      <td> </td>
-									                      <td class="td_right">{{event_register.event_user.mobile}}</td>
-									                    </tr>
-														<tr>
-															<td class="table_main_tbody_td">Type</td>
-															<td></td>
-															<td class="td_right">
-																{{event_register.event_status}}
-															</td>
-														</tr>
-									                    <tr>
-									                      <td class="table_main_tbody_td">Table</td>
-									                      <td> </td>
-									                      <td class="td_right">{{event_register.table.table_name}}</td>
-									                    </tr>
-														<tr>
-															<td class="table_main_tbody_td">Reg.Amount</td>
-															<td> </td>
-															<td align="left" class="table_td_second">
-															{% for dat in  payment_details %}
+                <tr>
+                    <td valign="top" width="250" align="left">
+                        <table border="0" cellspacing="0" cellpadding="1">
+                            <tr>
+                                <td class="img" style="font-size:0pt; line-height:0pt; text-align:left">
+                                    {% if request.user.is_authenticated %}
+                                        <a href="/users/" title="user list">
+                                            <img src="http://letsgonuts2018.com/static/images/mail/featured_img.png"
+                                                 alt="" border="0" width="300" height="250"/>
+                                        </a>
+                                    {% else %}
+                                        <img src="https://image.ibb.co/gAYeda/featured_img.png" alt="" border="0"
+                                             width="300" height="250"/>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td valign="top" class="featured"
+                        style="color:#7e8c95; font-family:Tahoma; font-size:12px; line-height:17px; text-align:left">
+                        <table id="bodyTable"
+                               style="width: 87%;margin-top: 7px;padding-left: -23px;font-size: 14px;line-height: auto;"
+                               align="center" border="0" cellpadding="0" cellspacing="0" height="100%">
+                            <tbody>
+                            <tr>
+                                <td valign="top" class="columnContainer">
+                                    <table border="0" cellpadding="0" cellspacing="5" width="100%" style="color:#fff">
+                                        <tbody class="table_main_tbody">
+                                        <tr>
+                                            <td class="table_main_tbody_td"></td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td class="td_right"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Name</td>
+                                            <td></td>
+                                            <td class="td_right">{{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Email</td>
+                                            <td></td>
+                                            <td class="td_right"><a
+                                                    style="text-decoration:none !important; text-decoration:none;outline:none;color:#fff;display:inline;">{{ event_register.event_user.email }}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Phone</td>
+                                            <td></td>
+                                            <td class="td_right">{{ event_register.event_user.mobile }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Type</td>
+                                            <td></td>
+                                            <td class="td_right">
+                                                {{ event_register.event_status }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Table</td>
+                                            <td></td>
+                                            <td class="td_right">{{ event_register.table.table_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table_main_tbody_td">Reg.Amount</td>
+                                            <td></td>
+                                            <td align="left" class="table_td_second">
+                                                {% for dat in  payment_details %}
 
-						                                    &nbsp; {{  event_register.amount_paid }}/- @{{ dat.created_date }} <br>
-						                                    {% empty %}
-						                                        {{ event_register.amount_paid }}
-						                                    {% endfor %}
-						                                    {% if partial %}
-							                                    <span style="color:#928f8b;margin-left:20px;">
+                                                    &nbsp; {{ event_register.amount_paid }}/- @{{ dat.created_date }}
+                                                    <br>
+                                                {% empty %}
+                                                    {{ event_register.amount_paid }}
+                                                {% endfor %}
+                                                {% if partial %}
+                                                    <span style="color:#928f8b;margin-left:20px;">
 																	&nbsp;&nbsp;&nbsp;{{ partial }}
 																</span>
-						                                    {% endif %}
+                                                {% endif %}
 
-						                                    </td>
-														</tr>
-                                                        {% if event_register.due_amount %}
-                                                        <tr>
-                                                        <td class="table_main_tbody_td">Due Amount</td>
-                                                        <td></td>
-                                                        <td class="td_right">
-																{{event_register.due_amount}}
-															</td>
-                                                        </tr>
-                                                        {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% if event_register.due_amount %}
+                                            <tr>
+                                                <td class="table_main_tbody_td">Due Amount</td>
+                                                <td></td>
+                                                <td class="td_right">
+                                                    {{ event_register.due_amount }}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
 
-									                    <tr>
-									                    	<td></td>
-									                    	<td></td>
-									                    	<td>&nbsp;</td>
-									                    </tr>
-														<!--<tr>-->
-															<!--<td class="table_main_tbody_td"></td>-->
-															<!--<td>:</td>-->
-															<!--<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date}}</td>-->
-														<!--</tr>-->
-														<!-- <tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <!--<tr>-->
+                                        <!--<td class="table_main_tbody_td"></td>-->
+                                        <!--<td>:</td>-->
+                                        <!--<td class="td_right">{{event_register.amount_paid}}/-&nbsp;&nbsp;&nbsp;{{event_register.created_date}}</td>-->
+                                        <!--</tr>-->
+                                        <!-- <tr>
 															<td class="table_main_tbody_td">Payment Mode</td>
 															<td>:</td>
 															<td class="td_right">{{event_register.payment}}</td>
 														</tr> -->
 
-														{% if hotel %}
-						                                    <tr>
-						                                      <td class="table_main_tbody_td">Hotel</td>
-						                                      <td> </td>
-						                                      <td class="td_right">
-						                                       {{ hotel }}
-						                                      </td>
-						                                    </tr>
-						                                {% endif %}									                   
-									                  </tbody>
-									                    <!-- <hr class="dotted_line"> -->
+                                        {% if hotel %}
+                                            <tr>
+                                                <td class="table_main_tbody_td">Hotel</td>
+                                                <td></td>
+                                                <td class="td_right">
+                                                    {{ hotel }}
+                                                </td>
+                                            </tr>
+                                            {% if relevant_hotel.registered_users.hotel_due %}
+                                                <tr>
+                                                    <td class="table_main_tbody_td">Hotel Due amount</td>
+                                                    <td></td>
+                                                    <td class="td_right">
+                                                        {{ relevant_hotel.registered_users.hotel_due }}
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endif %}
+                                        </tbody>
+                                        <!-- <hr class="dotted_line"> -->
 
-									                </table>
-                                                    <table>
-								                      	<tr style=" height: 55px;">
-								                          <td align="left" class="sorting_element reg_dttails_td1" style="color: #fff" >
-								                              Registration Number:<span class="reg_code_number">&nbsp;&nbsp;{{event_register.qrcode}}</span>
-								                          </td>
-								                      	</tr>
-                                                    </table>
-									            </td>
-									        </tr>
-									    </tbody>
-									</table>
-									</table>
+                                    </table>
+                                    <table>
+                                        <tr style=" height: 55px;">
+                                            <td align="left" class="sorting_element reg_dttails_td1"
+                                                style="color: #fff">
+                                                Registration Number:<span
+                                                    class="reg_code_number">&nbsp;&nbsp;{{ event_register.qrcode }}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+            </table>
 
-								</td>
+        </td>
 
-							</tr>
-			</table>
-			<!-- END Content -->
-			<!-- Bottom Content -->
+    </tr>
+</table>
+<!-- END Content -->
+<!-- Bottom Content -->
 <!--
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff">
 				<tr>
@@ -171,8 +214,8 @@
 				</tr>
 			</table>
 -->
-			<!-- END Bottom Content -->
-			<!-- Footer -->			<!-- END Footer -->
+<!-- END Bottom Content -->
+<!-- Footer -->            <!-- END Footer -->
 
 
 </body>

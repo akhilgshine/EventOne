@@ -105,15 +105,12 @@
                 <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()"
                      style="width: 110px;">
             </div>
-            <div class="col-sm-2">
-                <div class="container text-center">
+            <div class="col-sm-10">
+                <div class="text-center">
                     <h2 style="color: #fff;">DashBoard</h2>
                 </div>
             </div>
-            <div class="col-sm-4">
-            </div>
-            <div class="col-sm-4">
-            </div>
+
         </div>
     </div>
     <br>
@@ -195,38 +192,62 @@
         </div>
         <div class="col-sm-12">
             <div class="box">
-                <div class="col-sm-3 p0">
-                    <label>Date:</label>
-                    <select class="form-control">
-                        <option value="">August 3rd</option>
-                        <option value="" selected>August 4th</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
+                <div class="col-sm-3 col-sm-offset-3">
                     <label>Hotel</label>
                     <select class="form-control">
                         <option value="">Raviz</option>
                     </select>
                 </div>
+                <div class="col-sm-3 p0">
+                    <label>Date:</label>
+                    <select class="form-control" id="booking_date">
+                        <option value="3">August 3rd</option>
+                        <option value="4" selected>August 4th</option>
+                    </select>
+                </div>
+
                 <div class="clearfix"></div>
                 <div class="row">
-                <div class="col-sm-3">
-                <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
-                <h1>Total Rooms :{{ total_rooms }}</h1>
-                <h1>Total Rooms Available:{{ room_count }}</h1>
-                <h1>Total Rooms Booked:{{ total_rooms_booked }}</h1>
-                </div>
-                {% for room_type in room_types %}
-                <div class="col-sm-3">
-                    <h1><br>{{ room_type.room_type }}</h1>
-                    <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
-                    <span> Total Rooms:{{ room_type|total_room_count }}</span><br>
-                    <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
-                    <br>
-                    <span>Available:{{ room_type.rooms_available }}</span><br>
-                </div>
-                {% endfor %}
+                    <div class="col-sm-3 form-group date_aug_3">
+                        <div class="room_type_div">
+                            <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                            <h1>Total Rooms Booked:{{ total_rooms_booked }}</h1>
+                        </div>
+                    </div>
+                    {% for room_type in room_types %}
+                        <div class="col-sm-3 form-group date_aug_3">
+                            <div class="room_type_div">
+                                <h1><br>{{ room_type.room_type }}</h1>
+                                <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
+                                <br>
+                            </div>
+                        </div>
+                    {% endfor %}
 
+                    <div class="col-sm-3 form-group date_aug_4">
+                        <div class="room_type_div">
+                            <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                            <h1>Total Rooms :{{ total_rooms }}</h1>
+                            <h1>Total Rooms Booked:{{ total_rooms_booked }}</h1>
+                            <h1>Total Rooms Available:{{ room_count }}</h1>
+
+                        </div>
+                    </div>
+                    {% for room_type in room_types %}
+                        <div class="col-sm-3 form-group date_aug_4">
+                            <div class="room_type_div">
+                                <h1><br>{{ room_type.room_type }}</h1>
+                                <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
+                                <span> Total Rooms:{{ room_type|total_room_count }}</span><br>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-04"><span>Booked:{% get_room_count room_type '2018-08-04' as booked_count %} {{ booked_count }}</span></a>
+                                <br>
+                                <span>Available:{{ room_type.rooms_available }}</span><br>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
             </div>
         </div>
     </div>
@@ -240,5 +261,17 @@
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
+
+    $(document).ready(function () {
+        $('.date_aug_3').hide();
+
+        $('#booking_date').on('change', function () {
+            var val = $(this).val();
+            $('div[class*=date_aug_]').hide();
+            $('.date_aug_' + val).show();
+        })
+
+    });
+
 </script>
 </html>

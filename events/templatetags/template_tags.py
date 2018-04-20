@@ -1,6 +1,8 @@
 from events.models import *
 from django import template
 
+from events.utils import encoded_id
+
 register = template.Library()
 
 
@@ -123,8 +125,13 @@ def partly_paid_count(count):
 
 
 @register.filter
-def get_roomtype_count(booked_room_type):
-    booked_room_type = Hotels.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
+def get_roomtype_count(booked_room_type, date=None):
+    if date:
+        booked_room_type = Hotels.objects.filter(registered_users__is_active=True,
+                                                 checkin_date__gte=date,
+                                                 room_type=booked_room_type).count()
+    else:
+        booked_room_type = Hotels.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
     return booked_room_type
 
 
@@ -140,3 +147,17 @@ def total_room_count(booked_room_type):
     obj = RoomType.objects.get(room_type=booked_room_type)
     booked_room_type = get_roomtype_count(booked_room_type) + obj.rooms_available
     return booked_room_type
+
+
+@register.assignment_tag
+def get_room_count(booked_room_type, date):
+    obj = RoomType.objects.get(room_type=booked_room_type)
+    booked_room_type = get_roomtype_count(booked_room_type, date)
+    return booked_room_type
+
+
+@register.assignment_tag
+def encrypt_id(user_id):
+    return encoded_id(user_id)
+
+
