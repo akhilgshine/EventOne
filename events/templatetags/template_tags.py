@@ -128,7 +128,7 @@ def partly_paid_count(count):
 def get_roomtype_count(booked_room_type, date=None):
     if date:
         booked_room_type = Hotels.objects.filter(registered_users__is_active=True,
-                                                 checkin_date__gte=date,
+                                                 checkin_date__lte=date,
                                                  room_type=booked_room_type).count()
     else:
         booked_room_type = Hotels.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()

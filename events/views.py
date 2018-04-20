@@ -582,7 +582,10 @@ class InvoiceView(TemplateView):
             context['partial'] = 'Partial'
 
         context['hotel'] = hotelDetails(event_reg)
-        context['relevant_hotel'] = Hotels.objects.get(registered_users=event_reg)
+        try:
+            context['relevant_hotel'] = Hotels.objects.get(registered_users=event_reg)
+        except Hotels.DoesNotExist:
+            pass
         context['event_register'] = event_reg
         context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
         return render(request, self.template_name, context)
