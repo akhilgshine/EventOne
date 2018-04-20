@@ -57,7 +57,7 @@ class BookedHotelResource(resources.ModelResource):
 
 class BookedHotelAdmin(ImportExportModelAdmin):
 
-    list_display = ['room_type', 'tottal_rent', 'checkin_date', 'checkout_date']
+    list_display = ['registered_users', 'room_type', 'tottal_rent', 'checkin_date', 'checkout_date']
     search_fields = ['registered_users__event_user__first_name', 'registered_users__event_user__last_name']
     resource_class = BookedHotelResource
     list_filter = ['room_type__room_type', 'registered_users__event_user__table__table_name']
