@@ -1033,3 +1033,79 @@ class EditRegistrationView(UpdateView):
     form_class = UpdateProfileForm
     queryset = EventUsers.objects.all()
     success_url = '/users/'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(EditRegistrationView, self).get_context_data(**kwargs)
+        pk = self.object
+        event_registered_user =RegisteredUsers.objects.get(event_user=self.object)
+        try:
+            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
+        except:
+            hotel_obj = None
+        context['event_registered_user'] = event_registered_user
+        context['room_types'] = RoomType.objects.all()
+        context['hotel_obj'] = hotel_obj
+        return context
+
+    def form_valid(self, form):
+        registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
+        if self.request.POST.get('checkin_date'):
+            checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
+        else:
+            checkin = ""
+        if self.request.POST.get('checkout_date'):
+            checkout = datetime.datetime.strptime(self.request.POST.get('checkout_date'), "%d/%m/%Y")
+        else:
+            checkout = ""
+        hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
+        hotel_obj.hotel_name = self.request.POST['hotel_name']
+        hotel_obj.mode_of_payment = self.request.POST['payment']
+        if hotel_obj.registered_users.hotel_due > 0:
+            current_rent = hotel_obj.tottal_rent
+            hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
+        else:
+            hotel_obj.tottal_rent = self.request.POST['tottal_rent']
+        self.update_hotel(hotel_obj, self.request.POST,checkin,checkout)
+        self.update_registred_user(registered_user_obj)
+        form.save()
+        if created:
+            hotel_obj.room_type.rooms_available -= 1
+            hotel_obj.room_type.save()
+        if created:
+            message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+                hotel_obj.room_type) + "' "
+            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
+        else:
+            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+                hotel_obj.room_type) + "' "
+            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def update_hotel(self, hotel_obj, form, checkin, checkout):
+        room_id = self.request.POST['room_type_sel'].split(":")[0]
+        if room_id and room_id != '0':
+            hotel_obj.room_type = RoomType.objects.get(id=room_id)
+        if checkin :
+            hotel_obj.checkin_date = checkin
+        if checkout:
+            hotel_obj.checkout_date = checkout
+        hotel_obj.receipt_number = self.request.POST.get('receipt_number')
+        hotel_obj.receipt_file = self.request.POST.get('receipt_file')
+        hotel_obj.save()
+        return True
+
+    def update_registred_user(self,registered_user_obj):
+        if registered_user_obj.event_status != self.request.POST.get('status'):
+            if registered_user_obj.event_status== 'Stag':
+                registered_user_obj.amount_paid = 1000
+                if registered_user_obj.amount_paid> int(self.request.POST.get('amount_paid')):
+                    registered_user_obj.contributed_amount =registered_user_obj.contributed_amount+(int(self.request.POST.get('amount_paid'))-1000)
+            else:
+                registered_user_obj.contributed_amount = registered_user_obj.contributed_amount +1000
+                registered_user_obj.amount_paid = 5000
+        registered_user_obj.event_status = self.request.POST.get('status')
+        registered_user_obj.reciept_number = self.request.POST.get('reciept_number')
+        if self.request.FILES.get('reciept_file'):
+            registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
+        registered_user_obj.save()
