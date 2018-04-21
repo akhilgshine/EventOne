@@ -11,7 +11,7 @@ from events.templatetags import template_tags
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id
+from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
@@ -120,6 +120,7 @@ class RegisterEvent(TemplateView):
             return 3500
 
     def post(self, request, *args, **kwargs):
+        payment_event_type = EVENT_REGISTER
         context = {}
         message_hotel = ''
         message = ''
@@ -256,9 +257,10 @@ class RegisterEvent(TemplateView):
                 event_reg.amount_paid = amount_paid
                 event_reg.save()
                 if amount_paid:
-                    PaymentDetails.objects.create(reg_event=event_reg,
-                                                  amount=amount_paid
-                                                  )
+                    track_payment_details({'reg_event': event_reg, 'mode_of_payment': event_reg.payment,
+                                           'amount': event_reg.amount_paid, 'type': payment_event_type,
+                                           'receipt_number': event_reg.reciept_number,
+                                           'receipt_file': event_reg.reciept_file})
                 if room_type:
                     try:
                         room = RoomType.objects.get(id=room_type)
@@ -342,7 +344,6 @@ class RegSuccessView(TemplateView):
         event_reg = RegisteredUsers.objects.get(id=pk)
         context['hotel'] = hotelDetails(event_reg)
         context['event_register'] = event_reg
-        context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
         return render(request, self.template_name, context)
 
 
@@ -488,7 +489,8 @@ class ListUsers(ListView):
         if self.request.GET.get('is_active') == 'False':
             self.queryset = RegisteredUsers.objects.filter(is_active=False)
         elif self.request.GET.get('hotel') == 'True':
-            hotels = Hotels.objects.filter(registered_users__is_active=True).values_list('registered_users__id', flat=True)
+            hotels = Hotels.objects.filter(registered_users__is_active=True).values_list('registered_users__id',
+                                                                                         flat=True)
             hotel_booked_users = self.queryset.filter(id__in=hotels)
             self.queryset = hotel_booked_users
         elif self.request.GET.get('stag') == 'True':
@@ -512,10 +514,14 @@ class ListUsers(ListView):
                     partial_paid_relevant_users.append(users.id)
             self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
         elif self.request.GET.get('date') == 'aug3':
-            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03', checkout_date__gte='2018-08-03').values_list('registered_users__id', flat=True)
+            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03',
+                                           checkout_date__gte='2018-08-03').values_list('registered_users__id',
+                                                                                        flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('date') == 'aug4':
-            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04', checkout_date__gte='2018-08-04').values_list('registered_users__id', flat=True)
+            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04',
+                                           checkout_date__gte='2018-08-04').values_list('registered_users__id',
+                                                                                        flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('room_type'):
 
@@ -525,14 +531,18 @@ class ListUsers(ListView):
                     room_type = RoomType.objects.get(room_type=type)
                 except RoomType.DoesNotExist:
                     room_type = None
-                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type, checkin_date__lte=self.request.GET.get('date')).values_list('registered_users__id', flat=True)
+                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type,
+                                                       checkin_date__lte=self.request.GET.get('date')).values_list(
+                    'registered_users__id', flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
             else:
                 try:
                     room_type = RoomType.objects.get(room_type=type)
                 except RoomType.DoesNotExist:
                     room_type = None
-                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type).values_list('registered_users__id', flat=True)
+                relevant_users = Hotels.objects.filter(registered_users__is_active=True,
+                                                       room_type=room_type).values_list('registered_users__id',
+                                                                                        flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         else:
             self.queryset = self.queryset.filter(is_active=True)
@@ -557,7 +567,8 @@ class ListUsers(ListView):
         context['total_registration_due'] = sum(item.due_amount for item in self.queryset)
         context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
-        context['total_paid_hotel'] = Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_paid_hotel'] = \
+            Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
         return context
@@ -569,7 +580,6 @@ class ListUsers(ListView):
 
 
 class InvoiceView(TemplateView):
-
     template_name = 'coupon.html'
 
     def get(self, request, *args, **kwargs):
@@ -587,7 +597,6 @@ class InvoiceView(TemplateView):
         except Hotels.DoesNotExist:
             pass
         context['event_register'] = event_reg
-        context['payment_details'] = PaymentDetails.objects.filter(reg_event=event_reg)
         return render(request, self.template_name, context)
 
 
@@ -720,7 +729,6 @@ class UserRegisterUpdate(TemplateView):
 
             message_status = send_sms_message(phone, message, reg_user_obj.id)
 
-
             # message_status = requests.get(
             #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
             # message_status = requests.get(
@@ -732,7 +740,6 @@ class UserRegisterUpdate(TemplateView):
                 pass
             if message_hotel:
                 message_status = send_sms_message(phone, message, reg_user_obj)
-
 
             return HttpResponseRedirect('/users/')
         except:
@@ -765,6 +772,7 @@ class UpdateHotelView(UpdateView):
         return context
 
     def form_valid(self, form):
+        payment_event_type = HOTEL_UPDATE
         registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
         checkin = form.cleaned_data['checkin_date']
         checkout = form.cleaned_data['checkout_date']
@@ -797,8 +805,11 @@ class UpdateHotelView(UpdateView):
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
-            message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj)
-            send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
+        message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj)
+        send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
+        track_payment_details({'reg_event': registered_user_obj, 'mode_of_payment': hotel_obj.mode_of_payment,
+                               'amount': hotel_obj.tottal_rent, 'type': payment_event_type,
+                               'receipt_number': hotel_obj.receipt_number, 'receipt_file': hotel_obj.receipt_file})
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -814,16 +825,15 @@ class UpdateContributionPaymentView(UpdateView):
         return initial
 
     def form_valid(self, form):
+        payment_event_type = OTHER_CONTRIBUTIONS
         obj = self.get_object()
         current_contribution = obj.contributed_amount
-        # balance = obj.balance_amount
         if not current_contribution:
             current_contribution = 0
 
         obj = form.save(commit=False)
 
         updated_contribution = form.cleaned_data.get('contributed_amount')
-
         if not updated_contribution:
             updated_contribution = 0
         #
@@ -838,6 +848,9 @@ class UpdateContributionPaymentView(UpdateView):
 
         obj.contributed_amount = int(current_contribution) + int(updated_contribution)
         obj.save()
+        track_payment_details({'reg_event': obj, 'mode_of_payment': obj.payment,
+                               'amount': obj.contributed_amount, 'type': payment_event_type,
+                               'receipt_number': obj.reciept_number, 'receipt_file': obj.reciept_file})
         return super(UpdateContributionPaymentView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -855,20 +868,24 @@ class UpgradeStatusView(UpdateView):
         return initial
 
     def form_valid(self, form):
-        obj = self.get_object()
-        current = obj.amount_paid
-        obj = form.save(commit=False)
+        payment_event_type = STATUS_UPGRADE
+        self.obj = self.get_object()
+        current = self.obj.amount_paid
+        self.obj = form.save(commit=False)
         if self.request.POST.get('status'):
-            obj.event_status = self.request.POST.get('status')
-        obj.amount_paid = current + form.cleaned_data.get('amount_to_upgrade')
-        obj.save()
+            self.obj.event_status = self.request.POST.get('status')
+        self.obj.amount_paid = current + form.cleaned_data.get('amount_to_upgrade')
+        self.obj.save()
 
-        message = "You are successfully updated your status of registration to " + obj.event_status + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + obj.qrcode +\
-                  " And your  total payment is Rs." + str(obj.amount_paid) + "/-"
+        message = "You are successfully updated your status of registration to " + self.obj.event_status + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + self.obj.qrcode + \
+                  " And your  total payment is Rs." + str(self.obj.amount_paid) + "/-"
 
-        send_sms_message(obj.event_user.mobile, message, obj.event_user.id)
-
-        send_email(obj.event_user.email, message, obj)
+        send_sms_message(self.obj.event_user.mobile, message, self.obj.event_user.id)
+        #
+        send_email(self.obj.event_user.email, message, self.obj)
+        track_payment_details({'reg_event': self.obj, 'mode_of_payment': self.obj.payment,
+                               'amount': self.obj.amount_paid, 'type': payment_event_type,
+                               'receipt_number': self.obj.reciept_number, 'receipt_file': self.obj.reciept_file})
 
         return super(UpgradeStatusView, self).form_valid(form)
 
@@ -894,7 +911,7 @@ class DashBoardView(ListView):
         context['room_types'] = RoomType.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
         context['total_rooms'] = Hotels.objects.filter(registered_users__is_active=True).count() + context['room_count']
-        context['total_rooms_booked'] =  context['total_rooms'] - context['room_count']
+        context['total_rooms_booked'] = context['total_rooms'] - context['room_count']
 
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00
@@ -977,14 +994,25 @@ class DuePaymentView(UpdateView):
     queryset = RegisteredUsers.objects.all()
 
     def post(self, request, *args, **kwargs):
+        payment_event_type = REG_DUE_PAYMENT
+        form = UpdateDuePaymentForm(request.POST, request.FILES)
+        print(request.FILES, "ffffffffffffffffffffffffffff")
         self.object = self.get_object()
+        form.is_valid()
         init_val = self.object.amount_paid
         amount = int(request.POST.get('amount_paid'))
+        reciept_number = request.POST.get('reciept_number')
+        receipt_file = request.FILES.get('reciept_file')
+        self.object.reciept_number = reciept_number
+        self.object.reciept_file = receipt_file
         self.object.amount_paid = init_val + amount
         self.object.save()
         message = 'Your pending payment has been paid. Paid amount is %s' % self.object.amount_paid
         send_sms_message(self.object.event_user.mobile, message, self.object.event_user.id)
         send_email(self.object.event_user.email, message, self.object)
+        track_payment_details({'reg_event': self.object, 'mode_of_payment': self.object.payment,
+                               'amount': self.object.amount_paid, 'type': payment_event_type,
+                               'receipt_number': self.object.reciept_number, 'receipt_file': self.object.reciept_file})
         return HttpResponseRedirect(self.get_success_url())
 
     def get_initial(self):
@@ -1048,7 +1076,7 @@ class EditRegistrationView(UpdateView):
     def get_context_data(self, *args, **kwargs):
         context = super(EditRegistrationView, self).get_context_data(**kwargs)
         pk = self.object
-        event_registered_user =RegisteredUsers.objects.get(event_user=self.object)
+        event_registered_user = RegisteredUsers.objects.get(event_user=self.object)
         try:
             hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
         except:
@@ -1076,7 +1104,7 @@ class EditRegistrationView(UpdateView):
             hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
         else:
             hotel_obj.tottal_rent = self.request.POST['tottal_rent']
-        self.update_hotel(hotel_obj, self.request.POST,checkin,checkout)
+        self.update_hotel(hotel_obj, self.request.POST, checkin, checkout)
         self.update_registred_user(registered_user_obj)
         form.save()
         if created:
@@ -1097,7 +1125,7 @@ class EditRegistrationView(UpdateView):
         room_id = self.request.POST['room_type_sel'].split(":")[0]
         if room_id and room_id != '0':
             hotel_obj.room_type = RoomType.objects.get(id=room_id)
-        if checkin :
+        if checkin:
             hotel_obj.checkin_date = checkin
         if checkout:
             hotel_obj.checkout_date = checkout
@@ -1106,17 +1134,45 @@ class EditRegistrationView(UpdateView):
         hotel_obj.save()
         return True
 
-    def update_registred_user(self,registered_user_obj):
+    def update_registred_user(self, registered_user_obj):
         if registered_user_obj.event_status != self.request.POST.get('status'):
-            if registered_user_obj.event_status== 'Stag':
+            if registered_user_obj.event_status == 'Stag':
                 registered_user_obj.amount_paid = 1000
-                if registered_user_obj.amount_paid> int(self.request.POST.get('amount_paid')):
-                    registered_user_obj.contributed_amount =registered_user_obj.contributed_amount+(int(self.request.POST.get('amount_paid'))-1000)
+                if registered_user_obj.amount_paid > int(self.request.POST.get('amount_paid')):
+                    registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + (
+                            int(self.request.POST.get('amount_paid')) - 1000)
             else:
-                registered_user_obj.contributed_amount = registered_user_obj.contributed_amount +1000
+                registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + 1000
                 registered_user_obj.amount_paid = 5000
         registered_user_obj.event_status = self.request.POST.get('status')
         registered_user_obj.reciept_number = self.request.POST.get('reciept_number')
         if self.request.FILES.get('reciept_file'):
             registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
         registered_user_obj.save()
+
+
+class UpdateHotelDue(UpdateView):
+    form_class = UpdateHotelDuePaymentForm
+    template_name = 'update_hotel_due.html'
+    success_url = '/users'
+    queryset = Hotels.objects.all()
+
+    def form_valid(self, form):
+        payment_event_type = HOTEL_DUE_PAYMENT
+        self.object = self.get_object()
+        current_amt = self.object.tottal_rent
+        rent = form.cleaned_data.pop('tottal_rent')
+        obj = form.save(commit=False)
+        obj.tottal_rent = current_amt + rent
+        obj.save()
+        track_payment_details(
+            {'reg_event': self.object.registered_users, 'mode_of_payment': self.object.mode_of_payment,
+             'amount': self.object.tottal_rent, 'type': payment_event_type,
+             'receipt_number': self.object.receipt_number, 'receipt_file': self.object.receipt_file})
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_initial(self):
+        initial = super(UpdateHotelDue, self).get_initial()
+        initial['tottal_rent'] = self.object.registered_users.hotel_due
+        return initial
+

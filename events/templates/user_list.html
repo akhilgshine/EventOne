@@ -276,7 +276,7 @@
                                 <td>-</td>
                             {% else %}
                                 <td> {{ user.hotel_due }}&nbsp|&nbsp
-                                    <a href="{% url 'update_hotel_view' user.id %}">Pay Pending</a></td>
+                                    <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a></td>
 
                             {% endif %}
                             <td style="border-right: 3px solid green; "></td>

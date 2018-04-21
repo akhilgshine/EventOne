@@ -67,7 +67,7 @@ class HotelForm(forms.ModelForm):
 class UpdatePaymentForm(forms.ModelForm):
     class Meta:
         model = RegisteredUsers
-        fields = ('contributed_amount',)
+        fields = ('contributed_amount', 'payment', 'reciept_number', 'reciept_file')
 
     def __init__(self, *args, **kwargs):
         super(UpdatePaymentForm, self).__init__(*args, **kwargs)
@@ -79,7 +79,7 @@ class UpgradeStatusForm(forms.ModelForm):
 
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid', 'event_status')
+        fields = ('amount_paid', 'event_status','payment','reciept_number','reciept_file')
 
     def __init__(self, *args, **kwargs):
         super(UpgradeStatusForm, self).__init__(*args, **kwargs)
@@ -92,7 +92,7 @@ class UpgradeStatusForm(forms.ModelForm):
 class UpdateDuePaymentForm(forms.ModelForm):
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid',)
+        fields = ('amount_paid', 'payment', 'reciept_number', 'reciept_file')
 
     def __init__(self, *args, **kwargs):
         super(UpdateDuePaymentForm, self).__init__(*args, **kwargs)
@@ -111,3 +111,15 @@ class UpdateProfileForm(forms.ModelForm):
         self.fields['last_name'].widget.attrs['class'] = 'form-control'
         self.fields['mobile'].widget.attrs['class'] = 'form-control'
         self.fields['email'].widget.attrs['class'] = 'form-control'
+
+
+class UpdateHotelDuePaymentForm(forms.ModelForm):
+    class Meta:
+        model = Hotels
+        fields = ('tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file')
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateHotelDuePaymentForm, self).__init__(*args, **kwargs)
+        self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
+        self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
+

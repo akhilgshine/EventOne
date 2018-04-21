@@ -7,6 +7,12 @@ from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
 
+
+CASH = 'cash'
+POS = 'POS'
+CARD = 'card'
+BANK_TRANSFER = 'bank_transfer'
+
 STATUS_CHOICES = (
     ('Couple', _('Couple')),
     ('Stag', _('Stag')),
@@ -24,10 +30,28 @@ MEMBER_CHOICES = (
 )
 
 PAYMENT_CHOICES = (
-    ('Cash', _("Cash")),
-    ('POS', _("POS")),
-    ('Card', _("Card")),
-    ('Bank Transfer', _("Bank Transfer")),
+    (CASH, _("Cash")),
+    (POS, _("POS")),
+    (CARD, _("Card")),
+    (BANK_TRANSFER, _("Bank Transfer")),
+)
+
+EVENT_REGISTER = 0
+STATUS_UPGRADE = 1
+REG_DUE_PAYMENT = 2
+HOTEL_BOOKING = 3
+HOTEL_UPDATE = 4
+HOTEL_DUE_PAYMENT = 5
+OTHER_CONTRIBUTIONS = 6
+
+TYPE_CHOICES = (
+    (EVENT_REGISTER,('Event Registered')),
+    (STATUS_UPGRADE,('Status Upgrade')),
+    (REG_DUE_PAYMENT,'Reg Due Payment'),
+    (HOTEL_BOOKING,('Hotel Booking')),
+    (HOTEL_UPDATE,('Hotel Update Booking')),
+    (HOTEL_DUE_PAYMENT,('Hotel Due Payment')),
+    (OTHER_CONTRIBUTIONS,('Other Contributions')),
 )
 
 
@@ -72,7 +96,7 @@ class EventUsers(models.Model):
 class RegisteredUsers(models.Model):
     event_user = models.ForeignKey(EventUsers)
     event = models.ForeignKey(Event)
-    payment = models.CharField(max_length=20, blank=False)
+    payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20, blank=False)
     amount_paid = models.IntegerField(blank=True, null=True)
     qrcode = models.CharField(max_length=20, blank=False, null=False)
     table = models.ForeignKey(Table)
@@ -181,6 +205,19 @@ class PaymentDetails(models.Model):
     reg_event = models.ForeignKey(RegisteredUsers, null=True)
     amount = models.CharField(max_length=20)
     created_date = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(choices=TYPE_CHOICES, max_length=50, blank=True, null=True)
+    mode_of_payment  = models.CharField(choices=PAYMENT_CHOICES, max_length=50, blank=True, null=True)
+    receipt_number = models.CharField(blank=True, null=True, max_length=100)
+    receipt_file = models.FileField(blank=True, null=True, upload_to='payment_receipts')
+
+    def __str__(self):
+        return "{} {}".format(self.reg_event.event_user.first_name, self.reg_event.event_user.last_name)
+
+    class Meta:
+        verbose_name = 'User Payment Detail'
+        verbose_name_plural = 'User Payment Details'
+
+
 
 
 class RoomType(models.Model):

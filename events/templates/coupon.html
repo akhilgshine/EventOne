@@ -119,17 +119,12 @@
                                             <td class="table_main_tbody_td">Reg.Amount</td>
                                             <td></td>
                                             <td align="left" class="table_td_second">
-                                                {% for dat in  payment_details %}
-
-                                                    &nbsp; {{ event_register.amount_paid }}/- @{{ dat.created_date }}
+                                                    &nbsp; {{ event_register.amount_paid }}/- @{{ event_register.created_date }}
                                                     <br>
-                                                {% empty %}
-                                                    {{ event_register.amount_paid }}
-                                                {% endfor %}
                                                 {% if partial %}
-                                                    <span style="color:#928f8b;margin-left:20px;">
-																	&nbsp;&nbsp;&nbsp;{{ partial }}
-																</span>
+                                                    <span>
+                                                        {{ partial }}
+                                                    </span>
                                                 {% endif %}
 
                                             </td>
@@ -168,7 +163,19 @@
                                                     {{ hotel }}
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td >Hotel Payment</td>
+                                                {% if relevant_hotel.registered_users.hotel_due %}
+                                                <td></td>
+                                                <td>Partial</td>
+                                                <td></td>
+                                                {% else %}
+                                                <td></td>
+                                                <td>Complete</td>
+                                                {% endif %}
+                                            </tr>
                                             {% if relevant_hotel.registered_users.hotel_due %}
+
                                                 <tr>
                                                     <td class="table_main_tbody_td">Hotel Due amount</td>
                                                     <td></td>

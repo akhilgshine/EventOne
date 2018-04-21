@@ -74,3 +74,12 @@ def encoded_id(user_id):
 
 def decode_id(user_id):
     return base64.b64decode(user_id)
+
+
+def track_payment_details(data):
+    print(data)
+    payment_details = PaymentDetails.objects.create(**data)
+    print('payment_details',data)
+    return payment_details
+
+

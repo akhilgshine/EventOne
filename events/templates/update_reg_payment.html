@@ -67,7 +67,7 @@
         </div>
         <div class="col-sm-12 wrap-form-submit">
             <div id="hotelForm">
-                <form method="POST" class="form-horizontal form-nuts" id="DetailForm">
+                <form method="POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group">
                         <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
@@ -76,6 +76,47 @@
                             <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
                         </div>
 
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
+                        <div class="col-sm-2">
+                            <label>
+                                <input id="radioId_0" type="radio" class="payment-mode" name="payment"
+                                       value="cash"> <span class="radio-change"></span> Cash
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input id="radioId_1" type="radio" class="payment-mode" name="payment"
+                                       value="POS"> <span class="radio-change"></span> POS
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input id="radioId_2" type="radio" class="payment-mode" name="payment"
+                                       value="card"> <span class="radio-change"></span> Card
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                <input id="radioId_3" type="radio" class="payment-mode" name="payment"
+                                       value="bank_transfer"> <span class="radio-change"></span> Bank Transfer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group reciept_number">
+                        <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="id_reciept_number" placeholder="Receipt number"
+                                   name="reciept_number">
+                        </div>
+                    </div>
+                    <div class="form-group reciept_number">
+                        <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
+                        <div class="col-sm-8">
+                            <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt"
+                                   name="reciept_file">
+                        </div>
                     </div>
 
 
@@ -117,18 +158,28 @@
 <script type="text/javascript">
 
 
-    // function update_messages(messages){
-    //   console.log("update message");
-    //   $(".message").html("");
-    //   $.each(messages, function (i, m) {
-    //       $(".message").append(m.message);
-    //   });
-    //   $('.message').show();
-    //   setTimeout(function() {
-    //       $('.message').fadeOut('slow');
-    //       location.reload();
-    //   }, 3000);
-    // }
+
+      $( document ).ready(function() {
+     $('.reciept_number').css('display', 'none');
+            $(".payment-mode").click(function() {
+
+                if($('#radioId_3').is(':checked')){
+
+                    $('.reciept_number').css('display', 'block');
+                }
+                else if($('#radioId_1').is(':checked')){
+
+                    $('.reciept_number').css('display', 'block');
+                }
+                else {
+                    $('.reciept_number').css('display', 'none');
+
+                }
+
+
+            });
+
+    });
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
@@ -148,81 +199,7 @@
 
     }
 
-    $("#id_checkout_date").change(function () {
-        calculate_rent();
-    });
 
-    function changeCheckinDate() {
-        calculate_rent();
-    };
-
-    function calculate_rent() {
-
-        var one_day_rent = $('#id_room_rent').val();
-        var checkin = $('#id_checkin_date').val();
-        var checkout = $('#id_checkout_date').val();
-        if (checkin != '' && checkout != '') {
-            checkInDate = checkin.split('/')[0];
-            checkOutDate = checkout.split('/')[0];
-            diffDays = checkOutDate - checkInDate;
-
-            if (diffDays == 0 || diffDays == 1) {
-                var one_day_rent = one_day_rent;
-                $('#id_tottal_rent').val(one_day_rent);
-            }
-            else {
-                var rent = $('#id_tottal_rent').val();
-                if (one_day_rent)
-                    var tottal = diffDays * one_day_rent;
-                else
-                    var tottal = rent;
-                $('#id_tottal_rent').val(tottal);
-            }
-        }
-    }
-
-    $("#id_checkin_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
-        onSelect: function (selected) {
-            $("#id_checkout_date").datepicker("option", "minDate", selected)
-            changeCheckinDate();
-        }
-    });
-
-    $("#id_checkout_date").datepicker({
-        dateFormat: 'dd/mm/yy',
-        numberOfMonths: 1,
-        minDate: new Date(Date.parse("2018-08-03")),
-        maxDate: new Date(Date.parse("2018-08-05")),
-        defaultDate: new Date(Date.parse("2018-08-01")),
-    });
-
-
-    {%
-        if hotel_obj %}
-    $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
-    $("#id_tottal_rent").val('{{hotel_obj.tottal_rent}}');
-    $('#id_room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected', 'selected');
-    $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
-    $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
-    {%
-        endif %
-    }
-
-    $('#id_amount_paid').on('keyup change', function () {
-        var entered_values = $(this).val();
-        if (entered_values < 0) {
-            $('#id_pay_now').attr('disabled', true);
-            $('#amount_error_div').show();
-        } else {
-            $('#id_pay_now').attr('disabled', false);
-            $('#amount_error_div').hide();
-        }
-    });
 </script>
 </body>
 

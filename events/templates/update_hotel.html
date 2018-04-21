@@ -90,7 +90,7 @@
                             <select name="room_type_sel"  class="form-control" id="id_room_type" onchange="selectRoomType()"  required="">
                               <option value="">--- select type ---</option>
                               {% for room in room_types %}
-                                <option value="{{room.id}}:{{room.net_rate}}">{{room.room_type}} ({{room.rooms_available}})</option>
+                                <option value="{{room.id}}:{{room.net_rate}}" {% if  not room.rooms_available   %} disabled {% endif %}>{{room.room_type}} ({{room.rooms_available}})</option>
                               {% endfor %}
                             </select>
                           </div>
@@ -108,6 +108,12 @@
                             <input type="number" id="rent_total" class="form-control" readonly>
                           </div>
                         </div>
+                          <div class="form-group">
+                          <label class="control-label col-sm-4" for="id_room_rent"> Amount Paid :</label>
+                          <div class="col-sm-8">
+                          <input  type="text" value="{{hotel_obj.tottal_rent}}" readonly class="form-control" >
+                          </div>
+                        </div>
                         <div class="form-group">
                           <label class="control-label col-sm-4" for="id_room_rent"> Amount to be Paid :</label>
                           <div class="col-sm-8">
@@ -118,7 +124,7 @@
                           <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_0" type="radio" class="payment-mode" name="mode_of_payment" value="Cash" > <span class="radio-change"></span> Cash
+                                  <input id="radioId_0" type="radio" class="payment-mode" name="mode_of_payment" value="cash" > <span class="radio-change"></span> Cash
                               </label>
                           </div>
                           <div class="col-sm-2">
@@ -128,12 +134,12 @@
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="mode_of_payment" value="Card"> <span class="radio-change"></span> Card
+                                  <input id="radioId_2" type="radio" class="payment-mode" name="mode_of_payment" value="card"> <span class="radio-change"></span> Card
                               </label>
                           </div>
                           <div class="col-sm-2">
                               <label>
-                                  <input id="radioId_3" type="radio" class="payment-mode" name="mode_of_payment" value="Bank Transfer"> <span class="radio-change"></span> Bank Transfer
+                                  <input id="radioId_3" type="radio" class="payment-mode" name="mode_of_payment" value="bank_transfer"> <span class="radio-change"></span> Bank Transfer
                               </label>
                           </div>
                         </div>
@@ -217,6 +223,7 @@
     $( document ).ready(function() {
             $('#hotel_amount_final').text($('#id_tottal_rent').val());
             calculate_rent();
+             $('.reciept_number').css('display', 'none');
             $(".payment-mode").click(function() {
                 if($('#radioId_3').is(':checked')){
 
