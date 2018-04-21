@@ -196,7 +196,7 @@
                             <select name="room_type_sel"  class="form-control" id="room_type" onchange="selectRoomType()" >
                               <option value="0">--- select type ---</option>
                               {% for room in room_types %}
-                                <option value="{{room.id}}:{{room.net_rate}}">{{room.room_type}} ({{room.rooms_available}})</option>
+                                <option value="{{room.id}}:{{room.net_rate}}" {% if  not room.rooms_available   %} disabled {% endif %}>{{room.room_type}} ({{room.rooms_available}})</option>
                               {% endfor %}
                             </select>
                           </div>
