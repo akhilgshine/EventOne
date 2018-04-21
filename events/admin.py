@@ -25,6 +25,8 @@ class RegisteredUserAdmin(admin.ModelAdmin):
                        'created_date',
                        'get_hotel_rent']
 
+    list_filter = ['payment']
+
     search_fields = ['event_user__first_name', 'event_user__last_name']
 
     def get_total_paid(self, obj, *args, **kwargs):
