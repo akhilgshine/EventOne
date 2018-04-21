@@ -525,7 +525,7 @@ class ListUsers(ListView):
                     room_type = RoomType.objects.get(room_type=type)
                 except RoomType.DoesNotExist:
                     room_type = None
-                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type, checkin_date__gte=self.request.GET.get('date')).values_list('registered_users__id', flat=True)
+                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type, checkin_date__lte=self.request.GET.get('date')).values_list('registered_users__id', flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
             else:
                 try:
