@@ -270,11 +270,12 @@
             }
             else {
                 $('.reciept_number').css('display', 'none');
-
             }
-
-
         });
+        {% if hotel_obj %}
+            $('#hotel_amount_final').html($('#rent_total').val());
+            $('#amount_due').html($('#id_current_paid').val());
+        {% endif %}
 
     });
 
@@ -459,6 +460,7 @@
         {% elif hotel_obj.mode_of_payment == 'Bank Transfer' %}
             $("#radioId_2").prop("checked", true);
         {% endif %}
+
     {% endif %}
 
     function clearHotelFields() {
