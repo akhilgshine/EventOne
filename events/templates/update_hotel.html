@@ -101,7 +101,7 @@
                             <div class="col-sm-8" style="color: black">
                                 <input type="hidden" name="room_type" value="{{ hotel_obj.room_type.id }}">
                                 <select name="room_type_sel" class="form-control" id="id_room_type"
-                                        onchange="selectRoomType()" required="">
+                                        onchange="selectRoomType(this)" required="">
                                     <option value="">--- select type ---</option>
                                     {% for room in room_types %}
                                         <option value="{{ room.id }}:{{ room.net_rate }}"
@@ -476,6 +476,10 @@
         $('#id_tottal_rent').val('');
         $('#id_checkin_date').val('');
         $('#id_checkout_date').val('');
+        $('#hotel_amount_final').text(0);
+        $('#amount_paid_final').text(0);
+        $('#amount_due').text(0);
+        $("input:radio").attr("checked", false);
 
     }
     $('#id_tottal_rent').on('change keyup',function () {
