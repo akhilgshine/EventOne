@@ -195,7 +195,12 @@
                             <div class="col-sm-8">
                                 <h4>
                                     Total Hotel Booking Amount: Rs <span id="hotel_amount_final"></span> /-<br>
-                                    Amount To Be Paid :Rs <span id="amount_paid_final"></span> /-<br>
+                                    {% if hotel_obj %}
+                                    Amount  Paid :Rs <span id="amount_paid_final"></span> /-<br>
+                                        {% else %}
+                                        Amount To Be Paid :Rs <span id="amount_paid_final"></span> /-<br>
+                                    {% endif %}
+
                                     Due Amount :Rs <span id="amount_due"></span> /-<br>
                                 </h4>
                             </div>
