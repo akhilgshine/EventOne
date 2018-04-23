@@ -295,9 +295,9 @@ class RegisterEvent(TemplateView):
                             room.rooms_available = room.rooms_available - 1
                             room.save()
                             hotel_obj.room_type = room
-                            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
-                            # message_hotel += text
-                            message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
+                            # message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
+                            # # message_hotel += text
+                            # message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                         hotel_obj.save()
 
             except Exception as e:
@@ -312,8 +312,8 @@ class RegisterEvent(TemplateView):
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid) + "/-"
 
-                message_status = requests.get(
-                    'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
+                # message_status = requests.get(
+                #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:

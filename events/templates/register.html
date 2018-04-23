@@ -193,7 +193,7 @@
                           <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                           <div class="col-sm-8">
                               <input type="hidden" name="room_type">
-                            <select name="room_type_sel"  class="form-control" id="room_type" onchange="selectRoomType()" >
+                            <select name="room_type_sel"  class="form-control" id="room_type" onchange="selectRoomType(this)" >
                               <option value="0">--- select type ---</option>
                               {% for room in room_types %}
                                 <option value="{{room.id}}:{{room.net_rate}}" {% if  not room.rooms_available   %} disabled {% endif %}>{{room.room_type}} ({{room.rooms_available}})</option>
@@ -282,7 +282,7 @@
                         <hr>
                         <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-8">
-                            <button type="submit" class="btn btn-default nuts-sub" id="id_confirm_register"> Confirm Register </button>
+                            <button type="button" class="btn btn-default nuts-sub" id="id_confirm_register"> Confirm Register </button>
                           </div>
                         </div>
                       </form>
@@ -562,15 +562,38 @@
     });
 
 
-    $("#DetailForm").submit(function(){
-      if($('input[name=payment]:checked').length<=0)
+    $("#id_confirm_register").on('click', function(){
+     var hotel_name = $('#id_hotel_name').val();
+     var hotel_rent = $('#id_room_rent').val();
+     var check_in = $('#checkIn').val();
+     var check_out = $('#checkOut').val();
+     if (!$('input[name=status]:checked').val() ) {
+         $("#notifications").text('Please Select a Registration Type !');
+         return false;
+        }
+      else if($('input[name=payment]:checked').length<=0)
       {
         $("#notifications").text('Please Select a payment mode !');
         return false;
-      }else{
-        return true;
       }
+     else if(check_out == '' && check_in == '' && hotel_rent != '' && hotel_name != '' ){
+         $("#notifications").text('Please Select Checkin and Checkout !');
+        return false;
+         }
+     else{
+          $("#notifications").hide();
+          $('#DetailForm').submit();
+         return true;
+         }
     });
+    function clearHotelRelatedFields(){
+        $('#room_type>option[value=0]').prop('selected',true);
+        $('#room_type>option[value=0]').attr('selected',true);
+        $('#id_hotel_name').val('');
+        $('#id_room_rent').val('');
+        $('#checkIn').val('');
+        $('#checkOut').val('');
+    }
 
     function update_messages(messages){
       console.log("update message");
@@ -593,10 +616,15 @@
         document.getElementById("myNav").style.height = "0%";
     }
 
-    function selectRoomType(){
+    function selectRoomType(field){
+        if($(field).val()==0){
+           clearHotelRelatedFields();
+        }
+        else {
+             $('#id_hotel_name').val('Hotel Raviz Kollam');
+            calculate_rent();
+        }
 
-      $('#id_hotel_name').val('Hotel Raviz Kollam');
-      calculate_rent();
     }
 
     $("#checkOut").change(function(){
@@ -668,6 +696,7 @@
                 click: function() {
                   $("#checkIn").val('');
                   $("#checkIn").datepicker( "hide");
+                  clearHotelRelatedFields();
                 }
             }).appendTo( headerPane );
         }, 1 );
@@ -692,6 +721,7 @@
                   click: function() {
                     $("#checkOut").val('');
                     $("#checkOut").datepicker( "hide");
+                    clearHotelRelatedFields();
                   }
               }).appendTo( headerPane );
           }, 1 );
@@ -701,7 +731,12 @@
   $(document).ready(function(){
     var memberType = $('#memberType').val();
     $('#id_member_type').val(memberType);
-  }) 
+  });
+
+
+
+
+
   </script>
 </body>
 
