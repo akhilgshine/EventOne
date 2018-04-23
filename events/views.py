@@ -311,6 +311,7 @@ class RegisterEvent(TemplateView):
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid) + "/-"
+                message_status = send_sms_message(phone, message, event_reg.id)
 
                 # message_status = requests.get(
                 #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
