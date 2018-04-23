@@ -274,7 +274,8 @@
         });
         {% if hotel_obj %}
             $('#hotel_amount_final').html($('#rent_total').val());
-            $('#amount_due').html($('#id_current_paid').val());
+            $('#amount_paid_final').html($('#id_current_paid').val());
+            $('#amount_due').html ($('#rent_total').val() - ($('#id_current_paid').val()));
         {% endif %}
 
     });
