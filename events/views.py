@@ -997,7 +997,6 @@ class DuePaymentView(UpdateView):
     def post(self, request, *args, **kwargs):
         payment_event_type = REG_DUE_PAYMENT
         form = UpdateDuePaymentForm(request.POST, request.FILES)
-        print(request.FILES, "ffffffffffffffffffffffffffff")
         self.object = self.get_object()
         form.is_valid()
         init_val = self.object.amount_paid
@@ -1073,6 +1072,20 @@ class EditRegistrationView(UpdateView):
     form_class = UpdateProfileForm
     queryset = EventUsers.objects.all()
     success_url = '/users/'
+
+    def get_reg_amt(self, member_type, status):
+        if member_type == 'Tabler':
+            if status == 'Stag':
+                return 5000
+            return 6000
+        else:
+            if status == 'Stag':
+                return 4000
+            elif status == 'Couple':
+                return 5000
+            elif status == 'Stag_Informal':
+                return 2500
+            return 3500
 
     def get_context_data(self, *args, **kwargs):
         context = super(EditRegistrationView, self).get_context_data(**kwargs)

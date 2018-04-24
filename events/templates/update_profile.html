@@ -12,306 +12,368 @@
     <title>Lets Go Nuts - QRT 85</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"  rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    
+
     <!-- Custom css style -->
     <!-- <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"> -->
 
-<style>
-    .datepicker{
-        color:#555;
-    }
-    .close_btn{
-      float:right;
-    }
-    #payment_error_div{
-        color: red;
-    }
-</style>
+    <style>
+        .datepicker {
+            color: #555;
+        }
+
+        .close_btn {
+            float: right;
+        }
+
+        #payment_error_div {
+            color: red;
+        }
+
+
+
+        .nuts-sub-hotel-cancel {
+            width: 206px;
+            border: 0px;
+            border-radius: 0px;
+            color: #fff;
+            font-weight: bold;
+            min-width: 250px;
+            padding: 10px 30px;
+        }
+    </style>
 </head>
 
 <body id="page-top">
-    <div id="myNav" class="overlay">
+<div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
-      <a href="/">Home</a>
-      <a href="/users/">Registered Users</a>
+        <a href="/">Home</a>
+        <a href="/users/">Registered Users</a>
         <a href="/users/?is_active=False">Deleted Users </a>
-      <a href="{%  url 'add-contribution-list' %}">Contribute Extra </a>
-      <a href="{% url 'dash_board' %}">DashBoard</a>
-      <a href="/logout/">Logout</a>
+        <a href="{% url 'add-contribution-list' %}">Contribute Extra </a>
+        <a href="{% url 'dash_board' %}">DashBoard</a>
+        <a href="/logout/">Logout</a>
     </div>
-  </div>
-    <div class="container-fluid wrap-nuts register">
+</div>
+<div class="container-fluid wrap-nuts register">
 
-        {% if messages %}
-          {% for message in messages %}
-            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}  style='margin-top: 50px;'>
-              <a class="close" data-dismiss="alert" href="#">&times;</a>
-              {{ message }}
+    {% if messages %}
+        {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}
+                                      style='margin-top: 50px;'>
+                <a class="close" data-dismiss="alert" href="#">&times;</a>
+                {{ message }}
             </div>
-          {% endfor %}
-        {% else %}
-          <div class="message alert alert-success message"  style="display: none;">
-          <a class="close" data-dismiss="alert" href="#">&times;</a>
+        {% endfor %}
+    {% else %}
+        <div class="message alert alert-success message" style="display: none;">
+            <a class="close" data-dismiss="alert" href="#">&times;</a>
 
-          </div>
-        {% endif %}
+        </div>
+    {% endif %}
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="logo-wrap">
-                    <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="logo-wrap">
+                <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
+            </div>
 
-                <div class="col-sm-12 wrap-form-submit" >
-                      <form class="form-horizontal form-nuts" style="display: none;">
-                      <h3>Enter Details</h3>
-                      <div class="form-group">
+            <div class="col-sm-12 wrap-form-submit">
+                <form class="form-horizontal form-nuts" style="display: none;">
+                    <h3>Enter Details</h3>
+                    <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Member Type :</label>
                         <div class="col-sm-8">
-                            <select name=""  class="form-control" id="memberType">
+                            <select name="" class="form-control" id="memberType">
                                 <option value="Tabler">Tabler</option>
                                 <option value="Square_Leg">Square Leg</option>
                             </select>
                         </div>
-                      </div>
-                      <div class="form-group">
+                    </div>
+                    <div class="form-group">
                         <label class="control-label col-sm-4" for="email">Select Table :</label>
                         <div class="col-sm-8">
-                            <select name=""  class="form-control" id="selectId">
+                            <select name="" class="form-control" id="selectId">
                                 <option value=" ">Select Table</option>
                                 {% for val in tables %}
-                                <option value="{{ val.table_name }}">{{ val.table_name }}</option>
+                                    <option value="{{ val.table_name }}">{{ val.table_name }}</option>
                                 {% endfor %}
                                 <option value="Other">Other</option>
                             </select>
 
                         </div>
-                      </div>
-                      </form>
+                    </div>
+                </form>
 
-                      <div id="detailForm" >
-                        <form method= "POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
-                         {% csrf_token %}
+                <div id="detailForm">
+                    <form method="POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <input type="hidden" id="id_table" name="table_val">
                         <input type="hidden" id="id_member_type" name="member_type">
                         <div class="form-group" id="other_table_div" style="color: #fff; display: none">
-                          <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
-                          <div class="col-sm-8">
-                          <input type="text" class="form-control" id="id_other_table" placeholder="For New Table Only" name='other_table'>
-                          </div>
+                            <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="id_other_table"
+                                       placeholder="For New Table Only" name='other_table'>
+                            </div>
                         </div>
 
                         <div class="form-group" style="color: #fff">
-                          <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
-                          <div class="col-sm-8">
-                            {{form.first_name}}
-                          </div>
+                            <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
+                            <div class="col-sm-8">
+                                {{ form.first_name }}
+                            </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_last_name">Last Name :</label>
-                          <div class="col-sm-8">
-                            {{form.last_name}}
-                          </div>
+                            <label class="control-label col-sm-4" for="id_last_name">Last Name :</label>
+                            <div class="col-sm-8">
+                                {{ form.last_name }}
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_phone">Phone Number :</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control" id="id_mobile" placeholder="Enter your Phone Number" name="mobile"  required="" value="{{ form.mobile.value|default_if_none:""}}" pattern='^\+?\d{0,13}'>
-                          </div>
+                            <label class="control-label col-sm-4" for="id_phone">Phone Number :</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="id_mobile"
+                                       placeholder="Enter your Phone Number" name="mobile" required=""
+                                       value="{{ form.mobile.value|default_if_none:"" }}" pattern='^\+?\d{0,13}'>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_email">Email:</label>
-                          <div class="col-sm-8">
-                            <input type="email" class="form-control" id="id_email" placeholder="Enter your Email" name="email" value="{{ form.email.value|default_if_none:""}}"  required="">
-                          </div>
+                            <label class="control-label col-sm-4" for="id_email">Email:</label>
+                            <div class="col-sm-8">
+                                <input type="email" class="form-control" id="id_email" placeholder="Enter your Email"
+                                       name="email" value="{{ form.email.value|default_if_none:"" }}" required="">
+                            </div>
                         </div>
 
                         {% if event_registered_user %}
-                        <div class="form-group" style="display:none;">
-                          <label class="control-label col-sm-4" for=""></label>
-                          <div class="col-sm-8">
-                            <input type="hidden" class="form-control" id="update_id"  name="update_id" value="{{event_registered_user.id}}">
-                          </div>
-                        </div>
+                            <div class="form-group" style="display:none;">
+                                <label class="control-label col-sm-4" for=""></label>
+                                <div class="col-sm-8">
+                                    <input type="hidden" class="form-control" id="update_id" name="update_id"
+                                           value="{{ event_registered_user.id }}">
+                                </div>
+                            </div>
                         {% endif %}
 
                         <!--<div class="form-group" id="balance_div" style="display: none;">-->
-                          <!--<label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>-->
-                          <!--<div class="col-sm-8">-->
-                            <!--<input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>-->
-                          <!--</div>-->
+                        <!--<label class="control-label col-sm-4" for="id_balance">Paid Amount : </label>-->
+                        <!--<div class="col-sm-8">-->
+                        <!--<input class="form-control" id="paid_ampount_id"  name="paid_amount" readonly>-->
+                        <!--</div>-->
                         <!--</div>                        -->
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="">Registration Type : </label>
-                          
-                          <div class="col-sm-2" id="stag_type">
-                            <label>
-                              <input id="radio_status_2" value="Stag"  type="radio" class="payment-mode" name="status" required="" {% if event_registered_user.event_status == "Stag"%}checked="checked"{% endif %}> <span class="radio-change"></span> <span class="span-stag">Stag</span>
-                            </label>
-                          </div>
-                          <div class="col-sm-2" id="couple_type">
-                            <label>
-                                <input id="radio_status_1" value="Couple" type="radio" class="payment-mode" name="status" required="" {% if event_registered_user.event_status == "Couples"%}checked="checked"{% endif %}> <span class="radio-change"></span> <span class="span-couple">Couples</span>
-                            </label>
-                          </div>
-                          
-                          <div class="col-sm-2" id="informal_stag_type">
-                            <label>
-                              <input id="radio_status_3" value="Stag_Informal" type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Stag (Saturday Only)
-                            </label>
-                          </div>  
-                          <div class="col-sm-2" id="informal_couple_type">
-                            <label>
-                              <input id="radio_status_4" value="Couple_Informal"  type="radio" class="payment-mode" name="status" required=""> <span class="radio-change"></span> Couples (Saturday Only)
-                            </label>
-                          </div>
+                            <label class="control-label col-sm-4" for="">Registration Type : </label>
+
+                            <div class="col-sm-2" id="stag_type">
+                                <label>
+                                    <input id="radio_status_2" value="Stag" type="radio" class="payment-mode"
+                                           name="status" required=""
+                                           {% if event_registered_user.event_status == "Stag" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> <span class="span-stag">Stag</span>
+                                </label>
+                            </div>
+                            <div class="col-sm-2" id="couple_type">
+                                <label>
+                                    <input id="radio_status_1" value="Couple" type="radio" class="payment-mode"
+                                           name="status" required=""
+                                           {% if event_registered_user.event_status == "Couples" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> <span class="span-couple">Couples</span>
+                                </label>
+                            </div>
+
+                            <div class="col-sm-2" id="informal_stag_type">
+                                <label>
+                                    <input id="radio_status_3" value="Stag_Informal" type="radio" class="payment-mode"
+                                           name="status" required=""> <span class="radio-change"></span> Stag (Saturday
+                                    Only)
+                                </label>
+                            </div>
+                            <div class="col-sm-2" id="informal_couple_type">
+                                <label>
+                                    <input id="radio_status_4" value="Couple_Informal" type="radio" class="payment-mode"
+                                           name="status" required=""> <span class="radio-change"></span> Couples
+                                    (Saturday Only)
+                                </label>
+                            </div>
                         </div>
-{#                            <div class="form-group">#}
-{#                          <label class="control-label col-sm-4" for="partial_payment_id"></label>#}
-{#                          <div class="col-sm-2">#}
-{#                              <label>#}
-{#                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment#}
-{#                              </label>#}
-{#                          </div>#}
-{#                            </div>#}
+                        {#                            <div class="form-group">#}
+                        {#                          <label class="control-label col-sm-4" for="partial_payment_id"></label>#}
+                        {#                          <div class="col-sm-2">#}
+                        {#                              <label>#}
+                        {#                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment#}
+                        {#                              </label>#}
+                        {#                          </div>#}
+                        {#                            </div>#}
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
-                          <div class="col-sm-8">
-                            <input type="number" class="form-control" id="amount_added_id" placeholder="Enter Amount" name="amount_paid" value="{{event_registered_user.amount_paid}}">
-                              <div id="payment_error_div" style="display: none;"></div>
-                          </div>
+                            <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="amount_added_id"
+                                       placeholder="Enter Amount" name="amount_paid"
+                                       value="{{ event_registered_user.amount_paid }}">
+                                <div id="payment_error_div" style="display: none;"></div>
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="room_type">Room Type :</label>
-                          <div class="col-sm-8">
-                              <input type="hidden" name="room_type">
-                            <select name="room_type_sel"  class="form-control" id="room_type" onchange="selectRoomType()" >
-                              <option value="0">--- select type ---</option>
-                              {% for room in room_types %}
-                                <option {% if hotel_obj.room_type == room %}selected{% endif %} value="{{room.id}}:{{room.net_rate}}">{{room.room_type}} ({{room.rooms_available}})</option>
-                              {% endfor %}
-                            </select>
-                          </div>
+                            <label class="control-label col-sm-4" for="room_type">Room Type :</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="room_type">
+                                <select name="room_type_sel" class="form-control" id="room_type"
+                                        onchange="selectRoomType()">
+                                    <option value="0">--- select type ---</option>
+                                    {% for room in room_types %}
+                                        <option {% if hotel_obj.room_type == room %}selected{% endif %}
+                                                value="{{ room.id }}:{{ room.net_rate }}">{{ room.room_type }}
+                                            ({{ room.rooms_available }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control" id="id_hotel_name" placeholder="Enter Hotel Name" name="hotel_name" value="{{hotel_obj.hotel_name}}" >
-                          </div>
+                            <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="id_hotel_name"
+                                       placeholder="Enter Hotel Name" name="hotel_name"
+                                       value="{{ hotel_obj.hotel_name }}">
+                            </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control" id="id_room_rent" placeholder="" name="room_rent" value="{{hotel_obj.room_rent}}">
-                          </div>
+                            <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="id_room_rent" placeholder=""
+                                       name="room_rent" value="{{ hotel_obj.room_rent }}">
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for=""> Date : </label>
-                          <div class="col-sm-3">
-                            Check In:<input type="text" name="checkin_date" class="datepicker form-control" id="checkIn" value="{{hotel_obj.checkin_date}}">
-                          </div>
-                        <div class="col-sm-3">
-                           Check Out:<input type="text" name="checkout_date" class="datepicker form-control" id="checkOut" value="{{hotel_obj.checkout_date}}">
-                          </div>
+                            <label class="control-label col-sm-4" for=""> Date : </label>
+                            <div class="col-sm-3">
+                                Check In:<input type="text" name="checkin_date" class="datepicker form-control"
+                                                id="checkIn" value="{{ hotel_obj.checkin_date }}">
+                            </div>
+                            <div class="col-sm-3">
+                                Check Out:<input type="text" name="checkout_date" class="datepicker form-control"
+                                                 id="checkOut" value="{{ hotel_obj.checkout_date }}">
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash" {% if hotel_obj.mode_of_payment == "Cash"%}checked="checked"{% endif %} > <span class="radio-change"></span> Cash
-                              </label>
-                          </div>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS" {% if hotel_obj.mode_of_payment == "POS"%}checked="checked"{% endif %}> <span class="radio-change"></span> POS
-                              </label>
-                          </div>
-                          <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card" {% if hotel_obj.mode_of_payment == "Card"%}checked="checked"{% endif %} > <span class="radio-change"></span> Card
-                              </label>
-                          </div>
+                            <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                             <div class="col-sm-2">
-                              <label>
-                                  <input id="radioId_3" type="radio" class="payment-mode" name="payment" value="Bank Transfer" {% if hotel_obj.mode_of_payment == "Bank Transfer"%}checked="checked"{% endif %}> <span class="radio-change"></span> Bank Transfer
-                              </label>
-                          </div>
+                                <label>
+                                    <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash"
+                                           {% if hotel_obj.mode_of_payment == "Cash" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> Cash
+                                </label>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>
+                                    <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"
+                                           {% if hotel_obj.mode_of_payment == "POS" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> POS
+                                </label>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>
+                                    <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card"
+                                           {% if hotel_obj.mode_of_payment == "Card" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> Card
+                                </label>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>
+                                    <input id="radioId_3" type="radio" class="payment-mode" name="payment"
+                                           value="Bank Transfer"
+                                           {% if hotel_obj.mode_of_payment == "Bank Transfer" %}checked="checked"{% endif %}>
+                                    <span class="radio-change"></span> Bank Transfer
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
-                          <div class="col-sm-8">
-                              <input type="text" class="form-control" id="id_reciept_number" placeholder="Receipt number" value="{{event_registered_user.reciept_number}}" name="reciept_number">
-                          </div>
+                            <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="id_reciept_number"
+                                       placeholder="Receipt number" value="{{ event_registered_user.reciept_number }}"
+                                       name="reciept_number">
+                            </div>
                         </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
-                          <div class="col-sm-8">
-                              <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt" name="reciept_file">
-                             
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_other_contribution">Other Contribution</label>
-                          <div class="col-sm-8">
-                              <input type="number" class="form-control" id="id_other_contribution" placeholder="Other Contribution" value="{{event_registered_user.contributed_amount}}" name="other_contribution">
-                              
-                              <input type="hidden" class="form-control" id="id_tottal_rent" name="tottal_rent">
+                            <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>
+                            <div class="col-sm-8">
+                                <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt"
+                                       name="reciept_file">
 
-                          </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="id_other_contribution">Other Contribution</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="id_other_contribution"
+                                       placeholder="Other Contribution"
+                                       value="{{ event_registered_user.contributed_amount }}" name="other_contribution">
+
+                                <input type="hidden" class="form-control" id="id_tottal_rent" name="tottal_rent">
+
+                            </div>
                         </div>
 
                         <div class="form-group">
-                          <label class="control-label col-sm-4" for="id_room_rent"> Total Amount :</label>
-                          <div class="col-sm-8">
-                            <h4>
-                                Registration Amount: <span id="reg_amount_final">0</span><br>
-                                Hotel Booking Amount: <span id="hotel_amount_final">0</span><br>
-                                Total Amount: <span id="total_amount_final"></span><br>
-                            </h4>
-                          </div>
+                            <label class="control-label col-sm-4" for="id_room_rent"> Total Amount :</label>
+                            <div class="col-sm-8">
+                                <h4>
+                                    Registration Amount: <span id="reg_amount_final">0</span><br>
+                                    Hotel Booking Amount: <span id="hotel_amount_final">0</span><br>
+                                    Total Amount: <span id="total_amount_final"></span><br>
+                                </h4>
+                            </div>
                         </div>
                         <p id="notifications" style="color: red"></p>
                         <hr>
                         <div class="form-group">
-                          <div class="col-sm-offset-4 col-sm-8">
-                            <button type="submit" class="btn btn-default nuts-sub" id="id_confirm_register"> Confirm Register </button>
-                          </div>
+                            <div class="col-sm-offset-4 col-sm-8">
+                                <button type="submit" class="btn btn-default nuts-sub" id="id_confirm_register"> Confirm
+                                    Register
+                                </button>
+                                <a href="/users">
+                                    <button type="button" class="btn btn-danger nuts-sub-hotel-cancel btn-minwidth">
+                                        Cancel
+                                    </button>
+                                </a>
+                            </div>
                         </div>
-                      </form>
-                    </div>
+                    </form>
                 </div>
-
             </div>
+
         </div>
     </div>
+</div>
 
 
-    <!-- jQuery -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- jQuery -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
 
-    <link href="{% static 'css/custom_reg.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/custom_reg.css' %}" rel="stylesheet" type="text/css">
 
-     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <script type="text/javascript">
-      {% if event_registered_user %}
+<script type="text/javascript">
+    {% if event_registered_user %}
         $("#detailForm").show();
         $('#balance_div').show();
         $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
@@ -322,236 +384,239 @@
         $('#reg_amount_final').html('{{event_registered_user.amount_paid}}')
 
         {% if hotel_obj %}
-          $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
-          $("#hotel_amount_final").html('{{hotel_obj.tottal_rent}}');
-          $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
-          $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected','selected');
-          $("#checkOut").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
-          $("#checkIn").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+            $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
+            $("#hotel_amount_final").html('{{hotel_obj.tottal_rent}}');
+            $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
+            $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected', 'selected');
+            $("#checkOut").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
+            $("#checkIn").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
         {% endif %}
 
         $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
         {% ifequal event_registered_user.event_status "Couple" %}
-            $('#radio_status_1').prop('checked',true)
+            $('#radio_status_1').prop('checked', true)
         {% endifequal %}
         {% ifequal event_registered_user.event_status "Stag" %}
-            $('#radio_status_2').prop('checked',true)
+            $('#radio_status_2').prop('checked', true)
         {% endifequal %}
         {% ifequal event_registered_user.event_status "Not Mentioned" %}
-            $('#radio_status_3').prop('checked',true)
+            $('#radio_status_3').prop('checked', true)
         {% endifequal %}
 
         {% ifequal event_registered_user.payment 'cash' %}
-          $("#radioId_0").prop("checked", true);
+            $("#radioId_0").prop("checked", true);
         {% endifequal %}
         {% ifequal event_registered_user.payment 'POS' %}
-          $("#radioId_1").prop("checked", true);
+            $("#radioId_1").prop("checked", true);
         {% endifequal %}
 
-       {% ifequal event_registered_user.payment 'card' %}
-          $("#radioId_2").prop("checked", true);
+        {% ifequal event_registered_user.payment 'card' %}
+            $("#radioId_2").prop("checked", true);
         {% endifequal %}
 
-      {%endif%}
+    {%endif%}
 
-      function calcalateTotal(){
-            $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()));
-            $('#id_tottal_rent').val(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()))
-      }
-        function getAmount(member_type, status){
-            if(member_type == 'Tabler'){
-                if(status == 'Stag')
-                    return 5000;
-                else if(status == 'Couple')
-                  {% if event_registered_user.event_status == "Couple" %}
+    function calcalateTotal() {
+        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()));
+        $('#id_tottal_rent').val(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()))
+    }
+
+    function getAmount(member_type, status) {
+        if (member_type == 'Tabler') {
+            if (status == 'Stag')
+                return 5000;
+            else if (status == 'Couple')
+                {% if event_registered_user.event_status == "Couple" %}
                     return 6000;
-                  {% else %}
-                    return 1000
-                  {% endif %}
-            }
-            else{
-                if(status == 'Stag')
-                    return 4000;
-                else if(status == 'Couple')
-                    return 5000;
-                else if(status == 'Stag_Informal')
-                    return 2500;
-                else if(status == 'Couple_Informal')
-                    return 3500;
-            }
-            return 0;
+                {% else %}
+                    return 1000;
+                {% endif %}
         }
-    function check_value_status(){
+        else {
+            if (status == 'Stag')
+                return 4000;
+            else if (status == 'Couple')
+                return 5000;
+            else if (status == 'Stag_Informal')
+                return 2500;
+            else if (status == 'Couple_Informal')
+                return 3500;
+        }
+        return 0;
+    }
+
+    function check_value_status() {
         memberType = $('#memberType').val().toLowerCase()
-        if(memberType=='tabler'){
+        if (memberType == 'tabler') {
             $('.span-stag').html('Stag (2 days)');
             $('.span-couple').html('Couple (2 days)');
         }
-        else{
+        else {
             $('.span-stag').html('Stag');
             $('.span-couple').html('Couple');
         }
     }
-    $(document).ready(function() {
+
+    $(document).ready(function () {
         check_value_status();
         $('#memberType').on('change', function () {
             check_value_status();
         });
     });
-      $('#selectId').on('change', function(){
-      selected_id = $("#selectId option:selected").val();
-      $("#id_hotel_name").val('');
-      $("#id_room_rent").val('');
-      $('#bookFriday').prop('checked',false);
-      $('#room_type option[value="0"]').attr('selected','selected');
-      $("#id_email").val('');
-      $("#id_phone").val('');
-      $("#id_first_name").val('');
-      $("#id_last_name").val('');
-      $("#detailForm").show();
+    $('#selectId').on('change', function () {
+        selected_id = $("#selectId option:selected").val();
+        $("#id_hotel_name").val('');
+        $("#id_room_rent").val('');
+        $('#bookFriday').prop('checked', false);
+        $('#room_type option[value="0"]').attr('selected', 'selected');
+        $("#id_email").val('');
+        $("#id_phone").val('');
+        $("#id_first_name").val('');
+        $("#id_last_name").val('');
+        $("#detailForm").show();
 
-      if( selected_id == 'Other'){
-        $("#other_table_div").show();
-      }
-      else{
-        $("#other_table_div").hide();
-      }
+        if (selected_id == 'Other') {
+            $("#other_table_div").show();
+        }
+        else {
+            $("#other_table_div").hide();
+        }
 
-      $("#id_table").val(selected_id);
+        $("#id_table").val(selected_id);
 
-      $("#id_first_name").autocomplete({
-        source: "/auto_name/?table="+selected_id,
-        minLength: 1,
-        select: function (event, ui) {
-          // var input = $('#id_first_name').val();
-          var input = ui.item.value;
-          var selected_table = $("#selectId option:selected").val();
-          var new_table = $("#id_other_table").val();
-          $.ajax({
-            url: '/get_user_data/',
-            type:'GET',
-            data:{
-              'user_id': input,
-              'selected_table': selected_table,
-              'new_table': new_table,
+        $("#id_first_name").autocomplete({
+            source: "/auto_name/?table=" + selected_id,
+            minLength: 1,
+            select: function (event, ui) {
+                // var input = $('#id_first_name').val();
+                var input = ui.item.value;
+                var selected_table = $("#selectId option:selected").val();
+                var new_table = $("#id_other_table").val();
+                $.ajax({
+                    url: '/get_user_data/',
+                    type: 'GET',
+                    data: {
+                        'user_id': input,
+                        'selected_table': selected_table,
+                        'new_table': new_table,
+                    },
+                    success: function (data) {
+                        if (data.success == 'True') {
+                            $("#id_email").val(data.email);
+                            $("#id_phone").val(data.mobile);
+                            $("#id_first_name").val(data.first_name);
+                            $("#id_last_name").val(data.last_name);
+
+                            if (data.user_exist == 'true') {
+                                alert('This already registered for this event. Please see the details');
+                                window.location.href = '/users/'
+
+                                // $("#paid_ampount_id").val(data.balance);
+                                $("#balance_div").show();
+                                var amount = getAmount(memberType, status);
+                                $('#amount_added_id').val(data.paid_amount);
+                                $('#reg_amount_final').html(data.paid_amount);
+                                $("#paid_ampount_id").val(data.paid_amount);
+                                $("#id_hotel_name").val(data.hotel_name);
+                                $("#id_room_rent").val(data.tottal_rent);
+                                $("#room_type").val(data.hotel_type);
+                                $('#checkIn').datepicker('setDate', data.checkin_date);
+                                $('#checkOut').datepicker('setDate', data.checkout_date);
+
+                                if (data.status == 'Couple') {
+                                    $("#radio_status_1").prop("checked", true);
+                                }
+                                else if (data.status == 'Stag') {
+                                    $("#radio_status_2").prop("checked", true);
+                                }
+                                else if (data.status == 'Couple_Informal') {
+                                    $("#radio_status_4").prop("checked", true);
+                                }
+                                else {
+                                    $("#radio_status_3").prop("checked", true);
+                                }
+                                $('#room_type option[value="' + data.room_type_id + '"]').attr('selected', 'selected');
+                                if (data.book_friday == true) {
+                                    $('#bookFriday').prop('checked', true)
+                                }
+
+                                if (data.payment_type == 'cash') {
+                                    $("#radioId_0").prop("checked", true);
+                                }
+                                else if (data.payment_type == 'POS') {
+                                    $("#radioId_1").prop("checked", true);
+                                }
+                                else if (data.payment_type == 'card') {
+                                    $("#radioId_2").prop("checked", true);
+                                }
+                            }
+                            else {
+                                $("#balance_div").hide();
+                            }
+                        }
+                        else {
+                            // $("#id_balance").val(-1);
+                            console.log("No Data")
+                        }
+                    }
+                });
             },
-            success: function (data){
-              if (data.success == 'True'){
-                $("#id_email").val(data.email);
-                $("#id_phone").val(data.mobile);
-                $("#id_first_name").val(data.first_name);
-                $("#id_last_name").val(data.last_name);
-
-                if (data.user_exist == 'true'){
-                    alert('This already registered for this event. Please see the details');
-                    window.location.href = '/users/'
-
-                  // $("#paid_ampount_id").val(data.balance);
-                  $("#balance_div").show();
-                  var amount = getAmount(memberType, status);
-                  $('#amount_added_id').val(data.paid_amount);
-                  $('#reg_amount_final').html(data.paid_amount);
-                  $("#paid_ampount_id").val(data.paid_amount);
-                  $("#id_hotel_name").val(data.hotel_name);
-                  $("#id_room_rent").val(data.tottal_rent);
-                  $("#room_type").val(data.hotel_type);
-                  $('#checkIn').datepicker('setDate', data.checkin_date);
-                  $('#checkOut').datepicker('setDate', data.checkout_date);
-
-                  if ( data.status == 'Couple'){
-                    $("#radio_status_1").prop("checked", true);
-                  }
-                  else if (data.status == 'Stag'){
-                    $("#radio_status_2").prop("checked", true);
-                  }
-                  else if (data.status == 'Couple_Informal'){
-                    $("#radio_status_4").prop("checked", true);
-                  }
-                  else{
-                    $("#radio_status_3").prop("checked", true);
-                  }
-                  $('#room_type option[value="'+data.room_type_id+'"]').attr('selected','selected');
-                  if ( data.book_friday == true ){
-                    $('#bookFriday').prop('checked',true)
-                  }
-
-                  if ( data.payment_type == 'cash'){
-                    $("#radioId_0").prop("checked", true);
-                  }
-                  else if ( data.payment_type == 'POS'){
-                    $("#radioId_1").prop("checked", true);
-                  }
-                  else if (data.payment_type == 'card'){
-                    $("#radioId_2").prop("checked", true);
-                  }
-                }
-                else{
-                  $("#balance_div").hide();
-                }
-              }
-              else{
-                // $("#id_balance").val(-1);
-                console.log("No Data")
-              }
-            }
-          });
-        },
-      });
+        });
     });
 
 
-    $('#memberType').on('change', function(e){
-      var memberType = $(this).val();
-      $('#id_member_type').val(memberType);
-      if(memberType == 'Square_Leg'){
+    $('#memberType').on('change', function (e) {
+        var memberType = $(this).val();
+        $('#id_member_type').val(memberType);
+        if (memberType == 'Square_Leg') {
 
-        $('#informal_stag_type').show();  
-        $('#informal_couple_type').show();
-      }
-      else{
-        $('#informal_stag_type').hide();  
-        $('#informal_couple_type').hide(); 
-      }
-      var amount = getAmount(memberType, status);
-      $('#amount_added_id').val(amount);
-      $('#reg_amount_final').html(amount);
-      calcalateTotal();
+            $('#informal_stag_type').show();
+            $('#informal_couple_type').show();
+        }
+        else {
+            $('#informal_stag_type').hide();
+            $('#informal_couple_type').hide();
+        }
+        var amount = getAmount(memberType, status);
+        $('#amount_added_id').val(amount);
+        $('#reg_amount_final').html(amount);
+        calcalateTotal();
     });
 
-  $('input[type=radio][name=status]').on('change', function(e){
-      var memberType = $('#memberType').val();
-      status = $(this).val();
-      var amount = getAmount(memberType, status);
-      $('#amount_added_id').val(amount);
-      $('#reg_amount_final').html(amount);
-      calcalateTotal();
+    $('input[type=radio][name=status]').on('change', function (e) {
+        var memberType = $('#memberType').val();
+        status = $(this).val();
+        var amount = getAmount(memberType, status);
+        $('#amount_added_id').val(amount);
+        $('#reg_amount_final').html(amount);
+        calcalateTotal();
     });
-    $('#id_partial_payment').on('change', function(e){
-      var status = $('input[type=radio][name=status]:checked').val();
-      if(status && $(this).is(":checked")) {
-          $("#amount_added_id").attr("readonly", false);
-          $("#amount_added_id").focus();
-          var partial_amount = $('#amount_added_id').val();
-          console.log('partial',partial_amount);
-          calcalateTotal();
-      }
-      else{
-           var memberType = $('#memberType').val();
-      status = $('input[type=radio][name=status]:checked').val();
-      var amount = getAmount(memberType, status);
-      $('#amount_added_id').val(amount);
-      $('#reg_amount_final').html(amount);
-      calcalateTotal();
-          $("#amount_added_id").attr("readonly", true);
-      }
+    $('#id_partial_payment').on('change', function (e) {
+        var status = $('input[type=radio][name=status]:checked').val();
+        if (status && $(this).is(":checked")) {
+            $("#amount_added_id").attr("readonly", false);
+            $("#amount_added_id").focus();
+            var partial_amount = $('#amount_added_id').val();
+            console.log('partial', partial_amount);
+            calcalateTotal();
+        }
+        else {
+            var memberType = $('#memberType').val();
+            status = $('input[type=radio][name=status]:checked').val();
+            var amount = getAmount(memberType, status);
+            $('#amount_added_id').val(amount);
+            $('#reg_amount_final').html(amount);
+            calcalateTotal();
+            $("#amount_added_id").attr("readonly", true);
+        }
     });
-    $('#amount_added_id').on('change keyup', function(e){
+    $('#amount_added_id').on('change keyup', function (e) {
         var memberType = $('#memberType').val();
         var status = $('input[type=radio][name=status]:checked').val();
         var amount = getAmount(memberType, status);
-        console.log('amount',amount)
+        console.log('amount', amount)
         var partial_amount = $('#amount_added_id').val();
-        console.log('partial',partial_amount);
+        console.log('partial', partial_amount);
         /*if(partial_amount>amount){
              $('#payment_error_div').show();
              $('#payment_error_div').html('Amount Should be within '+amount );
@@ -569,27 +634,26 @@
     });
 
 
-    $("#DetailForm").submit(function(){
-      if($('input[name=payment]:checked').length<=0)
-      {
-        $("#notifications").text('Please Select a payment mode !');
-        return false;
-      }else{
-        return true;
-      }
+    $("#DetailForm").submit(function () {
+        if ($('input[name=payment]:checked').length <= 0) {
+            $("#notifications").text('Please Select a payment mode !');
+            return false;
+        } else {
+            return true;
+        }
     });
 
-    function update_messages(messages){
-      console.log("update message");
-      $(".message").html("");
-      $.each(messages, function (i, m) {
-          $(".message").append(m.message);
-      });
-      $('.message').show();
-      setTimeout(function() {
-          $('.message').fadeOut('slow');
-          location.reload();
-      }, 3000);
+    function update_messages(messages) {
+        console.log("update message");
+        $(".message").html("");
+        $.each(messages, function (i, m) {
+            $(".message").append(m.message);
+        });
+        $('.message').show();
+        setTimeout(function () {
+            $('.message').fadeOut('slow');
+            location.reload();
+        }, 3000);
     }
 
     function openNav() {
@@ -600,17 +664,17 @@
         document.getElementById("myNav").style.height = "0%";
     }
 
-    function selectRoomType(){
+    function selectRoomType() {
 
-      $('#id_hotel_name').val('Hotel Raviz Kollam');
-      calculate_rent();
+        $('#id_hotel_name').val('Hotel Raviz Kollam');
+        calculate_rent();
     }
 
-    $("#checkOut").change(function(){
+    $("#checkOut").change(function () {
         calculate_rent();
     });
 
-    function changeCheckinDate(){
+    function changeCheckinDate() {
         calculate_rent();
     };
 
@@ -635,14 +699,15 @@
             }
 
         }
-        else{
+        else {
             var tottal = one_day_rent;
         }
         $('#id_room_rent').val(tottal);
         $('#hotel_amount_final').html(tottal);
         calcalateTotal();
     }
-    $('#id_room_rent').on('change keyup',function () {
+
+    $('#id_room_rent').on('change keyup', function () {
         var partial_hotel_rent = $('#id_room_rent').val();
         $('#hotel_amount_final').html(partial_hotel_rent);
         calcalateTotal();
@@ -651,65 +716,65 @@
     var status, memberType;
     calcalateTotal();
     $('#informal_stag_type').hide();
-    $('#informal_couple_type').hide();   
-    
+    $('#informal_couple_type').hide();
+
     $("#checkIn").datepicker({
-      dateFormat: 'dd/mm/yy',
-      numberOfMonths: 1,
-      defaultDate: new Date(Date.parse("2018-08-01")),
-      minDate: new Date(Date.parse("2018-08-03")),
-      maxDate: new Date(Date.parse("2018-08-05")),
-      onSelect: function(selected) {
-        $("#checkOut").datepicker("option","minDate", selected)
-        changeCheckinDate();
-      },
-      beforeShow: function( input ) {
-        setTimeout(function() {
-            var headerPane = $( input )
-            .datepicker( "widget" )
-            .find( ".ui-datepicker-header" );
+        dateFormat: 'dd/mm/yy',
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-01")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
+        onSelect: function (selected) {
+            $("#checkOut").datepicker("option", "minDate", selected)
+            changeCheckinDate();
+        },
+        beforeShow: function (input) {
+            setTimeout(function () {
+                var headerPane = $(input)
+                    .datepicker("widget")
+                    .find(".ui-datepicker-header");
 
-            $( "<button>", {
-                text: "X",
-                class : 'close_btn',
-                click: function() {
-                  $("#checkIn").val('');
-                  $("#checkIn").datepicker( "hide");
-                }
-            }).appendTo( headerPane );
-        }, 1 );
-      }
+                $("<button>", {
+                    text: "X",
+                    class: 'close_btn',
+                    click: function () {
+                        $("#checkIn").val('');
+                        $("#checkIn").datepicker("hide");
+                    }
+                }).appendTo(headerPane);
+            }, 1);
+        }
     });
 
 
-    $( "#checkOut" ).datepicker({
-      dateFormat: 'dd/mm/yy',
-      numberOfMonths: 1,
-      defaultDate: new Date(Date.parse("2018-08-04")),
-      minDate: new Date(Date.parse("2018-08-03")),
-      maxDate: new Date(Date.parse("2018-08-05")),
-      beforeShow: function( input ) {
-          setTimeout(function() {
-              var headerPane = $( input )
-              .datepicker( "widget" )
-              .find( ".ui-datepicker-header" );
-              $( "<button>", {
-                  text: "X",
-                  class : 'close_btn',
-                  click: function() {
-                    $("#checkOut").val('');
-                    $("#checkOut").datepicker( "hide");
-                  }
-              }).appendTo( headerPane );
-          }, 1 );
-      }
+    $("#checkOut").datepicker({
+        dateFormat: 'dd/mm/yy',
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-04")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
+        beforeShow: function (input) {
+            setTimeout(function () {
+                var headerPane = $(input)
+                    .datepicker("widget")
+                    .find(".ui-datepicker-header");
+                $("<button>", {
+                    text: "X",
+                    class: 'close_btn',
+                    click: function () {
+                        $("#checkOut").val('');
+                        $("#checkOut").datepicker("hide");
+                    }
+                }).appendTo(headerPane);
+            }, 1);
+        }
     });
 
-  $(document).ready(function(){
-    var memberType = $('#memberType').val();
-    $('#id_member_type').val(memberType);
-  }) 
-  </script>
+    $(document).ready(function () {
+        var memberType = $('#memberType').val();
+        $('#id_member_type').val(memberType);
+    })
+</script>
 </body>
 
 </html>

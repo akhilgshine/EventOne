@@ -254,6 +254,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+
         $('#id_hotel_name').val('Hotel Raviz Kollam');
         var amount_to_be_paid = $('#rent_total').val();
         var initial_due = $('#id_tottal_rent').val();
@@ -418,26 +419,35 @@
 
     $('#confirmBooking').on('click', function (e) {
         e.preventDefault();
-        if (!$('input[name=mode_of_payment]:checked').val() ) {
-         $("#notifications").text('Please Select a Payment Mode !');
-         return false;
+
+        var rent_total = parseInt($('#id_tottal_rent').val());
+
+        if((amount_to_be_paid == 0) &&  (rent_total >= 0)){
+            alert("You don't have any due");
+            return false;
         }
 
-        var rent_total = $('#id_tottal_rent').val();
-
-        var amount_to_pay  = $('#rent_total').val();
         {% if hotel_obj.registered_users.hotel_due %}
-        if (parseInt(rent_total) > parseInt(amount_to_be_paid)) {
+         if (parseInt(rent_total) > parseInt(amount_to_be_paid)) {
             alert('Please pay only' +  amount_to_be_paid);
             return false;
         }
         {% endif %}
-        console.log('rent_total',rent_total);
-        console.log('amount_to_pay',amount_to_pay);
-        if (parseInt(rent_total) > parseInt(amount_to_pay) ){
-            return false;
+        if($('#id_room_type').val() == ""){
+            $("#notifications").text('Please Select a room type')
         }
-        $('#DetailForm').submit();
+        else if ($('#id_checkin_date').val()=='' && $('#id_checkout_date').val()==''){
+             $("#notifications").text('Please Select Checkin and Checkout');
+
+        }
+        else if (!$('input[name=mode_of_payment]:checked').val() ) {
+         $("#notifications").text('Please Select a Payment Mode !');
+        }
+
+        else{
+            $('#DetailForm').submit();
+        }
+
 
     });
 
