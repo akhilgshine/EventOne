@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^add-to-registration/(?P<pk>\d+)$', AddToRegistrationView.as_view(), name='add_to_registration'),
     url(r'^edit-registration/(?P<pk>\d+)$', EditRegistrationView.as_view(), name='edit-registration'),
     url(r'^hotel-due-payment/(?P<pk>\d+)$', UpdateHotelDue.as_view(), name='hotel_due_payment'),
+    url(r'^get-hotel-calculation/', get_total_hotel_rent_calculation, name='get-hotel-calculation'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
 ]

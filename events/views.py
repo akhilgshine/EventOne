@@ -1190,3 +1190,44 @@ class UpdateHotelDue(UpdateView):
         initial['tottal_rent'] = self.object.registered_users.hotel_due
         return initial
 
+
+def get_total_hotel_rent_calculation(request, *args, **kwargs):
+    errors = []
+    success = {}
+    user_hotel = request.GET.get('user_hotel')
+    room_type = request.GET.get('room_type')
+    check_in = request.GET.get('check_in')
+    check_out = request.GET.get('check_out')
+    booked_hotel = Hotels.objects.get(id=user_hotel)
+
+    """Generate the previously created data"""
+    current_hotel_amount_paid = booked_hotel.tottal_rent
+    current_hotel_due_amount = booked_hotel.registered_users.hotel_due
+    current_hotel_rent = current_hotel_amount_paid + current_hotel_due_amount
+
+    """Calculating updated hotel rent"""
+    new_room_type = RoomType.objects.get(id=room_type)
+    new_check_in = datetime.datetime.strptime(check_in, '%d/%m/%Y').date()
+    new_check_out = datetime.datetime.strptime(check_out, '%d/%m/%Y').date()
+    no_of_days_staying = (new_check_out-new_check_in).days
+
+    if no_of_days_staying > 0:
+        room_rent = new_room_type.net_rate * no_of_days_staying
+    else:
+        errors.append({'message':'invalid check in or checkout date'})
+        return HttpResponse(json.dumps(errors))
+    success['current_hotel_details'] = {
+        'hotel_rent_paid': current_hotel_amount_paid,
+        'hotel_due_amount': current_hotel_due_amount,
+        'total_hotel_rent': current_hotel_rent
+    }
+    success['updated_hotel_details'] = {
+        'total_hotel_rent': room_rent,
+        'hotel_rent_paid':current_hotel_amount_paid,
+        'hotel_due_amount': room_rent - current_hotel_amount_paid
+
+    }
+    return HttpResponse(json.dumps({'success': success}))
+
+
+

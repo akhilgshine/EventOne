@@ -96,7 +96,7 @@
                                 {{ form.hotel_name }}
                             </div>
                         </div>
-                    <div class="form-group">
+                        <div class="form-group">
                             <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                             <div class="col-sm-8" style="color: black">
                                 <input type="hidden" name="room_type" value="{{ hotel_obj.room_type.id }}">
@@ -112,7 +112,7 @@
                                 </select>
                             </div>
                         </div>
-                     <div class="form-group">
+                        <div class="form-group">
                             <label class="control-label col-sm-4" for=""> Date : </label>
                             <div class="col-sm-4">
                                 Check IN:
@@ -193,16 +193,11 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4"> Total Amount :</label>
                             <div class="col-sm-8">
-                                <h4>
+                                <div class="booked-hotel">
                                     Total Hotel Booking Amount: Rs <span id="hotel_amount_final"></span> /-<br>
-                                    {% if hotel_obj %}
                                     Amount  Paid :Rs <span id="amount_paid_final"></span> /-<br>
-                                        {% else %}
-                                        Amount To Be Paid :Rs <span id="amount_paid_final"></span> /-<br>
-                                    {% endif %}
-
                                     Due Amount :Rs <span id="amount_due"></span> /-<br>
-                                </h4>
+                                </div>
                             </div>
                         </div>
 
@@ -279,9 +274,19 @@
             }
         });
         {% if hotel_obj %}
+            {% if  hotel_obj.mode_of_payment == 'cash' %}
+                $("#radioId_0").prop("checked", true);
+            {% elif  hotel_obj.mode_of_payment == 'POS' %}
+                $("#radioId_1").prop("checked", true);
+            {% elif hotel_obj.mode_of_payment == 'card' %}
+                $("#radioId_2").prop("checked", true);
+            {% elif hotel_obj.mode_of_payment == 'bank_transfer' %}
+                $("#radioId_2").prop("checked", true);
+            {% endif %}
+
             $('#hotel_amount_final').html($('#rent_total').val());
-            $('#amount_paid_final').html($('#id_current_paid').val());
-            $('#amount_due').html ($('#rent_total').val() - ($('#id_current_paid').val()));
+            $('#amount_paid_final').html(initial_paid);
+            $('#amount_due').html($('#id_tottal_rent').val());
         {% endif %}
 
     });
@@ -297,10 +302,12 @@
     var selected_rent;
 
     function selectRoomType(field) {
-        if($(field).val()==''){
-             clearHotelFields();
+        ajaxCalculateHotelRent();
+
+        if ($(field).val() == '') {
+            clearHotelFields();
         }
-        else{
+        else {
             $('#id_hotel_name').val('Hotel Raviz Kollam');
             calculate_rent();
         }
@@ -310,10 +317,12 @@
 
     $("#id_checkout_date").change(function () {
         calculate_rent();
+        ajaxCalculateHotelRent();
     });
 
     function changeCheckinDate() {
         calculate_rent();
+        ajaxCalculateHotelRent();
     };
 
     function calculate_rent() {
@@ -369,8 +378,10 @@
         minDate: new Date(Date.parse("2018-08-03")),
         maxDate: new Date(Date.parse("2018-08-05")),
         onSelect: function (selected) {
-            $("#id_checkout_date").datepicker("option", "minDate", selected)
+            $("#id_checkout_date").datepicker("option", "minDate", selected);
             changeCheckinDate();
+            totalAmountCalculation($('#id_tottal_rent'));
+            ajaxCalculateHotelRent();
         },
         beforeShow: function (input) {
             setTimeout(function () {
@@ -385,6 +396,7 @@
                         $("#id_checkin_date").val('');
                         $("#id_checkin_date").datepicker("hide");
                         clearHotelFields();
+
                     }
                 }).appendTo(headerPane);
             }, 1);
@@ -398,6 +410,11 @@
         defaultDate: new Date(Date.parse("2018-08-04")),
         minDate: new Date(Date.parse("2018-08-03")),
         maxDate: new Date(Date.parse("2018-08-05")),
+        onSelect: function () {
+            changeCheckinDate();
+            totalAmountCalculation($('#id_tottal_rent'));
+
+        },
         beforeShow: function (input) {
             setTimeout(function () {
                 var headerPane = $(input)
@@ -411,6 +428,7 @@
                         $("#id_checkout_date").datepicker("hide");
                         clearHotelFields();
 
+
                     }
                 }).appendTo(headerPane);
             }, 1);
@@ -422,29 +440,29 @@
 
         var rent_total = parseInt($('#id_tottal_rent').val());
 
-        if((amount_to_be_paid == 0) &&  (rent_total >= 0)){
+        if ((amount_to_be_paid == 0) && (rent_total >= 0)) {
             alert("You don't have any due");
             return false;
         }
 
         {% if hotel_obj.registered_users.hotel_due %}
-         if (parseInt(rent_total) > parseInt(amount_to_be_paid)) {
-            alert('Please pay only' +  amount_to_be_paid);
-            return false;
-        }
+            if (parseInt(rent_total) > parseInt(amount_to_be_paid)) {
+                alert('Please pay only' + amount_to_be_paid);
+                return false;
+            }
         {% endif %}
-        if($('#id_room_type').val() == ""){
+        if ($('#id_room_type').val() == "") {
             $("#notifications").text('Please Select a room type')
         }
-        else if ($('#id_checkin_date').val()=='' && $('#id_checkout_date').val()==''){
-             $("#notifications").text('Please Select Checkin and Checkout');
+        else if ($('#id_checkin_date').val() == '' && $('#id_checkout_date').val() == '') {
+            $("#notifications").text('Please Select Checkin and Checkout');
 
         }
-        else if (!$('input[name=mode_of_payment]:checked').val() ) {
-         $("#notifications").text('Please Select a Payment Mode !');
+        else if (!$('input[name=mode_of_payment]:checked').val()) {
+            $("#notifications").text('Please Select a Payment Mode !');
         }
 
-        else{
+        else {
             $('#DetailForm').submit();
         }
 
@@ -480,8 +498,8 @@
     {% endif %}
 
     function clearHotelFields() {
-        $('#id_room_type > option[value=""]').prop('selected',true);
-        $('#id_room_type > option[value=""]').attr('selected',true);
+        $('#id_room_type > option[value=""]').prop('selected', true);
+        $('#id_room_type > option[value=""]').attr('selected', true);
         $('#rent_total').val('');
         $('#id_tottal_rent').val('');
         $('#id_checkin_date').val('');
@@ -493,19 +511,64 @@
         $("input:radio").attr("checked", false);
 
     }
-    $('#id_tottal_rent').on('change keyup',function () {
+
+    function totalAmountCalculation(due) {
         var rent_total = $('#rent_total').val();
-        var amount_to_be_paid = $(this).val();
-        $('#amount_paid_final').html(amount_to_be_paid);
-        if(parseInt(amount_to_be_paid)  < parseInt(rent_total)  ){
-            $('#amount_due').html(rent_total - amount_to_be_paid);
+        var amount_to_be_paid = $('#id_current_paid').val();
+        if (parseInt(amount_to_be_paid) < parseInt(rent_total)) {
+            $('#amount_due').html(rent_total - amount_to_be_paid - due.val());
         }
-        else{
+        else {
             $('#amount_due').html(0)
         }
 
 
-    })
+    }
+
+    $('#id_tottal_rent').on('change keyup', function () {
+        totalAmountCalculation($(this));
+        balance_amount = parseInt($('#updated-balance-amount').text().trim())
+        current_due_amount = balance_amount - $(this).val()
+        $('#updated_due-amount').text(current_due_amount)
+        $('#updated_due').show()
+
+    });
+    function ajaxCalculateHotelRent() {
+        {% if hotel_obj %}
+        var room_type = $('#id_room_type').val().split(':')[0];
+        var check_in = $('#id_checkin_date').val()
+        var check_out = $('#id_checkout_date').val()
+        current_hotel = ''
+        new_hotel = ''
+        console.log({{ hotel_obj.id }})
+        $.ajax({
+            type:"GET",
+            url: '{% url "get-hotel-calculation"  %}',
+            data: {'user_hotel':{{ hotel_obj.id }},'room_type': room_type,'check_in':check_in,'check_out':check_out},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                current_hotel += "<div style='font-size:16px;'>Booked Hotel Details</div><div style='padding-left:10px'>Booked hotel rent: Rs "
+                current_hotel += data.success.current_hotel_details.total_hotel_rent + " /-<br>"
+                current_hotel += "Hotel Rent Paid : Rs "
+                current_hotel += data.success.current_hotel_details.hotel_rent_paid + " /-<br>"
+                current_hotel += "Due Amount : Rs "
+                current_hotel += data.success.current_hotel_details.hotel_due_amount + " /-<br></div></br>"
+
+
+                current_hotel += "<div style='font-size:16px;'>Updated Hotel Details</div><div style='padding-left:10px'>Hotel Booking Amount: Rs "
+                current_hotel += data.success.updated_hotel_details.total_hotel_rent + " /-<br>"
+                current_hotel += "Balance Amount To Be Paid : Rs <span id='updated-balance-amount'>"
+                current_hotel += data.success.updated_hotel_details.hotel_due_amount + "</span> /-<br>"
+                current_hotel += "<span id='updated_due' style='display:none'>Current Due Amount: Rs <span id='updated_due-amount'></span></span></div>"
+
+                $('.booked-hotel').html(current_hotel)
+            }
+        });
+        {% endif %}
+
+    }
+
 
 </script>
 </body>
