@@ -125,7 +125,7 @@
                         <hr>
                         <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-4">
-                            <button type="submit" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
+                            <button type="button" id='id_pay_now' class="btn btn-default nuts-sub"> Pay Now</button>
                           </div>
                           <div class="col-sm-4">
                             <a href="/users/">
@@ -200,6 +200,19 @@
     function closeNav() {
         document.getElementById("myNav").style.height = "0%";
     }
+
+    $('#id_pay_now').on('click',function (e) {
+        e.preventDefault();
+        if (!$('input[name=payment]:checked').val()) {
+            $("#notifications").text('Please Select a Payment Mode !');
+        }
+        else {
+
+            $('#DetailForm').submit();
+        }
+
+    });
+
 
   </script>
 </body>

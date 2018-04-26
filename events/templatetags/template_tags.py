@@ -159,5 +159,3 @@ def get_room_count(booked_room_type, date):
 @register.assignment_tag
 def encrypt_id(user_id):
     return encoded_id(user_id)
-
-

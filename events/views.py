@@ -163,13 +163,6 @@ class RegisterEvent(TemplateView):
             if checkout:
                 checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
 
-            # if book_friday:
-            # 	book_friday = True
-            # 	text = " for 3rd Aug 2018 to 5th Aug 2018 (two nights)"
-            # else:
-            # 	book_friday = False
-            # 	text = " for 4th Aug 2018 to 5th Aug 2018 (one nights)"
-
             event = Event.objects.filter()[0]
             new_table = request.POST.get('other_table')
             if not new_table:
@@ -311,7 +304,7 @@ class RegisterEvent(TemplateView):
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid) + "/-"
-                message_status = send_sms_message(phone, message, event_reg.id)
+                # message_status = send_sms_message(phone, message, event_reg.id)
 
                 # message_status = requests.get(
                 #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
@@ -782,11 +775,16 @@ class UpdateHotelView(UpdateView):
         hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
         hotel_obj.hotel_name = form.cleaned_data['hotel_name']
         hotel_obj.mode_of_payment = form.cleaned_data['mode_of_payment']
-        if hotel_obj.registered_users.hotel_due > 0:
-            current_rent = hotel_obj.tottal_rent
-            hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
-        else:
-            hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
+        # if hotel_obj.registered_users.hotel_due > 0:
+        #     current_rent = hotel_obj.tottal_rent
+        #     hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
+        # else:
+        #     hotel_obj.tottal_rent = form.cleaned_data['tottal_rent']
+
+        current_rent = hotel_obj.tottal_rent
+        hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
+
+
         hotel_obj.room_type = form.cleaned_data['room_type']
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
@@ -1073,20 +1071,6 @@ class EditRegistrationView(UpdateView):
     queryset = EventUsers.objects.all()
     success_url = '/users/'
 
-    def get_reg_amt(self, member_type, status):
-        if member_type == 'Tabler':
-            if status == 'Stag':
-                return 5000
-            return 6000
-        else:
-            if status == 'Stag':
-                return 4000
-            elif status == 'Couple':
-                return 5000
-            elif status == 'Stag_Informal':
-                return 2500
-            return 3500
-
     def get_context_data(self, *args, **kwargs):
         context = super(EditRegistrationView, self).get_context_data(**kwargs)
         pk = self.object
@@ -1110,17 +1094,34 @@ class EditRegistrationView(UpdateView):
             checkout = datetime.datetime.strptime(self.request.POST.get('checkout_date'), "%d/%m/%Y")
         else:
             checkout = ""
-        hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
-        hotel_obj.hotel_name = self.request.POST['hotel_name']
-        hotel_obj.mode_of_payment = self.request.POST['payment']
-        if hotel_obj.registered_users.hotel_due > 0:
+        if checkin and checkout and self.request.POST.get('room_type'):
+            hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
+            hotel_obj.hotel_name = self.request.POST['hotel_name']
+            hotel_obj.mode_of_payment = self.request.POST['payment']
+            # if hotel_obj.registered_users.hotel_due > 0:
+            #     current_rent = hotel_obj.tottal_rent
+            #     hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
+            # else:
+            #     hotel_obj.tottal_rent = self.request.POST['tottal_rent']
             current_rent = hotel_obj.tottal_rent
             hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
-        else:
-            hotel_obj.tottal_rent = self.request.POST['tottal_rent']
-        self.update_hotel(hotel_obj, self.request.POST, checkin, checkout)
+            self.update_hotel(hotel_obj, created, self.request.POST, checkin, checkout)
         self.update_registred_user(registered_user_obj)
         form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def update_hotel(self, hotel_obj, created, form, checkin, checkout):
+        room_id = self.request.POST['room_type_sel'].split(":")[0]
+        if room_id and room_id != '0':
+            hotel_obj.room_type = RoomType.objects.get(id=room_id)
+        if checkin:
+            hotel_obj.checkin_date = checkin
+        if checkout:
+            hotel_obj.checkout_date = checkout
+        hotel_obj.receipt_number = self.request.POST.get('receipt_number')
+        hotel_obj.receipt_file = self.request.POST.get('receipt_file')
+        hotel_obj.save()
+
         if created:
             hotel_obj.room_type.rooms_available -= 1
             hotel_obj.room_type.save()
@@ -1132,20 +1133,6 @@ class EditRegistrationView(UpdateView):
             message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
-
-        return HttpResponseRedirect(self.get_success_url())
-
-    def update_hotel(self, hotel_obj, form, checkin, checkout):
-        room_id = self.request.POST['room_type_sel'].split(":")[0]
-        if room_id and room_id != '0':
-            hotel_obj.room_type = RoomType.objects.get(id=room_id)
-        if checkin:
-            hotel_obj.checkin_date = checkin
-        if checkout:
-            hotel_obj.checkout_date = checkout
-        hotel_obj.receipt_number = self.request.POST.get('receipt_number')
-        hotel_obj.receipt_file = self.request.POST.get('receipt_file')
-        hotel_obj.save()
         return True
 
     def update_registred_user(self, registered_user_obj):
@@ -1209,12 +1196,12 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
     new_room_type = RoomType.objects.get(id=room_type)
     new_check_in = datetime.datetime.strptime(check_in, '%d/%m/%Y').date()
     new_check_out = datetime.datetime.strptime(check_out, '%d/%m/%Y').date()
-    no_of_days_staying = (new_check_out-new_check_in).days
+    no_of_days_staying = (new_check_out - new_check_in).days
 
     if no_of_days_staying > 0:
         room_rent = new_room_type.net_rate * no_of_days_staying
     else:
-        errors.append({'message':'invalid check in or checkout date'})
+        errors.append({'message': 'invalid check in or checkout date'})
         return HttpResponse(json.dumps(errors))
     success['current_hotel_details'] = {
         'hotel_rent_paid': current_hotel_amount_paid,
@@ -1223,11 +1210,8 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
     }
     success['updated_hotel_details'] = {
         'total_hotel_rent': room_rent,
-        'hotel_rent_paid':current_hotel_amount_paid,
+        'hotel_rent_paid': current_hotel_amount_paid,
         'hotel_due_amount': room_rent - current_hotel_amount_paid
 
     }
     return HttpResponse(json.dumps({'success': success}))
-
-
-

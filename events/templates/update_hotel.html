@@ -47,6 +47,13 @@
             min-width: 276px;
             padding: 10px 30px;
         }
+
+ .btn-cancel {    min-width: 276px;
+    padding: 10px 30px;
+    border-radius: 0px;
+    font-weight: bold;}
+.btn-upgrade {    background: #0d6e0d;}
+
     </style>
 </head>
 
@@ -195,14 +202,14 @@
                             <div class="col-sm-8">
                                 <div class="booked-hotel">
                                     Total Hotel Booking Amount: Rs <span id="hotel_amount_final"></span> /-<br>
-                                    Amount  Paid :Rs <span id="amount_paid_final"></span> /-<br>
+                                    Amount Paid :Rs <span id="amount_paid_final"></span> /-<br>
                                     Due Amount :Rs <span id="amount_due"></span> /-<br>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-3" for=""></label>
+
                             <div class="col-sm-3">
                                 <button type="button" id="confirmBooking"
                                         class="btn btn-default nuts-sub-hotel-confirm btn-minwidth"> Confirm Booking
@@ -217,10 +224,16 @@
                                         </button>
                                     </a>
                                 </div>
+                                <div class="col-sm-3">
+                                    <button type="button"
+                                            class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth btn-upgrade" id="id_upgrade_hotel"> Upgrade Hotel
+                                    </button>
+                                    </a>
+                                </div>
                             {% endif %}
                             <div class="col-sm-3">
                                 <a href="/users/">
-                                    <button type="button" class="btn btn-danger nuts-sub-hotel-cancel btn-minwidth">
+                                    <button type="button" class="btn btn-cancel btn-danger nuts-sub-hotel-cancel btn-minwidth">
                                         Cancel
                                     </button>
                                 </a>
@@ -249,6 +262,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+
 
         $('#id_hotel_name').val('Hotel Raviz Kollam');
         var amount_to_be_paid = $('#rent_total').val();
@@ -287,7 +301,24 @@
             $('#hotel_amount_final').html($('#rent_total').val());
             $('#amount_paid_final').html(initial_paid);
             $('#amount_due').html($('#id_tottal_rent').val());
+
+            $('#DetailForm input ').attr('readonly', true);
+            $('#id_room_type').attr("disabled", true);
+            $('#id_checkin_date').datepicker('disable');
+            $('#id_checkout_date').datepicker('disable');
+            $('input:radio[name=mode_of_payment]').attr('disabled', true);
+
         {% endif %}
+
+    });
+    $('#id_upgrade_hotel').on('click',function () {
+            $('#DetailForm input ').attr('readonly', false);
+            $('#id_room_type').attr("disabled", false);
+            $('#id_room_type').focus();
+            $('#id_checkin_date').datepicker('enable');
+            $('#id_checkout_date').datepicker('enable');
+
+            $('input:radio[name=mode_of_payment]').attr('disabled', false);
 
     });
 
@@ -514,57 +545,76 @@
 
     function totalAmountCalculation(due) {
         var rent_total = $('#rent_total').val();
-        var amount_to_be_paid = $('#id_current_paid').val();
-        if (parseInt(amount_to_be_paid) < parseInt(rent_total)) {
-            $('#amount_due').html(rent_total - amount_to_be_paid - due.val());
-        }
-        else {
-            $('#amount_due').html(0)
-        }
+
+        {% if hotel_obj %}
+            var amount_to_be_paid = $('#id_current_paid').val()
+            if (parseInt(amount_to_be_paid) < parseInt(rent_total)) {
+
+                $('#amount_due').html(rent_total - amount_to_be_paid - due.val());
+            }
+            else {
+                $('#amount_due').html(0)
+            }
+        {% else %}
+            if (parseInt(due.val()) < parseInt(rent_total)) {
+                $('#amount_due').html(rent_total - due.val());
+            }
+
+            else {
+                $('#amount_due').html(0)
+            }
+
+        {% endif %}
 
 
     }
 
     $('#id_tottal_rent').on('change keyup', function () {
         totalAmountCalculation($(this));
-        balance_amount = parseInt($('#updated-balance-amount').text().trim())
-        current_due_amount = balance_amount - $(this).val()
-        $('#updated_due-amount').text(current_due_amount)
+        balance_amount = parseInt($('#updated-balance-amount').text().trim());
+        current_due_amount = balance_amount - $(this).val();
+        $('#updated_due-amount').text(current_due_amount);
         $('#updated_due').show()
 
     });
+
     function ajaxCalculateHotelRent() {
         {% if hotel_obj %}
-        var room_type = $('#id_room_type').val().split(':')[0];
-        var check_in = $('#id_checkin_date').val()
-        var check_out = $('#id_checkout_date').val()
-        current_hotel = ''
-        new_hotel = ''
-        console.log({{ hotel_obj.id }})
-        $.ajax({
-            type:"GET",
-            url: '{% url "get-hotel-calculation"  %}',
-            data: {'user_hotel':{{ hotel_obj.id }},'room_type': room_type,'check_in':check_in,'check_out':check_out},
-            dataType: 'json',
-            success: function (data) {
-                console.log(data)
-                current_hotel += "<div style='font-size:16px;'>Booked Hotel Details</div><div style='padding-left:10px'>Booked hotel rent: Rs "
-                current_hotel += data.success.current_hotel_details.total_hotel_rent + " /-<br>"
-                current_hotel += "Hotel Rent Paid : Rs "
-                current_hotel += data.success.current_hotel_details.hotel_rent_paid + " /-<br>"
-                current_hotel += "Due Amount : Rs "
-                current_hotel += data.success.current_hotel_details.hotel_due_amount + " /-<br></div></br>"
+            var room_type = $('#id_room_type').val().split(':')[0];
+            var check_in = $('#id_checkin_date').val()
+            var check_out = $('#id_checkout_date').val()
+            current_hotel = ''
+            new_hotel = ''
+            console.log({{ hotel_obj.id }})
+            $.ajax({
+                type: "GET",
+                url: '{% url "get-hotel-calculation"  %}',
+                data: {
+                    'user_hotel':{{ hotel_obj.id }},
+                    'room_type': room_type,
+                    'check_in': check_in,
+                    'check_out': check_out
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    current_hotel += "<div style='font-size:16px;'>Booked Hotel Details</div><div style='padding-left:10px'>Booked hotel rent: Rs "
+                    current_hotel += data.success.current_hotel_details.total_hotel_rent + " /-<br>"
+                    current_hotel += "Hotel Rent Paid : Rs "
+                    current_hotel += data.success.current_hotel_details.hotel_rent_paid + " /-<br>"
+                    current_hotel += "Due Amount : Rs "
+                    current_hotel += data.success.current_hotel_details.hotel_due_amount + " /-<br></div></br>"
 
 
-                current_hotel += "<div style='font-size:16px;'>Updated Hotel Details</div><div style='padding-left:10px'>Hotel Booking Amount: Rs "
-                current_hotel += data.success.updated_hotel_details.total_hotel_rent + " /-<br>"
-                current_hotel += "Balance Amount To Be Paid : Rs <span id='updated-balance-amount'>"
-                current_hotel += data.success.updated_hotel_details.hotel_due_amount + "</span> /-<br>"
-                current_hotel += "<span id='updated_due' style='display:none'>Current Due Amount: Rs <span id='updated_due-amount'></span></span></div>"
+                    current_hotel += "<div style='font-size:16px;'>Updated Hotel Details</div><div style='padding-left:10px'>Hotel Booking Amount: Rs "
+                    current_hotel += data.success.updated_hotel_details.total_hotel_rent + " /-<br>"
+                    current_hotel += "Balance Amount To Be Paid : Rs <span id='updated-balance-amount'>"
+                    current_hotel += data.success.updated_hotel_details.hotel_due_amount + "</span> /-<br>"
+                    current_hotel += "<span id='updated_due' style='display:none'>Current Due Amount: Rs <span id='updated_due-amount'></span></span></div>"
 
-                $('.booked-hotel').html(current_hotel)
-            }
-        });
+                    $('.booked-hotel').html(current_hotel)
+                }
+            });
         {% endif %}
 
     }
