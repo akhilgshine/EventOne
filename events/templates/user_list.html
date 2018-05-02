@@ -287,8 +287,8 @@
                             <td>
                                 {% encrypt_id user.id as encrypted_id %}
                                 <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
-{#                            <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>#}
-                            <td>Edit</td>
+                            <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
+{#                            <td>Edit</td>#}
                         {% if user.is_active %}
                             <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
                         {% else %}

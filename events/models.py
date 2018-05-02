@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models import Sum
 from datetime import datetime
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -227,6 +229,11 @@ class RoomType(models.Model):
 
     class Meta:
         ordering = ['sort_order', ]
+
+    @receiver(post_delete, sender='events.Hotels')
+    def increment_roomtype(instance, **kwargs):
+        instance.room_type.rooms_available += 1
+        instance.room_type.save()
 
 
 class Hotels(models.Model):

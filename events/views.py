@@ -2,21 +2,31 @@
 from __future__ import unicode_literals
 import csv
 import traceback
+
+import os
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.template import Context
+from django.template.loader import get_template
 from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from xhtml2pdf import pisa
+
 from events.templatetags import template_tags
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details
+from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details, \
+    render_to_pdf
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
 import re
 import datetime
+import pdfcrowd
+import sys
 
 """
     Home
@@ -784,7 +794,6 @@ class UpdateHotelView(UpdateView):
         current_rent = hotel_obj.tottal_rent
         hotel_obj.tottal_rent = form.cleaned_data['tottal_rent'] + current_rent
 
-
         hotel_obj.room_type = form.cleaned_data['room_type']
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
@@ -1038,8 +1047,8 @@ class DeleteHotelView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
-        self.object.room_type.rooms_available += 1
-        self.object.room_type.save()
+        # self.object.room_type.rooms_available += 1
+        # self.object.room_type.save()
         self.object.delete()
         return HttpResponseRedirect(success_url)
 
@@ -1085,6 +1094,7 @@ class EditRegistrationView(UpdateView):
         return context
 
     def form_valid(self, form):
+        # import pdb;pdb.set_trace()
         registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
         if self.request.POST.get('checkin_date'):
             checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
@@ -1104,13 +1114,14 @@ class EditRegistrationView(UpdateView):
             # else:
             #     hotel_obj.tottal_rent = self.request.POST['tottal_rent']
             current_rent = hotel_obj.tottal_rent
-            hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
+            hotel_obj.tottal_rent = int(self.request.POST['room_rent']) + current_rent
             self.update_hotel(hotel_obj, created, self.request.POST, checkin, checkout)
         self.update_registred_user(registered_user_obj)
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def update_hotel(self, hotel_obj, created, form, checkin, checkout):
+        # import pdb;pdb.set_trace()
         room_id = self.request.POST['room_type_sel'].split(":")[0]
         if room_id and room_id != '0':
             hotel_obj.room_type = RoomType.objects.get(id=room_id)
@@ -1121,7 +1132,6 @@ class EditRegistrationView(UpdateView):
         hotel_obj.receipt_number = self.request.POST.get('receipt_number')
         hotel_obj.receipt_file = self.request.POST.get('receipt_file')
         hotel_obj.save()
-
         if created:
             hotel_obj.room_type.rooms_available -= 1
             hotel_obj.room_type.save()
@@ -1138,7 +1148,7 @@ class EditRegistrationView(UpdateView):
     def update_registred_user(self, registered_user_obj):
         if registered_user_obj.event_status != self.request.POST.get('status'):
             if registered_user_obj.event_status == 'Stag':
-                registered_user_obj.amount_paid = 1000
+                registered_user_obj.amount_paid = 6000
                 if registered_user_obj.amount_paid > int(self.request.POST.get('amount_paid')):
                     registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + (
                             int(self.request.POST.get('amount_paid')) - 1000)
@@ -1215,3 +1225,77 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
 
     }
     return HttpResponse(json.dumps({'success': success}))
+
+
+class GenerateInVoicePDF(TemplateView):
+    template_name = 'invoice.html'
+
+    def get_context_data(self, **kwargs):
+        context = {
+        }
+        template = get_template('invoice.html')
+        pk = self.kwargs.pop('pk')
+        event_reg = RegisteredUsers.objects.get(id=pk)
+        context['hotel'] = hotelDetails(event_reg)
+        context['event_register'] = event_reg
+        html = template.render(context)
+        pdf = render_to_pdf('invoice.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" % ("12341231")
+            content = "inline; filename='%s'" % (filename)
+            download = self.request.GET.get("get-invoice-download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+
+
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources
+    """
+    # use short variable names
+    sUrl = settings.STATIC_URL      # Typically /static/
+    sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
+    mUrl = settings.MEDIA_URL       # Typically /static/media/
+    mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
+
+    # convert URIs to absolute system paths
+    if uri.startswith(mUrl):
+        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+    elif uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+    else:
+        return uri  # handle absolute uri (ie: http://some.tld/foo.png)
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+            raise Exception(
+                'media URI must start with %s or %s' % (sUrl, mUrl)
+            )
+    return path
+
+
+def render_pdf_view(request, pk):
+    template_path = 'invoice.html'
+    event_reg = RegisteredUsers.objects.get(id=pk)
+    context = dict()
+    context['hotel'] = hotelDetails(event_reg)
+    context['event_register'] = event_reg
+
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisastatus = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+    # if error then show some funy view
+    if pisastatus.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
