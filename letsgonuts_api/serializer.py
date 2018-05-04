@@ -1,11 +1,12 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType,MEMBER_CHOICES
+from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel,ImageRoomType
 
 
 class TableListSerializer(ModelSerializer):
     event_date = serializers.CharField(source='event.date')
+
     class Meta:
         model = Table
         exclude = ['table_order', 'event']
@@ -23,9 +24,13 @@ class FilterNameSerializer(ModelSerializer):
 
 
 class NameDetailsSerializer(ModelSerializer):
+
+    token = serializers.CharField(source='auth_token.key')
+    name = serializers.CharField(source='get_full_name')
+
     class Meta:
         model = EventUsers
-        fields = ['mobile', 'email', 'first_name', 'last_name' ]
+        fields = ['mobile', 'email', 'name', 'first_name', 'last_name', 'token']
 
 
 class RegisterEventSerializer(ModelSerializer):
@@ -38,16 +43,18 @@ class RegisterEventSerializer(ModelSerializer):
     registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
     hotel_name = serializers.CharField()
     tottal_rent = serializers.CharField(required=False)
+
     class Meta:
         model = RegisteredUsers
-        fields = ['first_name','last_name','mobile','email','room_type','event_status','registration_type','hotel_name','tottal_rent','event', 'event_user', 'table','payment',
+        fields = ['first_name', 'last_name', 'mobile', 'email', 'room_type', 'event_status', 'registration_type',
+                  'hotel_name', 'tottal_rent', 'event', 'event_user', 'table', 'payment',
                   'amount_paid', 'event_status', 'registration_type']
 
     def validate(self, data):
         error_flag = True
         errors = []
         if not data['tottal_rent'].isdigit():
-            errors.append({'tottal rent' : "Rent must be a number"})
+            errors.append({'tottal rent': "Rent must be a number"})
             error_flag = False
         if data['hotel_name'] is None:
             errors.append({'hotel_name': "Hotel Name should not be blank"})
@@ -61,25 +68,17 @@ class RegisterEventSerializer(ModelSerializer):
 
 
 class RegisteredUsersSerializer(ModelSerializer):
-    name = serializers.SerializerMethodField()
-    phone_number = serializers.SerializerMethodField()
-    email = serializers.SerializerMethodField()
+
+    user_details = NameDetailsSerializer(source='event_user', read_only=True)
     tableName = serializers.SerializerMethodField()
     registration_type = serializers.SerializerMethodField()
 
     class Meta:
         model = RegisteredUsers
         # fields = '__all__'
-        fields = ['id', 'name', 'tableName', 'phone_number', 'qrcode', 'email', 'amount_paid', 'registration_type']
+        fields = ['id', 'tableName', 'qrcode','amount_paid',
+                  'registration_type', 'user_details']
 
-    def get_name(self, obj):
-        return obj.event_user.first_name + '' + obj.event_user.last_name
-
-    def get_phone_number(self, obj):
-        return obj.event_user.mobile
-
-    def get_email(self, obj):
-        return obj.event_user.email
 
     def get_tableName(self, obj):
         return obj.table.table_name
@@ -87,14 +86,39 @@ class RegisteredUsersSerializer(ModelSerializer):
     def get_registration_type(self, obj):
         return obj.event_status
 
+
+class ImageRoomTypeSerializer(ModelSerializer):
+    class Meta:
+        model = ImageRoomType
+        fields = ['image']
+
+
 class RoomTypeSerializer(ModelSerializer):
     hotel_name = serializers.SerializerMethodField()
+    room_type_image = ImageRoomTypeSerializer(source='get_room_type_image', many=True)
 
     class Meta:
         model = RoomType
-        fields = ['id','room_type','rooms_available','net_rate','hotel_name']
+        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name','room_type_image']
+
+    def get_hotel_name(self,obj):
+        return Hotel.objects.all()[0].name
 
 
-    def get_hotel_name(self, obj):
-        return "Hotel Raviz Kollam"
+class UserLoginSerializer(Serializer):
+
+    email = serializers.EmailField()
+    mobile = serializers.CharField()
+
+
+class OtpPostSerializer(Serializer):
+
+    otp = serializers.CharField()
+
+
+class HotelNameSerializer(ModelSerializer):
+    class Meta:
+        model = Hotel
+        fields = ['id', 'name']
+
 

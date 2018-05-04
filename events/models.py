@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.db.models import Sum
 from datetime import datetime
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import UserManager
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -67,6 +71,21 @@ class Event(models.Model):
         return self.title
 
 
+class Hotel(models.Model):
+    """
+    Model to save hotel details
+    """
+    name = models.CharField(max_length=255)
+    publish = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Hotel'
+        verbose_name_plural = 'Hotels'
+
+
 class Table(models.Model):
     table_name = models.CharField(max_length=30, blank=True, null=True)
     table_order = models.IntegerField(blank=True, null=True)
@@ -76,25 +95,68 @@ class Table(models.Model):
         return self.table_name
 
 
-class EventUsers(models.Model):
+class MyUserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password):
+        user = self.create_user(email, password=password)
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
+class EventUsers(AbstractBaseUser, PermissionsMixin):
     member_type = models.CharField(choices=MEMBER_CHOICES, max_length=50, default='Tabler')
-    table = models.ForeignKey(Table)
+    table = models.ForeignKey(Table, null=True, blank=True)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     mobile = models.CharField(max_length=30, blank=True)
-    email = models.CharField(max_length=100, blank=False)
+    email = models.CharField(max_length=100, blank=False, unique=True)
     post = models.CharField(max_length=30, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
+    objects = MyUserManager()
+
+    USERNAME_FIELD = 'email'
 
     def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return self.email
+
+    def get_short_name(self):
+        return self.first_name
+
+    def get_full_name(self):
+        return '%s %s' % (self.first_name, self.last_name)
 
     class Meta:
         verbose_name = 'Event User'
         verbose_name_plural = 'Event Users'
 
 
+class OtpModel(models.Model):
+    user = models.ForeignKey(EventUsers)
+    created_time = models.DateTimeField(default=datetime.now, blank=True)
+    otp = models.CharField(max_length=25, unique=True)
+    is_expired = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.email
+
+
 class RegisteredUsers(models.Model):
-    event_user = models.ForeignKey(EventUsers)
+    event_user = models.ForeignKey(EventUsers, related_name='get_user_registration')
     event = models.ForeignKey(Event)
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20, blank=False)
     amount_paid = models.IntegerField(blank=True, null=True)
@@ -230,15 +292,23 @@ class RoomType(models.Model):
     class Meta:
         ordering = ['sort_order', ]
 
-    @receiver(post_delete, sender='events.Hotels')
+    @receiver(post_delete, sender='events.BookedHotel')
     def increment_roomtype(instance, **kwargs):
         instance.room_type.rooms_available += 1
         instance.room_type.save()
 
 
-class Hotels(models.Model):
+class ImageRoomType(models.Model):
+    image = models.ImageField(upload_to='room_type_images')
+    room_type = models.ForeignKey(RoomType, null=True, related_name='get_room_type_image')
+
+    def __str__(self):
+        return self.room_type.room_type
+
+
+class BookedHotel(models.Model):
     registered_users = models.ForeignKey(RegisteredUsers, null=True, related_name='hotel')
-    hotel_name = models.CharField(max_length=50, null=True)
+    hotel = models.ForeignKey(Hotel)
     room_number = models.CharField(max_length=20, null=True)
     tottal_rent = models.IntegerField(default=0)
     book_friday = models.BooleanField(default=False)
@@ -254,6 +324,6 @@ class Hotels(models.Model):
         return "{} {}".format(self.registered_users.event_user.first_name,
                               self.registered_users.event_user.last_name)
 
-    class Meta:
-        verbose_name = 'Booked Hotel'
-        verbose_name_plural = 'Booked Hotels'
+    @property
+    def hotel_name(self):
+        return self.hotel.name

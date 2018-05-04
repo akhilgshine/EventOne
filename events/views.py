@@ -103,6 +103,7 @@ class RegisterEvent(TemplateView):
 
         context['form'] = EventRegisterForm()
         context['room_types'] = RoomType.objects.all()
+        context['hotel_'] = Hotel.objects.all()
         context['tables'] = Table.objects.all()  # .order_by('table_order')
         return render(request, self.template_name, context)
 
@@ -149,7 +150,7 @@ class RegisterEvent(TemplateView):
             payment = request.POST.get('payment', '')
             amount_paid = int(request.POST.get('amount_paid'))
 
-            hotel_name = request.POST.get('hotel_name', '')
+            hotel_name = request.POST.get('hotel', '')
             room_rent = request.POST.get('room_rent', '')
             room_type = request.POST.get('room_type', '')
             # book_friday = request.POST.get('book_friday','')
@@ -271,9 +272,10 @@ class RegisterEvent(TemplateView):
                         print(e, "Exception at line 213")
                         room = None
                 if room:
-                    hotel_obj, created = Hotels.objects.get_or_create(registered_users=event_reg)
+                    hotel = Hotel.objects.get(id=hotel_name)
+                    hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=event_reg, hotel=hotel)
                     if created:
-                        hotel_obj.hotel_name = hotel_name
+                        # hotel_obj.hotel_name = hotel_name
                         hotel_obj.tottal_rent = int(room_rent)
                         # hotel_obj.book_friday = book_friday
                         hotel_obj.checkin_date = checkin_date
@@ -286,7 +288,7 @@ class RegisterEvent(TemplateView):
                         # message_hotel += text
                         message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                     else:
-                        hotel_obj.hotel_name = hotel_name
+                        # hotel_obj.hotel_name = hotel_name
                         hotel_obj.tottal_rent = room_rent
                         hotel_obj.checkin_date = checkin_date
                         hotel_obj.checkout_date = checkout_date
@@ -452,8 +454,8 @@ class GetUserData(TemplateView):
             data['other_table'] = ''
         else:
             try:
-                hotel_obj = Hotels.objects.get(registered_users=registered_user)
-            except Hotels.DoesNotExist:
+                hotel_obj = BookedHotel.objects.get(registered_users=registered_user)
+            except BookedHotel.DoesNotExist:
                 pass
             else:
                 data['hotel_name'] = hotel_obj.hotel_name
@@ -493,7 +495,7 @@ class ListUsers(ListView):
         if self.request.GET.get('is_active') == 'False':
             self.queryset = RegisteredUsers.objects.filter(is_active=False)
         elif self.request.GET.get('hotel') == 'True':
-            hotels = Hotels.objects.filter(registered_users__is_active=True).values_list('registered_users__id',
+            hotels = BookedHotel.objects.filter(registered_users__is_active=True).values_list('registered_users__id',
                                                                                          flat=True)
             hotel_booked_users = self.queryset.filter(id__in=hotels)
             self.queryset = hotel_booked_users
@@ -518,12 +520,12 @@ class ListUsers(ListView):
                     partial_paid_relevant_users.append(users.id)
             self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
         elif self.request.GET.get('date') == 'aug3':
-            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03',
+            hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03',
                                            checkout_date__gte='2018-08-03').values_list('registered_users__id',
                                                                                         flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('date') == 'aug4':
-            hotels = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04',
+            hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04',
                                            checkout_date__gte='2018-08-04').values_list('registered_users__id',
                                                                                         flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
@@ -535,7 +537,7 @@ class ListUsers(ListView):
                     room_type = RoomType.objects.get(room_type=type)
                 except RoomType.DoesNotExist:
                     room_type = None
-                relevant_users = Hotels.objects.filter(registered_users__is_active=True, room_type=room_type,
+                relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, room_type=room_type,
                                                        checkin_date__lte=self.request.GET.get('date')).values_list(
                     'registered_users__id', flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
@@ -544,7 +546,7 @@ class ListUsers(ListView):
                     room_type = RoomType.objects.get(room_type=type)
                 except RoomType.DoesNotExist:
                     room_type = None
-                relevant_users = Hotels.objects.filter(registered_users__is_active=True,
+                relevant_users = BookedHotel.objects.filter(registered_users__is_active=True,
                                                        room_type=room_type).values_list('registered_users__id',
                                                                                         flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
@@ -572,7 +574,7 @@ class ListUsers(ListView):
         context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
         context['total_paid_hotel'] = \
-            Hotels.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
+            BookedHotel.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
         return context
@@ -597,8 +599,8 @@ class InvoiceView(TemplateView):
 
         context['hotel'] = hotelDetails(event_reg)
         try:
-            context['relevant_hotel'] = Hotels.objects.get(registered_users=event_reg)
-        except Hotels.DoesNotExist:
+            context['relevant_hotel'] = BookedHotel.objects.get(registered_users=event_reg)
+        except BookedHotel.DoesNotExist:
             pass
         context['event_register'] = event_reg
         return render(request, self.template_name, context)
@@ -618,7 +620,7 @@ class UserRegisterUpdate(TemplateView):
         pk = kwargs.pop('pk')
         event_registered_user = RegisteredUsers.objects.get(id=pk)
         try:
-            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
+            hotel_obj = BookedHotel.objects.get(registered_users=event_registered_user)
         except:
             hotel_obj = None
 
@@ -672,7 +674,7 @@ class UserRegisterUpdate(TemplateView):
                                               amount=amount_paid)
             try:
                 room = RoomType.objects.get(id=room_type)
-                hotel_obj, created = Hotels.objects.get_or_create(registered_users=reg_user_obj)
+                hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=reg_user_obj)
                 if created:
                     hotel_obj.hotel_name = hotel_name
                     hotel_obj.tottal_rent = int(room_rent)
@@ -761,11 +763,12 @@ class UpdateHotelView(UpdateView):
     def get_initial(self):
         initial = super(UpdateHotelView, self).get_initial()
         try:
-            self.hotel_obj = Hotels.objects.get(registered_users=self.object)
-        except Hotels.DoesNotExist:
+            self.hotel_obj = BookedHotel.objects.get(registered_users=self.object)
+        except BookedHotel.DoesNotExist:
             self.hotel_obj = ''
         else:
             initial['tottal_rent'] = self.hotel_obj.registered_users.hotel_due
+
         return initial
 
     def get_context_data(self, **kwargs):
@@ -780,10 +783,16 @@ class UpdateHotelView(UpdateView):
         registered_user_obj = RegisteredUsers.objects.get(id=self.kwargs.pop('pk'))
         checkin = form.cleaned_data['checkin_date']
         checkout = form.cleaned_data['checkout_date']
+        hotel = form.cleaned_data['hotel']
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
-        hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
-        hotel_obj.hotel_name = form.cleaned_data['hotel_name']
+        try:
+            hotel_obj = BookedHotel.objects.get(registered_users=registered_user_obj)
+            hotel_obj.hotel = hotel
+            created = False
+        except BookedHotel.DoesNotExist:
+            hotel_obj = BookedHotel.objects.create(registered_users=registered_user_obj, hotel=hotel)
+            created = True
         hotel_obj.mode_of_payment = form.cleaned_data['mode_of_payment']
         # if hotel_obj.registered_users.hotel_due > 0:
         #     current_rent = hotel_obj.tottal_rent
@@ -913,17 +922,17 @@ class DashBoardView(ListView):
         context['registered_user'] = self.queryset
         context['stag_user'] = self.queryset.filter(event_status='Stag')
         context['couple_user'] = self.queryset.filter(event_status='Couple')
-        context['hotels_booked'] = Hotels.objects.filter(registered_users__is_active=True)
+        context['hotels_booked'] = BookedHotel.objects.filter(registered_users__is_active=True)
         context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
 
         context['room_types'] = RoomType.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
-        context['total_rooms'] = Hotels.objects.filter(registered_users__is_active=True).count() + context['room_count']
+        context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context['room_count']
         context['total_rooms_booked'] = context['total_rooms'] - context['room_count']
 
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00
-        context['total_paid_hotel'] = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        context['total_paid_hotel'] = BookedHotel.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] \
                                        + context['total_contributions'] or 0.00
         return context
@@ -940,7 +949,7 @@ class DownloadCSVView(TemplateView):
         total_registration_due = sum(item.due_amount for item in RegisteredUsers.objects.all())
         total_hotel_due = sum(item.hotel_due for item in RegisteredUsers.objects.all())
         total_due = total_registration_due + total_hotel_due
-        total_paid_hotel = Hotels.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+        total_paid_hotel = BookedHotel.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
         total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
         if get_user_registered:
             response = HttpResponse(content_type='text/csv')
@@ -1038,7 +1047,7 @@ class AddContributionListPage(TemplateView):
 
 
 class DeleteHotelView(DeleteView):
-    model = Hotels
+    model = BookedHotel
     success_url = '/users'
 
     def get(self, request, *args, **kwargs):
@@ -1085,7 +1094,7 @@ class EditRegistrationView(UpdateView):
         pk = self.object
         event_registered_user = RegisteredUsers.objects.get(event_user=self.object)
         try:
-            hotel_obj = Hotels.objects.get(registered_users=event_registered_user)
+            hotel_obj = BookedHotel.objects.get(registered_users=event_registered_user)
         except:
             hotel_obj = None
         context['event_registered_user'] = event_registered_user
@@ -1094,7 +1103,6 @@ class EditRegistrationView(UpdateView):
         return context
 
     def form_valid(self, form):
-        # import pdb;pdb.set_trace()
         registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
         if self.request.POST.get('checkin_date'):
             checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
@@ -1105,7 +1113,7 @@ class EditRegistrationView(UpdateView):
         else:
             checkout = ""
         if checkin and checkout and self.request.POST.get('room_type'):
-            hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user_obj)
+            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user_obj)
             hotel_obj.hotel_name = self.request.POST['hotel_name']
             hotel_obj.mode_of_payment = self.request.POST['payment']
             # if hotel_obj.registered_users.hotel_due > 0:
@@ -1121,7 +1129,6 @@ class EditRegistrationView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def update_hotel(self, hotel_obj, created, form, checkin, checkout):
-        # import pdb;pdb.set_trace()
         room_id = self.request.POST['room_type_sel'].split(":")[0]
         if room_id and room_id != '0':
             hotel_obj.room_type = RoomType.objects.get(id=room_id)
@@ -1166,7 +1173,7 @@ class UpdateHotelDue(UpdateView):
     form_class = UpdateHotelDuePaymentForm
     template_name = 'update_hotel_due.html'
     success_url = '/users'
-    queryset = Hotels.objects.all()
+    queryset = BookedHotel.objects.all()
 
     def form_valid(self, form):
         payment_event_type = HOTEL_DUE_PAYMENT
@@ -1195,7 +1202,7 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
     room_type = request.GET.get('room_type')
     check_in = request.GET.get('check_in')
     check_out = request.GET.get('check_out')
-    booked_hotel = Hotels.objects.get(id=user_hotel)
+    booked_hotel = BookedHotel.objects.get(id=user_hotel)
 
     """Generate the previously created data"""
     current_hotel_amount_paid = booked_hotel.tottal_rent

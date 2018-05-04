@@ -10,7 +10,7 @@ register = template.Library()
 def get_hotel_details(user_id):
     try:
         user = RegisteredUsers.objects.get(id=user_id)
-        hotel = Hotels.objects.get(registered_users=user)
+        hotel = BookedHotel.objects.get(registered_users=user)
         return hotel.room_type.room_type + '(' + str(hotel.checkin_date).split(" ")[0] + ' to ' + \
                str(hotel.checkout_date).split(" ")[0] + ')'
     except:
@@ -21,7 +21,7 @@ def get_hotel_details(user_id):
 def get_hotel_rent(user_id):
     try:
         user = RegisteredUsers.objects.get(id=user_id)
-        hotel = Hotels.objects.get(registered_users=user)
+        hotel = BookedHotel.objects.get(registered_users=user)
         return hotel.tottal_rent
     except:
         return ''
@@ -31,7 +31,7 @@ def get_hotel_rent(user_id):
 def no_of_night(user_id):
     try:
         user = RegisteredUsers.objects.get(id=user_id)
-        hotel = Hotels.objects.get(registered_users=user)
+        hotel = BookedHotel.objects.get(registered_users=user)
         nights = hotel.checkout_date - hotel.checkin_date
         return nights.days
     except:
@@ -62,7 +62,7 @@ def payment_status(user_id):
 def check_event_status(user_id):
     try:
         # user = RegisteredUsers.objects.get(id=user_id)
-        # hotel = Hotels.objects.get(registered_users=user)
+        # hotel = BookedHotel.objects.get(registered_users=user)
         # nights = hotel.checkout_date - hotel.checkin_date
         return True
     except:
@@ -127,17 +127,17 @@ def partly_paid_count(count):
 @register.filter
 def get_roomtype_count(booked_room_type, date=None):
     if date:
-        booked_room_type = Hotels.objects.filter(registered_users__is_active=True,
+        booked_room_type = BookedHotel.objects.filter(registered_users__is_active=True,
                                                  checkin_date__lte=date,
                                                  room_type=booked_room_type).count()
     else:
-        booked_room_type = Hotels.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
+        booked_room_type = BookedHotel.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
     return booked_room_type
 
 
 @register.filter
 def hotels_booked_two_nights(hotels_book_date):
-    hotels_book = Hotels.objects.filter(registered_users__is_active=True, checkin_date__lte=hotels_book_date,
+    hotels_book = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=hotels_book_date,
                                         checkout_date__gte=hotels_book_date).count()
     return hotels_book
 

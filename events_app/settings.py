@@ -168,6 +168,7 @@ EMAIL_HOST_USER = 'noreply@letsgonuts2018.com'
 EMAIL_HOST_PASSWORD = 'techversant!@'
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = 'noreply@letsgonuts2018.com'
+AUTH_USER_MODEL = 'events.EventUsers'
 
 import logging
 logging.basicConfig()

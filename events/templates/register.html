@@ -228,8 +228,14 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="id_hotel_name"
-                                       placeholder="Enter Hotel Name" name="hotel_name">
+{#                                <input type="text" class="form-control" id="id_hotel_name"#}
+{#                                       placeholder="Enter Hotel Name" name="hotel_name">#}
+                                <select name ='hotel' class="form-control" id="id_hotel_name">
+                                <option value="0">--- select type ---</option>
+                                    {% for hotels in hotel_ %}
+                                <option value="{{ hotels.id }}" {% if hotels.id == 1 %}selected {% endif %}>{{ hotels }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
 
@@ -432,7 +438,7 @@
     });
     $('#selectId').on('change', function () {
         selected_id = $("#selectId option:selected").val();
-        $("#id_hotel_name").val('');
+        {#$("#id_hotel_name").val('');#}
         $("#id_room_rent").val('');
         $('#bookFriday').prop('checked', false);
         $('#room_type option[value="0"]').attr('selected', 'selected');
@@ -484,7 +490,7 @@
                                 $('#amount_added_id').val(data.paid_amount);
                                 $('#reg_amount_final').html(data.paid_amount);
                                 $("#paid_ampount_id").val(data.paid_amount);
-                                $("#id_hotel_name").val(data.hotel_name);
+                                //$("#id_hotel_name").val(data.hotel_name);
                                 $("#id_room_rent").val(data.tottal_rent);
                                 $("#room_type").val(data.hotel_type);
                                 $('#checkIn').datepicker('setDate', data.checkin_date);
@@ -602,7 +608,7 @@
 
 
     $("#id_confirm_register").on('click', function () {
-        var hotel_name = $('#id_hotel_name').val();
+        {#var hotel_name = $('#id_hotel_name').val();#}
         var hotel_rent = $('#id_room_rent').val();
         var check_in = $('#checkIn').val();
         var check_out = $('#checkOut').val();
@@ -628,7 +634,7 @@
     function clearHotelRelatedFields() {
         $('#room_type>option[value=0]').prop('selected', true);
         $('#room_type>option[value=0]').attr('selected', true);
-        $('#id_hotel_name').val('');
+        {#$('#id_hotel_name').val('');#}
         $('#id_room_rent').val('');
         $('#checkIn').val('');
         $('#checkOut').val('');
@@ -663,7 +669,7 @@
             $('#id_hidden_room').val(0)
         }
         else {
-            $('#id_hotel_name').val('Hotel Raviz Kollam');
+            //$('#id_hotel_name').val('Hotel Raviz Kollam');
             calculate_rent();
         }
 

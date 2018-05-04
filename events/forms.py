@@ -46,15 +46,18 @@ class HotelForm(forms.ModelForm):
     checkout_date = forms.CharField(required=True)
 
     class Meta:
-        model = Hotels
-        fields = ('room_type', 'hotel_name', 'tottal_rent', 'mode_of_payment', 'receipt_number','receipt_file')
+        model = BookedHotel
+        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number','receipt_file')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)
         self.fields['room_type'].widget.attrs['class'] = 'form-control'
-        self.fields['hotel_name'].widget.attrs['placeholder'] = 'Hotel Name'
-        self.fields['hotel_name'].widget.attrs['class'] = 'form-control'
-        self.fields['hotel_name'].widget.attrs['readonly'] = 'readonly'
+        self.fields['hotel'].widget.attrs['placeholder'] = 'Hotel Name'
+        self.fields['hotel'].widget.attrs['class'] = 'form-control'
+        self.fields['hotel'].widget.attrs['readonly'] = 'readonly'
+        self.fields["hotel"].initial = Hotel.objects.all()[0].id
+
+
 
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['placeholder'] = 'Rent'
@@ -115,7 +118,7 @@ class UpdateProfileForm(forms.ModelForm):
 
 class UpdateHotelDuePaymentForm(forms.ModelForm):
     class Meta:
-        model = Hotels
+        model = BookedHotel
         fields = ('tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file')
 
     def __init__(self, *args, **kwargs):

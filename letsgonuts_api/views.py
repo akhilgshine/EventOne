@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db.models import Q
 from datetime import date, timedelta, datetime
+from django.utils.crypto import get_random_string
 
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -13,10 +14,10 @@ from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
-
-from events.models import Table, EventUsers, RegisteredUsers, Hotels, RoomType, Event
+import requests
+from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
-    RegisteredUsersSerializer, RoomTypeSerializer
+    RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer
 
 
 # Create your views here.
@@ -49,6 +50,7 @@ class LoginApiView(APIView):
 class TableListViewSet(ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableListSerializer
+    permission_classes = [AllowAny, ]
 
 
 class FilterNameViewSet(ModelViewSet):
@@ -138,7 +140,7 @@ class RegisterEventViewSet(ModelViewSet):
                 #  TODO Validate room type
             except:
                 return Response({'status': False, 'error-message': 'Invalid Room type'}, status=400)
-            hotel_obj, created = Hotels.objects.get_or_create(registered_users=registered_user)
+            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user)
             hotel_obj.hotel_name = hotel_name
             hotel_obj.tottal_rent = tottal_rent
             hotel_obj.room_type = room_type
@@ -174,3 +176,59 @@ class RoomTypeListViewSet(ModelViewSet):
             return Response('No rooms found', status=HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class UserLoginViewSet(ModelViewSet):
+    queryset = EventUsers.objects.all()
+    serializer_class = UserLoginSerializer
+    permission_classes = [AllowAny, ]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')
+        mobile = serializer.validated_data.get('mobile')
+        user, created = EventUsers.objects.get_or_create(email=email, mobile=mobile)
+        if created:
+            user.is_active = False
+            user.save()
+        otp_number = get_random_string(length=6, allowed_chars='1234567890')
+        otp_obj = OtpModel.objects.create(user=user, otp=otp_number)
+        message = "OTP for letsgonuts login is %s" % (otp_number,)
+        message_status = requests.get(
+            'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
+            '=QrtReg&message=%s' % (mobile, message))
+        headers = self.get_success_headers(serializer.data)
+        return Response('sent OTP MESSAGE successfully', status=HTTP_201_CREATED, headers=headers)
+
+
+class OtpPostViewSet(ModelViewSet):
+    queryset = EventUsers.objects.all()
+    serializer_class = OtpPostSerializer
+    permission_classes = [AllowAny, ]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        otp = request.POST.get('otp')
+        otp_obj = OtpModel.objects.get(otp=otp)
+        response = {}
+        token, _ = Token.objects.get_or_create(user=otp_obj.user)
+        if not otp_obj.user.is_active:
+            otp_obj.user.is_active = True
+            otp_obj.user.save()
+            response['token'] = token.key
+            response['status'] = 1
+            return Response(response, status=200)
+        else:
+            if otp_obj.user.get_user_registration.all():
+                reg_user = otp_obj.user.get_user_registration.all()[0]
+                response = RegisteredUsersSerializer(reg_user).data
+            else:
+                response = NameDetailsSerializer(otp_obj.user).data
+            return Response(response, status=200)
+
+
+class HotelNameViewSet(ModelViewSet):
+    queryset = Hotel.objects.all()
+    serializer_class = HotelNameSerializer

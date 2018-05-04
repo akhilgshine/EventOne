@@ -338,6 +338,7 @@
                                     <button type="button" class="btn btn-danger nuts-sub-hotel-cancel btn-minwidth">
                                         Cancel
                                     </button>
+
                                 </a>
                             </div>
                         </div>
@@ -368,12 +369,12 @@
     {% if event_registered_user %}
         $("#detailForm").show();
         $('#balance_div').show();
-        $('#id_first_name').val('{{event_registered_user.event_user.first_name}}')
-        $('#id_last_name').val('{{event_registered_user.event_user.last_name}}')
-        $('#id_phone').val('{{event_registered_user.event_user.mobile}}')
-        $('#id_email').val('{{event_registered_user.event_user.email}}')
-        $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}')
-        $('#reg_amount_final').html('{{event_registered_user.amount_paid}}')
+        $('#id_first_name').val('{{event_registered_user.event_user.first_name}}');
+        $('#id_last_name').val('{{event_registered_user.event_user.last_name}}');
+        $('#id_phone').val('{{event_registered_user.event_user.mobile}}');
+        $('#id_email').val('{{event_registered_user.event_user.email}}');
+        $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}');
+        $('#reg_amount_final').html('{{event_registered_user.amount_paid}}');
 
         {% if hotel_obj %}
             $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
@@ -386,13 +387,13 @@
 
         $('#selectId').append('<option value="{{event_registered_user.table.table_name}}" selected="selected">{{event_registered_user.table.table_name}}</option>')
         {% ifequal event_registered_user.event_status "Couple" %}
-            $('#radio_status_1').prop('checked', true)
+            $('#radio_status_1').prop('checked', true);
         {% endifequal %}
         {% ifequal event_registered_user.event_status "Stag" %}
-            $('#radio_status_2').prop('checked', true)
+            $('#radio_status_2').prop('checked', true);
         {% endifequal %}
         {% ifequal event_registered_user.event_status "Not Mentioned" %}
-            $('#radio_status_3').prop('checked', true)
+            $('#radio_status_3').prop('checked', true);
         {% endifequal %}
 
         {% ifequal event_registered_user.payment 'cash' %}
@@ -438,7 +439,7 @@
     }
 
     function check_value_status() {
-        memberType = $('#memberType').val().toLowerCase()
+        memberType = $('#memberType').val().toLowerCase();
         if (memberType == 'tabler') {
             $('.span-stag').html('Stag (2 days)');
             $('.span-couple').html('Couple (2 days)');
@@ -694,6 +695,10 @@
         else {
             var tottal = one_day_rent;
         }
+        {%  if hotel_obj.tottal_rent %}
+         tottal = tottal - {{ hotel_obj.tottal_rent }};
+         console.log(tottal);
+        {% endif %}
         $('#id_room_rent').val(tottal);
         $('#hotel_amount_final').html(tottal);
         calcalateTotal();

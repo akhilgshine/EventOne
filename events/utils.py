@@ -15,7 +15,7 @@ from events.models import *
 
 def hotelDetails(event_obj):
     try:
-        hotel_obj = Hotels.objects.get(registered_users=event_obj)
+        hotel_obj = BookedHotel.objects.get(registered_users=event_obj)
         event = Event.objects.filter()[0]
         data = hotel_obj.room_type.room_type + ", " + str(hotel_obj.tottal_rent) + "/-, Hotel Raviz Kollam, " + str(
             hotel_obj.checkin_date.strftime("%B %d, %Y")) + " to " + str(hotel_obj.checkout_date.strftime("%B %d, %Y"))
@@ -40,9 +40,9 @@ def send_email(to_email, message, event_obj):
     content = render_to_string('coupon_mail.html', cxt)
     from_email = settings.DEFAULT_FROM_EMAIL
 
-    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
-    msg.attach_alternative(content, "text/html")
-    msg.send()
+    # msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+    # msg.attach_alternative(content, "text/html")
+    # msg.send()
 
     print("mail --> ", to_email)
 
@@ -64,10 +64,10 @@ def set_status(event_reg):
 def send_sms_message(phone, message, user_id):
     domain = Site.objects.get_current().domain
     url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(user_id)}))
-    message_status = requests.get(
-        'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message +' You can see your coupon at ' + url)
+    # message_status = requests.get(
+    #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message +' You can see your coupon at ' + url)
 
-    return message_status
+    return ''
 
 
 def encoded_id(user_id):

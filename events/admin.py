@@ -8,8 +8,8 @@ from import_export.admin import ImportExportModelAdmin
 
 from events.models import *
 
-class RegisteredUserAdmin(admin.ModelAdmin):
 
+class RegisteredUserAdmin(admin.ModelAdmin):
     list_display = ['event_user',
                     'get_registered_amount',
                     'get_due_amount',
@@ -52,32 +52,32 @@ class RegisteredUserAdmin(admin.ModelAdmin):
 
 
 class BookedHotelResource(resources.ModelResource):
-
     class Meta:
-        model = Hotels
+        model = BookedHotel
 
 
 class BookedHotelAdmin(ImportExportModelAdmin):
-
     list_display = ['registered_users', 'room_type', 'tottal_rent', 'checkin_date', 'checkout_date']
     search_fields = ['registered_users__event_user__first_name', 'registered_users__event_user__last_name']
     resource_class = BookedHotelResource
     list_filter = ['room_type__room_type', 'registered_users__event_user__table__table_name']
 
     class Meta:
-        model = Hotels
+        model = BookedHotel
 
 
 class RoomTypeAdmin(admin.ModelAdmin):
-
     list_display = ['room_type', 'sort_order']
     list_editable = ['sort_order']
 
 
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers)
-admin.site.register(Hotels, BookedHotelAdmin)
+admin.site.register(BookedHotel, BookedHotelAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)
 admin.site.register(Table)
 admin.site.register(PaymentDetails)
+admin.site.register(OtpModel)
+admin.site.register(Hotel)
+admin.site.register(ImageRoomType)
