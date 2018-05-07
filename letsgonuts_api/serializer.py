@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel,ImageRoomType
+import letsgonuts_api
+from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel,ImageRoomType, BookedHotel
 
 
 class TableListSerializer(ModelSerializer):
@@ -67,42 +68,10 @@ class RegisterEventSerializer(ModelSerializer):
         return data
 
 
-class RegisteredUsersSerializer(ModelSerializer):
-
-    user_details = NameDetailsSerializer(source='event_user', read_only=True)
-    tableName = serializers.SerializerMethodField()
-    registration_type = serializers.SerializerMethodField()
-
-    class Meta:
-        model = RegisteredUsers
-        # fields = '__all__'
-        fields = ['id', 'tableName', 'qrcode','amount_paid',
-                  'registration_type', 'user_details']
-
-
-    def get_tableName(self, obj):
-        return obj.table.table_name
-
-    def get_registration_type(self, obj):
-        return obj.event_status
-
-
 class ImageRoomTypeSerializer(ModelSerializer):
     class Meta:
         model = ImageRoomType
         fields = ['image']
-
-
-class RoomTypeSerializer(ModelSerializer):
-    hotel_name = serializers.SerializerMethodField()
-    room_type_image = ImageRoomTypeSerializer(source='get_room_type_image', many=True)
-
-    class Meta:
-        model = RoomType
-        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name','room_type_image']
-
-    def get_hotel_name(self,obj):
-        return Hotel.objects.all()[0].name
 
 
 class UserLoginSerializer(Serializer):
@@ -120,5 +89,52 @@ class HotelNameSerializer(ModelSerializer):
     class Meta:
         model = Hotel
         fields = ['id', 'name']
+
+
+class RoomTypeSerializer(ModelSerializer):
+    hotel_name = serializers.SerializerMethodField()
+    room_type_image = ImageRoomTypeSerializer(source='get_room_type_image', many=True)
+
+    class Meta:
+        model = RoomType
+        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name','room_type_image']
+
+    def get_hotel_name(self,obj):
+        return Hotel.objects.all()[0].name
+
+
+class BookedHotelSerializer(ModelSerializer):
+    hotel_details = HotelNameSerializer(source='hotel', read_only=True)
+    room_details = RoomTypeSerializer(source='room_type', read_only=True)
+
+    class Meta:
+        model = BookedHotel
+        fields = ['checkin_date', 'checkout_date', 'hotel_details','room_details']
+
+
+class RegisteredUsersSerializer(ModelSerializer):
+
+    user_details = NameDetailsSerializer(source='event_user', read_only=True)
+    tableName = serializers.SerializerMethodField()
+    registration_type = serializers.SerializerMethodField()
+    table_details = TableListSerializer(source='table', read_only=True)
+    booked_hotel = BookedHotelSerializer(source='hotel', many=True)
+
+    class Meta:
+        model = RegisteredUsers
+        # fields = '__all__'
+        fields = ['id', 'tableName', 'qrcode','amount_paid',
+                  'registration_type', 'user_details', 'table_details', 'booked_hotel']
+
+
+    def get_tableName(self, obj):
+        return obj.table.table_name
+
+    def get_registration_type(self, obj):
+        return obj.event_status
+
+
+
+
 
 
