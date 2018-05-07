@@ -18,8 +18,7 @@ from events.templatetags import template_tags
 import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details, \
-    render_to_pdf
+from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details
 from django.contrib.auth import authenticate, login
 import requests
 from django.contrib.auth import logout
@@ -1234,75 +1233,4 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
     return HttpResponse(json.dumps({'success': success}))
 
 
-class GenerateInVoicePDF(TemplateView):
-    template_name = 'invoice.html'
 
-    def get_context_data(self, **kwargs):
-        context = {
-        }
-        template = get_template('invoice.html')
-        pk = self.kwargs.pop('pk')
-        event_reg = RegisteredUsers.objects.get(id=pk)
-        context['hotel'] = hotelDetails(event_reg)
-        context['event_register'] = event_reg
-        html = template.render(context)
-        pdf = render_to_pdf('invoice.html', context)
-        if pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "Invoice_%s.pdf" % ("12341231")
-            content = "inline; filename='%s'" % (filename)
-            download = self.request.GET.get("get-invoice-download")
-            if download:
-                content = "attachment; filename='%s'" % (filename)
-            response['Content-Disposition'] = content
-            return response
-        return HttpResponse("Not found")
-
-
-def link_callback(uri, rel):
-    """
-    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-    resources
-    """
-    # use short variable names
-    sUrl = settings.STATIC_URL      # Typically /static/
-    sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
-    mUrl = settings.MEDIA_URL       # Typically /static/media/
-    mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
-
-    # convert URIs to absolute system paths
-    if uri.startswith(mUrl):
-        path = os.path.join(mRoot, uri.replace(mUrl, ""))
-    elif uri.startswith(sUrl):
-        path = os.path.join(sRoot, uri.replace(sUrl, ""))
-    else:
-        return uri  # handle absolute uri (ie: http://some.tld/foo.png)
-
-    # make sure that file exists
-    if not os.path.isfile(path):
-            raise Exception(
-                'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
-    return path
-
-
-def render_pdf_view(request, pk):
-    template_path = 'invoice.html'
-    event_reg = RegisteredUsers.objects.get(id=pk)
-    context = dict()
-    context['hotel'] = hotelDetails(event_reg)
-    context['event_register'] = event_reg
-
-    # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
-
-    # create a pdf
-    pisastatus = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
-    # if error then show some funy view
-    if pisastatus.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
