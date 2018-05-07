@@ -66,7 +66,7 @@ class BookedHotelAdmin(ImportExportModelAdmin):
         model = BookedHotel
 
 
-class RoomTypeAdmin(admin.ModelAdmin):
+class RoomTypeAdmin( ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['room_type', 'sort_order']
     list_editable = ['sort_order']
 
