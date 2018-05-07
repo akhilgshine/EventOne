@@ -121,7 +121,7 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     mobile = models.CharField(max_length=30, blank=True)
-    email = models.CharField(max_length=100, blank=False, unique=True)
+    email = models.CharField(max_length=100, blank=False, unique=False)
     post = models.CharField(max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
