@@ -9,7 +9,7 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 
-from xhtml2pdf import pisa
+# from xhtml2pdf import pisa
 from events.models import *
 
 
@@ -81,7 +81,7 @@ def decode_id(user_id):
 def track_payment_details(data):
     print(data)
     payment_details = PaymentDetails.objects.create(**data)
-    print('payment_details',data)
+    print('payment_details', data)
     return payment_details
 
 
