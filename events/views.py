@@ -12,7 +12,7 @@ from django.template.loader import get_template
 from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from xhtml2pdf import pisa
+# from xhtml2pdf import pisa
 
 from events.templatetags import template_tags
 import json
@@ -24,7 +24,7 @@ import requests
 from django.contrib.auth import logout
 import re
 import datetime
-import pdfcrowd
+# import pdfcrowd
 import sys
 
 """
