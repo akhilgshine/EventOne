@@ -97,7 +97,7 @@ class RoomTypeSerializer(ModelSerializer):
 
     class Meta:
         model = RoomType
-        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name','room_type_image']
+        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name', 'room_type_image']
 
     def get_hotel_name(self,obj):
         return Hotel.objects.all()[0].name
@@ -119,12 +119,13 @@ class RegisteredUsersSerializer(ModelSerializer):
     registration_type = serializers.SerializerMethodField()
     table_details = TableListSerializer(source='table', read_only=True)
     booked_hotel = BookedHotelSerializer(source='hotel', many=True)
+    payment_details = serializers.SerializerMethodField()
 
     class Meta:
         model = RegisteredUsers
         # fields = '__all__'
         fields = ['id', 'tableName', 'qrcode','amount_paid',
-                  'registration_type', 'user_details', 'table_details', 'booked_hotel']
+                  'registration_type', 'user_details', 'table_details', 'booked_hotel','payment_details']
 
 
     def get_tableName(self, obj):
@@ -132,6 +133,14 @@ class RegisteredUsersSerializer(ModelSerializer):
 
     def get_registration_type(self, obj):
         return obj.event_status
+
+    def get_payment_details(self, obj):
+        data={}
+        data['contributed_amount'] = obj.contributed_amount
+        data['total_paid'] = obj.total_paid
+        data['event_status'] = obj.event_status
+        data['hotel_rent'] = obj.hotel_rent
+        return data
 
 
 

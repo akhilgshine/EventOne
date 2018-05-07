@@ -224,8 +224,10 @@ class OtpPostViewSet(ModelViewSet):
             if otp_obj.user.get_user_registration.all():
                 reg_user = otp_obj.user.get_user_registration.all()[0]
                 response = RegisteredUsersSerializer(reg_user).data
+                response['status'] = 3
             else:
                 response = NameDetailsSerializer(otp_obj.user).data
+                response['status'] = 2
             return Response(response, status=200)
 
 
