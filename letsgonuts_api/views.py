@@ -194,6 +194,7 @@ class UserLoginViewSet(ModelViewSet):
             user.save()
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
         otp_obj = OtpModel.objects.create(user=user, otp=otp_number)
+
         message = "OTP for letsgonuts login is %s" % (otp_number,)
         message_status = requests.get(
             'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
@@ -213,6 +214,10 @@ class OtpPostViewSet(ModelViewSet):
         otp = request.POST.get('otp')
         try:
             otp_obj = OtpModel.objects.get(otp=otp)
+            if (datetime.now() - otp_obj.created_time).total_seconds() >= 1800:
+                otp_obj.is_expired = True
+                otp_obj.save()
+                return Response({'error': 'Otp Expired'}, status=400)
         except OtpModel.DoesNotExist:
             return Response({'error': 'Invalid otp'}, status=400)
         response = {}
