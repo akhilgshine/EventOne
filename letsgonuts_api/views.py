@@ -211,7 +211,10 @@ class OtpPostViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         otp = request.POST.get('otp')
-        otp_obj = OtpModel.objects.get(otp=otp)
+        try:
+            otp_obj = OtpModel.objects.get(otp=otp)
+        except OtpModel.DoesNotExist:
+            return Response({'error': 'Invalid otp'}, status=400)
         response = {}
         token, _ = Token.objects.get_or_create(user=otp_obj.user)
         if not otp_obj.user.is_active:
