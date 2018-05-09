@@ -161,7 +161,17 @@ class RoomTypeListViewSet(ModelViewSet):
     def get_queryset(self):
         start_date = dateparser.parse(self.request.GET.get('start_date'))
         end_date = dateparser.parse(self.request.GET.get('end_date'))
-        event_date = Event.objects.get(id=1).date
+        hotel_id = self.request.GET.get('hotel_id')
+        event_id = self.request.GET.get('event_id')
+        try:
+            hotel = Hotel.objects.get(id=hotel_id)
+            self.queryset = hotel.get_hotel_room_types.all()
+        except Hotel.DoesNotExist:
+            return []
+        try:
+            event_date = Event.objects.get(id=event_id).date
+        except Event.DoesNotExist:
+            return []
         day_before_event = event_date - timedelta(1)
         day_before_event_with_time = datetime.combine(day_before_event, datetime.min.time())
         day_after_event = event_date + timedelta(1)

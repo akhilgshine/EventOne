@@ -92,15 +92,12 @@ class HotelNameSerializer(ModelSerializer):
 
 
 class RoomTypeSerializer(ModelSerializer):
-    hotel_name = serializers.SerializerMethodField()
+    hotel = HotelNameSerializer()
     room_type_image = ImageRoomTypeSerializer(source='get_room_type_image', many=True)
 
     class Meta:
         model = RoomType
-        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel_name', 'room_type_image']
-
-    def get_hotel_name(self,obj):
-        return Hotel.objects.all()[0].name
+        fields = ['id', 'room_type', 'rooms_available', 'net_rate', 'hotel', 'room_type_image']
 
 
 class BookedHotelSerializer(ModelSerializer):
@@ -113,7 +110,7 @@ class BookedHotelSerializer(ModelSerializer):
 
 
 class RegisteredUsersSerializer(ModelSerializer):
-
+ 
     user_details = NameDetailsSerializer(source='event_user', read_only=True)
     tableName = serializers.SerializerMethodField()
     registration_type = serializers.SerializerMethodField()
