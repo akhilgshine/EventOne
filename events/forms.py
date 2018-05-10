@@ -34,6 +34,7 @@ class EventRegisterForm(forms.Form):
     payment = forms.CharField(max_length=255, required=True)
     amount_paid = forms.FloatField(required=True)
     contributed_amount = forms.IntegerField(initial=0)
+    t_shirt_size = forms.ChoiceField(choices=T_SHIRT_CHOICES)
 
     # payment = ChoiceField(label='',
     # 	initial='bank',

@@ -33,7 +33,7 @@ import sys
 
 
 class IndexPage(TemplateView):
-    template_name = 'index.html'
+    template_name = 'user_registration/index_main.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexPage, self).get_context_data(**kwargs)
@@ -147,6 +147,7 @@ class RegisterEvent(TemplateView):
             member_type = request.POST.get('member_type')
             status = request.POST.get('status')
             payment = request.POST.get('payment', '')
+            t_shirt_size = request.POST.get('t_shirt_size', '')
             amount_paid = int(request.POST.get('amount_paid'))
 
             hotel_name = request.POST.get('hotel', '')
@@ -258,6 +259,7 @@ class RegisterEvent(TemplateView):
                 event_reg.reciept_number = reciept_number
                 event_reg.reciept_file = reciept_file
                 event_reg.amount_paid = amount_paid
+                event_reg.t_shirt_size = t_shirt_size
                 event_reg.save()
                 if amount_paid:
                     track_payment_details({'reg_event': event_reg, 'mode_of_payment': event_reg.payment,

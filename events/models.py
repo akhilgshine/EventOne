@@ -9,7 +9,6 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
-
 from django.utils.translation import ugettext_lazy as _
 
 CASH = 'cash'
@@ -56,6 +55,19 @@ TYPE_CHOICES = (
     (HOTEL_UPDATE, ('Hotel Update Booking')),
     (HOTEL_DUE_PAYMENT, ('Hotel Due Payment')),
     (OTHER_CONTRIBUTIONS, ('Other Contributions')),
+)
+SMALL = 'S'
+LARGE = 'L'
+MEDIUM = 'M'
+EXTRA_LARGE = 'XL'
+DOUBLE_EXTRA_LARGE = 'XXL'
+
+T_SHIRT_CHOICES = (
+    (SMALL, ('S')),
+    (LARGE, ('L')),
+    (MEDIUM, ('M')),
+    (EXTRA_LARGE, ('XL')),
+    (DOUBLE_EXTRA_LARGE, ('XXL')),
 )
 
 
@@ -171,6 +183,7 @@ class RegisteredUsers(models.Model):
     reciept_number = models.CharField(blank=True, null=True, max_length=100)
     reciept_file = models.FileField(blank=True, null=True, upload_to='reciepts')
     contributed_amount = models.IntegerField(default=0)
+    t_shirt_size = models.CharField(choices=T_SHIRT_CHOICES, max_length=50, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -283,6 +296,7 @@ class PaymentDetails(models.Model):
 
 
 class RoomType(models.Model):
+    hotel = models.ForeignKey(Hotel, related_name='get_hotel_room_types')
     room_type = models.CharField(max_length=50, null=True)
     rooms_available = models.IntegerField(blank=True, null=True)
     net_rate = models.IntegerField(blank=True, null=True)
