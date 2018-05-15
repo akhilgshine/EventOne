@@ -72,7 +72,8 @@ class RoomTypeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 class PaymentDetailsAdmin(ImportExportModelAdmin):
-    list_display = ['reg_event','amount','created_date','type','mode_of_payment']
+    list_display = ['reg_event', 'amount', 'created_date', 'get_type_display', 'mode_of_payment']
+
     class Meta:
         model = PaymentDetails
 
@@ -83,7 +84,7 @@ admin.site.register(BookedHotel, BookedHotelAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)
 admin.site.register(Table)
-admin.site.register(PaymentDetails,PaymentDetailsAdmin)
+admin.site.register(PaymentDetails, PaymentDetailsAdmin)
 admin.site.register(OtpModel)
 admin.site.register(Hotel)
 admin.site.register(ImageRoomType)
