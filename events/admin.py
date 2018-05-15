@@ -9,7 +9,7 @@ from import_export.admin import ImportExportModelAdmin
 from events.models import *
 
 
-class RegisteredUserAdmin(admin.ModelAdmin):
+class RegisteredUserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['event_user',
                     'get_registered_amount',
                     'get_due_amount',
@@ -66,9 +66,15 @@ class BookedHotelAdmin(ImportExportModelAdmin):
         model = BookedHotel
 
 
-class RoomTypeAdmin( ImportExportModelAdmin, admin.ModelAdmin):
+class RoomTypeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['room_type', 'sort_order']
     list_editable = ['sort_order']
+
+
+class PaymentDetailsAdmin(ImportExportModelAdmin):
+    list_display = ['reg_event','amount','created_date','type','mode_of_payment']
+    class Meta:
+        model = PaymentDetails
 
 
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
@@ -77,7 +83,7 @@ admin.site.register(BookedHotel, BookedHotelAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)
 admin.site.register(Table)
-admin.site.register(PaymentDetails)
+admin.site.register(PaymentDetails,PaymentDetailsAdmin)
 admin.site.register(OtpModel)
 admin.site.register(Hotel)
 admin.site.register(ImageRoomType)
