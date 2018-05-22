@@ -19,8 +19,8 @@ BANK_TRANSFER = 'bank_transfer'
 STATUS_CHOICES = (
     ('Couple', _('Couple')),
     ('Stag', _('Stag')),
-    ('Couple_Informal', _('Couple Informal')),
-    ('Stag_Informal', _('Stag Informal')),
+    ('Couple_Informal', _('Couple Informal(Saturday Only)')),
+    ('Stag_Informal', _('Stag Informal(Saturday Only)')),
 )
 ROOM_CHOICES = (
     ('Single', _('Single')),
@@ -145,9 +145,6 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-    def __str__(self):
-        return self.email
-
     def get_short_name(self):
         return self.first_name
 
@@ -157,6 +154,9 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = 'Event User'
         verbose_name_plural = 'Event Users'
+
+    def __str__(self):
+        return self.get_full_name()
 
 
 class OtpModel(models.Model):
@@ -260,7 +260,10 @@ class RegisteredUsers(models.Model):
                 hotel_rent = self.hotel.all()[0].room_type.net_rate
                 checkout = self.hotel.all()[0].checkout_date
                 checkin = self.hotel.all()[0].checkin_date
-                difference = checkout - checkin
+                if checkin and checkout:
+                    difference = checkout - checkin
+                else:
+                    return 0
                 return hotel_rent * difference.days
         return 0
 

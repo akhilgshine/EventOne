@@ -29,7 +29,18 @@
 
         color:red;
     }
+    ul {
+  list-style-type: none;
+}
 
+ .d-inline li {    display: inline-block;}
+
+ .d-inline {    margin-top: 1em;
+    padding: 0px;}
+
+.d-inline label {font-size: 16px;}
+
+.m0 { margin: 0px !important;}
 </style>
 </head>
 
@@ -70,15 +81,22 @@
                       <div  id="hotelForm">
                       <form method= "POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="form-group">
+                        <div class="form-group m0">
                           <label class="control-label col-sm-4" for="amount_paid">Enter Amount :</label>
                           <div class="col-sm-8" style="color: black">
                             {{form.amount_paid}}
                               <div id="amount_error_div" style="display: none;">Negative Amount Not Accepted</div>
                           </div>
 
+                        <div class="form-group m0">
+                        <label class="control-label col-sm-4" for="amount_paid">Current Status :
+                        </label>
+                        <div class="col-sm-8" style="color: #fff;">
+                            <span>{{ form.event_status}}</span>
+
                         </div>
-                      <div class="form-group">
+                    </div>
+                      <div class="form-group m0">
                         <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                         <div class="col-sm-2">
                             <label>
@@ -180,19 +198,6 @@
             });
 
     });
-    // function update_messages(messages){
-    //   console.log("update message");
-    //   $(".message").html("");
-    //   $.each(messages, function (i, m) {
-    //       $(".message").append(m.message);
-    //   });
-    //   $('.message').show();
-    //   setTimeout(function() {
-    //       $('.message').fadeOut('slow');
-    //       location.reload();
-    //   }, 3000);
-    // }
-
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
     }
@@ -212,6 +217,39 @@
         }
 
     });
+
+    $('input[type=radio][name=event_status]').on('change', function(e){
+      var memberType = '{{ object.event_user.member_type }}';
+      console.log(memberType);
+      status = $(this).val();
+      console.log(status);
+      var amount = getAmount(memberType, status);
+      var amount_paid = {{ object.amount_paid }}
+      $('#id_amount_paid').val(amount-amount_paid);
+      // calcalateTotal();
+
+    });
+
+  function getAmount(member_type, status){
+      if(member_type == 'Tabler'){
+          if(status == 'Stag')
+              return 5000;
+          else if(status == 'Couple')
+              return 6000;
+      }
+      else{
+          if(status == 'Stag')
+              return 4000;
+          else if(status == 'Couple')
+              return 5000;
+          else if(status == 'Stag_Informal')
+              return 2500;
+          else if(status == 'Couple_Informal')
+              return 3500;
+      }
+      return 0;
+  }
+
 
 
   </script>

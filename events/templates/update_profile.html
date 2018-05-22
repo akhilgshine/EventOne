@@ -33,8 +33,6 @@
             color: red;
         }
 
-
-
         .nuts-sub-hotel-cancel {
             width: 206px;
             border: 0px;
@@ -214,6 +212,21 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-sm-4" for="">T-Shirt Size : </label>
+                            <div class="col-sm-8">
+
+                                <select name='t_shirt_size' class="form-control">
+                                    <option value="0">--- select type ---</option>
+                                    {% for choice in form.t_shirt_size.field.choices %}
+                                        <option {% if event_registered_user.t_shirt_size == choice.1 %}selected{% endif %}
+                                                value="{{ choice.1}}">{{ choice.0}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                             <div class="col-sm-8">
                                 <input type="hidden" name="room_type">
@@ -323,6 +336,7 @@
                                 <h4>
                                     Registration Amount: <span id="reg_amount_final">0</span><br>
                                     Hotel Booking Amount: <span id="hotel_amount_final">0</span><br>
+                                    Contribution Amount : <span id="contribute_amount_final">0</span><br>
                                     Total Amount: <span id="total_amount_final"></span><br>
                                 </h4>
                             </div>
@@ -375,6 +389,7 @@
         $('#id_email').val('{{event_registered_user.event_user.email}}');
         $('#paid_ampount_id').val('{{event_registered_user.amount_paid}}');
         $('#reg_amount_final').html('{{event_registered_user.amount_paid}}');
+        $('#contribute_amount_final').html('{{event_registered_user.contributed_amount}}');
 
         {% if hotel_obj %}
             $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
@@ -410,7 +425,7 @@
     {%endif%}
 
     function calcalateTotal() {
-        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()));
+        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html())+ parseInt($('#id_other_contribution').val()));
         $('#id_tottal_rent').val(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()))
     }
 
@@ -626,7 +641,11 @@
 
     });
 
-
+    $('#id_other_contribution').on('change keyup', function () {
+        var contribution = $('#id_other_contribution').val();
+        $('#contribute_amount_final').html(contribution);
+        calcalateTotal();
+    });
     $("#DetailForm").submit(function () {
         if ($('input[name=payment]:checked').length <= 0) {
             $("#notifications").text('Please Select a payment mode !');
@@ -696,8 +715,8 @@
             var tottal = one_day_rent;
         }
         {%  if hotel_obj.tottal_rent %}
-         tottal = tottal - {{ hotel_obj.tottal_rent }};
-         console.log(tottal);
+            tottal = tottal - {{ hotel_obj.tottal_rent }};
+            console.log(tottal);
         {% endif %}
         $('#id_room_rent').val(tottal);
         $('#hotel_amount_final').html(tottal);

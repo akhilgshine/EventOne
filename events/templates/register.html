@@ -325,6 +325,7 @@
                                 <h4>
                                     Registration Amount: <span id="reg_amount_final">0</span><br>
                                     Hotel Booking Amount: <span id="hotel_amount_final">0</span><br>
+                                    Contribution Amount: <span id="span_other_contribution">0</span><br>
                                     Total Amount: <span id="total_amount_final"></span><br>
                                 </h4>
                             </div>
@@ -408,7 +409,7 @@
     {%endif%}
 
     function calcalateTotal() {
-        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()));
+        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html())+ parseInt($('#id_other_contribution').val()));
     }
 
     function getAmount(member_type, status) {
@@ -728,6 +729,12 @@
     $('#id_room_rent').on('change keyup', function () {
         var partial_hotel_rent = $('#id_room_rent').val();
         $('#hotel_amount_final').html(partial_hotel_rent);
+        calcalateTotal();
+    });
+
+    $('#id_other_contribution').on('change keyup', function () {
+        var contribution = $('#id_other_contribution').val();
+        $('#span_other_contribution').html(contribution);
         calcalateTotal();
     });
 

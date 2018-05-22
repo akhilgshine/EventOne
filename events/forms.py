@@ -48,7 +48,7 @@ class HotelForm(forms.ModelForm):
 
     class Meta:
         model = BookedHotel
-        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number','receipt_file')
+        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)
@@ -57,8 +57,6 @@ class HotelForm(forms.ModelForm):
         self.fields['hotel'].widget.attrs['class'] = 'form-control'
         self.fields['hotel'].widget.attrs['readonly'] = 'readonly'
         self.fields["hotel"].initial = Hotel.objects.all()[0].id
-
-
 
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['placeholder'] = 'Rent'
@@ -83,31 +81,40 @@ class UpgradeStatusForm(forms.ModelForm):
 
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid', 'event_status','payment','reciept_number','reciept_file')
+        fields = ('amount_paid', 'event_status', 'payment', 'reciept_number', 'reciept_file')
 
     def __init__(self, *args, **kwargs):
         super(UpgradeStatusForm, self).__init__(*args, **kwargs)
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
-        self.fields['event_status'].widget.attrs['class'] = 'form-control'
         self.fields['amount_to_upgrade'].widget.attrs['class'] = 'form-control'
         self.fields['amount_to_upgrade'].widget.attrs['readonly'] = 'readonly'
 
 
 class UpdateDuePaymentForm(forms.ModelForm):
+    event_status = forms.ChoiceField(choices=STATUS_CHOICES, widget=RadioSelect())
+
     class Meta:
         model = RegisteredUsers
-        fields = ('amount_paid', 'payment', 'reciept_number', 'reciept_file')
+        fields = ('amount_paid', 'payment', 'reciept_number', 'reciept_file', 'event_status')
 
     def __init__(self, *args, **kwargs):
         super(UpdateDuePaymentForm, self).__init__(*args, **kwargs)
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
+        self.fields['event_status'].widget.attrs['class'] = 'd-inline'
         self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
+        try:
+            if self.instance and self.instance.event_user.member_type == 'Tabler':
+                self.fields['event_status'].choices = [(u'Couple', u'Couple'), (u'Stag', u'Stag')]
+        except EventUsers.DoesNotExist:
+            pass
 
 
 class UpdateProfileForm(forms.ModelForm):
+    t_shirt_size = forms.ChoiceField(choices=T_SHIRT_CHOICES)
+
     class Meta:
         model = EventUsers
-        fields = ('first_name', 'last_name', 'mobile', 'email')
+        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size')
 
     def __init__(self, *args, **kwargs):
         super(UpdateProfileForm, self).__init__(*args, **kwargs)
@@ -126,4 +133,3 @@ class UpdateHotelDuePaymentForm(forms.ModelForm):
         super(UpdateHotelDuePaymentForm, self).__init__(*args, **kwargs)
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
-
