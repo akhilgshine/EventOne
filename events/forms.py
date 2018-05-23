@@ -101,7 +101,7 @@ class UpdateDuePaymentForm(forms.ModelForm):
         super(UpdateDuePaymentForm, self).__init__(*args, **kwargs)
         self.fields['amount_paid'].widget.attrs['class'] = 'form-control'
         self.fields['event_status'].widget.attrs['class'] = 'd-inline'
-        self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
+        # self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
         try:
             if self.instance and self.instance.event_user.member_type == 'Tabler':
                 self.fields['event_status'].choices = [(u'Couple', u'Couple'), (u'Stag', u'Stag')]
