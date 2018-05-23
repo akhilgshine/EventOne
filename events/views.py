@@ -595,9 +595,9 @@ class InvoiceView(TemplateView):
         pk = kwargs.pop('pk')
         pk = decode_id(pk)
         event_reg = get_object_or_404(RegisteredUsers, id=pk)
-
-        if event_reg.amount_paid < 5000:
-            context['partial'] = 'Partial'
+        context['partial'] = template_tags.payment_status(event_reg.id)
+        # if event_reg.amount_paid < 5000:
+        #     context['partial'] = 'Partial'
 
         context['hotel'] = hotelDetails(event_reg)
         try:
