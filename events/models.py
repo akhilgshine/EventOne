@@ -17,8 +17,8 @@ CARD = 'card'
 BANK_TRANSFER = 'bank_transfer'
 
 STATUS_CHOICES = (
-    ('Couple', _('Couple(2 Days)')),
-    ('Stag', _('Stag(2 Days)')),
+    ('Couple', _('Couple')),
+    ('Stag', _('Stag')),
     ('Couple_Informal', _('Couple(1 Day)')),
     ('Stag_Informal', _('Stag(1 Day)')),
 )
