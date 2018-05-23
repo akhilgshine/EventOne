@@ -104,7 +104,7 @@ class UpdateDuePaymentForm(forms.ModelForm):
         # self.fields['amount_paid'].widget.attrs['readonly'] = 'readonly'
         try:
             if self.instance and self.instance.event_user.member_type == 'Tabler':
-                self.fields['event_status'].choices = [(u'Couple', u'Couple'), (u'Stag', u'Stag')]
+                self.fields['event_status'].choices = [(u'Couple', u'Couple(2 Days)'), (u'Stag', u'Stag(2 Days)')]
         except EventUsers.DoesNotExist:
             pass
 

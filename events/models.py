@@ -17,10 +17,10 @@ CARD = 'card'
 BANK_TRANSFER = 'bank_transfer'
 
 STATUS_CHOICES = (
-    ('Couple', _('Couple')),
-    ('Stag', _('Stag')),
-    ('Couple_Informal', _('Couple Informal(Saturday Only)')),
-    ('Stag_Informal', _('Stag Informal(Saturday Only)')),
+    ('Couple', _('Couple(2 Days)')),
+    ('Stag', _('Stag(2 Days)')),
+    ('Couple_Informal', _('Couple(1 Days)')),
+    ('Stag_Informal', _('Stag(1 Days)')),
 )
 ROOM_CHOICES = (
     ('Single', _('Single')),
