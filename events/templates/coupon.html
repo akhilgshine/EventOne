@@ -116,10 +116,10 @@
                                             <td class="td_right">{{ event_register.table.table_name }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="table_main_tbody_td">Reg.Amount</td>
+                                            <td class="table_main_tbody_td">Total Payment Received</td>
                                             <td></td>
                                             <td align="left" class="table_td_second">
-                                                    &nbsp; {{ event_register.amount_paid }}/- @{{ event_register.created_date }}
+                                                    &nbsp; {{ event_register.amount_paid|add:event_register.contributed_amount}} /- @{{ event_register.created_date|date:"D d M Y"  }}
                                                     <br>
                                                 {% if partial %}
                                                     <span>

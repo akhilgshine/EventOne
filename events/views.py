@@ -316,8 +316,8 @@ class RegisterEvent(TemplateView):
             if event_reg:
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
-                    event_reg.amount_paid) + "/-"
-                # message_status = send_sms_message(phone, message, event_reg.id)
+                    event_reg.amount_paid + event_reg.contributed_amount) + "/-"
+                message_status = send_sms_message(phone, message, event_reg.id)
 
                 # message_status = requests.get(
                 #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
@@ -497,7 +497,7 @@ class ListUsers(ListView):
             self.queryset = RegisteredUsers.objects.filter(is_active=False)
         elif self.request.GET.get('hotel') == 'True':
             hotels = BookedHotel.objects.filter(registered_users__is_active=True).values_list('registered_users__id',
-                                                                                         flat=True)
+                                                                                              flat=True)
             hotel_booked_users = self.queryset.filter(id__in=hotels)
             self.queryset = hotel_booked_users
         elif self.request.GET.get('stag') == 'True':
@@ -522,13 +522,13 @@ class ListUsers(ListView):
             self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
         elif self.request.GET.get('date') == 'aug3':
             hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03',
-                                           checkout_date__gte='2018-08-03').values_list('registered_users__id',
-                                                                                        flat=True)
+                                                checkout_date__gte='2018-08-03').values_list('registered_users__id',
+                                                                                             flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('date') == 'aug4':
             hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04',
-                                           checkout_date__gte='2018-08-04').values_list('registered_users__id',
-                                                                                        flat=True)
+                                                checkout_date__gte='2018-08-04').values_list('registered_users__id',
+                                                                                             flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('room_type'):
 
@@ -539,7 +539,7 @@ class ListUsers(ListView):
                 except RoomType.DoesNotExist:
                     room_type = None
                 relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, room_type=room_type,
-                                                       checkin_date__lte=self.request.GET.get('date')).values_list(
+                                                            checkin_date__lte=self.request.GET.get('date')).values_list(
                     'registered_users__id', flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
             else:
@@ -548,8 +548,8 @@ class ListUsers(ListView):
                 except RoomType.DoesNotExist:
                     room_type = None
                 relevant_users = BookedHotel.objects.filter(registered_users__is_active=True,
-                                                       room_type=room_type).values_list('registered_users__id',
-                                                                                        flat=True)
+                                                            room_type=room_type).values_list('registered_users__id',
+                                                                                             flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         else:
             self.queryset = self.queryset.filter(is_active=True)
@@ -575,7 +575,8 @@ class ListUsers(ListView):
         context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
         context['total_paid_hotel'] = \
-            BookedHotel.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[0] or 0.00
+            BookedHotel.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[
+                0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
         return context
@@ -881,9 +882,9 @@ class UpgradeStatusView(UpdateView):
     success_url = '/users'
     queryset = RegisteredUsers.objects.all()
 
-    def get_initial(self):
-        initial = super(UpgradeStatusView, self).get_initial()
-        return initial
+    # def get_initial(self):
+    #     initial = super(UpgradeStatusView, self).get_initial()
+    #     return initial
 
     def form_valid(self, form):
         payment_event_type = STATUS_UPGRADE
@@ -928,7 +929,8 @@ class DashBoardView(ListView):
 
         context['room_types'] = RoomType.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
-        context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context['room_count']
+        context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context[
+            'room_count']
         context['total_rooms_booked'] = context['total_rooms'] - context['room_count']
 
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
@@ -1019,9 +1021,11 @@ class DuePaymentView(UpdateView):
         init_val = self.object.amount_paid
         amount = int(request.POST.get('amount_paid'))
         reciept_number = request.POST.get('reciept_number')
+        event_status = request.POST.get('event_status')
         receipt_file = request.FILES.get('reciept_file')
         self.object.reciept_number = reciept_number
         self.object.reciept_file = receipt_file
+        self.object.event_status = event_status
         self.object.amount_paid = init_val + amount
         self.object.save()
         message = 'Your pending payment has been paid. Paid amount is %s' % self.object.amount_paid
@@ -1165,6 +1169,7 @@ class EditRegistrationView(UpdateView):
                 registered_user_obj.amount_paid = 5000
         registered_user_obj.event_status = self.request.POST.get('status')
         registered_user_obj.reciept_number = self.request.POST.get('reciept_number')
+        registered_user_obj.t_shirt_size = self.request.POST.get('t_shirt_size')
         if self.request.FILES.get('reciept_file'):
             registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
         registered_user_obj.save()
@@ -1233,6 +1238,3 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
 
     }
     return HttpResponse(json.dumps({'success': success}))
-
-
-

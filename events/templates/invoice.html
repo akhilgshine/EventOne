@@ -175,7 +175,7 @@
                                         </td>
                                         <td> :</td>
                                         <td align="left" class="table_td_second">
-                                            {{ event_register.amount_paid }}/-
+                                            {{ event_register.amount_paid|add:event_register.contributed_amount }}/-
                                             @{{ event_register.created_date|date:"D d M Y" }}
                                             <br>
 
