@@ -151,6 +151,13 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return '%s %s' % (self.first_name, self.last_name)
 
+    @property
+    def registered_obj(self):
+        try:
+            return self.get_user_registration.all()[0]
+        except:
+            return None
+
     class Meta:
         verbose_name = 'Event User'
         verbose_name_plural = 'Event Users'
@@ -251,7 +258,10 @@ class RegisteredUsers(models.Model):
     #     return self.amount_paid - self.registered_amount
     @property
     def due_amount(self):
-        return 0 if self.registered_amount - self.amount_paid < 0 else self.registered_amount - self.amount_paid
+        amount = 0 if self.registered_amount - (
+            0 if self.amount_paid is None else self.amount_paid) < 0 else self.registered_amount - (
+            0 if self.amount_paid is None else self.amount_paid)
+        return amount
 
     @property
     def hotel_rent(self):
@@ -279,6 +289,10 @@ class RegisteredUsers(models.Model):
         if self.hotel_due:
             due = self.hotel_due
         return self.due_amount + due
+
+    @property
+    def hotel_user(self):
+        return self.hotel.all()[0]
 
 
 class PaymentDetails(models.Model):

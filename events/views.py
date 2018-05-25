@@ -1108,6 +1108,7 @@ class EditRegistrationView(UpdateView):
         return context
 
     def form_valid(self, form):
+
         registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
         if self.request.POST.get('checkin_date'):
             checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
@@ -1147,14 +1148,14 @@ class EditRegistrationView(UpdateView):
         if created:
             hotel_obj.room_type.rooms_available -= 1
             hotel_obj.room_type.save()
-        if created:
-            message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
-                hotel_obj.room_type) + "' "
-            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
-        else:
-            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
-                hotel_obj.room_type) + "' "
-            message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
+        # if created:
+        #     message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+        #         hotel_obj.room_type) + "' "
+        #     message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
+        # else:
+        #     message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+        #         hotel_obj.room_type) + "' "
+        #     message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
         return True
 
     def update_registred_user(self, registered_user_obj):
@@ -1170,6 +1171,8 @@ class EditRegistrationView(UpdateView):
         registered_user_obj.event_status = self.request.POST.get('status')
         registered_user_obj.reciept_number = self.request.POST.get('reciept_number')
         registered_user_obj.t_shirt_size = self.request.POST.get('t_shirt_size')
+        table_obj = Table.objects.get(id=self.request.POST.get('table'))
+        registered_user_obj.table = table_obj
         if self.request.FILES.get('reciept_file'):
             registered_user_obj.reciept_file = self.request.FILES.get('reciept_file')
         registered_user_obj.save()

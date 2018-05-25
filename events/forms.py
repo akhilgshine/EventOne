@@ -111,10 +111,12 @@ class UpdateDuePaymentForm(forms.ModelForm):
 
 class UpdateProfileForm(forms.ModelForm):
     t_shirt_size = forms.ChoiceField(choices=T_SHIRT_CHOICES)
+    member_type = forms.ChoiceField(choices=MEMBER_CHOICES)
+    table = forms.ModelChoiceField(queryset=Table.objects.all())
 
     class Meta:
         model = EventUsers
-        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size')
+        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size','member_type','table')
 
     def __init__(self, *args, **kwargs):
         super(UpdateProfileForm, self).__init__(*args, **kwargs)
@@ -122,6 +124,8 @@ class UpdateProfileForm(forms.ModelForm):
         self.fields['last_name'].widget.attrs['class'] = 'form-control'
         self.fields['mobile'].widget.attrs['class'] = 'form-control'
         self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['member_type'].widget.attrs['class'] = 'form-control'
+        self.fields['table'].widget.attrs['class'] = 'form-control'
 
 
 class UpdateHotelDuePaymentForm(forms.ModelForm):
@@ -133,3 +137,5 @@ class UpdateHotelDuePaymentForm(forms.ModelForm):
         super(UpdateHotelDuePaymentForm, self).__init__(*args, **kwargs)
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
+
+

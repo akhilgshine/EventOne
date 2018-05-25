@@ -52,7 +52,6 @@
         <a href="/">Home</a>
         <a href="/users/">Registered Users</a>
         <a href="/users/?is_active=False">Deleted Users </a>
-        <a href="{% url 'add-contribution-list' %}">Contribute Extra </a>
         <a href="{% url 'dash_board' %}">DashBoard</a>
         <a href="/logout/">Logout</a>
     </div>
@@ -110,16 +109,27 @@
                 <div id="detailForm">
                     <form method="POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" id="id_table" name="table_val">
-                        <input type="hidden" id="id_member_type" name="member_type">
-                        <div class="form-group" id="other_table_div" style="color: #fff; display: none">
-                            <label class="control-label col-sm-4" for="id_other_table">New Table :</label>
+                        {#                        <input type="hidden" id="id_table" name="table_val">#}
+                        {#                        <input type="hidden" id="id_member_type" name="member_type">#}
+                        {#                        <div class="form-group" id="other_table_div" style="color: #fff; display: none">#}
+                        {#                            <label class="control-label col-sm-4" for="id_other_table">New Table :</label>#}
+                        {#                            <div class="col-sm-8">#}
+                        {#                                <input type="text" class="form-control" id="id_other_table"#}
+                        {#                                       placeholder="For New Table Only" name='other_table'>#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        <div class="form-group" style="color: #fff">
+                            <label class="control-label col-sm-4" for="id_first_name">Member Type :</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="id_other_table"
-                                       placeholder="For New Table Only" name='other_table'>
+                                {{ form.member_type }}
                             </div>
                         </div>
-
+                        <div class="form-group" style="color: #fff">
+                            <label class="control-label col-sm-4" for="id_first_name">Table:</label>
+                            <div class="col-sm-8">
+                                {{ form.table }}
+                            </div>
+                        </div>
                         <div class="form-group" style="color: #fff">
                             <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
                             <div class="col-sm-8">
@@ -216,10 +226,10 @@
                             <div class="col-sm-8">
 
                                 <select name='t_shirt_size' class="form-control">
-                                    <option value="0">--- select type ---</option>
+                                    <option value="">--- select type ---</option>
                                     {% for choice in form.t_shirt_size.field.choices %}
                                         <option {% if event_registered_user.t_shirt_size == choice.1 %}selected{% endif %}
-                                                value="{{ choice.1}}">{{ choice.0}}
+                                                value="{{ choice.1 }}">{{ choice.0 }}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -268,38 +278,6 @@
                             <div class="col-sm-3">
                                 Check Out:<input type="text" name="checkout_date" class="datepicker form-control"
                                                  id="checkOut" value="{{ hotel_obj.checkout_date }}">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
-                            <div class="col-sm-2">
-                                <label>
-                                    <input id="radioId_0" type="radio" class="payment-mode" name="payment" value="cash"
-                                           {% if hotel_obj.mode_of_payment == "Cash" %}checked="checked"{% endif %}>
-                                    <span class="radio-change"></span> Cash
-                                </label>
-                            </div>
-                            <div class="col-sm-2">
-                                <label>
-                                    <input id="radioId_1" type="radio" class="payment-mode" name="payment" value="POS"
-                                           {% if hotel_obj.mode_of_payment == "POS" %}checked="checked"{% endif %}>
-                                    <span class="radio-change"></span> POS
-                                </label>
-                            </div>
-                            <div class="col-sm-2">
-                                <label>
-                                    <input id="radioId_2" type="radio" class="payment-mode" name="payment" value="card"
-                                           {% if hotel_obj.mode_of_payment == "Card" %}checked="checked"{% endif %}>
-                                    <span class="radio-change"></span> Card
-                                </label>
-                            </div>
-                            <div class="col-sm-2">
-                                <label>
-                                    <input id="radioId_3" type="radio" class="payment-mode" name="payment"
-                                           value="Bank Transfer"
-                                           {% if hotel_obj.mode_of_payment == "Bank Transfer" %}checked="checked"{% endif %}>
-                                    <span class="radio-change"></span> Bank Transfer
-                                </label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -425,7 +403,7 @@
     {%endif%}
 
     function calcalateTotal() {
-        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html())+ parseInt($('#id_other_contribution').val()));
+        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()) + parseInt($('#id_other_contribution').val()));
         $('#id_tottal_rent').val(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()))
     }
 
@@ -646,14 +624,14 @@
         $('#contribute_amount_final').html(contribution);
         calcalateTotal();
     });
-    $("#DetailForm").submit(function () {
-        if ($('input[name=payment]:checked').length <= 0) {
-            $("#notifications").text('Please Select a payment mode !');
-            return false;
-        } else {
-            return true;
-        }
-    });
+    // $("#DetailForm").submit(function () {
+    //   if ($('input[name=payment]:checked').length <= 0) {
+    //     $("#notifications").text('Please Select a payment mode !');
+    //   return false;
+    //} else {
+    //  return true;
+    //}
+    // });
 
     function update_messages(messages) {
         console.log("update message");
