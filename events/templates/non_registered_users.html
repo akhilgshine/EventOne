@@ -109,7 +109,6 @@
     <br>
     <div class="container-fluid">
      <div class="col-md-2 user_list_inputs">
-                <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
                 <a href="{% url 'un_registered_users_csv' %}" >
                     <button class='btn btn-primary'>Download</button>
                 </a>
@@ -121,7 +120,7 @@
                     <option value="" disabled selected>Select Table</option>
                     <option value="all">All</option>
                     {% for table in tables %}
-                        <option value={{ table.table_name|cut:" " }}>
+                        <option value={{ table.table_name }}>
                             {{ table.table_name }}
                         </option>
                     {% endfor %}
@@ -134,11 +133,12 @@
                 <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
                     <thead>
                     <tr>
-                        <th>SI No</th>
+                        <th></th>
                         <th>Name</th>
+                        <th>Table</th>
                         <th>Email</th>
                         <th>Phone Number</th>
-                        <th>Table</th>
+
                     </tr>
                     </thead>
 
@@ -148,9 +148,10 @@
 
                         <td></td>
                         <td>{{ users.first_name }} {{ users.last_name }}</td>
+                        <td>{{ users.table.table_name }}</td>
                         <td>{{ users.email }}</td>
                         <td>{{ users.mobile }}</td>
-                        <td>{{ users.table.table_name }}</td>
+
 
                     {% endfor %}
 
@@ -219,6 +220,7 @@
         }
         else {
             regExSearch = '"' + selected_table + '"';
+            console.log(regExSearch,'ki')
             table.column(2).search(regExSearch).draw();
         }
     });
