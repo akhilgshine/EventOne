@@ -1241,3 +1241,35 @@ def get_total_hotel_rent_calculation(request, *args, **kwargs):
 
     }
     return HttpResponse(json.dumps({'success': success}))
+
+
+class GetNotRegisteredUsers(TemplateView):
+    template_name = 'non_registered_users.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(GetNotRegisteredUsers, self).get_context_data(**kwargs)
+        event_users = RegisteredUsers.objects.all().values_list('event_user', flat=True)
+        context['tables'] = Table.objects.all()
+        context['unregistered_user'] = EventUsers.objects.exclude(id__in=event_users)
+        return context
+
+
+class DownloadUnRegisteredUserCSVView(TemplateView):
+    template_name = 'non_registered_users.html'
+
+    def get(self, request, *args, **kwargs):
+        event_users = RegisteredUsers.objects.all().values_list('event_user', flat=True)
+        unregistered_user = EventUsers.objects.exclude(id__in=event_users)
+
+        if unregistered_user:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['Name', 'Phone', 'Email', 'Table', ])
+            for users in unregistered_user:
+                if users.first_name:
+                    writer.writerow(
+                        [users.first_name + '' + users.last_name, users.mobile, users.email, users.table.table_name,
+                         ])
+            return response
+        return super(DownloadUnRegisteredUserCSVView, self).get(request, *args, **kwargs)

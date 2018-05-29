@@ -45,6 +45,8 @@ urlpatterns = [
     url(r'^edit-registration/(?P<pk>\d+)$', EditRegistrationView.as_view(), name='edit-registration'),
     url(r'^hotel-due-payment/(?P<pk>\d+)$', UpdateHotelDue.as_view(), name='hotel_due_payment'),
     url(r'^get-hotel-calculation/', get_total_hotel_rent_calculation, name='get-hotel-calculation'),
+    url(r'^un-registered_users/', GetNotRegisteredUsers.as_view(), name='un_registered_users'),
+    url(r'^un-registered_users-csv/', DownloadUnRegisteredUserCSVView.as_view(), name='un_registered_users_csv'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
 ]

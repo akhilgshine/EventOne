@@ -155,7 +155,7 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
     def registered_obj(self):
         try:
             return self.get_user_registration.all()[0]
-        except:
+        except IndexError:
             return None
 
     class Meta:
@@ -292,7 +292,10 @@ class RegisteredUsers(models.Model):
 
     @property
     def hotel_user(self):
-        return self.hotel.all()[0]
+        try:
+            return self.hotel.all()[0]
+        except IndexError:
+            return None
 
 
 class PaymentDetails(models.Model):
