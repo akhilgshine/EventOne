@@ -82,7 +82,7 @@ class EventUserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     class Meta:
         model = EventUsers
 
-    search_fields = ['first_name', 'last_name']
+    search_fields = ['first_name', 'last_name', 'email', 'mobile']
 
 
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
