@@ -78,8 +78,15 @@ class PaymentDetailsAdmin(ImportExportModelAdmin):
         model = PaymentDetails
 
 
+class EventUserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    class Meta:
+        model = EventUsers
+
+    search_fields = ['first_name', 'last_name']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
-admin.site.register(EventUsers)
+admin.site.register(EventUsers, EventUserAdmin)
 admin.site.register(BookedHotel, BookedHotelAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)

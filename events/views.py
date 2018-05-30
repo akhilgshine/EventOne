@@ -13,6 +13,7 @@ from django.views.generic import FormView, TemplateView, View, UpdateView, Delet
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 # from xhtml2pdf import pisa
+from django.db.models import Q
 
 from events.templatetags import template_tags
 import json
@@ -1247,10 +1248,12 @@ class GetNotRegisteredUsers(TemplateView):
     template_name = 'non_registered_users.html'
 
     def get_context_data(self, **kwargs):
+
         context = super(GetNotRegisteredUsers, self).get_context_data(**kwargs)
-        event_users = RegisteredUsers.objects.all().values_list('event_user', flat=True)
+        event_users_email = RegisteredUsers.objects.all().values_list('event_user__email', flat=True)
+        event_users_phone = RegisteredUsers.objects.all().values_list('event_user__mobile', flat=True)
         context['tables'] = Table.objects.all()
-        context['unregistered_user'] = EventUsers.objects.exclude(id__in=event_users)
+        context['unregistered_user'] = EventUsers.objects.exclude(Q(email__in=event_users_email)|Q(mobile__in=event_users_phone) )
         return context
 
 
@@ -1263,7 +1266,7 @@ class DownloadUnRegisteredUserCSVView(TemplateView):
 
         if unregistered_user:
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
+            response['Content-Disposition'] = 'attachment; filename="unregistered_users.csv"'
             writer = csv.writer(response)
             writer.writerow(['Name', 'Phone', 'Email', 'Table', ])
             for users in unregistered_user:
