@@ -256,9 +256,13 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="id_hotel_name"
-                                       placeholder="Enter Hotel Name" name="hotel_name"
-                                       value="{{ hotel_obj.hotel_name }}">
+
+                                <select name ='hotel' class="form-control" id="id_hotel_name">
+                                <option value="">--- select type ---</option>
+                                    {% for hotels in form.hotel.field.queryset %}
+                                <option value="{{ hotels.id }}" {% if hotels.id == 1 %}selected {% endif %}>{{ hotels }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
 
@@ -323,8 +327,7 @@
                         <hr>
                         <div class="form-group">
                             <div class="col-sm-offset-4 col-sm-8">
-                                <button type="submit" class="btn btn-default nuts-sub" id="id_confirm_register"> Confirm
-                                    Register
+                                <button type="submit" class="btn btn-default nuts-sub" id="id_confirm_register"> Update Register
                                 </button>
                                 <a href="/users">
                                     <button type="button" class="btn btn-danger nuts-sub-hotel-cancel btn-minwidth">
@@ -370,7 +373,6 @@
         $('#contribute_amount_final').html('{{event_registered_user.contributed_amount}}');
 
         {% if hotel_obj %}
-            $("#id_hotel_name").val('{{hotel_obj.hotel_name}}');
             $("#hotel_amount_final").html('{{hotel_obj.tottal_rent}}');
             $("#id_room_rent").val('{{hotel_obj.tottal_rent}}');
             $('#room_type option[value="{{hotel_obj.room_type.id}}"]').attr('selected', 'selected');
@@ -503,7 +505,6 @@
                                 $('#amount_added_id').val(data.paid_amount);
                                 $('#reg_amount_final').html(data.paid_amount);
                                 $("#paid_ampount_id").val(data.paid_amount);
-                                $("#id_hotel_name").val(data.hotel_name);
                                 $("#id_room_rent").val(data.tottal_rent);
                                 $("#room_type").val(data.hotel_type);
                                 $('#checkIn').datepicker('setDate', data.checkin_date);
@@ -624,27 +625,8 @@
         $('#contribute_amount_final').html(contribution);
         calcalateTotal();
     });
-    // $("#DetailForm").submit(function () {
-    //   if ($('input[name=payment]:checked').length <= 0) {
-    //     $("#notifications").text('Please Select a payment mode !');
-    //   return false;
-    //} else {
-    //  return true;
-    //}
-    // });
 
-    function update_messages(messages) {
-        console.log("update message");
-        $(".message").html("");
-        $.each(messages, function (i, m) {
-            $(".message").append(m.message);
-        });
-        $('.message').show();
-        setTimeout(function () {
-            $('.message').fadeOut('slow');
-            location.reload();
-        }, 3000);
-    }
+
 
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
@@ -656,7 +638,8 @@
 
     function selectRoomType() {
 
-        $('#id_hotel_name').val('Hotel Raviz Kollam');
+
+
         calculate_rent();
     }
 
@@ -692,10 +675,10 @@
         else {
             var tottal = one_day_rent;
         }
-        {%  if hotel_obj.tottal_rent %}
-            tottal = tottal - {{ hotel_obj.tottal_rent }};
-            console.log(tottal);
-        {% endif %}
+{#        {%  if hotel_obj.tottal_rent %}#}
+{#            tottal = tottal - {{ hotel_obj.tottal_rent }};#}
+{#            console.log(tottal);#}
+{#        {% endif %}#}
         $('#id_room_rent').val(tottal);
         $('#hotel_amount_final').html(tottal);
         calcalateTotal();

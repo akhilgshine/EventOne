@@ -110,13 +110,14 @@ class UpdateDuePaymentForm(forms.ModelForm):
 
 
 class UpdateProfileForm(forms.ModelForm):
-    t_shirt_size = forms.ChoiceField(choices=T_SHIRT_CHOICES)
+    t_shirt_size = forms.ChoiceField(choices=T_SHIRT_CHOICES, required=False)
     member_type = forms.ChoiceField(choices=MEMBER_CHOICES)
     table = forms.ModelChoiceField(queryset=Table.objects.all())
+    hotel = forms.ModelChoiceField(queryset=Hotel.objects.all(), required=False)
 
     class Meta:
         model = EventUsers
-        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size','member_type','table')
+        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size','member_type','table','hotel')
 
     def __init__(self, *args, **kwargs):
         super(UpdateProfileForm, self).__init__(*args, **kwargs)

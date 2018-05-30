@@ -77,13 +77,9 @@ class LoginView(View):
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
 
-            if user is not None:
-                try:
-                    if user.is_active:
-                        login(request, user)
-                        return HttpResponseRedirect(reverse('register_event'))
-                except:
-                    return render(self.request, self.template_name, {'form': form})
+            if user and user.is_superuser and user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('register_event'))
             else:
                 return render(self.request, self.template_name, {'form': form})
 
@@ -1109,7 +1105,6 @@ class EditRegistrationView(UpdateView):
         return context
 
     def form_valid(self, form):
-
         registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
         if self.request.POST.get('checkin_date'):
             checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
@@ -1120,20 +1115,22 @@ class EditRegistrationView(UpdateView):
         else:
             checkout = ""
         if checkin and checkout and self.request.POST.get('room_type'):
-            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user_obj)
-            hotel_obj.hotel_name = self.request.POST['hotel_name']
-            hotel_obj.mode_of_payment = self.request.POST['payment']
+            hotel = Hotel.objects.get(id=self.request.POST.get('hotel'))
+            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user_obj, hotel=hotel)
+            # hotel_obj.mode_of_payment = self.request.POST['payment']
             # if hotel_obj.registered_users.hotel_due > 0:
             #     current_rent = hotel_obj.tottal_rent
             #     hotel_obj.tottal_rent = int(self.request.POST['tottal_rent']) + current_rent
             # else:
             #     hotel_obj.tottal_rent = self.request.POST['tottal_rent']
-            current_rent = hotel_obj.tottal_rent
-            hotel_obj.tottal_rent = int(self.request.POST['room_rent']) + current_rent
+            # current_rent = hotel_obj.tottal_rent
+            # hotel_obj.tottal_rent = int(self.request.POST['room_rent']) + current_rent
+            hotel_obj.tottal_rent = int(self.request.POST['room_rent'])
             self.update_hotel(hotel_obj, created, self.request.POST, checkin, checkout)
         self.update_registred_user(registered_user_obj)
         form.save()
         return HttpResponseRedirect(self.get_success_url())
+
 
     def update_hotel(self, hotel_obj, created, form, checkin, checkout):
         room_id = self.request.POST['room_type_sel'].split(":")[0]
@@ -1149,26 +1146,20 @@ class EditRegistrationView(UpdateView):
         if created:
             hotel_obj.room_type.rooms_available -= 1
             hotel_obj.room_type.save()
-        # if created:
-        #     message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
-        #         hotel_obj.room_type) + "' "
-        #     message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
-        # else:
-        #     message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
-        #         hotel_obj.room_type) + "' "
-        #     message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
         return True
 
     def update_registred_user(self, registered_user_obj):
-        if registered_user_obj.event_status != self.request.POST.get('status'):
-            if registered_user_obj.event_status == 'Stag':
-                registered_user_obj.amount_paid = 6000
-                if registered_user_obj.amount_paid > int(self.request.POST.get('amount_paid')):
-                    registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + (
-                            int(self.request.POST.get('amount_paid')) - 1000)
-            else:
-                registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + 1000
-                registered_user_obj.amount_paid = 5000
+        # if registered_user_obj.event_status != self.request.POST.get('status'):
+        #     if registered_user_obj.event_status == 'Stag':
+        #         registered_user_obj.amount_paid = 6000
+        #         if registered_user_obj.amount_paid > int(self.request.POST.get('amount_paid')):
+        #             registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + (
+        #                     int(self.request.POST.get('amount_paid')) - 1000)
+        #     else:
+        #
+        #         registered_user_obj.contributed_amount = registered_user_obj.contributed_amount + 1000
+        #         registered_user_obj.amount_paid = 5000
+        registered_user_obj.amount_paid = self.request.POST.get('amount_paid')
         registered_user_obj.event_status = self.request.POST.get('status')
         registered_user_obj.reciept_number = self.request.POST.get('reciept_number')
         registered_user_obj.t_shirt_size = self.request.POST.get('t_shirt_size')
