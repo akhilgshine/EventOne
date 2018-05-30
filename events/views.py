@@ -490,7 +490,7 @@ def logout_view(request):
 
 class ListUsers(ListView):
     template_name = 'user_list.html'
-    queryset = RegisteredUsers.objects.filter(is_active=True)
+    queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
 
     def get_queryset(self):
         self.queryset = super(ListUsers, self).get_queryset()
@@ -1248,12 +1248,12 @@ class GetNotRegisteredUsers(TemplateView):
     template_name = 'non_registered_users.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(GetNotRegisteredUsers, self).get_context_data(**kwargs)
         event_users_email = RegisteredUsers.objects.all().values_list('event_user__email', flat=True)
         event_users_phone = RegisteredUsers.objects.all().values_list('event_user__mobile', flat=True)
         context['tables'] = Table.objects.all()
-        context['unregistered_user'] = EventUsers.objects.exclude(Q(email__in=event_users_email)|Q(mobile__in=event_users_phone) )
+        context['unregistered_user'] = EventUsers.objects.exclude(
+            Q(email__in=event_users_email) | Q(mobile__in=event_users_phone))
         return context
 
 
