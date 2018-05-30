@@ -490,7 +490,7 @@ def logout_view(request):
 
 class ListUsers(ListView):
     template_name = 'user_list.html'
-    queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
+    queryset = RegisteredUsers.objects.filter(is_active=True)
 
     def get_queryset(self):
         self.queryset = super(ListUsers, self).get_queryset()
