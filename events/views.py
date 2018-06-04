@@ -204,6 +204,7 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
             event_user.first_name = name
             event_user.last_name = last_name
             event_user.mobile = phone
+            event_user.is_approved = True
             event_user.save()
             try:
                 event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
