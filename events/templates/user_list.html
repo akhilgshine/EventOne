@@ -81,6 +81,9 @@
         <a href="/users/">Registered Users</a>
         <a href="/register/">Register Event </a>
         <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
+        <a href="{% url 'proxy-hotel' %}">Proxy Hotel Booking</a>
+        <a href="{% url 'proxy-listing' %}">Proxy Hotel Listing</a>
+        <a href="{% url 'user_registration_list' %}">User Registration Approval</a>
         <a href="/users/?is_active=False">Deleted Users </a>
         <a href="{% url 'dash_board' %}">DashBoard </a>
         <a href="/logout/">Logout</a>
@@ -183,6 +186,7 @@
                         <th>Partial/Completely</th><!-- Payment Status -->
 
                         <th>Registration Amount</th>
+                        <th>T-Shirt Size</th>
                         <th>Amount Due</th>
                         <!-- <th>Registration Date </th> -->
                         <!-- <th>Coupon</th> -->
@@ -234,6 +238,15 @@
                             <td> {{ user.id|payment_status }}</td>
 
                             <td> {{ user.amount_paid }}</td>
+                            <td>
+                                {% if user.t_shirt_size %}
+                                {{ user.t_shirt_size }}
+                                {% else %}
+                                Not Selected
+                                {% endif %}
+                              &nbsp|&nbsp
+                            <a href="{% url 't_shirt_update' user.id %}">Change </a>
+                            </td>
 
                             <td> {{ user.due_amount }}
                                 {% if user.due_amount %}
@@ -309,6 +322,7 @@
                         <td></td>
                         <td></td>
                         <td>{{ total_paid_registration }}</td>
+                        <td></td>
                         <td>{{ total_registration_due }}</td>
                         <td></td>
                         <td></td>

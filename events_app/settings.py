@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'import_export',
     'events',
+    'user_registration',
     'letsgonuts_api',
     'rest_framework',
     'rest_framework.authtoken',
@@ -147,7 +148,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'staticfiles'),
 ]
-
+LOGIN_URL = 'login'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "Media")
 

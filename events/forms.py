@@ -117,7 +117,7 @@ class UpdateProfileForm(forms.ModelForm):
 
     class Meta:
         model = EventUsers
-        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size','member_type','table','hotel')
+        fields = ('first_name', 'last_name', 'mobile', 'email', 't_shirt_size', 'member_type', 'table', 'hotel')
 
     def __init__(self, *args, **kwargs):
         super(UpdateProfileForm, self).__init__(*args, **kwargs)
@@ -140,3 +140,31 @@ class UpdateHotelDuePaymentForm(forms.ModelForm):
         self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
 
 
+class ProxyHotelForm(forms.ModelForm):
+    class Meta:
+        model = ProxyHotelBooking
+        fields = ('table', 'hotel', 'room_type', 'hotel_rent', 'check_in_date', 'check_out_date',)
+
+    def __init__(self, *args, **kwargs):
+        super(ProxyHotelForm, self).__init__(*args, **kwargs)
+        self.fields['table'].widget.attrs['class'] = 'form-control'
+        self.fields['room_type'].widget.attrs['class'] = 'form-control'
+        self.fields['hotel'].widget.attrs['placeholder'] = 'Hotel Name'
+        self.fields['hotel'].widget.attrs['class'] = 'form-control'
+        self.fields["hotel"].initial = Hotel.objects.all()[0].id
+
+        self.fields['hotel_rent'].widget.attrs['class'] = 'form-control'
+        self.fields['hotel_rent'].widget.attrs['placeholder'] = 'Rent'
+
+        self.fields['check_in_date'].widget.attrs['class'] = 'datepicker form-control'
+        self.fields['check_out_date'].widget.attrs['class'] = 'datepicker form-control'
+
+
+class UpdateTShirtForm(forms.ModelForm):
+    class Meta:
+        model = RegisteredUsers
+        fields = ['t_shirt_size', ]
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateTShirtForm, self).__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].widget.attrs['class'] = 'form-control'

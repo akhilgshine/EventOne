@@ -43,12 +43,18 @@ urlpatterns = [
     url(r'^upgrade-reg-status/(?P<pk>\d+)$', UpgradeStatusView.as_view(), name='upgrade_reg_status'),
     url(r'^add-to-registration/(?P<pk>\d+)$', AddToRegistrationView.as_view(), name='add_to_registration'),
     url(r'^edit-registration/(?P<pk>\d+)$', EditRegistrationView.as_view(), name='edit-registration'),
+    url(r'^approve-registration/(?P<pk>\d+)$', ApproveRegistrationView.as_view(), name='approve-registration'),
     url(r'^hotel-due-payment/(?P<pk>\d+)$', UpdateHotelDue.as_view(), name='hotel_due_payment'),
     url(r'^get-hotel-calculation/', get_total_hotel_rent_calculation, name='get-hotel-calculation'),
     url(r'^un-registered_users/', GetNotRegisteredUsers.as_view(), name='un_registered_users'),
     url(r'^un-registered_users-csv/', DownloadUnRegisteredUserCSVView.as_view(), name='un_registered_users_csv'),
+    url(r'^proxy-hotel/', ProxyHotelBookingView.as_view(), name='proxy-hotel'),
+    url(r'^proxy-listing/', ProxyHotelListingView.as_view(), name='proxy-listing'),
+    url(r'^user-registration-list/', UserRegistrationListView.as_view(), name='user_registration_list'),
+    url(r'^t-shirt-update/(?P<pk>\d+)$', AddTShirtView.as_view(), name='t_shirt_update'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
+    url(r'^user/', include('user_registration.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

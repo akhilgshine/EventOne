@@ -10,10 +10,11 @@ from django.shortcuts import render, get_object_or_404
 from django.template import Context
 from django.template.loader import get_template
 from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 # from xhtml2pdf import pisa
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from events.templatetags import template_tags
 import json
@@ -89,7 +90,7 @@ class LoginView(View):
     """
 
 
-class RegisterEvent(TemplateView):
+class RegisterEvent(LoginRequiredMixin, TemplateView):
     template_name = 'register.html'
 
     def get(self, request, *args, **kwargs):
@@ -484,7 +485,7 @@ def logout_view(request):
     """
 
 
-class ListUsers(ListView):
+class ListUsers(LoginRequiredMixin, ListView):
     template_name = 'user_list.html'
     queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
 
@@ -610,7 +611,7 @@ class InvoiceView(TemplateView):
 """
 
 
-class UserRegisterUpdate(TemplateView):
+class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
     template_name = 'register.html'
     form = EventRegisterForm
 
@@ -753,7 +754,7 @@ class UserRegisterUpdate(TemplateView):
             return HttpResponseRedirect(reverse('register_event'))
 
 
-class UpdateHotelView(UpdateView):
+class UpdateHotelView(LoginRequiredMixin, UpdateView):
     template_name = "update_hotel.html"
     form_class = HotelForm
     success_url = '/users/'
@@ -829,7 +830,7 @@ class UpdateHotelView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UpdateContributionPaymentView(UpdateView):
+class UpdateContributionPaymentView(LoginRequiredMixin, UpdateView):
     template_name = 'update_reg_payment.html'
     form_class = UpdatePaymentForm
     success_url = '/users'
@@ -873,7 +874,7 @@ class UpdateContributionPaymentView(UpdateView):
         return super(UpdateContributionPaymentView, self).form_invalid()
 
 
-class UpgradeStatusView(UpdateView):
+class UpgradeStatusView(LoginRequiredMixin, UpdateView):
     template_name = 'upgrade_status.html'
     form_class = UpgradeStatusForm
     success_url = '/users'
@@ -909,7 +910,7 @@ class UpgradeStatusView(UpdateView):
         return super(UpgradeStatusView, self).form_invalid(form)
 
 
-class DashBoardView(ListView):
+class DashBoardView(LoginRequiredMixin, ListView):
     template_name = "dashboard.html"
 
     def get_queryset(self):
@@ -1004,7 +1005,7 @@ class DownloadCSVView(TemplateView):
         return super(DownloadCSVView, self).get(request, *args, **kwargs)
 
 
-class DuePaymentView(UpdateView):
+class DuePaymentView(LoginRequiredMixin, UpdateView):
     template_name = 'update_due.html'
     form_class = UpdateDuePaymentForm
     success_url = '/users'
@@ -1048,7 +1049,7 @@ class AddContributionListPage(TemplateView):
         return context
 
 
-class DeleteHotelView(DeleteView):
+class DeleteHotelView(LoginRequiredMixin, DeleteView):
     model = BookedHotel
     success_url = '/users'
 
@@ -1064,7 +1065,7 @@ class DeleteHotelView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class DeleteRegisteredUsers(DeleteView):
+class DeleteRegisteredUsers(LoginRequiredMixin, DeleteView):
     model = RegisteredUsers
     template_name = 'registered_users_confirm_delete.html'
     success_url = '/users'
@@ -1076,7 +1077,7 @@ class DeleteRegisteredUsers(DeleteView):
         return HttpResponseRedirect(self.success_url)
 
 
-class AddToRegistrationView(View):
+class AddToRegistrationView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         user_id = RegisteredUsers.objects.get(id=self.kwargs['pk'])
@@ -1085,7 +1086,7 @@ class AddToRegistrationView(View):
         return HttpResponseRedirect('/users')
 
 
-class EditRegistrationView(UpdateView):
+class EditRegistrationView(LoginRequiredMixin, UpdateView):
     template_name = 'update_profile.html'
     form_class = UpdateProfileForm
     queryset = EventUsers.objects.all()
@@ -1131,7 +1132,6 @@ class EditRegistrationView(UpdateView):
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-
     def update_hotel(self, hotel_obj, created, form, checkin, checkout):
         room_id = self.request.POST['room_type_sel'].split(":")[0]
         if room_id and room_id != '0':
@@ -1170,7 +1170,7 @@ class EditRegistrationView(UpdateView):
         registered_user_obj.save()
 
 
-class UpdateHotelDue(UpdateView):
+class UpdateHotelDue(LoginRequiredMixin, UpdateView):
     form_class = UpdateHotelDuePaymentForm
     template_name = 'update_hotel_due.html'
     success_url = '/users'
@@ -1267,3 +1267,66 @@ class DownloadUnRegisteredUserCSVView(TemplateView):
                          ])
             return response
         return super(DownloadUnRegisteredUserCSVView, self).get(request, *args, **kwargs)
+
+
+class ProxyHotelBookingView(FormView):
+    template_name = 'proxy_hotel_booking.html'
+    form_class = ProxyHotelForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        table = form.cleaned_data['table']
+        hotel = form.cleaned_data['hotel']
+        room_type = form.cleaned_data['room_type']
+        hotel_rent = form.cleaned_data['hotel_rent']
+        check_in_date = form.cleaned_data['check_in_date']
+        check_out_date = form.cleaned_data['check_out_date']
+        obj = ProxyHotelBooking.objects.create(table=table, hotel=hotel, room_type=room_type, hotel_rent=hotel_rent,
+                                               check_in_date=check_in_date, check_out_date=check_out_date)
+        obj.room_type.rooms_available -= 1
+        obj.room_type.save()
+        return super(ProxyHotelBookingView, self).form_valid(form)
+
+
+class ProxyHotelListingView(TemplateView):
+    model = ProxyHotelBooking
+    template_name = 'proxy_listing.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProxyHotelListingView, self).get_context_data(**kwargs)
+        context['tables'] = Table.objects.all()
+        context['proxy_hotels'] = ProxyHotelBooking.objects.all()
+        return context
+
+
+class UserRegistrationListView(TemplateView):
+    model = RegisteredUsers
+    template_name = 'user_register_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserRegistrationListView, self).get_context_data(**kwargs)
+        context['tables'] = Table.objects.all()
+        context['user_registered'] = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=False)
+        return context
+
+
+class ApproveRegistrationView(TemplateView):
+    model = RegisteredUsers
+    success_url = reverse_lazy('list_users')
+
+    def get(self, request, pk=None):
+        try:
+            obj = RegisteredUsers.objects.get(event_user__id=pk)
+            obj.event_user.is_approved = True
+            obj.event_user.save()
+        except RegisteredUsers.DoesNotExist:
+            obj = None
+        return HttpResponseRedirect(self.success_url)
+
+
+class AddTShirtView(UpdateView):
+    model = RegisteredUsers
+    form_class = UpdateTShirtForm
+    template_name = 't_shirt_update.html'
+    success_url = reverse_lazy('list_users')
+

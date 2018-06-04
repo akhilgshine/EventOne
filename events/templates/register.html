@@ -42,6 +42,8 @@
         <a href="/">Home</a>
         <a href="/users/">Registered Users</a>
         <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
+        <a href="{% url 'proxy-hotel' %}">Proxy Hotel Booking</a>
+        <a href="{% url 'user_registration_list' %}">User Registration Approval</a>
         <a href="/users/?is_active=False">Deleted Users </a>
         <a href="{% url 'dash_board' %}">DashBoard</a>
         <a href="/logout/">Logout</a>
@@ -750,7 +752,7 @@
         minDate: new Date(Date.parse("2018-08-03")),
         maxDate: new Date(Date.parse("2018-08-05")),
         onSelect: function (selected) {
-            $("#checkOut").datepicker("option", "minDate", selected)
+            $("#checkOut").datepicker("option", "minDate", selected);
             changeCheckinDate();
         },
         beforeShow: function (input) {

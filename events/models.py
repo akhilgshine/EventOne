@@ -102,6 +102,7 @@ class Table(models.Model):
     table_name = models.CharField(max_length=30, blank=True, null=True)
     table_order = models.IntegerField(blank=True, null=True)
     event = models.ForeignKey(Event)
+    is_partial_payment = models.BooleanField(default=True)
 
     def __str__(self):
         return self.table_name
@@ -322,6 +323,7 @@ class RoomType(models.Model):
     rooms_available = models.IntegerField(blank=True, null=True)
     net_rate = models.IntegerField(blank=True, null=True)
     sort_order = models.IntegerField(default=0)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.room_type
@@ -364,3 +366,16 @@ class BookedHotel(models.Model):
     @property
     def hotel_name(self):
         return self.hotel.name
+
+
+class ProxyHotelBooking(models.Model):
+    table = models.ForeignKey(Table, null=True, blank=True)
+    hotel = models.ForeignKey(Hotel)
+    room_type = models.ForeignKey(RoomType, null=True, blank=True)
+    hotel_rent = models.IntegerField(default=0)
+    check_in_date = models.DateTimeField(null=True, blank=True)
+    check_out_date = models.DateTimeField(null=True, blank=True)
+    booked_date = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return self.table.table_name

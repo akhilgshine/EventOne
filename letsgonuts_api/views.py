@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from datetime import date, timedelta, datetime
 from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from events_app.settings import DEFAULT_FROM_EMAIL
 
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -106,9 +108,11 @@ class RegisterEventViewSet(ModelViewSet):
             event_user.mobile = serializer.validated_data.pop('mobile')
             event_user.email = serializer.validated_data.pop('email')
             event_user.member_type = serializer.validated_data.pop('registration_type')
-            room_type = serializer.validated_data.pop('room_type')
-            hotel_name = serializer.validated_data.pop('hotel_name')
-            tottal_rent = serializer.validated_data.pop('tottal_rent')
+            room_type = serializer.validated_data.pop('room_type', None)
+            hotel_id = serializer.validated_data.pop('hotel_id', None)
+            tottal_rent = serializer.validated_data.pop('tottal_rent', None)
+            checkin_date = serializer.validated_data.pop('checkin_date', None)
+            checkout_date = serializer.validated_data.pop('checkout_date', None)
             event_user.save()
             if RegisteredUsers.objects.filter(event_user=event_user).exists():
                 registered_user = RegisteredUsers.objects.get(event_user=event_user)
@@ -119,7 +123,7 @@ class RegisterEventViewSet(ModelViewSet):
                 registered_user.save()
             else:
                 registered_user = serializer.save()
-                if registered_user.qrcode is not None:
+                if registered_user.qrcode:
                     try:
                         registered_user.qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
                         if not registered_user.qrcode.split('QRT')[1].startswith('8'):
@@ -135,18 +139,30 @@ class RegisterEventViewSet(ModelViewSet):
                     except:
                         registered_user.qrcode = 'QRT8001'
                     registered_user = serializer.save()
-            try:
-                room_type = RoomType.objects.get(id=room_type)
-                #  TODO Validate room type
-            except:
-                return Response({'status': False, 'error-message': 'Invalid Room type'}, status=400)
-            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user)
-            hotel_obj.hotel_name = hotel_name
-            hotel_obj.tottal_rent = tottal_rent
-            hotel_obj.room_type = room_type
-            hotel_obj.save()
 
-        return Response({'status': True}, status=HTTP_201_CREATED)
+            try:
+                hotel = Hotel.objects.get(id=hotel_id)
+            except Hotel.DoesNotExist:
+                hotel = None
+
+            if hotel and room_type:
+                try:
+                    room_type = RoomType.objects.get(id=room_type)
+                    #  TODO Validate room type
+                except RoomType.DoesNotExist:
+                    return Response({'status': False, 'error-message': 'Invalid Room type'}, status=400)
+                try:
+                    hotel_obj = BookedHotel.objects.get(registered_users=registered_user)
+                    hotel_obj.hotel = hotel
+                except BookedHotel.DoesNotExist:
+                    hotel_obj = BookedHotel.objects.create(registered_users=registered_user, hotel=hotel)
+                hotel_obj.room_type = room_type
+                hotel_obj.tottal_rent = tottal_rent
+                hotel_obj.checkin_date = checkin_date
+                hotel_obj.checkout_date = checkout_date
+                hotel_obj.save()
+
+        return Response({'status': True, 'user_id': registered_user.id}, status=HTTP_201_CREATED)
 
 
 class RegisteredUsersViewSet(ModelViewSet):
@@ -157,6 +173,7 @@ class RegisteredUsersViewSet(ModelViewSet):
 class RoomTypeListViewSet(ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         start_date = dateparser.parse(self.request.GET.get('start_date'))
@@ -204,13 +221,13 @@ class UserLoginViewSet(ModelViewSet):
             user.save()
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
         otp_obj = OtpModel.objects.create(user=user, otp=otp_number)
-
         message = "OTP for letsgonuts login is %s" % (otp_number,)
         message_status = requests.get(
             'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
             '=QrtReg&message=%s' % (mobile, message))
+        # send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
         headers = self.get_success_headers(serializer.data)
-        return Response('sent OTP MESSAGE successfully', status=HTTP_201_CREATED, headers=headers)
+        return Response('sent OTP MESSAGE & Email successfully', status=HTTP_201_CREATED, headers=headers)
 
 
 class OtpPostViewSet(ModelViewSet):
@@ -237,6 +254,7 @@ class OtpPostViewSet(ModelViewSet):
             otp_obj.user.save()
             response['token'] = token.key
             response['status'] = 1
+            response['user_id'] = otp_obj.user.id
             return Response(response, status=200)
         else:
             if otp_obj.user.get_user_registration.all():
@@ -252,3 +270,9 @@ class OtpPostViewSet(ModelViewSet):
 class HotelNameViewSet(ModelViewSet):
     queryset = Hotel.objects.all()
     serializer_class = HotelNameSerializer
+
+
+class PaymentDetailsViewSet(ModelViewSet):
+    queryset = RegisteredUsers.objects.all()
+    serializer_class = RegisteredUsersSerializer
+    permission_classes = [AllowAny, ]
