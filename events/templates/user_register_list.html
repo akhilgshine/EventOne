@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+{% load template_tags %}
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lets Go Nuts - QRT 85</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/rowreorder/1.2.3/css/rowReorder.dataTables.min.css">
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/user_list.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/data-table-responsive.css' %}" rel="stylesheet" type="text/css">
+    <style type="text/css" class="init">
+    </style>
+
+
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.4.js">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
+    </script>
+
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <style>
+        body {
+            background: url('/static/images/bg-pink-dark.jpg') repeat-y;
+            /*min-height: 100%;*/
+            padding: 1%;
+            overflow-x: hidden;
+        }
+
+        .user_list_inputs {
+            margin-top: 10px;
+        }
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background: none;
+        }
+
+        .dataTables_scrollBody {
+            position: relative;
+            overflow: auto !important;
+            width: 100%;
+            height: 60vh !important;
+        }
+
+        th {
+            color: white;
+        }
+@media print
+{
+  table { page-break-after:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  td    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+}
+    </style>
+
+</head>
+<body id="page-top">
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+        <a href="/">Home</a>
+        <a href="/users/">Registered Users</a>
+        <a href="/register/">Register Event </a>
+        <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
+        <a href="{% url 'proxy-hotel' %}">Proxy Hotel Booking</a>
+        <a href="{% url 'proxy-listing' %}">Proxy Hotel Listing</a>
+        <a href="{% url 'user_registration_list' %}">User Registration Approval</a>
+        <a href="/users/?is_active=False">Deleted Users </a>
+        <a href="{% url 'dash_board' %}">DashBoard </a>
+        <a href="/logout/">Logout</a>
+    </div>
+</div>
+
+<div class="wraper-user_list" style="margin-bottom: 1%;">
+
+    <div class="container-fluid bg-3 text-center">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <img src="{% static 'images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()"
+                     style="width: 110px;">
+            </div>
+            <div class="col-sm-2">
+                <div class="container text-center">
+                    <h2 style="color: #fff;">Registered Users</h2>
+                </div>
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if messages %}
+        {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }} message"{% endif %}
+                                      style='margin-top: 50px;'>
+                <a class="close" data-dismiss="alert" href="#">&times;</a>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="message alert alert-success message" style="display: none;">
+            <a class="close" data-dismiss="alert" href="#">&times;</a>
+
+        </div>
+    {% endif %}
+
+
+    <div class="container-fluid">
+        <div class="row content">
+
+            <div class="col-md-2 user_list_inputs">
+                <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
+                <a href="{% url 'download_csv' %}" >
+                    <button class='btn btn-primary'>Download</button>
+                </a>
+            </div>
+            <div class="col-md-6 user_list_inputs">
+                <select id="sortTable" class="btn btn-primary btn_sort" place>
+                    <option value="" disabled selected>Select Table</option>
+                    <option value="all">All</option>
+                    {% for table in tables %}
+                        <option value={{ table.table_name|cut:" " }}>
+                            {{ table.table_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 user_list_inputs">
+                <select id="sortOption" class="btn btn-primary btn_sort">
+                    <option>Select one</option>
+                    <option value=1>Name</option>
+                    <option value=3>Table</option>
+                    <!-- <option value=9>Date</option> -->
+                    <option value=12>Order</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 user_list_inputs">
+                <div class="input-group">
+                    <input id="seachDataTable" type="text" class="form-control form_serch" placeholder="Search for...">
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <br>
+
+    <div class="fw-container">
+        <div class="fw-body">
+            <div class="content">
+                <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Table</th>
+                        <th>Registration code</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+
+                        <th>Reg Type</th> <!-- Status -->
+                        <th>Partial/Completely</th><!-- Payment Status -->
+
+                        <th>Registration Amount</th>
+                        <th>Amount Due</th>
+                        <!-- <th>Registration Date </th> -->
+                        <!-- <th>Coupon</th> -->
+                        <th>Room</th>
+
+                        <th>Hotel Name</th>
+                        <th>Room Type</th>
+                        <th>Checkin Date</th>
+                        <th>Checkout Date</th>
+                        <th>No of Nights</th>
+                        <th>Hotel Amount Paid</th>
+                        <th>Hotel Dues</th>
+                        <th></th>
+                        <th> Contribution</th>
+                        <th>Total Payment</th>
+                        <th>Total Due</th>
+                        <th>Print Coupon</th>
+                        <th>Approve Registration</th>
+                        {% if is_active %}
+                        <th> Add to Registration</th>
+                        {% else %}
+                            <th> Delete Registration</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for user in user_registered %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                {{ user.event_user.first_name }} {{ user.event_user.last_name }}
+                            </td>
+                            <td> {{ user.table.table_name|cut:" " }}</td>
+                            <td> {{ user.qrcode }} </td>
+                            <td> {{ user.event_user.mobile }} </td>
+                            <td> {{ user.event_user.email }}</td>
+
+                            <td>
+                                {{ user.get_event_status_display }}
+                                {% if not user.event_status == 'Couple' %}
+                                    {% if not user.event_status == 'Couple_Informal' %}
+                                        <a href="{% url 'upgrade_reg_status' user.id %}">
+                                            Upgrade
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td> {{ user.id|payment_status }}</td>
+
+                            <td> {{ user.amount_paid }}</td>
+
+                            <td> {{ user.due_amount }}
+                                {% if user.due_amount %}
+                                    &nbsp|&nbsp
+                                <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
+                                {% endif %}
+                            </td>
+
+                            <td style="border-right: 3px solid green; "> <!-- Room --></td>
+                            <td>
+                                {% if user.hotel.all %}
+
+                                    {{ user.hotel_name }}
+                                    <br>
+                                    <a href="/update_hotel/{{ user.id }}"> Update Booking </a>
+                                {% else %}
+                                    -<br>
+                                    <a href="/update_hotel/{{ user.id }}"> Book Hotel </a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.hotel.all %}
+                                    {{ user.hotel_room_type }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.hotel.all %}
+                                    {{ user.checkin_date|date }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.hotel.all %}
+                                    {{ user.checkout_date|date }}
+                                {% endif %}
+                            </td>
+
+                            <td>{{ user.id |no_of_night }}</td>
+                            <td> {{ user.id| get_hotel_rent }}</td>
+                            {% if not user.hotel_due %}
+                                <td>-</td>
+                            {% else %}
+                                <td> {{ user.hotel_due }}&nbsp|&nbsp
+                                    <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a></td>
+
+                            {% endif %}
+                            <td style="border-right: 3px solid green; "></td>
+                            <!-- TOTAL PAYMENT  -->
+                            <td>{{ user.contributed_amount }}</td>
+                            <td>{{ user.total_paid }}</td>
+                            <td><!--Total Due --> {{ user.total_due }}</td>
+                            <td>
+                                {% encrypt_id user.id as encrypted_id %}
+                                <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
+                            <td><a href='{% url 'approve-registration' user.event_user.id %}'>Approve Registration</a></td>
+{#                            <td>Edit</td>#}
+                        {% if user.is_active %}
+                            <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
+                        {% else %}
+                            <td><a href="{%  url 'add_to_registration' user.id %}">Add to Registration</a></td>
+                        {% endif %}
+                        </tr>
+
+                    {% endfor %}
+
+                    <tr>
+                        <td style="display: none;"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total_paid_registration }}</td>
+                        <td>{{ total_registration_due }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ total_paid_hotel }}</td>
+                        <td>{{ total_hotel_due }}</td>
+                        <td></td>
+                        <td>{{total_contributions}}</td>
+                        <td>{{ total_amount_paid }}</td>
+                        <td>{{ total_due }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function openNav() {
+        document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
+
+
+    $(document).ready(function () {
+        function printData()
+        {
+           var divToPrint=document.getElementById("printTable");
+           newWin= window.open("");
+           newWin.document.write(divToPrint.outerHTML);
+           newWin.print();
+           newWin.close();
+        }
+
+        $('#printPage').on('click',function(){
+        printData();
+        })
+
+        var t = $('#user_lists').DataTable({
+            "order": [[0, 'asc']],
+            "paging": false,
+            "info": false,
+            // responsive: true,
+            "scrollX": true,
+            fixedHeader: true,
+
+        });
+        $("#user_lists_filter").hide();
+
+        t.on('order.dt search.dt', function () {
+            t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    });
+
+    $('#sortOption').on('change', function () {
+
+        var table = $('#user_lists').DataTable();
+        var order = table.order();
+
+        selected_id = $("#sortOption option:selected").val();
+
+        if (selected_id == '9') {
+            table.order([12, 'desc']).draw();
+        }
+        else {
+            table.order([selected_id, 'asc']).draw();
+        }
+
+    });
+
+    $('#seachDataTable').keyup(function () {
+        var table = $('#user_lists').DataTable();
+        table.search($(this).val()).draw();
+    })
+
+
+    $('#sortTable').on('change', function () {
+        var table = $('#user_lists').DataTable();
+        var selected_table = $("#sortTable option:selected").val();
+        if (selected_table == 'all') {
+            location.reload();
+        }
+        else {
+            regExSearch = '"' + selected_table + '"';
+            table.column(2).search(regExSearch).draw();
+        }
+    });
+</script>
+</body>
+</html>

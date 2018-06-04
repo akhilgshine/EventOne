@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Lets Go Nuts - QRT 85</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Custom css style -->
+    <link href="{% static 'css/custom_reg.css' %}" rel="stylesheet" type="text/css">
+
+
+    <style>
+        .datepicker {
+            color: #555;
+        }
+
+        .close_btn {
+            float: right;
+        }
+
+        .reciept_number {
+            display: none;
+        }
+
+        .btn-minwidth {
+            min-width: auto !important;
+        }
+
+        .nuts-sub-hotel-confirm {
+            background: #00baff;
+            border: 0px;
+            border-radius: 0px;
+            color: #fff;
+            font-weight: bold;
+            min-width: 276px;
+            padding: 10px 30px;
+        }
+
+ .btn-cancel {    min-width: 276px;
+    padding: 10px 30px;
+    border-radius: 0px;
+    font-weight: bold;}
+.btn-upgrade {    background: #0d6e0d;}
+
+    </style>
+</head>
+
+<body id="page-top">
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+        <a href="/">Home</a>
+        <a href="/register/">Register Event</a>
+        <a href="/users/">Registered Users</a>
+        <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
+        <a href="/users/?is_active=False">Deleted Users </a>
+        <a href="{% url 'dash_board' %}">DashBoard</a>
+
+        <a href="/logout/">Logout</a>
+    </div>
+</div>
+<div class="container-fluid wrap-nuts register">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="logo-wrap">
+                <img src="{% static '/images/logo.png' %}" class="img-responsive" alt="" onclick="openNav()">
+            </div>
+            <div class="col-sm-12 wrap-form-submit">
+                <div id="hotelForm">
+                    <form method="POST" class="form-horizontal form-nuts" id="DetailForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                     <div class="form-group">
+                            <label class="control-label col-sm-4" >Table Name :</label>
+                            <div class="col-sm-8">
+                                {{ form.table }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="id_hotel">Hotel Name :</label>
+                            <div class="col-sm-8">
+                                {{ form.hotel }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="room_type">Room Type :</label>
+                            <div class="col-sm-8" style="color: black">
+                                {{ form.room_type }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for=""> Date : </label>
+                            <div class="col-sm-4">
+                                Check IN:
+                                {{ form.check_in_date }}
+                            </div>
+                            <div class="col-sm-4">
+                                Check Out:
+                                {{ form.check_out_date }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="id_hotel">Hotel Rent :</label>
+                            <div class="col-sm-8">
+                           {{ form.hotel_rent }}
+                            </div>
+                        </div>
+{#                        <div class="form-group">#}
+{#                            <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>#}
+{#                            <div class="col-sm-2">#}
+{#                                <label>#}
+{#                                    <input id="radioId_0" type="radio" class="payment-mode" name="mode_of_payment"#}
+{#                                           value="cash"> <span class="radio-change"></span> Cash#}
+{#                                </label>#}
+{#                            </div>#}
+{#                            <div class="col-sm-2">#}
+{#                                <label>#}
+{#                                    <input id="radioId_1" type="radio" class="payment-mode" name="mode_of_payment"#}
+{#                                           value="POS"> <span class="radio-change"></span> POS#}
+{#                                </label>#}
+{#                            </div>#}
+{#                            <div class="col-sm-2">#}
+{#                                <label>#}
+{#                                    <input id="radioId_2" type="radio" class="payment-mode" name="mode_of_payment"#}
+{#                                           value="card"> <span class="radio-change"></span> Card#}
+{#                                </label>#}
+{#                            </div>#}
+{#                            <div class="col-sm-2">#}
+{#                                <label>#}
+{#                                    <input id="radioId_3" type="radio" class="payment-mode" name="mode_of_payment"#}
+{#                                           value="bank_transfer"> <span class="radio-change"></span> Bank Transfer#}
+{#                                </label>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group reciept_number">#}
+{#                            <label class="control-label col-sm-4" for="id_reciept_number">Receipt Number :</label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="text" class="form-control" id="id_reciept_number"#}
+{#                                       placeholder="Receipt number" name="receipt_number">#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group reciept_number">#}
+{#                            <label class="control-label col-sm-4" for="id_reciept_file">Upload receipt :</label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="file" class="form-control" id="id_reciept_file" placeholder="Receipt"#}
+{#                                       name="receipt_file">#}
+{#                            </div>#}
+{#                        </div>#}
+                        <div class="col-sm-4">
+                            {{ form.errors }}
+                        </div>
+                        <p id="notifications" style="color: red"></p>
+                        <hr>
+{#                        <div class="form-group">#}
+{#                            <label class="control-label col-sm-4"> Total Amount :</label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <div class="booked-hotel">#}
+{#                                    Total Hotel Booking Amount: Rs <span id="hotel_amount_final"></span> /-<br>#}
+{#                                    Amount Paid :Rs <span id="amount_paid_final"></span> /-<br>#}
+{#                                    Due Amount :Rs <span id="amount_due"></span> /-<br>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+
+                        <div class="form-group">
+
+                            <div class="col-sm-3">
+                                <button type="button" id="confirmBooking"
+                                        class="btn btn-default nuts-sub-hotel-confirm btn-minwidth"> Confirm Booking
+                                </button>
+                            </div>
+                            {% if hotel_obj %}
+                                <div class="col-sm-3">
+                                    <a href="{% url 'delete_hotel_view' hotel_obj.id %}">
+                                        <button type="button"
+                                                class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth"> Delete
+                                            Booking
+                                        </button>
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button type="button"
+                                            class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth btn-upgrade" id="id_upgrade_hotel"> Upgrade Hotel
+                                    </button>
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <div class="col-sm-3">
+                                <a href="/users/">
+                                    <button type="button" class="btn btn-cancel btn-danger nuts-sub-hotel-cancel btn-minwidth">
+                                        Cancel
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/jquery/jquery-ui.css' %}">
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        var amount_to_be_paid = $('#rent_total').val();
+        var initial_due = $('#id_tottal_rent').val();
+        var initial_paid = $('#id_current_paid').val();
+        var rent_total = $('#rent_total').val();
+
+
+        $('#hotel_amount_final').text($('#id_tottal_rent').val());
+        ajaxHotelRent();
+        $('.reciept_number').css('display', 'none');
+        $(".payment-mode").click(function () {
+            if ($('#radioId_3').is(':checked')) {
+
+                $('.reciept_number').css('display', 'block');
+            }
+            else if ($('#radioId_1').is(':checked')) {
+
+                $('.reciept_number').css('display', 'block');
+            }
+            else {
+                $('.reciept_number').css('display', 'none');
+            }
+        });
+
+
+    });
+    $('#id_upgrade_hotel').on('click',function () {
+            $('#DetailForm input ').attr('readonly', false);
+            $('#id_room_type').attr("disabled", false);
+            $('#id_room_type').focus();
+            $('#id_checkin_date').datepicker('enable');
+            $('#id_checkout_date').datepicker('enable');
+
+            $('input:radio[name=mode_of_payment]').attr('disabled', false);
+
+    });
+
+    function openNav() {
+        document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
+
+    var selected_rent;
+
+    function selectRoomType(field) {
+        ajaxCalculateHotelRent();
+
+        if ($(field).val() == '') {
+            clearHotelFields();
+        }
+        else {
+            calculate_rent();
+        }
+
+
+    }
+
+    $("#id_check_out_date").change(function () {
+       ajaxHotelRent();
+        ajaxCalculateHotelRent();
+    });
+
+    function changeCheckinDate() {
+        ajaxHotelRent();
+        ajaxCalculateHotelRent();
+    };
+
+    function ajaxHotelRent() {
+
+        var hotel = $('#id_hotel').val();
+        var room_type =$('#id_room_type').val();
+        var check_in = $('#id_check_in_date').val().split('/')[0];
+        var check_out = $('#id_check_out_date').val().split('/')[0];
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'hotel_rent' %}',
+            data: {'hotel': hotel, 'room_type': room_type, 'check_in': check_in, 'check_out': check_out},
+            dataType: 'json',
+            success: function (data) {
+                $('.error_div').html('');
+
+                if (data && data.total_rent) {
+                    $('#id_hotel_rent').val(data.total_rent);
+                     $('#id_hotel_booking').html(data.total_rent);
+
+                }
+                else {
+                    $('.error_div').html(data.message)
+
+                }
+
+            }
+        });
+    }
+
+    $("#id_check_in_date").datepicker({
+        dateFormat: 'dd/mm/yy',
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-01")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
+        onSelect: function (selected) {
+            $("#id_checkout_date").datepicker("option", "minDate", selected);
+            changeCheckinDate();
+            totalAmountCalculation($('#id_hotel_rent'));
+            ajaxCalculateHotelRent();
+        },
+        beforeShow: function (input) {
+            setTimeout(function () {
+                var headerPane = $(input)
+                    .datepicker("widget")
+                    .find(".ui-datepicker-header");
+
+                $("<button>", {
+                    text: "X",
+                    class: 'close_btn',
+                    click: function () {
+                        $("#id_checkin_date").val('');
+                        $("#id_checkin_date").datepicker("hide");
+                        clearHotelFields();
+
+                    }
+                }).appendTo(headerPane);
+            }, 1);
+        }
+    });
+
+
+    $("#id_check_out_date").datepicker({
+        dateFormat: 'dd/mm/yy',
+        numberOfMonths: 1,
+        defaultDate: new Date(Date.parse("2018-08-04")),
+        minDate: new Date(Date.parse("2018-08-03")),
+        maxDate: new Date(Date.parse("2018-08-05")),
+        onSelect: function () {
+            changeCheckinDate();
+            totalAmountCalculation($('#id_hotel_rent'));
+
+        },
+        beforeShow: function (input) {
+            setTimeout(function () {
+                var headerPane = $(input)
+                    .datepicker("widget")
+                    .find(".ui-datepicker-header");
+                $("<button>", {
+                    text: "X",
+                    class: 'close_btn',
+                    click: function () {
+                        $("#id_checkout_date").val('');
+                        $("#id_checkout_date").datepicker("hide");
+                        clearHotelFields();
+
+
+                    }
+                }).appendTo(headerPane);
+            }, 1);
+        }
+    });
+
+    $('#confirmBooking').on('click', function (e) {
+        e.preventDefault();
+
+        var rent_total = parseInt($('#id_hotel_rent').val());
+        if ($('#id_room_type').val() == "") {
+            $("#notifications").text('Please Select a room type')
+        }
+        else if ($('#id_checkin_date').val() == '' && $('#id_checkout_date').val() == '') {
+            $("#notifications").text('Please Select Checkin and Checkout');
+
+        }
+        else if (!$('input[name=mode_of_payment]:checked').val()) {
+            $("#notifications").text('Please Select a Payment Mode !');
+        }
+
+        else {
+            $('#DetailForm').submit();
+        }
+
+
+    });
+
+
+
+
+
+
+    {% if hotel_obj %}
+        $("#id_hotel").val('{{hotel_obj.hotel.id}}');
+        {% if hotel_obj.registered_users.hotel_due %}
+            $("#id_hotel_rent").val('{{hotel_obj.registered_users.hotel_due}}');
+        {% else %}
+            $("#id_hotel_rent").val('{{hotel_obj.tottal_rent}}');
+            $("#rent_total").val('{{hotel_obj.tottal_rent}}');
+        {% endif %}
+        $('#id_room_type option[value="{{hotel_obj.room_type.id}}:{{ hotel_obj.room_type.net_rate }}"]').attr('selected', 'selected');
+        $("#id_checkin_date").val('{{hotel_obj.checkin_date|date:"d/m/Y" }}');
+        $("#id_checkout_date").val('{{hotel_obj.checkout_date|date:"d/m/Y" }}');
+        {% if  hotel_obj.mode_of_payment == 'Cash' %}
+            $("#radioId_0").prop("checked", true);
+        {% elif  hotel_obj.mode_of_payment == 'POS' %}
+            $("#radioId_1").prop("checked", true);
+        {% elif hotel_obj.mode_of_payment == 'Card' %}
+            $("#radioId_2").prop("checked", true);
+        {% elif hotel_obj.mode_of_payment == 'Bank Transfer' %}
+            $("#radioId_2").prop("checked", true);
+        {% endif %}
+
+    {% endif %}
+
+    function clearHotelFields() {
+        $('#id_room_type > option[value=""]').prop('selected', true);
+        $('#id_room_type > option[value=""]').attr('selected', true);
+        $('#rent_total').val('');
+        $('#id_tottal_rent').val('');
+        $('#id_checkin_date').val('');
+        $('#id_checkout_date').val('');
+        $('#id_current_paid').val('');
+        $('#hotel_amount_final').text(0);
+        $('#amount_paid_final').text(0);
+        $('#amount_due').text(0);
+        $("input:radio").attr("checked", false);
+
+    }
+
+    function totalAmountCalculation(due) {
+        var rent_total = $('#rent_total').val();
+
+        {% if hotel_obj %}
+            var amount_to_be_paid = $('#id_current_paid').val()
+            if (parseInt(amount_to_be_paid) < parseInt(rent_total)) {
+
+                $('#amount_due').html(rent_total - amount_to_be_paid - due.val());
+            }
+            else {
+                $('#amount_due').html(0)
+            }
+        {% else %}
+            if (parseInt(due.val()) < parseInt(rent_total)) {
+                $('#amount_due').html(rent_total - due.val());
+            }
+
+            else {
+                $('#amount_due').html(0)
+            }
+
+        {% endif %}
+
+
+    }
+
+    $('#id_tottal_rent').on('change keyup', function () {
+        totalAmountCalculation($(this));
+        balance_amount = parseInt($('#updated-balance-amount').text().trim());
+        current_due_amount = balance_amount - $(this).val();
+        $('#updated_due-amount').text(current_due_amount);
+        $('#updated_due').show()
+
+    });
+
+    {#function ajaxCalculateHotelRent() {#}
+    {#    {% if hotel_obj %}#}
+    {#        var room_type = $('#id_room_type').val().split(':')[0];#}
+    {#        var check_in = $('#id_checkin_date').val()#}
+    {#        var check_out = $('#id_checkout_date').val()#}
+    {#        current_hotel = ''#}
+    {#        new_hotel = ''#}
+    {#        console.log({{ hotel_obj.id }})#}
+    {#        $.ajax({#}
+    {#            type: "GET",#}
+    {#            url: '{% url "get-hotel-calculation"  %}',#}
+    {#            data: {#}
+    {#                'user_hotel':{{ hotel_obj.id }},#}
+    {#                'room_type': room_type,#}
+    {#                'check_in': check_in,#}
+    {#                'check_out': check_out#}
+    {#            },#}
+    {#            dataType: 'json',#}
+    {#            success: function (data) {#}
+    {#                console.log(data)#}
+    {#                current_hotel += "<div style='font-size:16px;'>Booked Hotel Details</div><div style='padding-left:10px'>Booked hotel rent: Rs "#}
+    {#                current_hotel += data.success.current_hotel_details.total_hotel_rent + " /-<br>"#}
+    {#                current_hotel += "Hotel Rent Paid : Rs "#}
+    {#                current_hotel += data.success.current_hotel_details.hotel_rent_paid + " /-<br>"#}
+    {#                current_hotel += "Due Amount : Rs "#}
+    {#                current_hotel += data.success.current_hotel_details.hotel_due_amount + " /-<br></div></br>"#}
+    {##}
+    {##}
+    {#                current_hotel += "<div style='font-size:16px;'>Updated Hotel Details</div><div style='padding-left:10px'>Hotel Booking Amount: Rs "#}
+    {#                current_hotel += data.success.updated_hotel_details.total_hotel_rent + " /-<br>"#}
+    {#                current_hotel += "Balance Amount To Be Paid : Rs <span id='updated-balance-amount'>"#}
+    {#                current_hotel += data.success.updated_hotel_details.hotel_due_amount + "</span> /-<br>"#}
+    {#                current_hotel += "<span id='updated_due' style='display:none'>Current Due Amount: Rs <span id='updated_due-amount'></span></span></div>"#}
+    {##}
+    {#                $('.booked-hotel').html(current_hotel)#}
+    {#            }#}
+    {#        });#}
+    {#    {% endif %}#}
+    {##}
+    {#}#}
+
+
+</script>
+</body>
+
+</html>
