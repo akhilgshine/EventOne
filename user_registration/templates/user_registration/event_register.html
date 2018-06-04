@@ -1,0 +1,563 @@
+<!doctype html>
+{% load static %}
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
+    <![endif]-->
+<!--[if IE 7]>
+    <html class="no-js lt-ie9 lt-ie8" lang="">
+        <![endif]-->
+<!--[if IE 8]>
+        <html class="no-js lt-ie9" lang="">
+            <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <style>
+         .error_div{
+    color:red;
+}
+    </style>
+</head>
+<body>
+<div class="gradient-bg">
+    <img src="{% static 'img/dance-shadow.png' %}" class="dance-bg"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 col-xs-5">
+                <div class="sub-logo">
+                    <img src="{% static 'img/sub-logo.png' %}" width="100%"/>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <nav nav-reveal-menu>
+            <ul>
+                {% comment %}{% if request.user.registered_obj %}
+                <a href="{% url 'coupon_success' %}" ><li>View Event Coupon</li></a>
+                {% else %}{% endcomment %}
+                 <a href="." ><li>Nothing To Display</li></a>
+{#                {% endif %}#}
+                <li>Two</li>
+                <li>Three</li>
+                <li>Four</li>
+                <li>Five</li>
+            </ul>
+        </nav>
+        <a href="#" id="nav-trigger" nav-reveal-button></a>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="stepper wizard ">
+                <div class="wizard-inner">
+                    <ul class="nav nav-tabs step-indicator" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Select table">
+                                                <span class="round-tab">
+                                                1
+                                                </span>
+                            </a>
+                            <h4 class="">Select table</h4>
+                        </li>
+                        <li role="presentation" class="disabled">
+                            <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Personal Info">
+                                                <span class="round-tab">
+                                                2
+                                                </span>
+                            </a>
+                            <h4 class="">PERSONAL INFO</h4>
+                        </li>
+                        <li role="presentation" class="disabled">
+                            <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab"
+                               title="Hotel Booking Details">
+                                                <span class="round-tab">
+                                                3
+                                                </span>
+                            </a>
+                            <h4 class="">HOTEL BOOKING DETAILS</h4>
+                        </li>
+                        <li role="presentation" class="disabled">
+                            <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab"
+                               title="Payment Details">
+                                                <span class="round-tab">
+                                                4
+                                                </span>
+                            </a>
+                            <h4 class="">PAYMENT DETAILS</h4>
+                        </li>
+                    </ul>
+                </div>
+                {#                                    <form role="form" id="form" data-toggle="validator">#}
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" role="tabpanel" id="step1">
+                        <div class="row m0">
+                            <h2>Select table</h2>
+                            <div class="col-sm-6 col-sm-offset-3 pt4em pb4em ">
+                                <form id="id_table_form" novalidate>
+                                    {% csrf_token %}
+                                    <label>Select Table </label>
+                                    {{ table_form.table }}
+                                     <span class="error_div"></span>
+                                    <label class="pt20">SELECT MEMBER TYPE </label>
+                                    {{ table_form.member_type }}
+                                </form>
+                            </div>
+                            <div class="clearfix"></div>
+                            <button type="button" class="btn btn-skip prev-step">BACK</button>
+                            <button type="button" class="btn  next-step pull-right btn-main " id="id_table_submit">
+                                NEXT
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="step2">
+                        <div class="row m0">
+                            <form id="id_profile_form" novalidate>
+                                {% csrf_token %}
+                                <h2>PERSONAL INFORMATION</h2>
+                                <div class="col-sm-6">
+                                    <label class="pt20">FIRST NAME</label>
+                                    {{ personal_info_form.first_name }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="pt20">LAST NAME</label>
+                                    {{ personal_info_form.last_name }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="">PHONE</label>
+                                    {{ personal_info_form.mobile }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="">EMAIL</label>
+                                    {{ personal_info_form.email }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="">T-Shirt Size</label>
+                                    {{ personal_info_form.t_shirt_size }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-sm-12">
+{#                                    <label class="d-block form-group pt20 ">REGISTRATION TYPE</label>#}
+{#                                    {{ personal_info_form.registration_type }}#}
+                                    {% for registration_types in personal_info_form.registration_type.field.choices %}
+                                        <label class="custom-check">
+                                            {{ registration_types.1 }}
+                                            <input type="radio" name="registration_type" value="{{ registration_types.0 }}">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    {% endfor %}
+                                    <span class="error_div error123"></span>
+
+                                    <div class="clearfix"></div>
+                                    <label class="pt20">Registration Fee :</label>
+                                    {{ personal_info_form.amount_paid }}
+                                    <span class="error_div"></span>
+                                    <h5 align="right" class="pt20">Total Amount: <span class="total_amount">0</span>
+                                    </h5>
+                                    <h5 align="right" class="pb20">Registration Amount: <span
+                                            class="total_amount">0</span></h5>
+                                </div>
+                                <div class="clearfix"></div>
+                                <button type="button" class="btn btn-main prev-step">BACK</button>
+                                <button type="button" class="btn  next-step pull-right btn-main"
+                                        id="id_profile_information">NEXT
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" role="tabpanel" id="step3">
+                        <form id="id_hotel_form">
+                            {% csrf_token %}
+                            <div class="row m0">
+                                <h2>HOTEL BOOKING</h2>
+                                <div class="col-sm-12">
+                                    <label class="">HOTEL NAME </label>
+                                    {{ hotel_details_form.hotel }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="">ROOM TYPE</label>
+                                    <div class="row m0 ">
+                                            <div class="form-group">
+
+                                                {% for roomtype in hotel_details_form.room_type.field.queryset %}
+                                                    <label class="btn room-typ">
+                                                        <img src="{% static 'img/tick.png' %}"
+                                                             class="room-select">
+                                                        {% if roomtype.get_room_type_image.all.0.image %}
+                                                            <img src="{{ roomtype.get_room_type_image.all.0.image.url }}"
+                                                                 alt="..." class=" img-check">
+                                                        {% else %}
+                                                            <img src="{% static 'img/r-1.png' %}" alt="..."
+                                                                 class=" img-check"
+                                                                 width="100%">
+                                                        {% endif %}
+                                                        <p>{{ roomtype }} <br> {{ roomtype.net_rate }} </p>
+                                                        <p></p>
+                                                        <input type="radio" name="room_type" id="item4"
+                                                               value="{{ roomtype.id }}" class="hidden"
+                                                               autocomplete="off">
+                                                    </label>
+                                                {% endfor %}
+                                            </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="pt20">CHECK IN</label>
+                                    {{ hotel_details_form.checkin_date }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="pt20">CHECK OUT</label>
+                                    {{ hotel_details_form.checkout_date }}
+                                    <span class="error_div"></span>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="pt20">HOTEL RENT IN RUPEES </label>
+                                    {{ hotel_details_form.tottal_rent }}
+                                    <span class="error_div"></span>
+                                    <h5 align="right" class="pt20" >HOTEL BOOKING AMOUNT: <span id="id_hotel_booking">0</span></h5>
+                                    <h5 align="right" class="pb20" >Total Amount: <span id="id_total_amount">0</span></h5>
+                                </div>
+                                <div class="clearfix"></div>
+                                <button type="button" class="btn btn-main prev-step">BACK</button>
+                                <button type="button" class="btn  next-step pull-right hotel-next btn-main "
+                                        id="id_hotel_information">NEXT
+                                </button>
+                                <button type="button" class="btn  next-step pull-right hotel-next btn-skip ">SKIP</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" role="tabpanel" id="complete">
+                        <div class="row m0">
+                            <h2>PAYMENT DETAILS</h2>
+                            <div class="col-sm-12">
+                                <div class="reciept" id="id_coupon_receipt">
+                                    <div class="row m0">
+                                        <div class="col-sm-6 col-sm-offset-5">
+                                            <h2>Area 1 Agm Of Round Table India For The Year 2018</h2>
+                                            <table class="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td><b>Name</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.event_user.first_name }} {{ payement_details.event_user.last_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Table</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.table.table_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Phone</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.event_user.mobile }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Email</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.event_user.email }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Type</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.event_status }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Reg.Amount</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.amount_paid }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Hotel</b> <span class="pull-right">:</span></td>
+                                                    <td>{{ payement_details.hotel_user.hotel.name }}, {{ payement_details.hotel_user.room_type.room_type }},
+                                                        Rs {{ payement_details.hotel_user.tottal_rent }} /-
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <div align="right">
+                                                <button class="btn coupon-reg"><b>Reg Number</b> : <span>{{ payement_details.qrcode }}</span>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <form id="paymentForm" method="post" action="{% url 'payment_registration' %}"  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="col-sm-12">
+                                    <label class="d-block mb20" style="    margin-bottom: 20px;">Payment Method</label>
+                                    {% for payments in payment_form.payment.field.choices %}
+                                        <label class="custom-check">
+                                            {{ payments.1 }}
+                                            <input type="radio" name="payment" value="{{ payments.0 }}">
+
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    {% endfor %}
+                                    <span class="error_div payment_error"></span>
+
+
+                                    <div class="clearfix"></div>
+                                    <label class="pt20">Reciept Number</label>
+                                    {{ payment_form.reciept_number }}
+                                    <label class="pt20">Reciept File</label>
+
+                                    {{ payment_form.reciept_file }}
+                                    <div class="clearfix m20" style="margin-top: 40px"></div>
+                                    <button type="button" class="btn btn-main prev-step">BACK</button>
+                                    <button type="button" class="btn  next-step pull-right btn-main "
+                                            id="id_payment_information">FINISH
+                                    </button>
+                                <div id="id_finish_message"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/vendor/jquery-1.11.2.min.js' %}"></script>
+<script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function (e) {
+        $(".img-check").click(function () {
+            $('.img-check').removeClass('check');
+            $(".room-select").hide();
+            $(this).siblings(".room-select").show();
+            $(this).addClass("check");
+            $(this).siblings('input[type=radio]').prop('checked', true);
+            console.log($(this).siblings('input[type=radio]').is(':checked'), "is checked?");
+            console.log('onclickroom', $(this).siblings('input[type=radio]').val());
+            ajaxHotelRent();
+
+        });
+        $('#id_hotel_booking').html($('#id_tottal_rent').val());
+        $('.total_amount').html($('#id_amount_paid').val());
+        $('#id_amount_paid').on('change keyup', function () {
+
+            $('.total_amount').html($(this).val());
+
+
+        });
+        $('#id_tottal_rent').on('change keyup', function () {
+
+            $('#id_hotel_booking').html($(this).val());
+
+
+        });
+        $('#id_checkin_date').datepicker({
+            dateFormat: 'dd/mm/yy',
+            numberOfMonths: 1,
+            defaultDate: '-2m',
+            minDate: new Date(Date.parse("2018-08-03")),
+            maxDate: new Date(Date.parse("2018-08-05"))
+        });
+        $('#id_checkout_date').datepicker({
+            dateFormat: 'dd/mm/yy',
+            numberOfMonths: 1,
+            defaultDate: new Date(Date.parse("2018-08-01")),
+            minDate: new Date(Date.parse("2018-08-03")),
+            maxDate: new Date(Date.parse("2018-08-05"))
+        });
+
+    });
+    $('#id_table_submit').on('click', function (e) {
+        e.preventDefault();
+        var myForm1 = $('#id_table_form');
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'event_register' %}',
+            data: myForm1.serialize(),
+            dataType: 'json',
+            success: function (data) {
+                if (data.message) {
+                    $('.step-indicator li.active').addClass('completed');
+                    var $active = $('.wizard .nav-tabs li.active');
+                    $active.next().removeClass('disabled');
+                    nextTab($active);
+                }
+                else {
+                    $.each(data, function(key,value){
+                    var input = $("#id_table_form :input[name='"+key+"']");
+                    input.siblings('.error_div').text(value);
+                  });
+
+                }
+            }
+        });
+    });
+
+    $('#id_profile_information').on('click', function () {
+        var myForm2 = $('#id_profile_form');
+        var v  =$(this);
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'profile_register' %}',
+            data: myForm2.serialize(),
+            dataType: 'json',
+            success: function (data) {
+                if (data.status) {
+                    $('.step-indicator li.active').addClass('completed');
+                    var $active = $('.wizard .nav-tabs li.active');
+                    $active.next().removeClass('disabled');
+                    nextTab($active);
+
+                }
+                else {
+                    $.each(data, function(key,value){
+                    var input = $("#id_profile_form :input[name='"+key+"']");
+                    input.siblings('.error_div').text(value);
+                  });
+
+                }
+            }
+        });
+    });
+    $('#id_payment_information').on('click', function () {
+        var myForm2 = $('#paymentForm');
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'payment_registration' %}',
+            data: myForm2.serialize(),
+            dataType: 'json',
+            success: function (data) {
+                if (data.status) {
+                    window.location.href = data.url;
+                }
+                else {
+                    $.each(data, function(key,value){
+                    var input = $("#paymentForm :input[name='"+key+"']");
+                    input.parent().parent().find('.error_div').text(value);
+                  });
+
+                }
+            }
+        });
+    });
+    $('.hotel-next').on('click', function () {
+        var myForm3 = $('#id_hotel_form');
+        $.ajax({
+        type: 'POST',
+        url: '{% url 'hotel_booking' %}',
+        data: myForm3.serialize(),
+        success: function (data) {
+        $('#id_coupon_receipt').html(data);
+            $('.step-indicator li.active').addClass('completed');
+            var $active = $('.wizard .nav-tabs li.active');
+            $active.next().removeClass('disabled');
+            nextTab($active);
+
+
+        }
+    });
+    });
+
+    function ajaxHotelRent() {
+
+        var hotel = $('#id_hotel').val();
+        var room_type = $('input:radio[name=room_type]:checked').val();
+        console.log('ajax_roomtype', room_type);
+        var check_in = $('#id_checkin_date').val().split('/')[1];
+        var check_out = $('#id_checkout_date').val().split('/')[1];
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'hotel_rent' %}',
+            data: {'hotel': hotel, 'room_type': room_type, 'check_in': check_in, 'check_out': check_out},
+            dataType: 'json',
+            success: function (data) {
+                $('.error_div').html('');
+
+                if (data && data.total_rent) {
+                    $('#id_tottal_rent').val(data.total_rent);
+                     $('#id_hotel_booking').html(data.total_rent);
+                     $('#id_total_amount').html((parseInt({{ request.user.registered_obj.amount_paid }}) + parseInt($('#id_tottal_rent').val())));
+
+                }
+                else {
+                    $('.error_div').html(data.message)
+
+                }
+
+            }
+        });
+    }
+
+    $('#id_hotel').on('change', function () {
+        ajaxHotelRent();
+    });
+    $('#id_checkin_date').on('change', function () {
+
+        ajaxHotelRent();
+    });
+    $('#id_checkout_date').on('change', function () {
+        ajaxHotelRent();
+
+    });
+    function getAmount(member_type, status) {
+        if (member_type == 'Tabler') {
+            if (status == 'Stag')
+                return 5000;
+            else if (status == 'Couple')
+                return 6000;
+        }
+        else {
+            if (status == 'Stag')
+                return 4000;
+            else if (status == 'Couple')
+                return 5000;
+            else if (status == 'Stag_Informal')
+                return 2500;
+            else if (status == 'Couple_Informal')
+                return 3500;
+        }
+        return 0;
+    }
+
+    $('input[type=radio][name=registration_type]').on('change', function () {
+        var memberType = '{{ request.user.member_type }}';
+        status = $(this).val();
+        var amount = getAmount(memberType, status);
+        $('#id_amount_paid').val(amount);
+        $('.total_amount').html(amount);
+    });
+    {% if request.user.registered_obj %}
+
+        {% if request.user.registered_obj.hotel_user.room_type %}
+            var value = {{request.user.registered_obj.hotel_user.room_type.id  }}
+            $("input[name=room_type][value=" + value + "]").attr('checked', 'checked');
+            $("input[name=room_type][value=" + value + "]").siblings(".room-select").show();
+        {% endif %}
+        {% if request.user.registered_obj.payment %}
+            var value = '{{request.user.registered_obj.payment }}';
+            $("input:radio[name=payment][value=" + value + "]").attr('checked','checked');
+
+
+        {% endif %}
+        {% if request.user.registered_obj.event_status %}
+            var value = '{{request.user.registered_obj.event_status }}';
+                $("input:radio[name=registration_type][value=" + value + "]").attr('checked','checked');
+
+
+        {% endif %}
+    {% endif %}
+
+</script>
+</body>
+</html>

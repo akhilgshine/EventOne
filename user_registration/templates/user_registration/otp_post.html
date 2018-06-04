@@ -1,0 +1,86 @@
+{%  extends 'user_registration/registration_base.html' %}
+{% load static %}
+{% block content %}
+<div class="enter_otp">
+    <h3 class="mb20">Enter OTP</h3>
+    <form action="" id="id_ajax_form">
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="input-group otp-input">
+                <span class="input-group-addon b0">
+                <img src="{% static 'img/locked.png' %}" width="20px">
+                </span>
+                <input class="form-control common-input b0 " placeholder="Enter OTP"
+                    name="otp_post" type="text" id="id_otp_value" autofocus>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-block btn-main" id="id_otp_submit">
+            Enter Otp
+            </button>
+        </div>
+        <div class="otp_error"></div>
+    </form>
+</div>
+<form action="{% url 'set_password' %}" method="post">
+    {% csrf_token %}
+    <div class="hide-show" style="display: none">
+        <h3 class="mb20">Set Password</h3>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon b0">
+                <img src="{% static 'img/locked.png' %}" width="20px">
+                </span>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon b0">
+                <img src="{% static 'img/locked.png' %}" width="20px">
+                </span>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-block btn-main"
+                id="id_password_submit"> Set Password
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+{% block js %}
+<script>
+    $('#id_ajax_form').on('submit click', function (e) {
+        //alert('hjiii');
+        e.preventDefault();
+        var otp = $('#id_otp_value').val();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'otp_post' %}',
+            data: {
+                'otp': otp, csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (!data.status) {
+                    $('.otp_error').text(data.message);
+                }
+                else {
+                    $('.hide-show').show();
+                    $('.enter_otp').hide();
+
+
+                }
+
+            }
+        });
+
+    });
+
+
+</script>
+{% endblock js %}

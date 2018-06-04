@@ -1,0 +1,32 @@
+{% extends 'user_registration/registration_base.html' %}
+{% load static %}
+{% block content %}
+<h3 class="mb20">User Login</h3>
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon b0">
+            <img src="{% static 'img/mail.png' %}" width="20px">
+            </span>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon b0">
+            <img src="{% static 'img/locked.png' %}" width="20px">
+            </span>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+    </div>
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    <div class="form-group">
+        <button class="btn btn-block btn-main"> Login</button>
+    </div>
+</form>
+{% endblock content %}

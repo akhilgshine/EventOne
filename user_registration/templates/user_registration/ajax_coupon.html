@@ -1,0 +1,67 @@
+<div class="row m0">
+    <div class="col-sm-6 col-sm-offset-5">
+        <h2>Area 1 Agm Of Round Table India For The Year 2018</h2>
+        <table class="table">
+            <tbody>
+            <tr>
+                <td><b>Name</b> <span class="pull-right">:</span></td>
+                <td>{{ request.user.first_name }} {{ request.user.last_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Table</b> <span class="pull-right">:</span></td>
+                <td>{{ request.user.table.table_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Phone</b> <span class="pull-right">:</span></td>
+                <td>{{ request.user.mobile }}</td>
+            </tr>
+            <tr>
+                <td><b>Email</b> <span class="pull-right">:</span></td>
+                <td>{{ request.user.email }}</td>
+            </tr>
+            <tr>
+                <td><b>Type</b> <span class="pull-right">:</span></td>
+                <td>{{ request.user.registered_obj.event_status }}</td>
+            </tr>
+            <tr>
+                <td><b>Amount Received</b> <span class="pull-right">:</span></td>
+                <td>Rs {{ request.user.registered_obj.amount_paid }}/-</td>
+
+            </tr>
+            <tr>
+                {% if  request.user.registered_obj.due_amount %}
+                    <td><b>Amount Due</b> <span class="pull-right">:</span></td>
+                    <td>Rs {{ request.user.registered_obj.due_amount }}/-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td><b>Hotel</b> <span class="pull-right">:</span></td>
+                {% if request.user.registered_obj.hotel_user %}
+                    <td>{{ request.user.registered_obj.hotel_user.hotel.name }}, {{ request.user.registered_obj.hotel_user.room_type.room_type }},
+                        <b>{{ request.user.registered_obj.hotel_user.checkin_date }}
+                            to {{ request.user.registered_obj.hotel_user.checkout_date }}</b>,
+                        Rs {{ request.user.registered_obj.hotel_user.tottal_rent }} /-
+                    </td>
+                {% else %}
+                    <td> No Hotels Booked</td>
+                {% endif %}
+            </tr>
+            <tr>
+                {% if  request.user.registered_obj.hotel_due %}
+                    <td><b>Hotel Due</b> <span class="pull-right">:</span></td>
+                    <td>Rs {{ request.user.registered_obj.hotel_due }}/-</td>
+                {% endif %}
+            </tr>
+
+            </tbody>
+        </table>
+
+        <div align="right">
+            <button class="btn coupon-reg"><b>Reg Number</b> : <span>{{ request.user.registered_obj.qrcode }}</span>
+            </button>
+        </div>
+
+    </div>
+</div>
+

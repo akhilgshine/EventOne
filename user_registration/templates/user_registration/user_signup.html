@@ -1,0 +1,30 @@
+{% extends 'user_registration/registration_base.html' %}
+{% block content %}
+{% load static %}
+<h3 class="mb20">User signup</h3>
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon b0">
+            <img src="{% static 'img/mail.png' %}" width="20px">
+            </span>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon b0">
+            <img src="{% static 'img/mobile-phone.png' %}" width="20px">
+            </span>
+            {{ form.mobile }}
+            {{ form.mobile.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-block btn-main"> SEND OTP</button>
+    </div>
+    <p>if you are already a user, Please <a href="{% url 'user_login' %}">Login</a></p>
+</form>
+{% endblock content %}
