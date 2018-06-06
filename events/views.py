@@ -1245,7 +1245,7 @@ class GetNotRegisteredUsers(TemplateView):
         event_users_phone = RegisteredUsers.objects.all().values_list('event_user__mobile', flat=True)
         context['tables'] = Table.objects.all()
         context['unregistered_user'] = EventUsers.objects.exclude(
-            Q(email__in=event_users_email) & Q(mobile__in=event_users_phone))
+            Q(email__in=event_users_email) | Q(mobile__in=event_users_phone))
         return context
 
 
