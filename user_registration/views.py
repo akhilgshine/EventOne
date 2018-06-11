@@ -15,12 +15,14 @@ import requests
 from PIL import Image
 from django.contrib.auth import update_session_auth_hash, authenticate, login
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from django.urls import reverse, reverse_lazy
+from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView
 from datetime import datetime
@@ -53,6 +55,8 @@ class UserSignupView(FormView):
             'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
             '=QrtReg&message=%s' % (obj.mobile, message))
         print(message_status)
+        send_mail('QRT 85 Registration', message, settings.DEFAULT_FROM_EMAIL, [obj.email], fail_silently=False, )
+
         return super(UserSignupView, self).form_valid(form)
 
 

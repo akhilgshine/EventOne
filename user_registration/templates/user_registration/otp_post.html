@@ -55,7 +55,6 @@
 {% block js %}
 <script>
     $('#id_ajax_form').on('submit click', function (e) {
-        //alert('hjiii');
         e.preventDefault();
         var otp = $('#id_otp_value').val();
         $.ajax({

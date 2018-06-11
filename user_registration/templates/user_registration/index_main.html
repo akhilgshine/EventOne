@@ -62,11 +62,11 @@
         Videos</a></li>
 {% if  request.user.is_authenticated and  not request.user.is_superuser %}
         <li class="sign-out"><a href="/logout">
-            <div class="nav-icon sign-ic"></div>
+           <i class="fas fa-sign-out-alt"></i>
             Log out</a></li>
     {% else %}
         <li class="sign-out"><a href="{% url 'user_login' %}">
-        <i class="fas fa-sign-in-alt"></i>
+           <i class="fas fa-sign-out-alt"></i>
             Log In</a></li>
     {% endif %}
 
