@@ -1,6 +1,7 @@
 {% load static %}
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -29,10 +30,10 @@
     <div class="row m0">
         <div class="col-sm-6 col-sm-offset-3">
             <div class="panel success-panel" align="center">
-             <img  src="{% static 'img/green.png' %}" width="60px" >
+             <img  src="{% static 'img/coupon-successfully.png' %}">
                 <h3>Your registration has been successfull! </h3>
                 <h4>It will be review by admin and we will update in your email and mobile number with your coupon</h4>
-                <a href="{% url 'event_register' %}" ><button class="btn btn-main"> FINISH</button></a>
+                <a href="{% url 'index_page' %}" ><button class="btn btn-main"> FINISH</button></a>
 </div>
         </div>
     </div>

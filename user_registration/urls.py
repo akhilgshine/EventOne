@@ -3,7 +3,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .views import UserSignupView, OtpPostView, SetPassWordView, UserLoginView, UserTableRegistrationView, \
-    ProfileRegistrationView, AjaxHotelRentCalculation, HotelRegistrationView, PaymentRegistrationView, CouponSuccessView
+    ProfileRegistrationView, AjaxHotelRentCalculation, HotelRegistrationView, PaymentRegistrationView, \
+    CouponSuccessView, UserProfileView
 
 urlpatterns = [
     url(r'^user_signup/', UserSignupView.as_view(), name='user_signup'),
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^hotel-booking/', HotelRegistrationView.as_view(), name='hotel_booking'),
     url(r'^payment-registration/', PaymentRegistrationView.as_view(), name='payment_registration'),
     url(r'^coupon-success/', CouponSuccessView.as_view(), name='coupon_success'),
+    url(r'^user-profile/', UserProfileView.as_view(), name='user_profile'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

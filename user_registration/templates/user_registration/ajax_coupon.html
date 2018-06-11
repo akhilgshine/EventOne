@@ -1,67 +1,137 @@
-<div class="row m0">
-    <div class="col-sm-6 col-sm-offset-5">
-        <h2>Area 1 Agm Of Round Table India For The Year 2018</h2>
-        <table class="table">
-            <tbody>
-            <tr>
-                <td><b>Name</b> <span class="pull-right">:</span></td>
-                <td>{{ request.user.first_name }} {{ request.user.last_name }}</td>
-            </tr>
-            <tr>
-                <td><b>Table</b> <span class="pull-right">:</span></td>
-                <td>{{ request.user.table.table_name }}</td>
-            </tr>
-            <tr>
-                <td><b>Phone</b> <span class="pull-right">:</span></td>
-                <td>{{ request.user.mobile }}</td>
-            </tr>
-            <tr>
-                <td><b>Email</b> <span class="pull-right">:</span></td>
-                <td>{{ request.user.email }}</td>
-            </tr>
-            <tr>
-                <td><b>Type</b> <span class="pull-right">:</span></td>
-                <td>{{ request.user.registered_obj.event_status }}</td>
-            </tr>
-            <tr>
-                <td><b>Amount Received</b> <span class="pull-right">:</span></td>
-                <td>Rs {{ request.user.registered_obj.amount_paid }}/-</td>
+{% load static %}
+<style>
+    .coupon-re tbody td { padding: 5px !important;}
+</style>
+<div class="coupon-re">
+    <div class="row m0">
+        <div class="col-sm-8" style="padding:0px;">
+            <div style="    background: url(img/coupon-txt-bg.png);
+                                                border-radius: 35px;
+                                                margin-bottom: 3em;
+                                                box-shadow: 0px 0px 8px -1px;
+                                                overflow: hidden;     height: 420px;">
+                <div class="row m0">
+                    <div class="col-sm-4">
+                        <img src="{% static 'img/coupon-headleft.png' %}" width="100%" style=" position: absolute;
+                                                            height: fit-content;">
+                    </div>
+                    <div class="col-sm-8">
+                        <img src="{% static 'img/coupon-head-txt.png' %}" style=" margin-top: 2em;
+                                                            width: 60%; margin-bottom: 10px;">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Name</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.first_name }} {{ request.user.last_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0px;;font-size: 16px;"><b>Table</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.table.table_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Phone</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.email }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0px;
+                                font-size: 16px;"><b>Phone</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;
+                                font-size: 16px;">{{ request.user.mobile }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Type</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.get_event_status_display }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Reg.Amount</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.amount_paid }}/-
+                                    @ {{ request.user.registered_obj.created_date|date:"D, d M" }}
+                                </td>
+                            </tr>
+                            {% if request.user.registered_obj.due_amount %}
+                                 <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.due_amount }}/-
 
-            </tr>
-            <tr>
-                {% if  request.user.registered_obj.due_amount %}
-                    <td><b>Amount Due</b> <span class="pull-right">:</span></td>
-                    <td>Rs {{ request.user.registered_obj.due_amount }}/-</td>
-                {% endif %}
-            </tr>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px; font-size: 16px;">
+                                    {% if  request.user.registered_obj.hotel_user %}
+                                        {{ request.user.registered_obj.hotel_user.hotel.name }},
+                                        Rs {{ request.user.registered_obj.hotel_user.tottal_rent }}/-,
+                                        {{ request.user.registered_obj.hotel_user.room_type.room_type }},
+                                        <b>{{ request.user.registered_obj.hotel_user.checkin_date|date:"D d M" }}
+                                            to {{ request.user.registered_obj.hotel_user.checkout_date|date:"D d M Y" }}</b>
+                                    {% else %}
+                                        No Hotel Booked
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if  request.user.registered_obj.hotel_due %}
+                                <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">Rs {{ request.user.registered_obj.hotel_due }}/-
 
-            <tr>
-                <td><b>Hotel</b> <span class="pull-right">:</span></td>
-                {% if request.user.registered_obj.hotel_user %}
-                    <td>{{ request.user.registered_obj.hotel_user.hotel.name }}, {{ request.user.registered_obj.hotel_user.room_type.room_type }},
-                        <b>{{ request.user.registered_obj.hotel_user.checkin_date }}
-                            to {{ request.user.registered_obj.hotel_user.checkout_date }}</b>,
-                        Rs {{ request.user.registered_obj.hotel_user.tottal_rent }} /-
-                    </td>
-                {% else %}
-                    <td> No Hotels Booked</td>
-                {% endif %}
-            </tr>
-            <tr>
-                {% if  request.user.registered_obj.hotel_due %}
-                    <td><b>Hotel Due</b> <span class="pull-right">:</span></td>
-                    <td>Rs {{ request.user.registered_obj.hotel_due }}/-</td>
-                {% endif %}
-            </tr>
+                                </td>
+                            </tr>
 
-            </tbody>
-        </table>
-
-        <div align="right">
-            <button class="btn coupon-reg"><b>Reg Number</b> : <span>{{ request.user.registered_obj.qrcode }}</span>
-            </button>
+                            {% endif %}
+                            </tbody>
+                        </table>
+{#                        <div align="right">#}
+{#                            <button class="btn" style="   margin-bottom: 15px;#}
+{#                                                                margin-right: 20px;#}
+{#                                                                background: #ff4057;#}
+{#                                                                color: white;#}
+{#                                                                border-radius: 23px;#}
+{#                                                                padding: 6px 15px;">Reg Number : {{ request.user.registered_obj.qrcode }}#}
+{#                            </button>#}
+{#                        </div>#}
+                    </div>
+                </div>
+            </div>
         </div>
-
+        <div class="col-sm-4" style="    padding: 0px;
+                                            background: #ff4057;
+                                            border-radius: 35px;
+                                            box-shadow: 0px 0px 8px -1px;
+                                            padding-left: 20px;
+                                            padding-top: 1.5em;     height: 420px; overflow: hidden;">
+            <img src="{% static 'img/coupon-right-logo.png' %}" style="margin-bottom:10px;">
+            <h3 style="    font-size: 30px;
+                                                font-weight: 100;
+                                                color: #fff; margin-top: 10px;">August 03, 2018 <br>
+                August 05, 2018
+            </h3>
+            <div class="" style="     margin-bottom: 15px;
+                                                margin-right: 20px;
+                                                background: #ffffff;
+                                                color: black;
+                                                border-radius: 34px;
+                                                padding: 6px 15px;
+                                                font-size: 16px;
+                                                margin-top: 10px;     display: inline-block;">Reg Number :{{ request.user.registered_obj.qrcode }}
+            </div>
+            <img src="{% static 'img/bar-q.png' %}" style="    margin: 10px;
+                                                margin-bottom: 1em;">
+            <div style="width: 90px;height: 90px;background: #fff; position: absolute;top: 55px;right: -44px;border-radius: 100%;"></div>
+        </div>
     </div>
 </div>
-

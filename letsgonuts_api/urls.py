@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from .views import LoginApiView, TableListViewSet, FilterNameViewSet, NameDetailsViewSet, RegisterEventViewSet, \
     RegisteredUsersViewSet, RoomTypeListViewSet, UserLoginViewSet, OtpPostViewSet, HotelNameViewSet, \
-    PaymentDetailsViewSet
+    PaymentDetailsViewSet, CouponSuccessViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -15,6 +15,7 @@ router.register(r'user-registration', UserLoginViewSet, base_name='user_registra
 router.register(r'otp-post', OtpPostViewSet, base_name='otp_post')
 router.register(r'hotel-name', HotelNameViewSet, base_name='hotel_name')
 router.register(r'payment-details', PaymentDetailsViewSet, base_name='payment_details')
+router.register(r'coupon-success', CouponSuccessViewSet, base_name='coupon_success')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

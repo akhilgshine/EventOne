@@ -26,9 +26,9 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
     <style>
-         .error_div{
-    color:red;
-}
+        .error_div {
+            color: red !important;
+        }
     </style>
 </head>
 <body>
@@ -45,11 +45,9 @@
         <div class="clearfix"></div>
         <nav nav-reveal-menu>
             <ul>
-                {% comment %}{% if request.user.registered_obj %}
-                <a href="{% url 'coupon_success' %}" ><li>View Event Coupon</li></a>
-                {% else %}{% endcomment %}
-                 <a href="." ><li>Nothing To Display</li></a>
-{#                {% endif %}#}
+                <a href=".">
+                    <li>Nothing To Display</li>
+                </a>
                 <li>Two</li>
                 <li>Three</li>
                 <li>Four</li>
@@ -97,7 +95,6 @@
                         </li>
                     </ul>
                 </div>
-                {#                                    <form role="form" id="form" data-toggle="validator">#}
                 <div class="tab-content">
                     <div class="tab-pane fade in active" role="tabpanel" id="step1">
                         <div class="row m0">
@@ -107,7 +104,7 @@
                                     {% csrf_token %}
                                     <label>Select Table </label>
                                     {{ table_form.table }}
-                                     <span class="error_div"></span>
+                                    <span class="error_div"></span>
                                     <label class="pt20">SELECT MEMBER TYPE </label>
                                     {{ table_form.member_type }}
                                 </form>
@@ -149,12 +146,11 @@
                                 </div>
                                 <div class="clearfix"></div>
                                 <div class="col-sm-12">
-{#                                    <label class="d-block form-group pt20 ">REGISTRATION TYPE</label>#}
-{#                                    {{ personal_info_form.registration_type }}#}
                                     {% for registration_types in personal_info_form.registration_type.field.choices %}
-                                        <label class="custom-check">
+                                        <label class="custom-check status_choices">
                                             {{ registration_types.1 }}
-                                            <input type="radio" name="registration_type" value="{{ registration_types.0 }}">
+                                            <input type="radio" name="registration_type"
+                                                   value="{{ registration_types.0 }}">
                                             <span class="checkmark"></span>
                                         </label>
                                     {% endfor %}
@@ -164,10 +160,12 @@
                                     <label class="pt20">Registration Fee :</label>
                                     {{ personal_info_form.amount_paid }}
                                     <span class="error_div"></span>
-                                    <h5 align="right" class="pt20">Total Amount: <span class="total_amount">0</span>
+                                    <h5 align="right" class="pt20">Total Amount: <span id="total_amount">0</span>
                                     </h5>
-                                    <h5 align="right" class="pb20">Registration Amount: <span
-                                            class="total_amount">0</span></h5>
+                                    <h5 align="right" class="pb10">Registration Amount: <span
+                                            id="register_amount">0</span></h5>
+                                    <h5 align="right" class="pb20 error_div" style="display: none">Due Amount: <span
+                                            id="due_amount">0</span></h5>
                                 </div>
                                 <div class="clearfix"></div>
                                 <button type="button" class="btn btn-main prev-step">BACK</button>
@@ -190,28 +188,28 @@
                                 <div class="col-sm-12">
                                     <label class="">ROOM TYPE</label>
                                     <div class="row m0 ">
-                                            <div class="form-group">
+                                        <div class="form-group">
 
-                                                {% for roomtype in hotel_details_form.room_type.field.queryset %}
-                                                    <label class="btn room-typ">
-                                                        <img src="{% static 'img/tick.png' %}"
-                                                             class="room-select">
-                                                        {% if roomtype.get_room_type_image.all.0.image %}
-                                                            <img src="{{ roomtype.get_room_type_image.all.0.image.url }}"
-                                                                 alt="..." class=" img-check">
-                                                        {% else %}
-                                                            <img src="{% static 'img/r-1.png' %}" alt="..."
-                                                                 class=" img-check"
-                                                                 width="100%">
-                                                        {% endif %}
-                                                        <p>{{ roomtype }} <br> {{ roomtype.net_rate }} </p>
-                                                        <p></p>
-                                                        <input type="radio" name="room_type" id="item4"
-                                                               value="{{ roomtype.id }}" class="hidden"
-                                                               autocomplete="off">
-                                                    </label>
-                                                {% endfor %}
-                                            </div>
+                                            {% for roomtype in hotel_details_form.room_type.field.queryset %}
+                                                <label class="btn room-typ">
+                                                    <img src="{% static 'img/tick.png' %}"
+                                                         class="room-select">
+                                                    {% if roomtype.get_room_type_image.all.0.image %}
+                                                        <img src="{{ roomtype.get_room_type_image.all.0.image.url }}"
+                                                             alt="..." class=" img-check">
+                                                    {% else %}
+                                                        <img src="{% static 'img/r-1.png' %}" alt="..."
+                                                             class=" img-check"
+                                                             width="100%">
+                                                    {% endif %}
+                                                    <p>{{ roomtype }}   </p>
+                                                    <span class="price-p"> ₹ {{ roomtype.net_rate }}</span>
+                                                    <input type="radio" name="room_type" id="item4"
+                                                           value="{{ roomtype.id }}" class="hidden"
+                                                           autocomplete="off">
+                                                </label>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -228,15 +226,18 @@
                                     <label class="pt20">HOTEL RENT IN RUPEES </label>
                                     {{ hotel_details_form.tottal_rent }}
                                     <span class="error_div"></span>
-                                    <h5 align="right" class="pt20" >HOTEL BOOKING AMOUNT: <span id="id_hotel_booking">0</span></h5>
-                                    <h5 align="right" class="pb20" >Total Amount: <span id="id_total_amount">0</span></h5>
+                                    <h5 align="right" class="pt20">HOTEL BOOKING AMOUNT: <span
+                                            id="id_hotel_booking">0</span></h5>
+                                    <h5 align="right" class="pb20">Total Amount: <span id="id_total_amount">0</span>
+                                    </h5>
                                 </div>
                                 <div class="clearfix"></div>
                                 <button type="button" class="btn btn-main prev-step">BACK</button>
                                 <button type="button" class="btn  next-step pull-right hotel-next btn-main "
                                         id="id_hotel_information">NEXT
                                 </button>
-                                <button type="button" class="btn  next-step pull-right hotel-next btn-skip ">SKIP</button>
+                                <button type="button" class="btn  next-step pull-right hotel-next btn-skip ">SKIP
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -244,7 +245,7 @@
                         <div class="row m0">
                             <h2>PAYMENT DETAILS</h2>
                             <div class="col-sm-12">
-                                <div class="reciept" id="id_coupon_receipt">
+                                <div id="id_coupon_receipt">
                                     <div class="row m0">
                                         <div class="col-sm-6 col-sm-offset-5">
                                             <h2>Area 1 Agm Of Round Table India For The Year 2018</h2>
@@ -284,7 +285,8 @@
                                             </table>
 
                                             <div align="right">
-                                                <button class="btn coupon-reg"><b>Reg Number</b> : <span>{{ payement_details.qrcode }}</span>
+                                                <button class="btn coupon-reg"><b>Reg Number</b> :
+                                                    <span>{{ payement_details.qrcode }}</span>
                                                 </button>
                                             </div>
 
@@ -292,7 +294,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <form id="paymentForm" method="post" action="{% url 'payment_registration' %}"  enctype="multipart/form-data">
+                            <form id="paymentForm" method="post" action="{% url 'payment_registration' %}"
+                                  enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="col-sm-12">
                                     <label class="d-block mb20" style="    margin-bottom: 20px;">Payment Method</label>
@@ -300,7 +303,6 @@
                                         <label class="custom-check">
                                             {{ payments.1 }}
                                             <input type="radio" name="payment" value="{{ payments.0 }}">
-
                                             <span class="checkmark"></span>
                                         </label>
                                     {% endfor %}
@@ -308,17 +310,20 @@
 
 
                                     <div class="clearfix"></div>
-                                    <label class="pt20">Reciept Number</label>
-                                    {{ payment_form.reciept_number }}
-                                    <label class="pt20">Reciept File</label>
+                                    <div id="id_reciept" style="display: none">
+                                        <label class="pt20">Reciept Number</label>
+                                        {{ payment_form.reciept_number }}
+                                        <label class="pt20">Reciept File</label>
 
-                                    {{ payment_form.reciept_file }}
+                                        {{ payment_form.reciept_file }}
+                                    </div>
+
                                     <div class="clearfix m20" style="margin-top: 40px"></div>
                                     <button type="button" class="btn btn-main prev-step">BACK</button>
                                     <button type="button" class="btn  next-step pull-right btn-main "
                                             id="id_payment_information">FINISH
                                     </button>
-                                <div id="id_finish_message"></div>
+                                    <div id="id_finish_message"></div>
                                 </div>
                             </form>
                         </div>
@@ -350,9 +355,23 @@
         });
         $('#id_hotel_booking').html($('#id_tottal_rent').val());
         $('.total_amount').html($('#id_amount_paid').val());
+
         $('#id_amount_paid').on('change keyup', function () {
 
-            $('.total_amount').html($(this).val());
+            $('#register_amount').html($(this).val());
+            var total_amount = $('#total_amount').html();
+            var register_amount = $(this).val();
+            console.log('total_amount', total_amount);
+            console.log('register_amount', register_amount);
+            if (parseInt(register_amount) < parseInt(total_amount)) {
+                var due = parseInt(total_amount) - parseInt(register_amount);
+                $('#due_amount').parent().show();
+                $('#due_amount').html(due);
+
+            }
+            else {
+                $('#due_amount').parent().hide();
+            }
 
 
         });
@@ -378,9 +397,11 @@
         });
 
     });
+
     $('#id_table_submit').on('click', function (e) {
         e.preventDefault();
         var myForm1 = $('#id_table_form');
+        var membertype = $('#id_member_type').val()
         $.ajax({
             type: 'POST',
             url: '{% url 'event_register' %}',
@@ -392,13 +413,22 @@
                     var $active = $('.wizard .nav-tabs li.active');
                     $active.next().removeClass('disabled');
                     nextTab($active);
+                    if (membertype == "Tabler") {
+                        $('.status_choices').each(function (i) {
+                            if (i == 2 || i == 3) {
+                                $(this).hide()
+                            }
+                        })
+                    }
+                    else {
+                        $('.status_choices').show();
+                    }
                 }
                 else {
-                    $.each(data, function(key,value){
-                    var input = $("#id_table_form :input[name='"+key+"']");
-                    input.siblings('.error_div').text(value);
-                  });
-
+                    $.each(data, function (key, value) {
+                        var input = $("#id_table_form :input[name='" + key + "']");
+                        input.siblings('.error_div').text(value);
+                    });
                 }
             }
         });
@@ -406,7 +436,7 @@
 
     $('#id_profile_information').on('click', function () {
         var myForm2 = $('#id_profile_form');
-        var v  =$(this);
+        var v = $(this);
         $.ajax({
             type: 'POST',
             url: '{% url 'profile_register' %}',
@@ -421,10 +451,10 @@
 
                 }
                 else {
-                    $.each(data, function(key,value){
-                    var input = $("#id_profile_form :input[name='"+key+"']");
-                    input.siblings('.error_div').text(value);
-                  });
+                    $.each(data, function (key, value) {
+                        var input = $("#id_profile_form :input[name='" + key + "']");
+                        input.siblings('.error_div').text(value);
+                    });
 
                 }
             }
@@ -442,10 +472,10 @@
                     window.location.href = data.url;
                 }
                 else {
-                    $.each(data, function(key,value){
-                    var input = $("#paymentForm :input[name='"+key+"']");
-                    input.parent().parent().find('.error_div').text(value);
-                  });
+                    $.each(data, function (key, value) {
+                        var input = $("#paymentForm :input[name='" + key + "']");
+                        input.parent().parent().find('.error_div').text(value);
+                    });
 
                 }
             }
@@ -454,19 +484,19 @@
     $('.hotel-next').on('click', function () {
         var myForm3 = $('#id_hotel_form');
         $.ajax({
-        type: 'POST',
-        url: '{% url 'hotel_booking' %}',
-        data: myForm3.serialize(),
-        success: function (data) {
-        $('#id_coupon_receipt').html(data);
-            $('.step-indicator li.active').addClass('completed');
-            var $active = $('.wizard .nav-tabs li.active');
-            $active.next().removeClass('disabled');
-            nextTab($active);
+            type: 'POST',
+            url: '{% url 'hotel_booking' %}',
+            data: myForm3.serialize(),
+            success: function (data) {
+                $('#id_coupon_receipt').html(data);
+                $('.step-indicator li.active').addClass('completed');
+                var $active = $('.wizard .nav-tabs li.active');
+                $active.next().removeClass('disabled');
+                nextTab($active);
 
 
-        }
-    });
+            }
+        });
     });
 
     function ajaxHotelRent() {
@@ -486,8 +516,8 @@
 
                 if (data && data.total_rent) {
                     $('#id_tottal_rent').val(data.total_rent);
-                     $('#id_hotel_booking').html(data.total_rent);
-                     $('#id_total_amount').html((parseInt({{ request.user.registered_obj.amount_paid }}) + parseInt($('#id_tottal_rent').val())));
+                    $('#id_hotel_booking').html(data.total_rent);
+                    $('#id_total_amount').html((parseInt({{ request.user.registered_obj.amount_paid }}) + parseInt($('#id_tottal_rent').val())));
 
                 }
                 else {
@@ -502,6 +532,22 @@
     $('#id_hotel').on('change', function () {
         ajaxHotelRent();
     });
+    $('#id_member_type').on('change', function () {
+        var membertype = $('#id_member_type').val();
+
+        if (membertype == "Tabler") {
+            $('.status_choices').each(function (i) {
+                if (i == 2 || i == 3) {
+                    $(this).hide()
+                }
+
+            })
+        }
+        else {
+            $('.status_choices').show();
+        }
+
+    });
     $('#id_checkin_date').on('change', function () {
 
         ajaxHotelRent();
@@ -510,6 +556,7 @@
         ajaxHotelRent();
 
     });
+
     function getAmount(member_type, status) {
         if (member_type == 'Tabler') {
             if (status == 'Stag')
@@ -531,30 +578,50 @@
     }
 
     $('input[type=radio][name=registration_type]').on('change', function () {
-        var memberType = '{{ request.user.member_type }}';
+        var memberType = $('#id_member_type').val();
         status = $(this).val();
         var amount = getAmount(memberType, status);
         $('#id_amount_paid').val(amount);
-        $('.total_amount').html(amount);
+        $('#total_amount').html(amount);
+        $('#register_amount').html(amount);
     });
-    {% if request.user.registered_obj %}
+    $("input:radio[name=payment]").on('click', function () {
+        if ($('input[name=payment]:checked').val() == "bank_transfer") {
+            $('#id_reciept').css('display', 'block');
+        }
+        else {
+            $('#id_reciept').css('display', 'none');
+        }
 
+
+    });
+
+
+    {% if request.user.registered_obj %}
+        {% if request.user.registered_obj.amount_paid %}
+            $('#register_amount').html({{ request.user.registered_obj.amount_paid }});
+            $('#total_amount').html({{ request.user.registered_obj.registered_amount }});
+            {% if request.user.registered_obj.due_amount %}
+                $('#due_amount').parent().show();
+                $('#due_amount').html({{ request.user.registered_obj.due_amount }});
+            {% endif %}
+        {% endif %}
         {% if request.user.registered_obj.hotel_user.room_type %}
             var value = {{request.user.registered_obj.hotel_user.room_type.id  }}
-            $("input[name=room_type][value=" + value + "]").attr('checked', 'checked');
+                $("input[name=room_type][value=" + value + "]").attr('checked', 'checked');
             $("input[name=room_type][value=" + value + "]").siblings(".room-select").show();
         {% endif %}
         {% if request.user.registered_obj.payment %}
             var value = '{{request.user.registered_obj.payment }}';
-            $("input:radio[name=payment][value=" + value + "]").attr('checked','checked');
-
-
+            $("input:radio[name=payment][value=" + value + "]").attr('checked', 'checked');
         {% endif %}
         {% if request.user.registered_obj.event_status %}
             var value = '{{request.user.registered_obj.event_status }}';
-                $("input:radio[name=registration_type][value=" + value + "]").attr('checked','checked');
-
-
+            $("input:radio[name=registration_type][value=" + value + "]").attr('checked', 'checked');
+        {% endif %}
+        {% if request.user.registered_obj.hotel_user %}
+            $('#id_hotel_booking').html({{ request.user.registered_obj.hotel_rent }});
+            $('#id_total_amount').html({{ request.user.registered_obj.total_paid }});
         {% endif %}
     {% endif %}
 

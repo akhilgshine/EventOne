@@ -1,0 +1,388 @@
+{% load static %}
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
+<![endif]-->
+<!--[if IE 7]>
+    <html class="no-js lt-ie9 lt-ie8" lang="">
+<![endif]-->
+<!--[if IE 8]>
+        <html class="no-js lt-ie9" lang="">
+    <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <style>
+        .coupon-re tbody td {
+            padding: 5px !important;
+        }
+    </style>
+</head>
+<body>
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+
+            </div>
+            {% if  request.user.is_authenticated %}
+                <a href="#user"><img class="circle" src="{% static 'img/user-profile.png' %}"></a>
+                <a href="#name"><span class="white-text name">John Doe</span></a>
+                <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
+            {% else %}
+                <a><img src="{% static 'img/home-logo.png' %}" width="75px"></a>
+            {% endif %}
+
+        </div>
+    </li>
+    {% if  not request.user.is_authenticated or request.user.is_superuser %}
+        <li><a href="{% url 'login' %}">
+            <div class="nav-icon home-ic"></div>
+            Admin</a></li>
+    {% endif %}
+ <li><a href="{% url 'index_page' %}">
+            <div class="nav-icon home-ic"></div>
+            Home</a></li>
+    <li><a href="">
+        <div class="nav-icon hotel-ic"></div>
+        Hotels</a></li>
+    <li><a href="">
+        <div class="nav-icon pic-ic"></div>
+        Pictures</a></li>
+    <li><a href="">
+        <div class="nav-icon video-ic"></div>
+        Videos</a></li>
+    {% if  request.user.is_authenticated and  not request.user.is_superuser %}
+
+        <li class="sign-out"><a href="/logout">
+           <i class="fas fa-sign-out-alt"></i>
+            Log out</a></li>
+    {% else %}
+        <li class="sign-out"><a href="{% url 'user_login' %}">
+            <i class="fas fa-sign-out-alt"></i>
+            Log In</a></li>
+    {% endif %}
+</ul>
+<div class="gradient-bg">
+    <img src="{% static 'img/dance-shadow.png' %}" class="dance-bg"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 col-xs-5">
+                <div class="sub-logo">
+                    <img src="{% static 'img/sub-logo.png' %}" width="100%"/>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+
+        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="profile-details">
+                        <h3><i class="fas fa-user-circle"></i> Profile Details</h3>
+                        <div class="row m0">
+                            <div class="col-sm-4">
+                                <img src="{% static 'img/user-profile.png' %}" width="100%" class="img-circle">
+                            </div>
+                            <div class="col-sm-8">
+                                <h4><b>{{ request.user.first_name }} {{ request.user.last_name }}</b></h4>
+                                <p><i class="fas fa-envelope"></i> {{ request.user.email }}</p>
+                                <p><i class="fas fa-phone-square"></i> {{ request.user.mobile }}</p>
+
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="clearfix"></div>
+                        <table class="table p-table">
+
+                            <tbody>
+                            <tr>
+                                <td align="left">Table</td>
+                                <td align="right"><b>{{ request.user.table.table_name }}</b></td>
+                            </tr>
+                            {% if  request.user.registered_obj.hotel_user.hotel %}
+                                <tr>
+                                    <td align="left">Hotel Name</td>
+                                    <td align="right"><b>{{ request.user.registered_obj.hotel_user.hotel.name }}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">Room Type</td>
+                                    <td align="right">
+                                        <b>{{ request.user.registered_obj.hotel_user.room_type.room_type }}</b></td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="reg-type-d">
+                        <h3><i class="far fa-list-alt"></i> Registration Details</h3>
+                        <table class="table p-table">
+                            <tbody>
+                            <tr>
+                                <td align="left">Registration Type</td>
+                                <td align="right">{{ request.user.registered_obj.get_event_status_display }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left">Registration Amount</td>
+                                <td align="right">₹ {{ request.user.registered_obj.amount_paid }}</td>
+                            </tr>
+                            <tr>
+                                <td align="left">Hotel Amount</td>
+                                <td align="right">
+                                    {% if  request.user.registered_obj.hotel_user.tottal_rent >= 0 %}
+                                        ₹ {{ request.user.registered_obj.hotel_user.tottal_rent }}
+                                    {% else %}
+                                        No hotels Booked
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left" cellpadding="10"><b>Grand Total</b></td>
+                                <td align="right" cellpadding="10"><b>₹ {{ request.user.registered_obj.total_paid }}</b>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                        <hr>
+                        {% if  request.user.registered_obj.due_amount or request.user.registered_obj.hotel_due %}
+
+                            <div align="center">
+                                <p class="amount-due-p">Due amount
+                                    <span>₹ {{ request.user.registered_obj.total_due }}</span></p>
+
+                                <button class="btn-main btn">PROCESS TO PAY</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-sm-12">
+                    <div class="pro-coupon-wrap">
+                        <h3><i class="fas fa-receipt"></i> Coupon</h3>
+                        <div class="no-coupon" align="center">
+                            {% if request.user.is_approved %}
+
+                                <div class="coupon-re">
+                                    <div class="row m0">
+                                        <div class="col-sm-8" style="padding:0px;">
+                                            <div style="    background: url(img/coupon-txt-bg.png);
+                                                border-radius: 35px;
+                                                margin-bottom: 3em;
+                                                box-shadow: 0px 0px 8px -1px;
+                                                overflow: hidden;     height: 420px;">
+                                                <div class="row m0">
+                                                    <div class="col-sm-4">
+                                                        <img src="{% static 'img/coupon-headleft.png' %}" width="100%"
+                                                             style="     position: absolute;
+    height: fit-content;
+    width: 100%;
+    left: 0px;
+    margin-top: 0px;">
+                                                    </div>
+                                                    <div class="col-sm-8" align="left">
+                                                        <img src="{% static 'img/coupon-head-txt.png' %}" style=" margin-top: 2em;
+                                                            width: 60%; margin-bottom: 10px;">
+                                                        <table class="table">
+                                                            <tbody>
+                                                            <tr>
+                                                                <td style="border: 0px;font-size: 16px;"><b>Name</b>
+                                                                    <span
+                                                                            class="pull-right">:</span></td>
+                                                                <td style="border: 0px;font-size: 16px;">{{ request.user.first_name }} {{ request.user.last_name }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 0px;;font-size: 16px;"><b>Table</b>
+                                                                    <span
+                                                                            class="pull-right">:</span></td>
+                                                                <td style="border: 0px;font-size: 16px;">{{ request.user.table.table_name }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 0px;font-size: 16px;"><b>Phone</b>
+                                                                    <span
+                                                                            class="pull-right">:</span></td>
+                                                                <td style="border: 0px;font-size: 16px;">{{ request.user.email }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 0px;
+                                font-size: 16px;"><b>Phone</b> <span
+                                                                        class="pull-right">:</span></td>
+                                                                <td style="border: 0px;
+                                font-size: 16px;">{{ request.user.mobile }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 0px;font-size: 16px;"><b>Type</b>
+                                                                    <span
+                                                                            class="pull-right">:</span></td>
+                                                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.get_event_status_display }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 0px;font-size: 16px;">
+                                                                    <b>Reg.Amount</b> <span
+                                                                        class="pull-right">:</span></td>
+                                                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.amount_paid }}/-
+                                                                    @ {{ request.user.registered_obj.created_date|date:"D, d M" }}
+                                                                </td>
+                                                            </tr>
+                                                            {% if request.user.registered_obj.due_amount %}
+                                                                <tr>
+                                                                    <td style="border: 0px;font-size: 16px;"><b>Due
+                                                                        Amount</b> <span
+                                                                            class="pull-right">:</span></td>
+                                                                    <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.due_amount }}/-
+
+                                                                    </td>
+                                                                </tr>
+                                                            {% endif %}
+                                                            <tr>
+                                                                <td style="border: 0px;font-size: 16px;"><b>Hotel</b>
+                                                                    <span
+                                                                            class="pull-right">:</span></td>
+                                                                <td style="border: 0px; font-size: 16px;">
+                                                                    {% if  request.user.registered_obj.hotel_user %}
+                                                                        {{ request.user.registered_obj.hotel_user.hotel.name }}
+                                                                        ,
+                                                                        Rs
+                                                                        {{ request.user.registered_obj.hotel_user.tottal_rent }}
+                                                                        /-,
+                                                                        {{ request.user.registered_obj.hotel_user.room_type.room_type }}
+                                                                        ,
+                                                                        <b>{{ request.user.registered_obj.hotel_user.checkin_date|date:"D d M" }}
+                                                                            to {{ request.user.registered_obj.hotel_user.checkout_date|date:"D d M Y" }}</b>
+                                                                    {% else %}
+                                                                        No Hotel Booked
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                            {% if  request.user.registered_obj.hotel_due %}
+                                                                <tr>
+                                                                    <td style="border: 0px;font-size: 16px;"><b>Hotel
+                                                                        Due</b> <span
+                                                                            class="pull-right">:</span></td>
+                                                                    <td style="border: 0px;font-size: 16px;">
+                                                                        Rs {{ request.user.registered_obj.hotel_due }}/-
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            {% endif %}
+                                                            </tbody>
+                                                        </table>
+                                                        {#                        <div align="right">#}
+                                                        {#                            <button class="btn" style="   margin-bottom: 15px;#}
+                                                        {#                                                                margin-right: 20px;#}
+                                                        {#                                                                background: #ff4057;#}
+                                                        {#                                                                color: white;#}
+                                                        {#                                                                border-radius: 23px;#}
+                                                        {#                                                                padding: 6px 15px;">Reg Number : {{ request.user.registered_obj.qrcode }}#}
+                                                        {#                            </button>#}
+                                                        {#                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4" style="    padding: 0px;
+                                            background: #ff4057;
+                                            border-radius: 35px;
+                                            box-shadow: 0px 0px 8px -1px;
+                                            padding-left: 20px;
+                                            padding-top: 1.5em;     height: 420px; overflow: hidden;     text-align: left;">
+                                            <img src="{% static 'img/coupon-right-logo.png' %}"
+                                                 style="margin-bottom:10px;">
+                                            <h3 style="font-size: 30px;
+    font-weight: 100;
+    color: #fff;
+    margin-top: 10px;
+    background: none;
+    padding-left: 0px;
+    border: 0px;">August 03, 2018 <br>
+                                                August 05, 2018
+                                            </h3>
+                                            <div class="" style="     margin-bottom: 15px;
+                                                margin-right: 20px;
+                                                background: #ffffff;
+                                                color: black;
+                                                border-radius: 34px;
+                                                padding: 6px 15px;
+                                                font-size: 16px;
+                                                margin-top: 10px;     display: inline-block;">Reg Number
+                                                :{{ request.user.registered_obj.qrcode }}
+                                            </div>
+                                            <img src="{% static 'img/bar-q.png' %}" style="     margin: 10px;
+    margin-bottom: 1em;
+    width: 80%;">
+                                            <div style="width: 90px;height: 90px;background: #fff; position: absolute;top: 55px;right: -44px;border-radius: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <img src="{% static 'img/ticket.png' %}">
+                                <h2>Your Coupon will be visible only after admin approval</h2>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="{% static 'js/vendor/jquery-1.11.2.min.js' %}"></script>
+<script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"><\/script>')</script>
+<script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/kinetic.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/soon.min.js' %}"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script type="text/javascript">
+
+    (function () {
+
+        var i = 0, soons = document.querySelectorAll('.auto-due .soon'), l = soons.length;
+        for (; i < l; i++) {
+            soons[i].setAttribute('data-due', '2016-01-30T14:10:09');
+            soons[i].setAttribute('data-now', '2016-01-01T00:00:00');
+        }
+
+    }());
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems, options);
+    });
+
+    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+    // var collapsibleElem = document.querySelector('.collapsible');
+    // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+
+    // Or with jQuery
+
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+</script>
+</html>

@@ -1,12 +1,28 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import base64
+
 import dateparser
+import os
+
+from PIL import Image
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.db.models import Q
 from datetime import date, timedelta, datetime
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
+import imgkit
+from rest_framework.renderers import TemplateHTMLRenderer
+from django.conf import settings
+
+from events.utils import encoded_id
 from events_app.settings import DEFAULT_FROM_EMAIL
 
 from rest_framework.views import APIView
@@ -225,7 +241,7 @@ class UserLoginViewSet(ModelViewSet):
         message_status = requests.get(
             'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
             '=QrtReg&message=%s' % (mobile, message))
-        # send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
+        send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
         headers = self.get_success_headers(serializer.data)
         return Response('sent OTP MESSAGE & Email successfully', status=HTTP_201_CREATED, headers=headers)
 
@@ -276,3 +292,32 @@ class PaymentDetailsViewSet(ModelViewSet):
     queryset = RegisteredUsers.objects.all()
     serializer_class = RegisteredUsersSerializer
     permission_classes = [AllowAny, ]
+
+
+class CouponSuccessViewSet(ModelViewSet):
+    queryset = RegisteredUsers.objects.all()
+    serializer_class = RegisteredUsersSerializer
+    permission_classes = [AllowAny, ]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        #
+        # coupon = render_to_string('api_templates/coupon_1.html',
+        #                           {'instance': instance, 'domain':domain})
+        options = {
+            'format': 'png',
+            'encoding': "UTF-8",
+        }
+        url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(instance.id)}))
+        # imgkit.from_string(coupon, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'))
+        imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), options=options)
+        try:
+            image_data = open(os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), "rb").read()
+            return HttpResponse(image_data, content_type="image/png")
+        except IOError as e:
+            response = HttpResponse(content_type="image/png")
+            return response
+

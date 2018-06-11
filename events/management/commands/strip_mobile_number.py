@@ -13,5 +13,4 @@ class Command(BaseCommand):
             mobile = event_user.mobile
             event_user.mobile = mobile[-10:]
             event_user.save()
-            print ("end")
 

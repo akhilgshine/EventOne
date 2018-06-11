@@ -3,9 +3,16 @@ from __future__ import unicode_literals
 
 import json
 import datetime
+import uuid
+
+import imgkit
 from datetime import datetime
 
+import io
+
+import os
 import requests
+from PIL import Image
 from django.contrib.auth import update_session_auth_hash, authenticate, login
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -17,7 +24,9 @@ from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView
 from datetime import datetime
-
+from django.conf import settings
+from openpyxl.worksheet import page
+from .mixins import RegisteredObjectMixin
 from events.models import EventUsers, OtpModel, Table, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
 from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
     PaymentDetailsForm, HotelDetailForm
@@ -93,7 +102,11 @@ class UserLoginView(FormView):
         if user:
             if user.is_active:
                 login(self.request, user)
-                return HttpResponseRedirect('/user/event-register/')
+                if self.request.user.registered_obj and self.request.user.registered_obj.is_payment_completed:
+                    return HttpResponseRedirect(reverse_lazy('user_profile'))
+                else:
+                    return HttpResponseRedirect(self.success_url)
+
             else:
                 context['form'] = form
                 context['error'] = 'Inactive'
@@ -104,7 +117,7 @@ class UserLoginView(FormView):
             return render(self.request, self.template_name, context)
 
 
-class UserTableRegistrationView(FormView):
+class UserTableRegistrationView(RegisteredObjectMixin, FormView):
     template_name = 'user_registration/event_register.html'
     form_class = TableSelectForm
 
@@ -151,7 +164,7 @@ class UserTableRegistrationView(FormView):
         return JsonResponse(form.errors)
 
 
-class ProfileRegistrationView(TemplateView):
+class ProfileRegistrationView(RegisteredObjectMixin, TemplateView):
     template_name = 'user_registration/event_register.html'
     form_class = ProfileInformationForm
 
@@ -243,7 +256,7 @@ class AjaxHotelRentCalculation(View):
         return JsonResponse({'total_rent': total_rent})
 
 
-class HotelRegistrationView(FormView):
+class HotelRegistrationView(RegisteredObjectMixin, FormView):
     template_name = 'user_registration/event_register.html'
     form_class = HotelDetailForm
 
@@ -274,7 +287,7 @@ class HotelRegistrationView(FormView):
         return HttpResponse(html)
 
 
-class PaymentRegistrationView(FormView):
+class PaymentRegistrationView(RegisteredObjectMixin, FormView):
     template_name = 'user_registration/event_register.html'
     form_class = PaymentDetailsForm
     success_url = reverse_lazy('coupon_success')
@@ -290,6 +303,7 @@ class PaymentRegistrationView(FormView):
                 user_payment.payment = payment
                 user_payment.reciept_number = reciept_number
                 user_payment.reciept_file = reciept_file
+                user_payment.is_payment_completed = True
                 user_payment.save()
             except RegisteredUsers.DoesNotExist:
                 pass
@@ -306,3 +320,8 @@ class CouponSuccessView(TemplateView):
         context = super(CouponSuccessView, self).get_context_data(**kwargs)
         context['payement_details'] = RegisteredUsers.objects.get(id=self.request.user.registered_obj.id)
         return context
+
+
+class UserProfileView(TemplateView):
+    model = RegisteredUsers
+    template_name = 'user_registration/profile.html'

@@ -35,7 +35,7 @@ import sys
 
 
 class IndexPage(TemplateView):
-    template_name = 'index.html'
+    template_name = 'user_registration/index_main.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexPage, self).get_context_data(**kwargs)
@@ -1307,7 +1307,8 @@ class UserRegistrationListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserRegistrationListView, self).get_context_data(**kwargs)
         context['tables'] = Table.objects.all()
-        context['user_registered'] = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=False)
+        context['user_registered'] = RegisteredUsers.objects.filter(is_active=True, is_payment_completed=True,
+                                                                    event_user__is_approved=False)
         return context
 
 
@@ -1330,4 +1331,3 @@ class AddTShirtView(UpdateView):
     form_class = UpdateTShirtForm
     template_name = 't_shirt_update.html'
     success_url = reverse_lazy('list_users')
-
