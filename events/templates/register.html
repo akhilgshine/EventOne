@@ -39,7 +39,7 @@
 <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
-        <a href="/">Home</a>
+        <a href="{% url 'register_event' %}">Home</a>
         <a href="/users/">Registered Users</a>
         <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
         <a href="{% url 'proxy-hotel' %}">Proxy Hotel Booking</a>
@@ -214,11 +214,11 @@
                             <label class="control-label col-sm-4" for="">T-Shirt Size : </label>
                             <div class="col-sm-8">
 
-                               <select name ='t_shirt_size' class="form-control">
-                               <option value="0">--- select type ---</option>
-                                   {% for choice in form.t_shirt_size.field.choices %}
-                                <option value="{{choice.1}}">{{ choice.0 }}</option>
-                                   {% endfor %}
+                                <select name='t_shirt_size' class="form-control">
+                                    <option value="0">--- select type ---</option>
+                                    {% for choice in form.t_shirt_size.field.choices %}
+                                        <option value="{{ choice.1 }}">{{ choice.0 }}</option>
+                                    {% endfor %}
                                 </select>
 
                             </div>
@@ -243,12 +243,13 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
                             <div class="col-sm-8">
-{#                                <input type="text" class="form-control" id="id_hotel_name"#}
-{#                                       placeholder="Enter Hotel Name" name="hotel_name">#}
-                                <select name ='hotel' class="form-control" id="id_hotel_name">
-                                <option value="0">--- select type ---</option>
+                                {#                                <input type="text" class="form-control" id="id_hotel_name"#}
+                                {#                                       placeholder="Enter Hotel Name" name="hotel_name">#}
+                                <select name='hotel' class="form-control" id="id_hotel_name">
+                                    <option value="0">--- select type ---</option>
                                     {% for hotels in hotel_ %}
-                                <option value="{{ hotels.id }}" {% if hotels.id == 1 %}selected {% endif %}>{{ hotels }}</option>
+                                        <option value="{{ hotels.id }}"
+                                                {% if hotels.id == 1 %}selected {% endif %}>{{ hotels }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -411,7 +412,7 @@
     {%endif%}
 
     function calcalateTotal() {
-        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html())+ parseInt($('#id_other_contribution').val()));
+        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()) + parseInt($('#id_other_contribution').val()));
     }
 
     function getAmount(member_type, status) {
