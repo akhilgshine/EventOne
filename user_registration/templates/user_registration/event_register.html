@@ -23,8 +23,6 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
     <style>
         .error_div {
             color: red !important;
@@ -381,20 +379,12 @@
 
 
         });
-        $('#id_checkin_date').datepicker({
-            dateFormat: 'dd/mm/yy',
-            numberOfMonths: 1,
-            defaultDate: '-2m',
-            minDate: new Date(Date.parse("2018-08-03")),
-            maxDate: new Date(Date.parse("2018-08-05"))
+        $('.datepicker').datepicker({
+             format: 'dd/mm/yyyy',
+             defaultViewDate: {year:2018, month:7, day:1},
+
         });
-        $('#id_checkout_date').datepicker({
-            dateFormat: 'dd/mm/yy',
-            numberOfMonths: 1,
-            defaultDate: new Date(Date.parse("2018-08-01")),
-            minDate: new Date(Date.parse("2018-08-03")),
-            maxDate: new Date(Date.parse("2018-08-05"))
-        });
+
 
     });
 
@@ -504,8 +494,8 @@
         var hotel = $('#id_hotel').val();
         var room_type = $('input:radio[name=room_type]:checked').val();
         console.log('ajax_roomtype', room_type);
-        var check_in = $('#id_checkin_date').val().split('/')[1];
-        var check_out = $('#id_checkout_date').val().split('/')[1];
+        var check_in = $('#id_checkin_date').val().split('/')[0];
+        var check_out = $('#id_checkout_date').val().split('/')[0];
         $.ajax({
             type: 'GET',
             url: '{% url 'hotel_rent' %}',
@@ -514,8 +504,7 @@
             success: function (data) {
                 $('.error_div').html('');
 
-                if (data && data.total_rent) {
-                    $('#id_tottal_rent').val(data.total_rent);
+                if (data && data.total_rent) {$('#id_tottal_rent').val(data.total_rent);
                     $('#id_hotel_booking').html(data.total_rent);
                     $('#id_total_amount').html((parseInt({{ request.user.registered_obj.amount_paid }}) + parseInt($('#id_tottal_rent').val())));
 

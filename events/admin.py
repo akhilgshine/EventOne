@@ -85,6 +85,13 @@ class EventUserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'mobile']
 
 
+class ImageRoomTypeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    class Meta:
+        model = ImageRoomType
+
+    search_fields = ['first_name', 'last_name', 'email', 'mobile']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers, EventUserAdmin)
 admin.site.register(BookedHotel, BookedHotelAdmin)
@@ -94,5 +101,5 @@ admin.site.register(Table)
 admin.site.register(PaymentDetails, PaymentDetailsAdmin)
 admin.site.register(OtpModel)
 admin.site.register(Hotel)
-admin.site.register(ImageRoomType)
+admin.site.register(ImageRoomType, ImageRoomTypeAdmin)
 admin.site.register(ProxyHotelBooking)

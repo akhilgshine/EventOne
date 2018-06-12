@@ -170,10 +170,12 @@ class RegisterEventViewSet(ModelViewSet):
                 try:
                     hotel_obj = BookedHotel.objects.get(registered_users=registered_user)
                     hotel_obj.hotel = hotel
+                    previous_rent = hotel_obj.tottal_rent
                 except BookedHotel.DoesNotExist:
                     hotel_obj = BookedHotel.objects.create(registered_users=registered_user, hotel=hotel)
+                    previous_rent = 0
                 hotel_obj.room_type = room_type
-                hotel_obj.tottal_rent = tottal_rent
+                hotel_obj.tottal_rent = int(previous_rent) + int(tottal_rent)
                 hotel_obj.checkin_date = checkin_date
                 hotel_obj.checkout_date = checkout_date
                 hotel_obj.save()
@@ -238,9 +240,10 @@ class UserLoginViewSet(ModelViewSet):
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
         otp_obj = OtpModel.objects.create(user=user, otp=otp_number)
         message = "OTP for letsgonuts login is %s" % (otp_number,)
-        message_status = requests.get(
-            'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
-            '=QrtReg&message=%s' % (mobile, message))
+        requests.get(
+            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + user.mobile + "&text=" + message +
+             "&flash=0&type=1&sender=QrtReg",
+            headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
         send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
         headers = self.get_success_headers(serializer.data)
         return Response('sent OTP MESSAGE & Email successfully', status=HTTP_201_CREATED, headers=headers)

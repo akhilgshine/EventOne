@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-block btn-main" id="id_otp_submit">
+            <button type="submit" class="btn btn-block btn-main" id="id_otp_submit">
             Enter Otp
             </button>
         </div>
@@ -54,7 +54,7 @@
 {% endblock content %}
 {% block js %}
 <script>
-    $('#id_ajax_form').on('submit click', function (e) {
+    $('#id_ajax_form').on('submit', function (e) {
         e.preventDefault();
         var otp = $('#id_otp_value').val();
         $.ajax({

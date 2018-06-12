@@ -29,7 +29,6 @@ def hotelDetails(event_obj):
 
 
 def send_email(to_email, message, event_obj):
-
     cxt = {'event_register': event_obj}
     cxt['hotel'] = hotelDetails(event_obj)
 
@@ -65,8 +64,9 @@ def send_sms_message(phone, message, user_id):
     domain = Site.objects.get_current().domain
     url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(user_id)}))
     message_status = requests.get(
-        'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message +' You can see your coupon at ' + url)
-
+        "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + phone + "&text=" + message +
+        '. You can see your coupon at ' + url + "&flash=0&type=1&sender=QrtReg",
+        headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
     return message_status
 
 
@@ -83,5 +83,3 @@ def track_payment_details(data):
     payment_details = PaymentDetails.objects.create(**data)
     print('payment_details', data)
     return payment_details
-
-

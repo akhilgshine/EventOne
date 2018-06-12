@@ -736,11 +736,6 @@ class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
 
             message_status = send_sms_message(phone, message, reg_user_obj.id)
 
-            # message_status = requests.get(
-            #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
-            # message_status = requests.get(
-            #     "http://unifiedbuzz.com/api/insms/format/json/?mobile="+ phone +"&api_key="+'11111'+"&text="+message+"&flash=0&type=1&sender=QrtReg")
-
             try:
                 send_email(email, message, reg_user_obj)
             except:
