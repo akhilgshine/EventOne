@@ -380,7 +380,6 @@
 
         });
         $('.datepicker').datepicker({
-             format: 'dd/mm/yyyy',
              defaultViewDate: {year:2018, month:7, day:1},
 
         });
@@ -494,8 +493,8 @@
         var hotel = $('#id_hotel').val();
         var room_type = $('input:radio[name=room_type]:checked').val();
         console.log('ajax_roomtype', room_type);
-        var check_in = $('#id_checkin_date').val().split('/')[0];
-        var check_out = $('#id_checkout_date').val().split('/')[0];
+        var check_in = $('#id_checkin_date').val().split('/')[1];
+        var check_out = $('#id_checkout_date').val().split('/')[1];
         $.ajax({
             type: 'GET',
             url: '{% url 'hotel_rent' %}',

@@ -318,8 +318,6 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                     event_reg.amount_paid + event_reg.contributed_amount) + "/-"
                 message_status = send_sms_message(phone, message, event_reg.id)
 
-                # message_status = requests.get(
-                #     'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=' + phone + '&sender=QrtReg&message=' + message)
                 try:
                     send_email(email, message, event_reg)
                 except Exception as e:

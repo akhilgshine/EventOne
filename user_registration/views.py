@@ -42,22 +42,41 @@ class UserSignupView(FormView):
     form_class = UserSignupForm
     success_url = reverse_lazy('otp_post')
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        try:
+            event_user = EventUsers.objects.get(email=self.request.POST.get('email'),
+                                                mobile=self.request.POST.get('mobile'))
+            if not event_user.password:
+                self.send_otp(event_user)
+                return HttpResponseRedirect(self.success_url)
+        except EventUsers.DoesNotExist:
+            pass
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
     def form_valid(self, form):
         obj = form.save(commit=False)
         user, created = EventUsers.objects.get_or_create(email=obj.email, mobile=obj.mobile)
         if created:
             user.is_active = False
             user.save()
-        otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        OtpModel.objects.create(user=user, otp=otp_number)
-        message = "OTP for letsgonuts login is %s" % (otp_number,)
-        message_status = requests.get(
-            'http://alerts.ebensms.com/api/v3/?method=sms&api_key=A2944970535b7c2ce38ac3593e232a4ee&to=%s&sender'
-            '=QrtReg&message=%s' % (obj.mobile, message))
-        print(message_status)
-        send_mail('QRT 85 Registration', message, settings.DEFAULT_FROM_EMAIL, [obj.email], fail_silently=False, )
+        self.send_otp(user)
 
         return super(UserSignupView, self).form_valid(form)
+
+    def send_otp(self, obj):
+        otp_number = get_random_string(length=6, allowed_chars='1234567890')
+        OtpModel.objects.create(user=obj, otp=otp_number)
+        message = "OTP for letsgonuts login is %s" % (otp_number,)
+        message_status = requests.get(
+            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
+            "&flash=0&type=1&sender=QrtReg",
+            headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+
+        send_mail('QRT 85 Registration', message, settings.DEFAULT_FROM_EMAIL, [obj.email], fail_silently=False, )
 
 
 class OtpPostView(FormView):
@@ -269,7 +288,6 @@ class HotelRegistrationView(RegisteredObjectMixin, FormView):
         return HttpResponse(html)
 
     def form_valid(self, form):
-
         hotel = form.cleaned_data['hotel']
         room_type = form.cleaned_data['room_type']
         checkin_date = form.cleaned_data['checkin_date']

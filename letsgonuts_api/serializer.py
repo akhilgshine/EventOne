@@ -60,7 +60,7 @@ class RegisterEventSerializer(ModelSerializer):
         if data.get('tottal_rent') and not data.get('tottal_rent').isdigit():
             errors.append({'tottal rent': "Rent must be a number"})
             error_flag = False
-        if not data.get('amount_paid') > 0:
+        if data.get('amount_paid') < 0:
             errors.append({'amount_paid': "Amount Paid should not be blank"})
             error_flag = False
         if not error_flag:
