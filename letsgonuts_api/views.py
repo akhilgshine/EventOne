@@ -109,15 +109,14 @@ class NameDetailsViewSet(ModelViewSet):
 class RegisterEventViewSet(ModelViewSet):
     queryset = RegisteredUsers.objects.all()
     serializer_class = RegisterEventSerializer
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        event_user = request.POST.get('event_user')
-        try:
-            event_user = EventUsers.objects.get(id=event_user)
-        except EventUsers.DoesNotExist:
-            event_user = None
+        event_user, created = EventUsers.objects.get_or_create(email=serializer.validated_data.get('email'),
+                                                               mobile=serializer.validated_data.get('mobile'))
+        token, _ = Token.objects.get_or_create(user=event_user)
         if serializer.validated_data:
             event_user.first_name = serializer.validated_data.pop('first_name')
             event_user.last_name = serializer.validated_data.pop('last_name')
@@ -138,8 +137,9 @@ class RegisterEventViewSet(ModelViewSet):
                     registered_user.amount_paid += previous_amount_paid
                 registered_user.save()
             else:
+                serializer.validated_data['event_user'] = event_user
                 registered_user = serializer.save()
-                if registered_user.qrcode:
+                if not registered_user.qrcode:
                     try:
                         registered_user.qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
                         if not registered_user.qrcode.split('QRT')[1].startswith('8'):
@@ -180,7 +180,8 @@ class RegisterEventViewSet(ModelViewSet):
                 hotel_obj.checkout_date = checkout_date
                 hotel_obj.save()
 
-        return Response({'status': True, 'user_id': registered_user.id}, status=HTTP_201_CREATED)
+        return Response({'status': True, 'user_id': event_user.id, 'registered_user_id': registered_user.id},
+                        status=HTTP_201_CREATED)
 
 
 class RegisteredUsersViewSet(ModelViewSet):
@@ -231,22 +232,17 @@ class UserLoginViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get('email')
         mobile = serializer.validated_data.get('mobile')
-        user, created = EventUsers.objects.get_or_create(email=email, mobile=mobile)
-        if created:
-            user.is_active = False
-            user.save()
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        otp_obj = OtpModel.objects.create(user=user, otp=otp_number)
+        otp_obj = OtpModel.objects.create(otp=otp_number, mobile=mobile)
         message = "OTP for letsgonuts login is %s" % (otp_number,)
         requests.get(
-            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + user.mobile + "&text=" + message +
-             "&flash=0&type=1&sender=QrtReg",
+            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
+            "&flash=0&type=1&sender=QrtReg",
             headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-        send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
+        # send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
         headers = self.get_success_headers(serializer.data)
-        return Response('sent OTP MESSAGE & Email successfully', status=HTTP_201_CREATED, headers=headers)
+        return Response('sent OTP MESSAGE  successfully', status=HTTP_201_CREATED, headers=headers)
 
 
 class OtpPostViewSet(ModelViewSet):
@@ -267,28 +263,28 @@ class OtpPostViewSet(ModelViewSet):
         except OtpModel.DoesNotExist:
             return Response({'error': 'Invalid otp'}, status=400)
         response = {}
-        token, _ = Token.objects.get_or_create(user=otp_obj.user)
-        if not otp_obj.user.is_active:
-            otp_obj.user.is_active = True
-            otp_obj.user.save()
-            response['token'] = token.key
+        try:
+            event_user = EventUsers.objects.get(mobile=otp_obj.mobile)
+        except EventUsers.DoesNotExist:
+            event_user = None
+        if not event_user:
             response['status'] = 1
-            response['user_id'] = otp_obj.user.id
             return Response(response, status=200)
+        token, _ = Token.objects.get_or_create(user=event_user)
+        if event_user.registered_obj:
+            reg_user = event_user.registered_obj
+            response = RegisteredUsersSerializer(reg_user).data
+            response['status'] = 3
         else:
-            if otp_obj.user.get_user_registration.all():
-                reg_user = otp_obj.user.get_user_registration.all()[0]
-                response = RegisteredUsersSerializer(reg_user).data
-                response['status'] = 3
-            else:
-                response = NameDetailsSerializer(otp_obj.user).data
-                response['status'] = 2
-            return Response(response, status=200)
+            response = NameDetailsSerializer(event_user).data
+            response['status'] = 2
+        return Response(response, status=200)
 
 
 class HotelNameViewSet(ModelViewSet):
     queryset = Hotel.objects.all()
     serializer_class = HotelNameSerializer
+    permission_classes = [AllowAny, ]
 
 
 class PaymentDetailsViewSet(ModelViewSet):
@@ -307,15 +303,12 @@ class CouponSuccessViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         current_site = Site.objects.get_current()
         domain = current_site.domain
-        #
-        # coupon = render_to_string('api_templates/coupon_1.html',
-        #                           {'instance': instance, 'domain':domain})
+
         options = {
             'format': 'png',
             'encoding': "UTF-8",
         }
         url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(instance.id)}))
-        # imgkit.from_string(coupon, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'))
         imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), options=options)
         try:
             image_data = open(os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), "rb").read()
@@ -323,4 +316,3 @@ class CouponSuccessViewSet(ModelViewSet):
         except IOError as e:
             response = HttpResponse(content_type="image/png")
             return response
-

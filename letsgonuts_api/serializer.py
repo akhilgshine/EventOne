@@ -50,7 +50,7 @@ class RegisterEventSerializer(ModelSerializer):
     class Meta:
         model = RegisteredUsers
         fields = ['first_name', 'last_name', 'mobile', 'email', 'room_type', 'event_status', 'registration_type',
-                  'hotel_id', 'tottal_rent', 'event', 'event_user', 'table', 'payment',
+                  'hotel_id', 'tottal_rent', 'event','table', 'payment',
                   'amount_paid', 'event_status', 'registration_type', 'reciept_number', 'reciept_file', 'checkin_date',
                   'checkout_date']
 
@@ -75,7 +75,7 @@ class ImageRoomTypeSerializer(ModelSerializer):
 
 
 class UserLoginSerializer(Serializer):
-    email = serializers.EmailField()
+    # email = serializers.EmailField()
     mobile = serializers.CharField()
 
 

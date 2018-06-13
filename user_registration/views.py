@@ -6,7 +6,6 @@ import datetime
 import uuid
 
 import imgkit
-from datetime import datetime
 
 import io
 
@@ -20,7 +19,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-
 from django.urls import reverse, reverse_lazy
 from django.conf import settings
 from django.utils.crypto import get_random_string
@@ -69,14 +67,12 @@ class UserSignupView(FormView):
 
     def send_otp(self, obj):
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        OtpModel.objects.create(user=obj, otp=otp_number)
+        OtpModel.objects.create(mobile=obj.mobile, otp=otp_number)
         message = "OTP for letsgonuts login is %s" % (otp_number,)
         message_status = requests.get(
             "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
             "&flash=0&type=1&sender=QrtReg",
             headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-
-        send_mail('QRT 85 Registration', message, settings.DEFAULT_FROM_EMAIL, [obj.email], fail_silently=False, )
 
 
 class OtpPostView(FormView):
@@ -87,7 +83,8 @@ class OtpPostView(FormView):
         otp = request.POST.get('otp')
         try:
             otp_obj = OtpModel.objects.get(otp=otp)
-            request.session['user'] = otp_obj.user.id
+            event_user = EventUsers.objects.get(mobile=otp_obj.mobile)
+            request.session['user'] = event_user.id
             if (datetime.now() - otp_obj.created_time).total_seconds() >= 1800:
                 otp_obj.is_expired = True
                 otp_obj.save()

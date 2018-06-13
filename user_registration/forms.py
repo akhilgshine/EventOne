@@ -108,6 +108,8 @@ class ProfileInformationForm(forms.ModelForm):
 class HotelDetailForm(forms.ModelForm):
     hotel = forms.ModelChoiceField(queryset=Hotel.objects.all(), required=False)
     room_type = forms.ModelChoiceField(queryset=RoomType.objects.all(), required=False)
+    checkin_date = forms.DateTimeField(input_formats=["%d/%m/%y"])
+    checkout_date = forms.DateTimeField(input_formats=["%d/%m/%y"])
 
     class Meta:
         model = BookedHotel

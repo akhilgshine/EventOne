@@ -359,30 +359,5 @@
 <script type="text/javascript" src="{% static 'js/soon.min.js' %}"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-<script type="text/javascript">
 
-    (function () {
-
-        var i = 0, soons = document.querySelectorAll('.auto-due .soon'), l = soons.length;
-        for (; i < l; i++) {
-            soons[i].setAttribute('data-due', '2016-01-30T14:10:09');
-            soons[i].setAttribute('data-now', '2016-01-01T00:00:00');
-        }
-
-    }());
-    document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.sidenav');
-        var instances = M.Sidenav.init(elems, options);
-    });
-
-    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
-    // var collapsibleElem = document.querySelector('.collapsible');
-    // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
-
-    // Or with jQuery
-
-    $(document).ready(function () {
-        $('.sidenav').sidenav();
-    });
-</script>
 </html>

@@ -169,13 +169,13 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
 
 
 class OtpModel(models.Model):
-    user = models.ForeignKey(EventUsers)
+    mobile = models.CharField(max_length=15, default=0)
     created_time = models.DateTimeField(default=datetime.now, blank=True)
     otp = models.CharField(max_length=25, unique=True)
     is_expired = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.email
+        return self.otp
 
 
 class RegisteredUsers(models.Model):

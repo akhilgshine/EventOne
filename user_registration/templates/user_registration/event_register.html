@@ -30,6 +30,51 @@
     </style>
 </head>
 <body>
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+
+            </div>
+            {% if  request.user.is_authenticated %}
+                <a href="#user"><img class="circle" src="{% static 'img/user-profile.png' %}"></a>
+                <a href="#name"><span
+                        class="white-text name">{{ request.user.first_name }}{{ request.user.last_name }}</span></a>
+                <a href="#email"><span class="white-text email">{{ request.user.email }}</span></a>
+            {% else %}
+                <a><img src="{% static 'img/home-logo.png' %}" width="75px"></a>
+            {% endif %}
+
+        </div>
+    </li>
+    {% if  not request.user.is_authenticated or request.user.is_superuser %}
+        <li><a href="{% url 'login' %}">
+            <div class="nav-icon home-ic"></div>
+            Admin</a></li>
+    {% endif %}
+    <li><a href="{% url 'index_page' %}">
+        <div class="nav-icon home-ic"></div>
+        Home</a></li>
+    <li><a href="">
+        <div class="nav-icon hotel-ic"></div>
+        Hotels</a></li>
+    <li><a href="">
+        <div class="nav-icon pic-ic"></div>
+        Pictures</a></li>
+    <li><a href="">
+        <div class="nav-icon video-ic"></div>
+        Videos</a></li>
+    {% if  request.user.is_authenticated and  not request.user.is_superuser %}
+
+        <li class="sign-out"><a href="/logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Log out</a></li>
+    {% else %}
+        <li class="sign-out"><a href="{% url 'user_login' %}">
+            <i class="fas fa-sign-out-alt"></i>
+            Log In</a></li>
+    {% endif %}
+</ul>
 <div class="gradient-bg">
     <img src="{% static 'img/dance-shadow.png' %}" class="dance-bg"/>
     <div class="container-fluid">
@@ -41,18 +86,8 @@
             </div>
         </div>
         <div class="clearfix"></div>
-        <nav nav-reveal-menu>
-            <ul>
-                <a href=".">
-                    <li>Nothing To Display</li>
-                </a>
-                <li>Two</li>
-                <li>Three</li>
-                <li>Four</li>
-                <li>Five</li>
-            </ul>
-        </nav>
-        <a href="#" id="nav-trigger" nav-reveal-button></a>
+
+        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <div class="col-md-10 col-md-offset-1">
             <div class="stepper wizard ">
                 <div class="wizard-inner">
@@ -108,7 +143,7 @@
                                 </form>
                             </div>
                             <div class="clearfix"></div>
-                            <button type="button" class="btn btn-skip prev-step">BACK</button>
+                            <button type="button" class="btn btn-skip prev-step seeee">BACK</button>
                             <button type="button" class="btn  next-step pull-right btn-main " id="id_table_submit">
                                 NEXT
                             </button>
@@ -335,11 +370,39 @@
 <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 
+    (function () {
+
+        var i = 0, soons = document.querySelectorAll('.auto-due .soon'), l = soons.length;
+        for (; i < l; i++) {
+            soons[i].setAttribute('data-due', '2016-01-30T14:10:09');
+            soons[i].setAttribute('data-now', '2016-01-01T00:00:00');
+        }
+
+    }());
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems, options);
+    });
+
+    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+    // var collapsibleElem = document.querySelector('.collapsible');
+    // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+
+    // Or with jQuery
+
+
     $(document).ready(function (e) {
+        $(".prev-step").click(function (e) {
+
+            var $active = $('.wizard .nav-tabs li.active');
+            prevTab($active);
+
+        });
+        $('.sidenav').sidenav();
         $(".img-check").click(function () {
             $('.img-check').removeClass('check');
             $(".room-select").hide();
@@ -380,7 +443,11 @@
 
         });
         $('.datepicker').datepicker({
-             defaultViewDate: {year:2018, month:7, day:1},
+            format: 'dd/mm/yy',
+            defaultDate: new Date(Date.parse("2018-08-01")),
+            minDate: new Date(Date.parse("2018-08-03")),
+            maxDate: new Date(Date.parse("2018-08-05")),
+
 
         });
 
@@ -493,8 +560,8 @@
         var hotel = $('#id_hotel').val();
         var room_type = $('input:radio[name=room_type]:checked').val();
         console.log('ajax_roomtype', room_type);
-        var check_in = $('#id_checkin_date').val().split('/')[1];
-        var check_out = $('#id_checkout_date').val().split('/')[1];
+        var check_in = $('#id_checkin_date').val().split('/')[0];
+        var check_out = $('#id_checkout_date').val().split('/')[0];
         $.ajax({
             type: 'GET',
             url: '{% url 'hotel_rent' %}',
@@ -503,9 +570,12 @@
             success: function (data) {
                 $('.error_div').html('');
 
-                if (data && data.total_rent) {$('#id_tottal_rent').val(data.total_rent);
+                if (data && data.total_rent) {
+                    $('#id_tottal_rent').val(data.total_rent);
                     $('#id_hotel_booking').html(data.total_rent);
-                    $('#id_total_amount').html((parseInt({{ request.user.registered_obj.amount_paid }}) + parseInt($('#id_tottal_rent').val())));
+                    var register_amount = parseInt($('#id_amount_paid').val());
+                    var hotel_amount = parseInt($('#id_tottal_rent').val());
+                    $('#id_total_amount').html(register_amount + hotel_amount);
 
                 }
                 else {
