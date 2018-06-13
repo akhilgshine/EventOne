@@ -3,29 +3,17 @@ from __future__ import unicode_literals
 
 import json
 import datetime
-import uuid
 
-import imgkit
-
-import io
-
-import os
 import requests
-from PIL import Image
-from django.contrib.auth import update_session_auth_hash, authenticate, login
-from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
-from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView
 from datetime import datetime
-from django.conf import settings
-from openpyxl.worksheet import page
 from .mixins import RegisteredObjectMixin
 from events.models import EventUsers, OtpModel, Table, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
 from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
@@ -344,3 +332,24 @@ class CouponSuccessView(TemplateView):
 class UserProfileView(TemplateView):
     model = RegisteredUsers
     template_name = 'user_registration/profile.html'
+
+
+class ResetPassword(TemplateView):
+    template_name = 'user_registration/forgot_password.html'
+    success_url = reverse_lazy('otp_post')
+
+    def post(self, request, *args, **kwargs):
+        mobile = request.POST.get('mobile')
+        try:
+            EventUsers.objects.get(mobile=mobile)
+            otp_number = get_random_string(length=6, allowed_chars='1234567890')
+            OtpModel.objects.create(mobile=mobile, otp=otp_number)
+            message = "OTP for letsgonuts login is %s" % (otp_number,)
+            message_status = requests.get(
+                "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
+                "&flash=0&type=1&sender=QrtReg",
+                headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+            return HttpResponseRedirect(self.success_url)
+        except EventUsers.DoesNotExist:
+            return HttpResponse(json.dumps({'status': False, 'message': 'Number DoesNot Exist'}))
+

@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 
 from .views import UserSignupView, OtpPostView, SetPassWordView, UserLoginView, UserTableRegistrationView, \
     ProfileRegistrationView, AjaxHotelRentCalculation, HotelRegistrationView, PaymentRegistrationView, \
-    CouponSuccessView, UserProfileView
+    CouponSuccessView, UserProfileView, ResetPassword
 
 urlpatterns = [
     url(r'^user_signup/', UserSignupView.as_view(), name='user_signup'),
@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^payment-registration/', PaymentRegistrationView.as_view(), name='payment_registration'),
     url(r'^coupon-success/', CouponSuccessView.as_view(), name='coupon_success'),
     url(r'^user-profile/', UserProfileView.as_view(), name='user_profile'),
+    url(r'^reset-password/', ResetPassword.as_view(), name='reset_password'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
