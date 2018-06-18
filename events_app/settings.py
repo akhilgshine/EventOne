@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'letsgonuts_api',
     'rest_framework',
     'rest_framework.authtoken',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
