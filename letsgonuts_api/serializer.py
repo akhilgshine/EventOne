@@ -50,7 +50,7 @@ class RegisterEventSerializer(ModelSerializer):
     class Meta:
         model = RegisteredUsers
         fields = ['first_name', 'last_name', 'mobile', 'email', 'room_type', 'event_status', 'registration_type',
-                  'hotel_id', 'tottal_rent', 'event','table', 'payment',
+                  'hotel_id', 'tottal_rent', 'event', 'table', 'payment',
                   'amount_paid', 'event_status', 'registration_type', 'reciept_number', 'reciept_file', 'checkin_date',
                   'checkout_date']
 
@@ -124,10 +124,8 @@ class RegisteredUsersSerializer(ModelSerializer):
     def get_tableName(self, obj):
         return obj.table.table_name
 
-    def get_registration_type(self,obj):
+    def get_registration_type(self, obj):
         return obj.event_user.member_type
-
-
 
     def get_payment_details(self, obj):
         data = {}

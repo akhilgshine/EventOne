@@ -40,8 +40,8 @@
             </div>
             {% if  request.user.is_authenticated %}
                 <a href="#user"><img class="circle" src="{% static 'img/user-profile.png' %}"></a>
-                <a href="#name"><span class="white-text name">John Doe</span></a>
-                <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
+                <a href="#name"><span class="white-text name">{{ request.user.first_name }} {{ request.user.last_name }}</span></a>
+                <a href="#email"><span class="white-text email">{{ request.user.email }}</span></a>
             {% else %}
                 <a><img src="{% static 'img/home-logo.png' %}" width="75px"></a>
             {% endif %}
@@ -359,5 +359,10 @@
 <script type="text/javascript" src="{% static 'js/soon.min.js' %}"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<script>
+     $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+</script>
 </html>

@@ -1,35 +1,51 @@
 {% extends 'user_registration/registration_base.html' %}
 {% load static %}
 {% block content %}
-<h3 class="mb20">User Login</h3>
-<form method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-    <div class="form-group">
-        <div class="input-group">
+    <div id="preloader">
+        <div id="status">
+            <div class="loader_wrapper">
+                <svg class="loader" width="65" height="65" viewBox="0 0 44 44">
+                    <circle cx="22" cy="22" r="20" fill="none" stroke-width="4"></circle>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <h3 class="mb20">User Login</h3>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="input-group">
             <span class="input-group-addon b0">
             <img src="{% static 'img/mail.png' %}" width="20px">
             </span>
-            {{ form.email }}
-            <div class="clearfix"></div>
-            {{ form.email.errors }}
+                {{ form.email }}
+                <div class="clearfix"></div>
+                {{ form.email.errors }}
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="input-group">
+        <div class="form-group">
+            <div class="input-group">
             <span class="input-group-addon b0">
             <img src="{% static 'img/locked.png' %}" width="20px">
             </span>
-            {{ form.password }}
-             <div class="clearfix"></div>
-            {{ form.password.errors }}
+                {{ form.password }}
+                <div class="clearfix"></div>
+                {{ form.password.errors }}
+            </div>
         </div>
-    </div>
-    {% if error %}
-        {{ error }}
-    {% endif %}
-    <div class="form-group">
-        <button class="btn btn-block btn-main"> Login</button>
-        <a href="{%  url 'reset_password' %}">Forgot password ?</a>
-    </div>
-</form>
+        {% if error %}
+            {{ error }}
+        {% endif %}
+        <div class="form-group">
+            <button class="btn btn-block btn-main"> Login</button>
+            <a href="{% url 'reset_password' %}">Forgot password ?</a>
+        </div>
+    </form>
 {% endblock content %}
+{% block js %}
+    <script type="text/javascript">
+        $(window).load(function () {
+            $("#preloader").delay(1000).fadeOut("slow");
+        })
+    </script>
+{% endblock js %}

@@ -386,6 +386,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         var elems = document.querySelectorAll('.sidenav');
         var instances = M.Sidenav.init(elems, options);
+
     });
 
     // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
@@ -442,12 +443,13 @@
 
 
         });
+
         $('.datepicker').datepicker({
+
             format: 'dd/mm/yy',
             defaultDate: new Date(Date.parse("2018-08-01")),
             minDate: new Date(Date.parse("2018-08-03")),
             maxDate: new Date(Date.parse("2018-08-05")),
-
 
         });
 

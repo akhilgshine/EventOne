@@ -1,15 +1,11 @@
 import requests
 import base64
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.contrib.sites.models import Site
-from io import BytesIO
-from django.http import HttpResponse
-from django.template.loader import get_template
+from django.utils.crypto import get_random_string
 
-# from xhtml2pdf import pisa
 from events.models import *
 
 
@@ -39,9 +35,9 @@ def send_email(to_email, message, event_obj):
     content = render_to_string('coupon_mail.html', cxt)
     from_email = settings.DEFAULT_FROM_EMAIL
 
-    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
-    msg.attach_alternative(content, "text/html")
-    msg.send()
+    # msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+    # msg.attach_alternative(content, "text/html")
+    # msg.send()
 
     print("mail --> ", to_email)
 
@@ -83,3 +79,14 @@ def track_payment_details(data):
     payment_details = PaymentDetails.objects.create(**data)
     print('payment_details', data)
     return payment_details
+
+
+# send otp message to mobile
+def send_otp(obj):
+    otp_number = get_random_string(length=6, allowed_chars='1234567890')
+    OtpModel.objects.create(mobile=obj.mobile, otp=otp_number)
+    message = "OTP for Letsgonuts login is %s" % (otp_number,)
+    message_status = requests.get(
+        "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
+        "&flash=0&type=1&sender=QrtReg",
+        headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})

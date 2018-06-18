@@ -14,4 +14,3 @@ def validate_phone(value):
     formatted_phone_number = re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1", "%d" % int(clean_phone_number[:-1])) + \
                              clean_phone_number[-1]
     return formatted_phone_number
-

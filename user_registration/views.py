@@ -4,17 +4,16 @@ from __future__ import unicode_literals
 import json
 import datetime
 
-import requests
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
-from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView
 from datetime import datetime
 from .mixins import RegisteredObjectMixin
+from events.utils import send_otp
 from events.models import EventUsers, OtpModel, Table, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
 from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
     PaymentDetailsForm, HotelDetailForm
@@ -34,7 +33,7 @@ class UserSignupView(FormView):
             event_user = EventUsers.objects.get(email=self.request.POST.get('email'),
                                                 mobile=self.request.POST.get('mobile'))
             if not event_user.password:
-                self.send_otp(event_user)
+                send_otp(event_user)
                 return HttpResponseRedirect(self.success_url)
         except EventUsers.DoesNotExist:
             pass
@@ -49,18 +48,9 @@ class UserSignupView(FormView):
         if created:
             user.is_active = False
             user.save()
-        self.send_otp(user)
+            send_otp(user)
 
         return super(UserSignupView, self).form_valid(form)
-
-    def send_otp(self, obj):
-        otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        OtpModel.objects.create(mobile=obj.mobile, otp=otp_number)
-        message = "OTP for letsgonuts login is %s" % (otp_number,)
-        message_status = requests.get(
-            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
-            "&flash=0&type=1&sender=QrtReg",
-            headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
 
 
 class OtpPostView(FormView):
@@ -341,15 +331,8 @@ class ResetPassword(TemplateView):
     def post(self, request, *args, **kwargs):
         mobile = request.POST.get('mobile')
         try:
-            EventUsers.objects.get(mobile=mobile)
-            otp_number = get_random_string(length=6, allowed_chars='1234567890')
-            OtpModel.objects.create(mobile=mobile, otp=otp_number)
-            message = "OTP for letsgonuts login is %s" % (otp_number,)
-            message_status = requests.get(
-                "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
-                "&flash=0&type=1&sender=QrtReg",
-                headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-            return HttpResponseRedirect(self.success_url)
+            user = EventUsers.objects.get(mobile=mobile)
+            send_otp(user)
+            return JsonResponse({'status': True, 'url': self.success_url})
         except EventUsers.DoesNotExist:
             return HttpResponse(json.dumps({'status': False, 'message': 'Number DoesNot Exist'}))
-
