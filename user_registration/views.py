@@ -16,7 +16,7 @@ from .mixins import RegisteredObjectMixin
 from events.utils import send_otp
 from events.models import EventUsers, OtpModel, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
 from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
-    PaymentDetailsForm, HotelDetailForm
+    PaymentDetailsForm, HotelDetailForm, ResetPasswordForm
 
 
 # Create your views here.
@@ -332,7 +332,8 @@ class UserProfileView(TemplateView):
     template_name = 'user_registration/profile.html'
 
 
-class ResetPassword(TemplateView):
+class ResetPassword(FormView):
+    form_class = ResetPasswordForm
     template_name = 'user_registration/forgot_password.html'
     success_url = reverse_lazy('otp_post')
 

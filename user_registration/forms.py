@@ -132,8 +132,20 @@ class PaymentDetailsForm(forms.ModelForm):
     class Meta:
         model = RegisteredUsers
         fields = ['payment', 'reciept_number', 'reciept_file']
-        
+
     def __init__(self, *args, **kwargs):
         super(PaymentDetailsForm, self).__init__(*args, **kwargs)
         self.fields['reciept_number'].widget.attrs['class'] = 'form-control common-input form-group'
         self.fields['reciept_file'].widget.attrs['class'] = 'form-control common-input form-group'
+
+
+class ResetPasswordForm(forms.Form):
+    mobile = forms.CharField(validators=[validate_phone], required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['mobile'].widget.attrs['class'] = 'form-control common-input b0'
+        self.fields['mobile'].widget.attrs['placeholder'] = 'Enter Registered Number'
+        self.fields['mobile'].widget.attrs.update({'autofocus': 'autofocus'})
+
+
