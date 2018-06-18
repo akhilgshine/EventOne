@@ -1340,6 +1340,12 @@ ul:not(.browser-default) > li {
     color: red;
 }
 
+.error-div {
+    text-align: center;
+    color: red;
+    padding: 10px;
+}
+
 .datepicker-date-display {
     -webkit-box-flex: 1;
     -webkit-flex: 1 auto;
@@ -1505,13 +1511,12 @@ ul:not(.browser-default) > li {
     position: relative;
 }
 
-
 .modal {
     display: none;
     position: fixed;
     left: 0;
     right: 0;
-    background:none;
+    background: none;
     padding: 0;
     max-height: 70%;
     width: 55%;
@@ -1536,7 +1541,7 @@ ul:not(.browser-default) > li {
     transform-origin: 0 0;
 }
 
-.dropdown-content li>a, .dropdown-content li>span {
+.dropdown-content li > a, .dropdown-content li > span {
     font-size: 16px;
     color: #26a69a;
     display: block;
@@ -1544,8 +1549,8 @@ ul:not(.browser-default) > li {
     padding: 14px 16px;
 }
 
-.datepicker-select  {
-    background-color: rgba(255,255,255,0.9);
+.datepicker-select {
+    background-color: rgba(255, 255, 255, 0.9);
     width: 100%;
     padding: 5px;
     border: 1px solid #f2f2f2;
@@ -1562,7 +1567,6 @@ ul:not(.browser-default) > li {
         width: 80%
     }
 }
-
 
 .modal .modal-content {
     padding: 24px
@@ -1627,8 +1631,6 @@ ul:not(.browser-default) > li {
     border-radius: 0;
     will-change: bottom, opacity
 }
-
-
 
 .datepicker-modal {
     max-width: 325px;
@@ -1811,7 +1813,7 @@ ul:not(.browser-default) > li {
 .datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done {
     color: #ff4057;
     padding: 0 1rem;
-    margin-bottom:  10px;
+    margin-bottom: 10px;
     border: 0px;
     font-size: 18px;
     background: none;
@@ -2072,24 +2074,23 @@ ul:not(.browser-default) > li {
 
 /*******xtra-end****** */
 
-
 /*
 *******pre-loader*******/
 
-
 #preloader {
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: #ffffff;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     height: 100%;
-    z-index:99; / makes sure it stays on top /
+    z-index: 99;
+/ makes sure it stays on top /
 }
 
 /*#status {
@@ -2102,48 +2103,47 @@ ul:not(.browser-default) > li {
 }
 */
 @keyframes loader_animate {
-  100% {
-    transform: rotate(360deg);
-  }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes stroke_animate {
-  0% {
-    stroke-dasharray: 1, 150;
-    stroke-dashoffset: 0;
-  }
-  50% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -35;
-  }
-  100% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -124;
-  }
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+    }
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+    }
 }
 
 .loader_wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: absolute;;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;;
 }
 
 .loader {
-  animation: loader_animate 2s linear infinite;
+    animation: loader_animate 2s linear infinite;
 }
 
 .loader circle {
-  stroke-dasharray: 1, 150;
-  stroke-dashoffset: 0;
-  stroke-linecap: round;
-  animation: stroke_animate 1.5s cubic-bezier(0.4, 0.0, 0.6, 1) infinite;
-  stroke: #ff4254;
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    animation: stroke_animate 1.5s cubic-bezier(0.4, 0.0, 0.6, 1) infinite;
+    stroke: #ff4254;
 }
-
 
 /*
 *******pre-loader*******/

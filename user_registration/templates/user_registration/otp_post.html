@@ -23,7 +23,7 @@
             <div class="otp_error"></div>
         </form>
     </div>
-    <form action="{% url 'set_password' %}" method="post">
+    <form id="id_password_set">
         {% csrf_token %}
         <div class="hide-show" style="display: none">
             <h3 class="mb20">Set Password</h3>
@@ -33,7 +33,7 @@
                 <img src="{% static 'img/locked.png' %}" width="20px">
                 </span>
                     {{ form.password1 }}
-                    {{ form.password1.errors }}
+
                 </div>
             </div>
             <div class="form-group">
@@ -42,9 +42,10 @@
                 <img src="{% static 'img/locked.png' %}" width="20px">
                 </span>
                     {{ form.password2 }}
-                    {{ form.password2.errors }}
+
                 </div>
             </div>
+            <div class="error-div"></div>
             <div class="form-group">
                 <button type="submit" class="btn btn-block btn-main"
                         id="id_password_submit"> Set Password
@@ -72,6 +73,33 @@
                     else {
                         $('.hide-show').show();
                         $('.enter_otp').hide();
+
+
+                    }
+
+                }
+            });
+
+        });
+
+        $('#id_password_submit').on('click', function (e) {
+            e.preventDefault();
+            var form = $('#id_password_set');
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'set_password' %}',
+                data: form.serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        window.location.href = data.url;
+
+                    }
+                    else {
+                        $.each(data, function (key, value) {
+                            var input = $("#id_password_set :input[name='" + key + "']");
+                            $('.error-div').text(value);
+                        });
 
 
                     }

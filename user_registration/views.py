@@ -9,12 +9,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import View, TemplateView, FormView
 from datetime import datetime
 from .mixins import RegisteredObjectMixin
 from events.utils import send_otp
-from events.models import EventUsers, OtpModel, Table, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
+from events.models import EventUsers, OtpModel, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
 from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
     PaymentDetailsForm, HotelDetailForm
 
@@ -56,6 +56,7 @@ class UserSignupView(FormView):
 class OtpPostView(FormView):
     template_name = 'user_registration/otp_post.html'
     form_class = OtpPostForm
+    success_url = reverse_lazy('set_password')
 
     def post(self, request):
         otp = request.POST.get('otp')
@@ -84,7 +85,14 @@ class SetPassWordView(FormView):
             user.set_password(form.cleaned_data['password1'])
             user.is_active = True
             user.save()
-        return super(SetPassWordView, self).form_valid(form)
+        data = {
+            'status': True,
+            'url': self.success_url
+        }
+        return JsonResponse(data)
+
+    def form_invalid(self, form):
+        return JsonResponse(form.errors)
 
 
 class UserLoginView(FormView):
