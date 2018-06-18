@@ -282,7 +282,7 @@ class OtpPostViewSet(ModelViewSet):
 
 
 class HotelNameViewSet(ModelViewSet):
-    queryset = Hotel.objects.all()
+    queryset = Hotel.objects.order_by('name')
     serializer_class = HotelNameSerializer
     permission_classes = [AllowAny, ]
 
