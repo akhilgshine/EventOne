@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^proxy-hotel/', ProxyHotelBookingView.as_view(), name='proxy-hotel'),
     url(r'^proxy-listing/', ProxyHotelListingView.as_view(), name='proxy-listing'),
     url(r'^user-registration-list/', UserRegistrationListView.as_view(), name='user_registration_list'),
+    url(r'^get-hotel-booking-details/', GetHotelBookingDetailsView.as_view(), name='get_hotel_booking_details'),
     url(r'^t-shirt-update/(?P<pk>\d+)$', AddTShirtView.as_view(), name='t_shirt_update'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),

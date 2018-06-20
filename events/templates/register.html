@@ -194,14 +194,7 @@
                                 </label>
                             </div>
                         </div>
-                        {#                            <div class="form-group">#}
-                        {#                          <label class="control-label col-sm-4" for="partial_payment_id"></label>#}
-                        {#                          <div class="col-sm-2">#}
-                        {#                              <label>#}
-                        {#                                  <input id="id_partial_payment" value="partial_amount" type="checkbox" class="payment-mode" name="partial_payment"> <span class="radio-change"></span> Partial Payment#}
-                        {#                              </label>#}
-                        {#                          </div>#}
-                        {#                            </div>#}
+
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="id_amount_paid">Registration Fee : </label>
                             <div class="col-sm-8">
@@ -224,6 +217,18 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
+                            <div class="col-sm-8">
+                                <select name='hotel' class="form-control" id="id_hotel_name">
+                                    <option value="0" selected>--- select type ---</option>
+                                    {% for hotels in hotel_ %}
+                                        <option value="{{ hotels.id }}"
+                                                >{{ hotels }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                             <div class="col-sm-8">
                                 <input type="hidden" id="id_hidden_room" name="room_type">
@@ -233,28 +238,14 @@
                                     {% for room in room_types %}
                                         <option value="{{ room.id }}:{{ room.net_rate }}"
                                                 {% if  not room.rooms_available %}
-                                                disabled {% endif %}>{{ room.room_type }} ({{ room.rooms_available }})
+                                                disabled {% endif %}
+                                                data-hotel="{{ room.hotel.id }}">{{ room.room_type }}
+                                            ({{ room.rooms_available }})
                                         </option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-4" for="id_hotel_name">Hotel Name :</label>
-                            <div class="col-sm-8">
-                                {#                                <input type="text" class="form-control" id="id_hotel_name"#}
-                                {#                                       placeholder="Enter Hotel Name" name="hotel_name">#}
-                                <select name='hotel' class="form-control" id="id_hotel_name">
-                                    <option value="0">--- select type ---</option>
-                                    {% for hotels in hotel_ %}
-                                        <option value="{{ hotels.id }}"
-                                                {% if hotels.id == 1 %}selected {% endif %}>{{ hotels }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="id_room_rent"> Hotel Rent In Rupees :</label>
                             <div class="col-sm-8">
@@ -412,7 +403,17 @@
     {%endif%}
 
     function calcalateTotal() {
-        $('#total_amount_final').html(parseInt($('#reg_amount_final').html()) + parseInt($('#hotel_amount_final').html()) + parseInt($('#id_other_contribution').val()));
+        var reg_amount = parseInt($('#reg_amount_final').html());
+        var hotel_amount = parseInt($('#hotel_amount_final').html());
+        var contribution = parseInt($('#id_other_contribution').val());
+        if (isNaN(contribution)){
+            $('#total_amount_final').html(reg_amount+hotel_amount);
+        }
+        else {
+
+             $('#total_amount_final').html(reg_amount+hotel_amount+contribution);
+        }
+
     }
 
     function getAmount(member_type, status) {
@@ -800,9 +801,18 @@
         }
     });
 
+
     $(document).ready(function () {
         var memberType = $('#memberType').val();
         $('#id_member_type').val(memberType);
+
+        $('#id_hotel_name').on('change', function () {
+            $('#room_type').val('');
+            var hotel = $(this).val();
+            $("#room_type option").hide();
+            $("#room_type option[data-hotel=" + hotel + "]").show();
+        })
+
     });
 
 

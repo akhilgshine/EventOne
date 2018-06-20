@@ -8,12 +8,12 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import Context
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 # from xhtml2pdf import pisa
-from django.db.models import Q
+from django.db.models import Q, Count, F, Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from events.templatetags import template_tags
@@ -284,7 +284,7 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                         hotel_obj.save()
                         room.rooms_available = room.rooms_available - 1
                         room.save()
-                        message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
+                        message_hotel = "You have successfully booked room in " + hotel_obj.hotel.name + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
                         # message_hotel += text
                         message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                     else:
@@ -684,7 +684,7 @@ class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
                     hotel_obj.save()
                     room.rooms_available = room.rooms_available - 1
                     room.save()
-                    message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
+                    message_hotel = "You have successfully booked room in " + hotel_obj.hotel.name + "for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
                     message_hotel += text
                     message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                 else:
@@ -694,7 +694,7 @@ class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
                     hotel_obj.tottal_rent = room_rent
 
                     if not hotel_obj.checkout_date == checkout_date or hotel_obj.checkout_date == checkout_date:
-                        message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
+                        message_hotel = "You have successfully updated room in " + hotel_obj.hotel.name + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
                         message_hotel += text
                         message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
 
@@ -706,7 +706,7 @@ class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
                         room.rooms_available = room.rooms_available - 1
                         room.save()
                         hotel_obj.room_type = room
-                        message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
+                        message_hotel = "You have successfully updated room in " + hotel_obj.hotel.name + "for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + room.room_type + "'"
                         message_hotel += text
                         message_hotel += " And your total rent is Rs." + str(room_rent) + "/-"
                     hotel_obj.save()
@@ -808,11 +808,11 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
             hotel_obj.room_type.save()
 
         if created:
-            message_hotel = "You have successfully booked room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+            message_hotel = "You have successfully booked room in " + hotel_obj.hotel.name + "for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
         else:
-            message_hotel = "You have successfully updated room in Hotel Raviz Kollam for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+            message_hotel = "You have successfully updated room in" + + hotel_obj.hotel.name + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
@@ -920,6 +920,7 @@ class DashBoardView(LoginRequiredMixin, ListView):
         context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
 
         context['room_types'] = RoomType.objects.all()
+        context['hotel_names'] = Hotel.objects.all()
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
         context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context[
             'room_count']
@@ -1266,7 +1267,7 @@ class DownloadUnRegisteredUserCSVView(TemplateView):
 class ProxyHotelBookingView(FormView):
     template_name = 'proxy_hotel_booking.html'
     form_class = ProxyHotelForm
-    success_url = '/'
+    success_url = reverse_lazy('list_users')
 
     def form_valid(self, form):
         table = form.cleaned_data['table']
@@ -1324,3 +1325,22 @@ class AddTShirtView(UpdateView):
     form_class = UpdateTShirtForm
     template_name = 't_shirt_update.html'
     success_url = reverse_lazy('list_users')
+
+
+class GetHotelBookingDetailsView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        hotel = request.GET.get('hotel')
+        try:
+            booked_hotel = Hotel.objects.get(id=hotel)
+            hotel_room_type = booked_hotel.get_hotel_room_types.all()
+            count = hotel_room_type.aggregate(Sum('rooms_available')).values()[0] or 0.00
+            booked_rooms = BookedHotel.objects.filter(hotel=booked_hotel)
+            total_rooms = count + booked_rooms.count()
+        except Hotel.DoesNotExist:
+            booked_hotel = None
+
+        html = render_to_string('dashboard_ajax.html',
+                                {'hotel_roomtype': hotel_room_type, 'booked_rooms': booked_rooms,'count':count,'total_rooms':total_rooms})
+
+        return HttpResponse(html)

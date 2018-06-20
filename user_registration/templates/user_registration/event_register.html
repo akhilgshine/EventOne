@@ -226,14 +226,14 @@
                                         <div class="form-group">
 
                                             {% for roomtype in hotel_details_form.room_type.field.queryset %}
-                                                <label class="btn room-typ">
+                                                <label class="btn room-typ" data-hotel="{{ roomtype.hotel.id }}">
                                                     <img src="{% static 'img/tick.png' %}"
                                                          class="room-select">
                                                     {% if roomtype.get_room_type_image.all.0.image %}
-                                                        {% thumbnail  roomtype.get_room_type_image.all.0.image "150x99" crop="center" as im %}
-                                                        <img src="{{ im.url }}" width="{{ im.width }}"
-                                                             height="{{ im.height }}"  alt="..." class=" img-check">
-                                                    {% endthumbnail %}
+                                                        {% thumbnail roomtype.get_room_type_image.all.0.image "150x99" crop="center" as im %}
+                                                            <img src="{{ im.url }}" width="{{ im.width }}"
+                                                                 height="{{ im.height }}" alt="..." class=" img-check" >
+                                                        {% endthumbnail %}
                                                     {% else %}
                                                         <img src="{% static 'img/r-1.png' %}" alt="..."
                                                              class=" img-check"
@@ -656,6 +656,15 @@
         else {
             $('#id_reciept').css('display', 'none');
         }
+
+
+    });
+
+    $('#id_hotel').on('click', function () {
+        var hotel = $(this).val();
+        {#$('#room_type').val('');#}
+        $("label[data-hotel]").hide();
+        $("label[data-hotel=" + hotel + "]").show();
 
 
     });

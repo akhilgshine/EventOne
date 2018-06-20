@@ -7,6 +7,7 @@ from django.db.models import Sum
 from datetime import datetime
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from django.utils.translation import ugettext_lazy as _

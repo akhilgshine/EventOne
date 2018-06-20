@@ -144,6 +144,12 @@
                                 <td align="left">Registration Amount</td>
                                 <td align="right">₹ {{ request.user.registered_obj.amount_paid }}</td>
                             </tr>
+                            {% if request.user.registered_obj.contributed_amount %}
+                            <tr>
+                                <td align="left">Contributed  Amount</td>
+                                <td align="right">₹ {{ request.user.registered_obj.contributed_amount }}</td>
+                            </tr>
+                            {% endif %}
                             <tr>
                                 <td align="left">Hotel Amount</td>
                                 <td align="right">

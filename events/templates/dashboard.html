@@ -193,8 +193,11 @@
             <div class="box">
                 <div class="col-sm-3 col-sm-offset-3">
                     <label>Hotel</label>
-                    <select class="form-control">
-                        <option value="">Raviz</option>
+                    <select name='hotel' class="form-control" id="id_hotel_name">
+                        {% for hotels in hotel_names %}
+                            <option value="{{ hotels.id }}"
+                            >{{ hotels }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-sm-3 p0">
@@ -206,7 +209,7 @@
                 </div>
 
                 <div class="clearfix"></div>
-                <div class="row">
+                <div class="row" id="id_hotel_booking">
                     <div class="col-sm-3 form-group date_aug_3">
                         <div class="room_type_div">
                             <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
@@ -268,9 +271,38 @@
             var val = $(this).val();
             $('div[class*=date_aug_]').hide();
             $('.date_aug_' + val).show();
+        });
+        hotelBookingDetails();
+    });
+
+    function hotelBookingDetails() {
+        var hotel = $('#id_hotel_name').val();
+        var booking_date = $('#booking_date').val();
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'get_hotel_booking_details' %}',
+            data: {'hotel': hotel, 'booking_date': booking_date},
+            success: function (data) {
+                $('#id_hotel_booking').html(data);
+                var val = $('#booking_date').val();
+                $('div[class*=date_aug_]').hide();
+                $('.date_aug_' + val).show();
+
+            }
         })
 
-    });
+    }
+
+    {
+
+
+        $('#id_hotel_name').on('change', function () {
+
+            hotelBookingDetails();
+        })
+
+
+    }
 
 </script>
 </html>

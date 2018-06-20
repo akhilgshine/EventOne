@@ -48,11 +48,16 @@
             padding: 10px 30px;
         }
 
- .btn-cancel {    min-width: 276px;
-    padding: 10px 30px;
-    border-radius: 0px;
-    font-weight: bold;}
-.btn-upgrade {    background: #0d6e0d;}
+        .btn-cancel {
+            min-width: 276px;
+            padding: 10px 30px;
+            border-radius: 0px;
+            font-weight: bold;
+        }
+
+        .btn-upgrade {
+            background: #0d6e0d;
+        }
 
     </style>
 </head>
@@ -113,7 +118,9 @@
                                     {% for room in room_types %}
                                         <option value="{{ room.id }}:{{ room.net_rate }}"
                                                 {% if  not room.rooms_available %}
-                                                disabled {% endif %}>{{ room.room_type }} ({{ room.rooms_available }})
+                                                disabled {% endif %}
+                                                data-hotel="{{ room.hotel.id }}">{{ room.room_type }}
+                                            ({{ room.rooms_available }})
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -226,14 +233,16 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <button type="button"
-                                            class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth btn-upgrade" id="id_upgrade_hotel"> Upgrade Hotel
+                                            class="btn btn-warning nuts-sub-hotel-confirm btn-minwidth btn-upgrade"
+                                            id="id_upgrade_hotel"> Upgrade Hotel
                                     </button>
                                     </a>
                                 </div>
                             {% endif %}
                             <div class="col-sm-3">
                                 <a href="/users/">
-                                    <button type="button" class="btn btn-cancel btn-danger nuts-sub-hotel-cancel btn-minwidth">
+                                    <button type="button"
+                                            class="btn btn-cancel btn-danger nuts-sub-hotel-cancel btn-minwidth">
                                         Cancel
                                     </button>
                                 </a>
@@ -268,6 +277,12 @@
         var initial_due = $('#id_tottal_rent').val();
         var initial_paid = $('#id_current_paid').val();
         var rent_total = $('#rent_total').val();
+        $('#id_hotel').on('change', function () {
+            var hotel = $(this).val();
+            $('#id_room_type').val('');
+            $("#id_room_type option").hide();
+            $("#id_room_type option[data-hotel=" + hotel + "]").show();
+        })
 
 
         $('#hotel_amount_final').text($('#id_tottal_rent').val());
@@ -310,14 +325,14 @@
         {% endif %}
 
     });
-    $('#id_upgrade_hotel').on('click',function () {
-            $('#DetailForm input ').attr('readonly', false);
-            $('#id_room_type').attr("disabled", false);
-            $('#id_room_type').focus();
-            $('#id_checkin_date').datepicker('enable');
-            $('#id_checkout_date').datepicker('enable');
+    $('#id_upgrade_hotel').on('click', function () {
+        $('#DetailForm input ').attr('readonly', false);
+        $('#id_room_type').attr("disabled", false);
+        $('#id_room_type').focus();
+        $('#id_checkin_date').datepicker('enable');
+        $('#id_checkout_date').datepicker('enable');
 
-            $('input:radio[name=mode_of_payment]').attr('disabled', false);
+        $('input:radio[name=mode_of_payment]').attr('disabled', false);
 
     });
 
@@ -430,8 +445,6 @@
             }, 1);
         }
     });
-
-
     $("#id_checkout_date").datepicker({
         dateFormat: 'dd/mm/yy',
         numberOfMonths: 1,
@@ -441,7 +454,6 @@
         onSelect: function () {
             changeCheckinDate();
             totalAmountCalculation($('#id_tottal_rent'));
-
         },
         beforeShow: function (input) {
             setTimeout(function () {
@@ -467,7 +479,10 @@
         e.preventDefault();
 
         var rent_total = parseInt($('#id_tottal_rent').val());
-
+        if (parseInt(rent_total) > parseInt(amount_to_be_paid)) {
+            alert('Please pay only' + amount_to_be_paid);
+            return false;
+        }
         if ((amount_to_be_paid == 0) && (rent_total >= 0)) {
             alert("You don't have any due");
             return false;
@@ -496,13 +511,13 @@
 
 
     });
-
-
-
-
-
-
     {% if hotel_obj %}
+        $('#id_hotel').on('change', function () {
+            var hotel = $(this).val();
+            $('#id_room_type').val('');
+            $("#id_room_type option").hide();
+            $("#id_room_type option[data-hotel=" + hotel + "]").show();
+        })
         $("#id_hotel").val('{{hotel_obj.hotel.id}}');
         {% if hotel_obj.registered_users.hotel_due %}
             $("#id_tottal_rent").val('{{hotel_obj.registered_users.hotel_due}}');

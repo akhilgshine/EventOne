@@ -277,7 +277,7 @@
     var selected_rent;
 
     function selectRoomType(field) {
-        ajaxCalculateHotelRent();
+        ajaxHotelRent();
 
         if ($(field).val() == '') {
             clearHotelFields();
@@ -291,12 +291,10 @@
 
     $("#id_check_out_date").change(function () {
        ajaxHotelRent();
-        ajaxCalculateHotelRent();
     });
 
     function changeCheckinDate() {
         ajaxHotelRent();
-        ajaxCalculateHotelRent();
     };
 
     function ajaxHotelRent() {
@@ -337,7 +335,6 @@
             $("#id_checkout_date").datepicker("option", "minDate", selected);
             changeCheckinDate();
             totalAmountCalculation($('#id_hotel_rent'));
-            ajaxCalculateHotelRent();
         },
         beforeShow: function (input) {
             setTimeout(function () {
@@ -402,9 +399,7 @@
             $("#notifications").text('Please Select Checkin and Checkout');
 
         }
-        else if (!$('input[name=mode_of_payment]:checked').val()) {
-            $("#notifications").text('Please Select a Payment Mode !');
-        }
+
 
         else {
             $('#DetailForm').submit();
@@ -491,46 +486,7 @@
 
     });
 
-    {#function ajaxCalculateHotelRent() {#}
-    {#    {% if hotel_obj %}#}
-    {#        var room_type = $('#id_room_type').val().split(':')[0];#}
-    {#        var check_in = $('#id_checkin_date').val()#}
-    {#        var check_out = $('#id_checkout_date').val()#}
-    {#        current_hotel = ''#}
-    {#        new_hotel = ''#}
-    {#        console.log({{ hotel_obj.id }})#}
-    {#        $.ajax({#}
-    {#            type: "GET",#}
-    {#            url: '{% url "get-hotel-calculation"  %}',#}
-    {#            data: {#}
-    {#                'user_hotel':{{ hotel_obj.id }},#}
-    {#                'room_type': room_type,#}
-    {#                'check_in': check_in,#}
-    {#                'check_out': check_out#}
-    {#            },#}
-    {#            dataType: 'json',#}
-    {#            success: function (data) {#}
-    {#                console.log(data)#}
-    {#                current_hotel += "<div style='font-size:16px;'>Booked Hotel Details</div><div style='padding-left:10px'>Booked hotel rent: Rs "#}
-    {#                current_hotel += data.success.current_hotel_details.total_hotel_rent + " /-<br>"#}
-    {#                current_hotel += "Hotel Rent Paid : Rs "#}
-    {#                current_hotel += data.success.current_hotel_details.hotel_rent_paid + " /-<br>"#}
-    {#                current_hotel += "Due Amount : Rs "#}
-    {#                current_hotel += data.success.current_hotel_details.hotel_due_amount + " /-<br></div></br>"#}
-    {##}
-    {##}
-    {#                current_hotel += "<div style='font-size:16px;'>Updated Hotel Details</div><div style='padding-left:10px'>Hotel Booking Amount: Rs "#}
-    {#                current_hotel += data.success.updated_hotel_details.total_hotel_rent + " /-<br>"#}
-    {#                current_hotel += "Balance Amount To Be Paid : Rs <span id='updated-balance-amount'>"#}
-    {#                current_hotel += data.success.updated_hotel_details.hotel_due_amount + "</span> /-<br>"#}
-    {#                current_hotel += "<span id='updated_due' style='display:none'>Current Due Amount: Rs <span id='updated_due-amount'></span></span></div>"#}
-    {##}
-    {#                $('.booked-hotel').html(current_hotel)#}
-    {#            }#}
-    {#        });#}
-    {#    {% endif %}#}
-    {##}
-    {#}#}
+
 
 
 </script>
