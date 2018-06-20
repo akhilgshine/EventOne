@@ -1,0 +1,40 @@
+{% load template_tags %}
+                    <div class="col-sm-3 form-group date_aug_3">
+                        <div class="room_type_div">
+                            <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                            <h1>Total Rooms Booked:{{ booked_rooms.count }}</h1>
+                        </div>
+                    </div>
+                    {% for room_type in hotel_roomtype %}
+                        <div class="col-sm-3 form-group date_aug_3">
+                            <div class="room_type_div">
+                                <h1><br>{{ room_type.room_type }}</h1>
+                                <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
+                                <br>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="col-sm-3 form-group date_aug_4">
+                        <div class="room_type_div">
+                            <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
+                            <h1>Total Rooms :{{ total_rooms }}</h1>
+                            <h1>Total Rooms Booked:{{ booked_rooms.count }}</h1>
+                            <h1>Total Rooms Available:{{ count}}</h1>
+
+                        </div>
+                    </div>
+                    {% for room_type in hotel_roomtype %}
+                        <div class="col-sm-3 form-group date_aug_4">
+                            <div class="room_type_div">
+                                <h1><br>{{ room_type.room_type }}</h1>
+                                <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
+                                <span> Total Rooms:{{ room_type|total_room_count }}</span><br>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-04"><span>Booked:{% get_room_count room_type '2018-08-04' as booked_count %} {{ booked_count }}</span></a>
+                                <br>
+                                <span>Available:{{ room_type.rooms_available }}</span><br>
+                            </div>
+                        </div>
+                    {% endfor %}
+
