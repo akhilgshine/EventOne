@@ -224,6 +224,8 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                                 qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
                             if qrcode_updated_length == 2:
                                 qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
+                            else:
+                                qrcode = str('QRT8') + str(qrcode_updated_increment)
                     except Exception as e:
                         print(e, "Exception at line 184")
                         qrcode = 'QRT8001'

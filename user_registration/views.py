@@ -214,6 +214,8 @@ class ProfileRegistrationView(RegisteredObjectMixin, TemplateView):
                                 registered_user.qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
                             if qrcode_updated_length == 2:
                                 registered_user.qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
+                            else:
+                                registered_user.qrcode = str('QRT8') + str(qrcode_updated_increment)
                     except:
                         registered_user.qrcode = 'QRT8001'
                 registered_user.amount_paid = amount_paid
