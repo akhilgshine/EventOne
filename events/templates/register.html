@@ -116,7 +116,7 @@
                             <label class="control-label col-sm-4" for="id_first_name">First Name :</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="id_first_name"
-                                       placeholder="Enter your First Name" name='first_name' required="">
+                                       placeholder="Enter your First Name" name='first_name' required>
                             </div>
                         </div>
 
@@ -131,7 +131,7 @@
                             <label class="control-label col-sm-4" for="id_phone">Phone Number :</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="id_phone"
-                                       placeholder="Enter your Phone Number" name="phone" required=""
+                                       placeholder="Enter your Phone Number" name="phone" required
                                        pattern='^\+?\d{0,13}'>
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                             <label class="control-label col-sm-4" for="id_email">Email:</label>
                             <div class="col-sm-8">
                                 <input type="email" class="form-control" id="id_email" placeholder="Enter your Email"
-                                       name="email" required="">
+                                       name="email" required>
                             </div>
                         </div>
 
@@ -223,7 +223,7 @@
                                     <option value="0" selected>--- select type ---</option>
                                     {% for hotels in hotel_ %}
                                         <option value="{{ hotels.id }}"
-                                                >{{ hotels }}</option>
+                                        >{{ hotels }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -406,12 +406,12 @@
         var reg_amount = parseInt($('#reg_amount_final').html());
         var hotel_amount = parseInt($('#hotel_amount_final').html());
         var contribution = parseInt($('#id_other_contribution').val());
-        if (isNaN(contribution)){
-            $('#total_amount_final').html(reg_amount+hotel_amount);
+        if (isNaN(contribution)) {
+            $('#total_amount_final').html(reg_amount + hotel_amount);
         }
         else {
 
-             $('#total_amount_final').html(reg_amount+hotel_amount+contribution);
+            $('#total_amount_final').html(reg_amount + hotel_amount + contribution);
         }
 
     }
@@ -630,6 +630,19 @@
         var hotel_rent = $('#id_room_rent').val();
         var check_in = $('#checkIn').val();
         var check_out = $('#checkOut').val();
+        var phone = $('#id_phone').val();
+        var email = $('#id_email').val();
+
+        if (email === '') {
+
+            $("#notifications").text('Please Enter Email !');
+            return false;
+        }
+        if (phone === '') {
+
+            $("#notifications").text('Please Enter Phone !');
+            return false;
+        }
         if (!$('input[name=status]:checked').val()) {
             $("#notifications").text('Please Select a Registration Type !');
             return false;
