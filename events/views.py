@@ -229,7 +229,6 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                     except Exception as e:
                         print(e, "Exception at line 184")
                         qrcode = 'QRT8001'
-
                     print("amount_paid : ", amount_paid)
                     balance_amount = self.check_balance(amount_paid)
 
