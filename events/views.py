@@ -195,6 +195,12 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
             if created:
                 event_user.table = table
             else:
+                if event_user.registered_obj:
+                    message = "User with this MailID '" + str(event_user.email) + "' already exist in table '" + str(
+                        event_user.table.table_name) + "'"
+                    messages.success(self.request, message)
+                    return HttpResponseRedirect(reverse('register_event'))
+
                 if event_user.table != table:
                     message = "User with this MailID '" + str(event_user.email) + "' already exist in table '" + str(
                         event_user.table.table_name) + "'"
@@ -210,7 +216,6 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                 event_reg, created = RegisteredUsers.objects.get_or_create(event_user=event_user,
                                                                            event=event,
                                                                            table=table)
-
                 if created:
                     try:
                         qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
@@ -317,7 +322,7 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid + event_reg.contributed_amount) + "/-"
-                message_status = send_sms_message(phone, message, event_reg.id)
+                # message_status = send_sms_message(phone, message, event_reg.id)
 
                 try:
                     send_email(email, message, event_reg)
@@ -1342,6 +1347,7 @@ class GetHotelBookingDetailsView(TemplateView):
             booked_hotel = None
 
         html = render_to_string('dashboard_ajax.html',
-                                {'hotel_roomtype': hotel_room_type, 'booked_rooms': booked_rooms,'count':count,'total_rooms':total_rooms})
+                                {'hotel_roomtype': hotel_room_type, 'booked_rooms': booked_rooms, 'count': count,
+                                 'total_rooms': total_rooms})
 
         return HttpResponse(html)
