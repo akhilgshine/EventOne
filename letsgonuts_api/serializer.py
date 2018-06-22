@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 import letsgonuts_api
 from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel, \
-    ImageRoomType, BookedHotel
+    ImageRoomType, BookedHotel,EventDocument
 
 
 class TableListSerializer(ModelSerializer):
@@ -134,3 +134,9 @@ class RegisteredUsersSerializer(ModelSerializer):
         data['event_status'] = obj.event_status
         data['hotel_rent'] = obj.hotel_rent
         return data
+
+
+class EventDocumentSerializer(ModelSerializer):
+    class Meta:
+        model = EventDocument
+        fields = ['event_videos']

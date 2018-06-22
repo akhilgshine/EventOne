@@ -381,3 +381,13 @@ class ProxyHotelBooking(models.Model):
 
     def __str__(self):
         return self.table.table_name
+
+
+class EventDocument(models.Model):
+    description = models.CharField(max_length=255, null=True, blank=True)
+    event_videos = models.FileField(upload_to='event_videos/', null=True, blank=True)
+    event_images = models.ImageField(upload_to='event_images/', null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.description

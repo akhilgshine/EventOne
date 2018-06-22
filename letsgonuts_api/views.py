@@ -33,9 +33,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 import requests
-from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel
+from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel, \
+    EventDocument
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
-    RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer
+    RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer, \
+    EventDocumentSerializer
 
 
 # Create your views here.
@@ -242,7 +244,6 @@ class UserLoginViewSet(ModelViewSet):
             "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
             "&flash=0&type=1&sender=QrtReg",
             headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-        # send_mail('QRT 85 Registration', message, DEFAULT_FROM_EMAIL, [email], fail_silently=False, )
         headers = self.get_success_headers(serializer.data)
         return Response('sent OTP MESSAGE  successfully', status=HTTP_201_CREATED, headers=headers)
 
@@ -318,3 +319,9 @@ class CouponSuccessViewSet(ModelViewSet):
         except IOError as e:
             response = HttpResponse(content_type="image/png")
             return response
+
+
+class EventDocumentViewSet(ModelViewSet):
+    queryset = EventDocument.objects.all()
+    serializer_class = EventDocumentSerializer
+    permission_classes = [AllowAny, ]
