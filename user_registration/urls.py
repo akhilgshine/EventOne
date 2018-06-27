@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 from .views import UserSignupView, OtpPostView, SetPassWordView, UserLoginView, UserTableRegistrationView, \
     ProfileRegistrationView, AjaxHotelRentCalculation, HotelRegistrationView, PaymentRegistrationView, \
@@ -19,6 +20,8 @@ urlpatterns = [
     url(r'^coupon-success/', CouponSuccessView.as_view(), name='coupon_success'),
     url(r'^user-profile/', UserProfileView.as_view(), name='user_profile'),
     url(r'^reset-password/', ResetPassword.as_view(), name='reset_password'),
+    url(r'^hotel-details/', TemplateView.as_view(template_name='user_registration/hotel_list.html'),
+        name='hotel_details'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

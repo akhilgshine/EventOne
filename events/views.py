@@ -322,7 +322,7 @@ class RegisterEvent(LoginRequiredMixin, TemplateView):
                 # set_status(event_reg))
                 message = "You are successfully registered for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. Your registration ID is : " + event_reg.qrcode + " And you have paid Rs." + str(
                     event_reg.amount_paid + event_reg.contributed_amount) + "/-"
-                # message_status = send_sms_message(phone, message, event_reg.id)
+                message_status = send_sms_message(phone, message, event_reg.id)
 
                 try:
                     send_email(email, message, event_reg)
