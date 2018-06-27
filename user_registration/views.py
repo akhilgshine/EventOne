@@ -289,6 +289,8 @@ class HotelRegistrationView(RegisteredObjectMixin, FormView):
             hotel_user.tottal_rent = tottal_rent
             hotel_user.checkin_date = checkin_date
             hotel_user.checkout_date = checkout_date
+            hotel_user.room_type.rooms_available -= 1
+            hotel_user.room_type.save()
             hotel_user.save()
         html = render_to_string('user_registration/ajax_coupon.html', {"request": self.request})
         return HttpResponse(html)

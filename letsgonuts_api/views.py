@@ -182,6 +182,8 @@ class RegisterEventViewSet(ModelViewSet):
                 hotel_obj.tottal_rent = int(previous_rent) + int(tottal_rent)
                 hotel_obj.checkin_date = checkin_date
                 hotel_obj.checkout_date = checkout_date
+                hotel_obj.room_type.rooms_available -= 1
+                hotel_obj.room_type.save()
                 hotel_obj.save()
 
         return Response({'status': True, 'user_id': event_user.id, 'registered_user_id': registered_user.id},
