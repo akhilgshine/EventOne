@@ -1,6 +1,7 @@
 import requests
 import base64
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.contrib.sites.models import Site
@@ -36,9 +37,9 @@ def send_email(to_email, message, event_obj):
     content = render_to_string('coupon_mail.html', cxt)
     from_email = settings.DEFAULT_FROM_EMAIL
 
-    # msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
-    # msg.attach_alternative(content, "text/html")
-    # msg.send()
+    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+    msg.attach_alternative(content, "text/html")
+    msg.send()
 
     print("mail --> ", to_email)
 
