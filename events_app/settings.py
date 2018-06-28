@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'rrw-)!=rayr7@$ye=pkmliz52in^+d139=4sk^^b-ph9hwrxp@'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -39,12 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'import_export',
-    'events',
-    'user_registration',
-    'letsgonuts_api',
     'rest_framework',
     'rest_framework.authtoken',
     'sorl.thumbnail',
+    'events',
+    'user_registration',
+    'letsgonuts_api',
 ]
 
 MIDDLEWARE = [
@@ -57,14 +55,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 REST_FRAMEWORK = {
-   'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework.authentication.TokenAuthentication',
-   ),
-   'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-   ),
+    ),
 }
-
 
 ROOT_URLCONF = 'events_app.urls'
 
@@ -86,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'events_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -98,9 +94,9 @@ DATABASES = {
 }
 
 import dj_database_url
+
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -119,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -173,4 +168,5 @@ DEFAULT_FROM_EMAIL = 'noreply@letsgonuts2018.com'
 AUTH_USER_MODEL = 'events.EventUsers'
 
 import logging
+
 logging.basicConfig()
