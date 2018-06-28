@@ -242,8 +242,10 @@
                                 {% if user.t_shirt_size %}
                                 {{ user.t_shirt_size }}
                                 {% else %}
-                                Not Selected
+                                    Not Selected
+
                                 {% endif %}
+
                               &nbsp|&nbsp
                             <a href="{% url 't_shirt_update' user.id %}">Change </a>
                             </td>
