@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import base64
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.db.models import Sum
@@ -300,6 +302,10 @@ class RegisteredUsers(models.Model):
             return self.hotel.all()[0]
         except IndexError:
             return None
+
+    @property
+    def encoded_id(self):
+        return base64.b64encode(str(self.id))
 
 
 class PaymentDetails(models.Model):

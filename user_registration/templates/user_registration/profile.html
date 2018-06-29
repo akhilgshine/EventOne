@@ -26,9 +26,7 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
     <style>
-        .coupon-re tbody td {
-            padding: 5px !important;
-        }
+      .coupon-re tbody td { padding: 2px !important; font-size: 13px !important;}
     </style>
 </head>
 <body>
@@ -297,15 +295,6 @@
                                                             {% endif %}
                                                             </tbody>
                                                         </table>
-                                                        {#                        <div align="right">#}
-                                                        {#                            <button class="btn" style="   margin-bottom: 15px;#}
-                                                        {#                                                                margin-right: 20px;#}
-                                                        {#                                                                background: #ff4057;#}
-                                                        {#                                                                color: white;#}
-                                                        {#                                                                border-radius: 23px;#}
-                                                        {#                                                                padding: 6px 15px;">Reg Number : {{ request.user.registered_obj.qrcode }}#}
-                                                        {#                            </button>#}
-                                                        {#                        </div>#}
                                                     </div>
                                                 </div>
                                             </div>
@@ -361,7 +350,6 @@
 <script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"><\/script>')</script>
 <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/kinetic.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/soon.min.js' %}"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
