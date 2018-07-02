@@ -118,6 +118,14 @@ class RegisterEventViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         event_user, created = EventUsers.objects.get_or_create(email=serializer.validated_data.get('email'),
                                                                mobile=serializer.validated_data.get('mobile'))
+        if created:
+            try:
+                table = Table.objects.get(id=serializer.validated_data.get('hotel_id'))
+                event_user.table = table
+                event_user.save()
+            except Table.DoesNotExist:
+                return Response({'status': False, 'error-message': 'Invalid Table'}, status=400)
+
         token, _ = Token.objects.get_or_create(user=event_user)
         if serializer.validated_data:
             event_user.first_name = serializer.validated_data.pop('first_name')
