@@ -341,7 +341,6 @@ class EventDocumentViewSet(ModelViewSet):
 class NfcCouponViewSet(ModelViewSet):
     queryset = NfcCoupon.objects.all()
     serializer_class = NfcCouponSerializer
-    permission_classes = [AllowAny, ]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
