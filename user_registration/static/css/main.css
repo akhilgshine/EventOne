@@ -2288,5 +2288,23 @@ transition-delay:.2s;
     border: 3px solid white;
     box-shadow: 0px 0px 15px 0px #404040;
     }
+
+.contact-wrap {
+    background: #fff;
+    border-radius: 4px;
+    padding-top: 1px;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+ .contact-inner {
+    padding: 5px 10px;
+    background: rgb(234, 234, 234);
+    border-bottom: 1px solid #d4d4d4;
+    }
+
+
+.contact-wrap  h3 {margin-left: 10px;color: #ff494e;text-transform:  uppercase;}
+
 /*
 *******pre-loader*******/

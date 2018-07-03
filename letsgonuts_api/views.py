@@ -365,5 +365,5 @@ class NfcDetailsViewSet(ModelViewSet):
         card_number = request.GET.get('card_number')
         nfc_details = NfcCoupon.objects.filter(card_number=card_number)
         if not nfc_details:
-            return Response({'status': False, })
-        return Response({'status': True, })
+            return Response({'status': False})
+        return Response({'status': True})
