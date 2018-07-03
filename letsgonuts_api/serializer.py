@@ -1,9 +1,11 @@
+from django.contrib.sites.models import Site
+from django.urls import reverse_lazy
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
 import letsgonuts_api
 from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel, \
-    ImageRoomType, BookedHotel,EventDocument
+    ImageRoomType, BookedHotel, EventDocument
 
 
 class TableListSerializer(ModelSerializer):
@@ -114,12 +116,14 @@ class RegisteredUsersSerializer(ModelSerializer):
     table_details = TableListSerializer(source='table', read_only=True)
     booked_hotel = BookedHotelSerializer(source='hotel', many=True)
     payment_details = serializers.SerializerMethodField()
+    coupon_url = serializers.SerializerMethodField()
 
     class Meta:
         model = RegisteredUsers
         # fields = '__all__'
         fields = ['id', 'tableName', 'qrcode', 'amount_paid',
-                  'registration_type', 'user_details', 'table_details', 'booked_hotel', 'payment_details', ]
+                  'registration_type', 'user_details', 'table_details', 'booked_hotel', 'payment_details',
+                  'coupon_url']
 
     def get_tableName(self, obj):
         return obj.table.table_name
@@ -134,6 +138,12 @@ class RegisteredUsersSerializer(ModelSerializer):
         data['event_status'] = obj.event_status
         data['hotel_rent'] = obj.hotel_rent
         return data
+
+    def get_coupon_url(self,obj):
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        url = '%s/api/%s/%s' % (domain, 'coupon-success', obj.id)
+        return url
 
 
 class EventDocumentSerializer(ModelSerializer):

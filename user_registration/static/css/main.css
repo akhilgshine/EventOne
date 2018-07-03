@@ -738,7 +738,7 @@ select {
 
 .home-logo {
     margin-top: 20px;
-    width: 200px;
+    width: 180px;
 }
 
 h3.homelogotxt {
@@ -2247,5 +2247,46 @@ transition-delay:.2s;
     stroke: #ff4254;
 }
 
+.index-menu-wrap-left {
+    position: absolute;
+    left: 0px;
+    height: 100vh;
+    }
+
+
+.index-menu-wrap-right {
+    position: absolute;
+    right: 0px;
+    height: 100vh;
+    }
+
+
+
+.m-box {
+  width: 220px;
+  height: 100%;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction:  column;
+  justify-content: center;
+}
+
+.m-inner{width: 200px;margin-top: 15px;margin-bottom: 15px;cursor: pointer;}
+
+.m-inner h4 {
+    margin-top: 3px;
+    color: #fff;
+    font-weight: 400;
+    margin-bottom: 2px;
+    font-size: 16px;
+    }
+
+.m-inner img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0px 0px 15px 0px #404040;
+    }
 /*
 *******pre-loader*******/
