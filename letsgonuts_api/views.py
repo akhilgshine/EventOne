@@ -19,6 +19,7 @@ from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 import imgkit
+from rest_framework import status
 from rest_framework.renderers import TemplateHTMLRenderer
 from django.conf import settings
 
@@ -34,10 +35,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 import requests
 from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel, \
-    EventDocument
+    EventDocument, NfcCoupon
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
     RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer, \
-    EventDocumentSerializer
+    EventDocumentSerializer, NfcCouponSerializer
 
 
 # Create your views here.
@@ -335,3 +336,24 @@ class EventDocumentViewSet(ModelViewSet):
     queryset = EventDocument.objects.all()
     serializer_class = EventDocumentSerializer
     permission_classes = [AllowAny, ]
+
+
+class NfcCouponViewSet(ModelViewSet):
+    queryset = NfcCoupon.objects.all()
+    serializer_class = NfcCouponSerializer
+    permission_classes = [AllowAny, ]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        mobile = serializer.validated_data.pop('mobile')
+        card_number = serializer.validated_data.get('card_number')
+        try:
+            event_user = EventUsers.objects.get(mobile=mobile)
+            registered_user = event_user.registered_obj
+            if not registered_user:
+                return Response('User not registered for event', status=400)
+            NfcCoupon.objects.create(registered_user=registered_user, card_number=card_number)
+            return Response('coupon created  successfully', status=HTTP_201_CREATED)
+        except EventUsers.DoesNotExist:
+            return Response('Invalid Number', status=400)

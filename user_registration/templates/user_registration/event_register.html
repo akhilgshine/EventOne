@@ -232,7 +232,7 @@
                                                     {% if roomtype.get_room_type_image.all.0.image %}
                                                         {% thumbnail roomtype.get_room_type_image.all.0.image "150x99" crop="center" as im %}
                                                             <img src="{{ im.url }}" width="{{ im.width }}"
-                                                                 height="{{ im.height }}" alt="..." class=" img-check" >
+                                                                 height="{{ im.height }}" alt="..." class=" img-check">
                                                         {% endthumbnail %}
                                                     {% else %}
                                                         <img src="{% static 'img/r-1.png' %}" alt="..."
@@ -456,6 +456,15 @@
             maxDate: new Date(Date.parse("2018-08-05")),
 
         });
+        var hotel_value = $('#id_hotel').val();
+        if (hotel_value !== '') {
+            $("label[data-hotel=" + hotel_value + "]").show();
+
+        }
+        else {
+            $("label[data-hotel]").hide();
+
+        }
 
 
     });
@@ -680,6 +689,7 @@
             {% endif %}
         {% endif %}
         {% if request.user.registered_obj.hotel_user.room_type %}
+
             var value = {{request.user.registered_obj.hotel_user.room_type.id  }}
                 $("input[name=room_type][value=" + value + "]").attr('checked', 'checked');
             $("input[name=room_type][value=" + value + "]").siblings(".room-select").show();
@@ -693,6 +703,10 @@
             $("input:radio[name=registration_type][value=" + value + "]").attr('checked', 'checked');
         {% endif %}
         {% if request.user.registered_obj.hotel_user %}
+            var hotel = $('#id_hotel').val();
+            $("label[data-hotel]").hide();
+            $("label[data-hotel=" + hotel + "]").show();
+
             $('#id_hotel_booking').html({{ request.user.registered_obj.hotel_rent }});
             $('#id_total_amount').html({{ request.user.registered_obj.total_paid }});
         {% endif %}

@@ -1,11 +1,13 @@
 from django.contrib.sites.models import Site
 from django.urls import reverse_lazy
+from html5lib import serializer
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
 import letsgonuts_api
 from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel, \
-    ImageRoomType, BookedHotel, EventDocument
+    ImageRoomType, BookedHotel, EventDocument, NfcCoupon
+from user_registration.validators import validate_phone
 
 
 class TableListSerializer(ModelSerializer):
@@ -139,7 +141,7 @@ class RegisteredUsersSerializer(ModelSerializer):
         data['hotel_rent'] = obj.hotel_rent
         return data
 
-    def get_coupon_url(self,obj):
+    def get_coupon_url(self, obj):
         current_site = Site.objects.get_current()
         domain = current_site.domain
         url = '%s/api/%s/%s' % (domain, 'coupon-success', obj.id)
@@ -150,3 +152,16 @@ class EventDocumentSerializer(ModelSerializer):
     class Meta:
         model = EventDocument
         fields = ['event_videos']
+
+
+class NfcCouponSerializer(ModelSerializer):
+    mobile = serializers.CharField(write_only=True, validators=[validate_phone])
+
+    class Meta:
+        model = NfcCoupon
+        fields = ['card_number', 'mobile']
+
+    def validate_card_number(self, card_number):
+        if NfcCoupon.objects.filter(card_number=card_number).exists():
+            raise serializers.ValidationError("This card number also exist")
+        return card_number
