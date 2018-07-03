@@ -163,5 +163,5 @@ class NfcCouponSerializer(ModelSerializer):
 
     def validate_card_number(self, card_number):
         if NfcCoupon.objects.filter(card_number=card_number).exists():
-            raise serializers.ValidationError("This card number also exist")
+            raise serializers.ValidationError("This card number already exist")
         return card_number

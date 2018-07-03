@@ -356,3 +356,14 @@ class NfcCouponViewSet(ModelViewSet):
             return Response('coupon created  successfully', status=HTTP_201_CREATED)
         except EventUsers.DoesNotExist:
             return Response('Invalid Number', status=400)
+
+
+class NfcDetailsViewSet(ModelViewSet):
+    queryset = NfcCoupon.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        card_number = request.GET.get('card_number')
+        nfc_details = NfcCoupon.objects.filter(card_number=card_number)
+        if not nfc_details:
+            return Response({'status': False, })
+        return Response({'status': True, })
