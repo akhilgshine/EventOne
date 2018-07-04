@@ -122,7 +122,8 @@ class RegisterEventViewSet(ModelViewSet):
         if created:
             table = serializer.validated_data.get('table')
             event_user.table = table
-            event_user.is_approved = False
+            if request.user.is_superuser:
+                event_user.is_approved = True
             event_user.save()
         token, _ = Token.objects.get_or_create(user=event_user)
         if serializer.validated_data:
@@ -164,7 +165,6 @@ class RegisterEventViewSet(ModelViewSet):
                                 registered_user.qrcode = str('QRT8') + str(qrcode_updated_increment)
                     except:
                         registered_user.qrcode = 'QRT8001'
-                    registered_user.is_payment_completed = True
                     registered_user = serializer.save()
 
             try:
