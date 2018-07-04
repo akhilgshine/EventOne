@@ -165,6 +165,8 @@ class RegisterEventViewSet(ModelViewSet):
                                 registered_user.qrcode = str('QRT8') + str(qrcode_updated_increment)
                     except:
                         registered_user.qrcode = 'QRT8001'
+                        if not request.user.is_superuser:
+                            registered_user.is_payment_completed = True
                     registered_user = serializer.save()
 
             try:
