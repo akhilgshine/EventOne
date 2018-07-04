@@ -30,10 +30,6 @@ import datetime
 # import pdfcrowd
 import sys
 
-"""
-    Home
-    """
-
 
 class SuperUserMixin(AccessMixin):
     """
@@ -48,6 +44,10 @@ class SuperUserMixin(AccessMixin):
 
 class IndexPage(TemplateView):
     template_name = 'user_registration/index_main.html'
+
+    """
+        Home
+        """
 
     def get_context_data(self, **kwargs):
         context = super(IndexPage, self).get_context_data(**kwargs)

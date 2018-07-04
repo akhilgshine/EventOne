@@ -92,6 +92,14 @@ class ImageRoomTypeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'mobile']
 
 
+class NfcCouponAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    class Meta:
+        model = NfcCoupon
+
+    search_fields = ['card_number']
+    list_display = ['registered_user', 'card_number', 'created_date']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers, EventUserAdmin)
 admin.site.register(BookedHotel, BookedHotelAdmin)
@@ -104,4 +112,4 @@ admin.site.register(Hotel)
 admin.site.register(ImageRoomType, ImageRoomTypeAdmin)
 admin.site.register(ProxyHotelBooking)
 admin.site.register(EventDocument)
-admin.site.register(NfcCoupon)
+admin.site.register(NfcCoupon, NfcCouponAdmin)
