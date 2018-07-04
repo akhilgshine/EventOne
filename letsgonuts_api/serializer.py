@@ -155,11 +155,12 @@ class EventDocumentSerializer(ModelSerializer):
 
 
 class NfcCouponSerializer(ModelSerializer):
-    mobile = serializers.CharField(write_only=True, validators=[validate_phone])
+    mobile = serializers.CharField(write_only=True, validators=[validate_phone], required=False)
+    email = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = NfcCoupon
-        fields = ['card_number', 'mobile']
+        fields = ['card_number', 'mobile', 'email']
 
     def validate_card_number(self, card_number):
         if NfcCoupon.objects.filter(card_number=card_number).exists():

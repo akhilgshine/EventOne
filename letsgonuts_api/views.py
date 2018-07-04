@@ -345,21 +345,35 @@ class NfcCouponViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        mobile = serializer.validated_data.pop('mobile')
+        mobile = serializer.validated_data.get('mobile')
+        email = serializer.validated_data.get('email')
         card_number = serializer.validated_data.get('card_number')
-        try:
-            event_user = EventUsers.objects.get(mobile=mobile)
-            registered_user = event_user.registered_obj
-            if not registered_user:
-                return Response('User not registered for event', status=400)
-            NfcCoupon.objects.create(registered_user=registered_user, card_number=card_number)
-            return Response('coupon created  successfully', status=HTTP_201_CREATED)
-        except EventUsers.DoesNotExist:
-            return Response('Invalid Number', status=400)
+        if mobile and card_number:
+            try:
+                event_user = EventUsers.objects.get(mobile=mobile)
+                return self.get_registered_users(event_user, card_number)
+            except EventUsers.DoesNotExist:
+                return Response('Invalid User', status=400)
+        if email and card_number:
+            try:
+                event_user = EventUsers.objects.get(email=email)
+                return self.get_registered_users(event_user, card_number)
+            except EventUsers.DoesNotExist:
+                return Response('Invalid User', status=400)
+        else:
+            return Response('Invalid User', status=400)
+
+    def get_registered_users(self, event_user, card_number):
+        registered_user = event_user.registered_obj
+        if not registered_user:
+            return Response('User not registered for event', status=400)
+        NfcCoupon.objects.create(registered_user=registered_user, card_number=card_number)
+        return Response('coupon created  successfully', status=HTTP_201_CREATED)
 
 
 class NfcDetailsViewSet(ModelViewSet):
     queryset = NfcCoupon.objects.all()
+    serializer_class = NfcCouponSerializer
 
     def list(self, request, *args, **kwargs):
         card_number = request.GET.get('card_number')
