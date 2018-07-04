@@ -13,9 +13,10 @@ from django.views.generic import FormView, TemplateView, View, UpdateView, Delet
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 # from xhtml2pdf import pisa
-from django.db.models import Q, Count, F, Sum
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.admin.views.decorators import staff_member_required
 
+from django.db.models import Q, Count, F, Sum
+from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 from events.templatetags import template_tags
 import json
 from events.forms import *
@@ -32,6 +33,17 @@ import sys
 """
     Home
     """
+
+
+class SuperUserMixin(AccessMixin):
+    """
+    CBV mixin which verifies that the current user is Superuser.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return self.handle_no_permission()
+        return super(SuperUserMixin, self).dispatch(request, *args, **kwargs)
 
 
 class IndexPage(TemplateView):
@@ -90,7 +102,7 @@ class LoginView(View):
     """
 
 
-class RegisterEvent(LoginRequiredMixin, TemplateView):
+class RegisterEvent(SuperUserMixin, LoginRequiredMixin, TemplateView):
     template_name = 'register.html'
 
     def get(self, request, *args, **kwargs):
