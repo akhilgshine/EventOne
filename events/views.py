@@ -969,10 +969,11 @@ class DownloadCSVView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
             writer = csv.writer(response)
-            writer.writerow(['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'Partial/Completely',
-                             'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
-                             'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
-                             'Total Payment', 'Total Due'])
+            writer.writerow(
+                ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt', 'Partial/Completely',
+                 'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
+                 'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
+                 'Total Payment', 'Total Due'])
             for users in get_user_registered:
                 try:
                     payment_status = template_tags.payment_status(users.id)
@@ -999,7 +1000,8 @@ class DownloadCSVView(TemplateView):
                     writer.writerow(
                         [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
                          users.qrcode, users.event_user.mobile,
-                         users.event_user.email, users.event_status, payment_status, users.amount_paid,
+                         users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
+                         users.amount_paid,
                          users.due_amount, '',
                          hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
                          '', users.contributed_amount, users.total_paid,
