@@ -7,13 +7,11 @@ import os
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.template import Context
 from django.template.loader import get_template, render_to_string
 from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 # from xhtml2pdf import pisa
-from django.contrib.admin.views.decorators import staff_member_required
 
 from django.db.models import Q, Count, F, Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
@@ -23,12 +21,9 @@ from events.forms import *
 from events.models import *
 from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details
 from django.contrib.auth import authenticate, login
-import requests
 from django.contrib.auth import logout
 import re
 import datetime
-# import pdfcrowd
-import sys
 
 
 class SuperUserMixin(AccessMixin):
@@ -536,15 +531,16 @@ class ListUsers(LoginRequiredMixin, ListView):
                     partial_paid_relevant_users.append(users.id)
             self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
         elif self.request.GET.get('date') == 'aug3':
-            hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-03',
-                                                checkout_date__gte='2018-08-03').values_list('registered_users__id',
-                                                                                             flat=True)
+            hotels = BookedHotel.objects.filter(Q(checkin_date__lte='2018-08-03'),
+                                                registered_users__is_active=True, ).values_list('registered_users__id',
+                                                                                                flat=True)
             self.queryset = self.queryset.filter(id__in=hotels)
         elif self.request.GET.get('date') == 'aug4':
-            hotels = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte='2018-08-04',
-                                                checkout_date__gte='2018-08-04').values_list('registered_users__id',
-                                                                                             flat=True)
-            self.queryset = self.queryset.filter(id__in=hotels)
+            relevant_users = BookedHotel.objects.filter(Q(checkin_date__lte='2018-08-04'),
+                                                        registered_users__is_active=True).values_list(
+                'registered_users__id',
+                flat=True)
+            self.queryset = self.queryset.filter(id__in=relevant_users)
         elif self.request.GET.get('room_type'):
 
             type = self.request.GET.get('room_type')
@@ -566,6 +562,12 @@ class ListUsers(LoginRequiredMixin, ListView):
                                                             room_type=room_type).values_list('registered_users__id',
                                                                                              flat=True)
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+        elif self.request.GET.get('hotel_room_type'):
+            hotel = self.request.GET.get('hotel_room_type')
+            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, hotel=hotel).values_list(
+                'registered_users__id',
+                flat=True)
+            self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         else:
             self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
@@ -1361,7 +1363,8 @@ class GetHotelBookingDetailsView(TemplateView):
             booked_hotel = None
 
         html = render_to_string('dashboard_ajax.html',
-                                {'hotel_roomtype': hotel_room_type, 'booked_rooms': booked_rooms, 'count': count,
+                                {'booked_hotel': booked_hotel, 'hotel_roomtype': hotel_room_type,
+                                 'booked_rooms': booked_rooms, 'count': count,
                                  'total_rooms': total_rooms})
 
         return HttpResponse(html)

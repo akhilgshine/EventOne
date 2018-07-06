@@ -1,5 +1,6 @@
 from events.models import *
 from django import template
+from django.db.models import Q
 
 from events.utils import encoded_id
 
@@ -128,17 +129,23 @@ def partly_paid_count(count):
 def get_roomtype_count(booked_room_type, date=None):
     if date:
         booked_room_type = BookedHotel.objects.filter(registered_users__is_active=True,
-                                                 checkin_date__lte=date,
-                                                 room_type=booked_room_type).count()
+                                                      checkin_date__lte=date,
+                                                      room_type=booked_room_type).count()
     else:
-        booked_room_type = BookedHotel.objects.filter(registered_users__is_active=True, room_type=booked_room_type).count()
+        booked_room_type = BookedHotel.objects.filter(registered_users__is_active=True,
+                                                      room_type=booked_room_type).count()
     return booked_room_type
 
 
 @register.filter
 def hotels_booked_two_nights(hotels_book_date):
-    hotels_book = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=hotels_book_date,
-                                        checkout_date__gte=hotels_book_date).count()
+    # BookedHotel.objects.filter(Q(checkin_date__lte=hotels_book_date) |
+    #                            Q(checkout_date__gte=hotels_book_date).filter(
+    #                                registered_users__is_active=True).values_list('registered_users__id',
+    #
+    #                                                                              flat=True))
+    hotels_book = BookedHotel.objects.filter((Q(checkin_date__lte=hotels_book_date)),
+                                             registered_users__is_active=True).count()
     return hotels_book
 
 

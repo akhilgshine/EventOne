@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 import letsgonuts_api
 from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel, \
-    ImageRoomType, BookedHotel, EventDocument, NfcCoupon
+    ImageRoomType, BookedHotel, EventDocument, NfcCoupon, FridayLunchBooking, FridayLunchAmount
 from user_registration.validators import validate_phone
 
 
@@ -166,3 +166,15 @@ class NfcCouponSerializer(ModelSerializer):
         if NfcCoupon.objects.filter(card_number=card_number).exists():
             raise serializers.ValidationError("This card number already exist")
         return card_number
+
+
+class FridayLunchBookingSerializer(ModelSerializer):
+    nfc_card_number = serializers.CharField(write_only=True, required=False)
+    friday_lunch_amount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FridayLunchBooking
+        fields = ['registered_user', 'payment_type', 'pos_number', 'nfc_card_number', 'friday_lunch_amount']
+
+    def get_friday_lunch_amount(self):
+        return FridayLunchAmount.objects.values_list('friday_lunch_amount', flat=True)
