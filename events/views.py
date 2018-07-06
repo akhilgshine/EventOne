@@ -610,7 +610,10 @@ class InvoiceView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = {}
         pk = kwargs.pop('pk')
-        pk = decode_id(pk)
+        try:
+            pk = decode_id(pk)
+        except TypeError:
+            pass
         event_reg = get_object_or_404(RegisteredUsers, id=pk)
         context['partial'] = template_tags.payment_status(event_reg.id)
         # if event_reg.amount_paid < 5000:
