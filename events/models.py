@@ -9,7 +9,8 @@ import imgkit
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.sites.models import Site
 from django.db import models
-from django.db.models import Sum, settings
+from django.db.models import Sum
+from django.conf import settings
 from datetime import datetime
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
