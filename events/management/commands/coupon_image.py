@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print "creating coupon...."
 
-        reg_users = RegisteredUsers.objects.all()
+        reg_users = [RegisteredUsers.objects.all().latest('id')]
 
         current_site = Site.objects.get_current()
         domain = current_site.domain
