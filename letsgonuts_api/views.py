@@ -317,14 +317,17 @@ class CouponSuccessViewSet(ModelViewSet):
         current_site = Site.objects.get_current()
         domain = current_site.domain
 
-        options = {
-            'format': 'png',
-            'encoding': "UTF-8",
-        }
-        url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(instance.id)}))
-        imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), options=options)
+        coupon_file_name = '%s.png' % instance.id
+
+        # options = {
+        #     'format': 'png',
+        #     'encoding': "UTF-8",
+        # }
+        #
+        # url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(instance.id)}))
+        # imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), options=options)
         try:
-            image_data = open(os.path.join(settings.BASE_DIR, 'Media', 'coupon.png'), "rb").read()
+            image_data = open(os.path.join(settings.BASE_DIR, 'Media', 'coupons', coupon_file_name), "rb").read()
             return HttpResponse(image_data, content_type="image/png")
         except IOError as e:
             response = HttpResponse(content_type="image/png")
