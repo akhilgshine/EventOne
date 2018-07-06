@@ -35,7 +35,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 import requests
 from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel, \
-    EventDocument, NfcCoupon, FridayLunchBooking
+    EventDocument, NfcCoupon, FridayLunchBooking, FridayLunchAmount
 from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
     RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer, \
     EventDocumentSerializer, NfcCouponSerializer, FridayLunchBookingSerializer
@@ -384,7 +384,6 @@ class NfcDetailsViewSet(ModelViewSet):
 
 class FridayLunchBookingCheckViewset(ModelViewSet):
     queryset = FridayLunchBooking.objects.all()
-    serializer_class = FridayLunchBookingSerializer
 
     def list(self, request, *args, **kwargs):
         card_number = request.GET.get('card_number')
@@ -392,10 +391,13 @@ class FridayLunchBookingCheckViewset(ModelViewSet):
             try:
                 nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
                 coupon_user = nfc_coupon.registered_user
-                if not coupon_user.get_friday_lunch_users:
-                    response = FridayLunchBookingSerializer(coupon_user).data
+                if not coupon_user.get_friday_lunch_users.all():
+                    response = {}
                     response['status'] = False
-                    Response(response, status=200)
+                    response['amount'] = FridayLunchAmount.objects.values_list('friday_lunch_amount', flat=True)
+                    return Response(response, status=200)
+                else:
+                    return Response({'status': True})
             except NfcCoupon.DoesNotExist:
                 return Response('Card number doesnot exist', status=400)
 

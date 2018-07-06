@@ -170,11 +170,9 @@ class NfcCouponSerializer(ModelSerializer):
 
 class FridayLunchBookingSerializer(ModelSerializer):
     nfc_card_number = serializers.CharField(write_only=True, required=False)
-    friday_lunch_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = FridayLunchBooking
-        fields = ['registered_user', 'payment_type', 'pos_number', 'nfc_card_number', 'friday_lunch_amount']
+        fields = ['registered_user', 'payment_type', 'pos_number', 'nfc_card_number']
 
-    def get_friday_lunch_amount(self):
-        return FridayLunchAmount.objects.values_list('friday_lunch_amount', flat=True)
+
