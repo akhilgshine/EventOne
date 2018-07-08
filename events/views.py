@@ -4,24 +4,21 @@ from __future__ import unicode_literals
 import csv
 import datetime
 import json
-import os
 import re
 import traceback
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.db.models import Count, F, Q, Sum
+from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.template.loader import get_template, render_to_string
+from django.template.loader import render_to_string
 from django.views.generic import (DeleteView, FormView, ListView, TemplateView,
                                   UpdateView, View)
 
 from events.forms import *
-from events.models import *
 from events.templatetags import template_tags
 from events.utils import (decode_id, hotelDetails, send_email,
                           send_sms_message, set_status, track_payment_details)

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import base64
 import os
-from datetime import datetime
+import datetime
 
 import imgkit
 from django.conf import settings
@@ -176,7 +176,7 @@ class EventUsers(AbstractBaseUser, PermissionsMixin):
 
 class OtpModel(models.Model):
     mobile = models.CharField(max_length=15, default=0)
-    created_time = models.DateTimeField(default=datetime.now, blank=True)
+    created_time = models.DateTimeField(default=datetime.datetime.now, blank=True)
     otp = models.CharField(max_length=25, unique=True)
     is_expired = models.BooleanField(default=False)
 
@@ -365,7 +365,7 @@ class BookedHotel(models.Model):
     room_type = models.ForeignKey(RoomType, null=True, blank=True)
     checkin_date = models.DateTimeField(null=True, blank=True)
     checkout_date = models.DateTimeField(null=True, blank=True)
-    booked_date = models.DateTimeField(default=datetime.now, blank=True)
+    booked_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
     mode_of_payment = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
     receipt_number = models.CharField(blank=True, null=True, max_length=100)
     receipt_file = models.FileField(blank=True, null=True, upload_to='hotel_receipts')
@@ -386,7 +386,7 @@ class ProxyHotelBooking(models.Model):
     hotel_rent = models.IntegerField(default=0)
     check_in_date = models.DateTimeField(null=True, blank=True)
     check_out_date = models.DateTimeField(null=True, blank=True)
-    booked_date = models.DateTimeField(default=datetime.now, blank=True)
+    booked_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
 
     def __str__(self):
         return self.table.table_name
@@ -405,7 +405,7 @@ class EventDocument(models.Model):
 class NfcCoupon(models.Model):
     registered_user = models.ForeignKey(RegisteredUsers, null=True, blank=True, related_name='get_nfc_coupon_users')
     card_number = models.CharField(max_length=255, null=True, blank=True)
-    created_date = models.DateTimeField(default=datetime.now, blank=True)
+    created_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
 
     def __str__(self):
         return '{} {}'.format(self.registered_user.event_user.first_name, self.registered_user.event_user.last_name)
