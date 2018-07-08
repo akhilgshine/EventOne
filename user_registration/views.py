@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import datetime
+import json
+from datetime import datetime
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
@@ -10,16 +11,16 @@ from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.generic import View, TemplateView, FormView
-from datetime import datetime
-from .mixins import RegisteredObjectMixin
+from django.views.generic import FormView, TemplateView, View
+
+from events.models import (BookedHotel, Event, EventUsers, Hotel, OtpModel,
+                           RegisteredUsers, RoomType)
 from events.utils import send_otp
-from events.models import EventUsers, OtpModel, RegisteredUsers, Event, Hotel, RoomType, BookedHotel
-from .forms import UserSignupForm, OtpPostForm, UserLoginForm, TableSelectForm, ProfileInformationForm, \
-    PaymentDetailsForm, HotelDetailForm, ResetPasswordForm
 
-
-# Create your views here.
+from .forms import (HotelDetailForm, OtpPostForm, PaymentDetailsForm,
+                    ProfileInformationForm, ResetPasswordForm, TableSelectForm,
+                    UserLoginForm, UserSignupForm)
+from .mixins import RegisteredObjectMixin
 
 
 class UserSignupView(FormView):

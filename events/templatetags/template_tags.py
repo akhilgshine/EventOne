@@ -1,7 +1,7 @@
-from events.models import *
 from django import template
 from django.db.models import Q
 
+from events.models import *
 from events.utils import encoded_id
 
 register = template.Library()

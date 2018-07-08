@@ -5,12 +5,13 @@
 
 
 
-from django.core.management.base import BaseCommand, CommandError
-# from django.utils import timezone
-from events.models import *
 # from datetime import datetime, timedelta
 import csv
 import re
+
+from django.core.management.base import BaseCommand, CommandError
+
+from events.models import *
 
 
 class Command(BaseCommand):

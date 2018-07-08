@@ -1,9 +1,13 @@
-from django.conf.urls import url, include
-from .views import LoginApiView, TableListViewSet, FilterNameViewSet, NameDetailsViewSet, RegisterEventViewSet, \
-    RegisteredUsersViewSet, RoomTypeListViewSet, UserLoginViewSet, OtpPostViewSet, HotelNameViewSet, \
-    PaymentDetailsViewSet, CouponSuccessViewSet, EventDocumentViewSet, NfcCouponViewSet, NfcDetailsViewSet, \
-    FridayLunchBookingCheckViewset
+from django.conf.urls import include, url
 from rest_framework import routers
+
+from .views import (CouponSuccessViewSet, EventDocumentViewSet,
+                    FilterNameViewSet, FridayLunchBookingCheckViewset,
+                    HotelNameViewSet, LoginApiView, NameDetailsViewSet,
+                    NfcCouponViewSet, NfcDetailsViewSet, OtpPostViewSet,
+                    PaymentDetailsViewSet, RegisteredUsersViewSet,
+                    RegisterEventViewSet, RoomTypeListViewSet,
+                    TableListViewSet, UserLoginViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'tablelist', TableListViewSet, base_name='table-list')

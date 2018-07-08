@@ -1,11 +1,11 @@
 import os
 
 import imgkit
+from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
 from django.urls import reverse_lazy
 
 from events.models import *

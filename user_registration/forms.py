@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from events.models import EventUsers, MEMBER_CHOICES, Table, STATUS_CHOICES, T_SHIRT_CHOICES, RegisteredUsers, \
-    BookedHotel, Hotel, RoomType, PAYMENT_CHOICES
+from events.models import (MEMBER_CHOICES, PAYMENT_CHOICES, STATUS_CHOICES,
+                           T_SHIRT_CHOICES, BookedHotel, EventUsers, Hotel,
+                           RegisteredUsers, RoomType, Table)
+
 from .validators import validate_phone
 
 
@@ -22,6 +24,13 @@ class UserSignupForm(forms.ModelForm):
         self.fields['mobile'].widget.attrs['class'] = 'form-control common-input b0'
         self.fields['mobile'].widget.attrs['placeholder'] = 'Mobile'
         self.fields['mobile'].widget.attrs.update({'autofocus': 'autofocus'})
+
+    def clean(self):
+        cleaned_data = super(UserSignupForm, self).clean()
+        email = cleaned_data.get('email')
+        mobile = cleaned_data.get('mobile')
+        if EventUsers.objects.filter(mobile=mobile).exists():
+            self.add_error('mobile', 'This mobile number is already registered')
 
 
 class OtpPostForm(UserCreationForm):
@@ -147,5 +156,3 @@ class ResetPasswordForm(forms.Form):
         self.fields['mobile'].widget.attrs['class'] = 'form-control common-input b0'
         self.fields['mobile'].widget.attrs['placeholder'] = 'Enter Registered Number'
         self.fields['mobile'].widget.attrs.update({'autofocus': 'autofocus'})
-
-

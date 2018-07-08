@@ -1,11 +1,13 @@
-from django.conf.urls import url, include
 from django.conf import settings
+from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from .views import UserSignupView, OtpPostView, SetPassWordView, UserLoginView, UserTableRegistrationView, \
-    ProfileRegistrationView, AjaxHotelRentCalculation, HotelRegistrationView, PaymentRegistrationView, \
-    CouponSuccessView, UserProfileView, ResetPassword
+from .views import (AjaxHotelRentCalculation, CouponSuccessView,
+                    HotelRegistrationView, OtpPostView,
+                    PaymentRegistrationView, ProfileRegistrationView,
+                    ResetPassword, SetPassWordView, UserLoginView,
+                    UserProfileView, UserSignupView, UserTableRegistrationView)
 
 urlpatterns = [
     url(r'^user_signup/', UserSignupView.as_view(), name='user_signup'),

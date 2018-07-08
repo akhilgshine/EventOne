@@ -2,25 +2,20 @@
 from __future__ import unicode_literals
 
 import base64
-
 import os
+from datetime import datetime
 
 import imgkit
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sites.models import Site
 from django.db import models
 from django.db.models import Sum
-from django.conf import settings
-from datetime import datetime
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.urls import reverse_lazy
-
 from django.utils.translation import ugettext_lazy as _
-
-from events.utils import encoded_id
 
 CASH = 'cash'
 POS = 'POS'
@@ -443,6 +438,6 @@ def create_coupon(sender, instance, **kwargs):
         'format': 'png',
         'encoding': "UTF-8",
     }
-    url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': encoded_id(instance.id)}))
+    url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': base64.b64encode(str(instance.id))}))
     coupon_file_name = '%s.png' % instance.id
     imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', coupon_file_name), options=options)

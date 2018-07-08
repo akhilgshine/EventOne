@@ -1,12 +1,11 @@
 from django.contrib.sites.models import Site
-from django.urls import reverse_lazy
-from html5lib import serializer
-from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, Serializer
 
-import letsgonuts_api
-from events.models import Table, EventUsers, RegisteredUsers, STATUS_CHOICES, RoomType, MEMBER_CHOICES, Hotel, \
-    ImageRoomType, BookedHotel, EventDocument, NfcCoupon, FridayLunchBooking, FridayLunchAmount
+from events.models import (MEMBER_CHOICES, STATUS_CHOICES, BookedHotel,
+                           EventDocument, EventUsers, FridayLunchAmount,
+                           FridayLunchBooking, Hotel, ImageRoomType, NfcCoupon,
+                           RegisteredUsers, RoomType, Table)
 from user_registration.validators import validate_phone
 
 
@@ -174,5 +173,3 @@ class FridayLunchBookingSerializer(ModelSerializer):
     class Meta:
         model = FridayLunchBooking
         fields = ['registered_user', 'payment_type', 'pos_number', 'nfc_card_number']
-
-

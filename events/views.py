@@ -1,29 +1,33 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import csv
+import datetime
+import json
+import os
+import re
 import traceback
 
-import os
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.template.loader import get_template, render_to_string
-from django.views.generic import FormView, TemplateView, View, UpdateView, DeleteView, ListView
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
-# from xhtml2pdf import pisa
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Count, F, Q, Sum
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import get_template, render_to_string
+from django.views.generic import (DeleteView, FormView, ListView, TemplateView,
+                                  UpdateView, View)
 
-from django.db.models import Q, Count, F, Sum
-from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
-from events.templatetags import template_tags
-import json
 from events.forms import *
 from events.models import *
-from events.utils import send_email, set_status, hotelDetails, send_sms_message, decode_id, track_payment_details
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
-import re
-import datetime
+from events.templatetags import template_tags
+from events.utils import (decode_id, hotelDetails, send_email,
+                          send_sms_message, set_status, track_payment_details)
+
+# from xhtml2pdf import pisa
+
 
 
 class SuperUserMixin(AccessMixin):

@@ -2,44 +2,46 @@
 from __future__ import unicode_literals
 
 import base64
+import os
+from datetime import date, datetime, timedelta
 
 import dateparser
-import os
-
-from PIL import Image
+import imgkit
+import requests
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.db.models import Q
-from datetime import date, timedelta, datetime
-
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.core.mail import send_mail
-import imgkit
+from PIL import Image
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 from rest_framework.renderers import TemplateHTMLRenderer
-from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
+                                   HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED)
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
+from events.models import (BookedHotel, Event, EventDocument, EventUsers,
+                           FridayLunchAmount, FridayLunchBooking, Hotel,
+                           NfcCoupon, OtpModel, RegisteredUsers, RoomType,
+                           Table)
 from events.utils import encoded_id
 from events_app.settings import DEFAULT_FROM_EMAIL
 
-from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
-from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.models import Token
-from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
-import requests
-from events.models import Table, EventUsers, RegisteredUsers, BookedHotel, RoomType, Event, OtpModel, Hotel, \
-    EventDocument, NfcCoupon, FridayLunchBooking, FridayLunchAmount
-from .serializer import TableListSerializer, FilterNameSerializer, NameDetailsSerializer, RegisterEventSerializer, \
-    RegisteredUsersSerializer, RoomTypeSerializer, UserLoginSerializer, OtpPostSerializer, HotelNameSerializer, \
-    EventDocumentSerializer, NfcCouponSerializer, FridayLunchBookingSerializer
-
+from .serializer import (EventDocumentSerializer, FilterNameSerializer,
+                         FridayLunchBookingSerializer, HotelNameSerializer,
+                         NameDetailsSerializer, NfcCouponSerializer,
+                         OtpPostSerializer, RegisteredUsersSerializer,
+                         RegisterEventSerializer, RoomTypeSerializer,
+                         TableListSerializer, UserLoginSerializer)
 
 # Create your views here.
 
@@ -403,4 +405,3 @@ class FridayLunchBookingCheckViewset(ModelViewSet):
                     return Response({'status': True})
             except NfcCoupon.DoesNotExist:
                 return Response('Card number doesnot exist', status=400)
-

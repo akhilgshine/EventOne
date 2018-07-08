@@ -1,13 +1,14 @@
-import requests
 import base64
+
+import requests
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.contrib.sites.models import Site
 from django.utils.crypto import get_random_string
 
-from events.models import *
+from events.models import BookedHotel, Event, OtpModel, PaymentDetails
 
 
 def hotelDetails(event_obj):
