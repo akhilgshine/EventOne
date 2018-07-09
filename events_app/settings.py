@@ -173,7 +173,7 @@ AUTH_USER_MODEL = 'events.EventUsers'
 logging.basicConfig()
 
 # REDIS related settings
-REDIS_HOST = '69.164.196.222'
+REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
