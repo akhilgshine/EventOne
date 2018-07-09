@@ -11,49 +11,9 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0008_alter_user_username_max_length'),
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='EventUsers',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('member_type', models.CharField(choices=[('Tabler', 'Tabler'), ('Square_Leg', 'Square Leg')], default='Tabler', max_length=50)),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('mobile', models.CharField(blank=True, max_length=30)),
-                ('email', models.CharField(max_length=100, unique=True)),
-                ('post', models.CharField(blank=True, max_length=30)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_admin', models.BooleanField(default=False)),
-                ('is_approved', models.BooleanField(default=False)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-            ],
-            options={
-                'verbose_name': 'Event User',
-                'verbose_name_plural': 'Event Users',
-            },
-        ),
-        migrations.CreateModel(
-            name='BookedHotel',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('room_number', models.CharField(max_length=20, null=True)),
-                ('tottal_rent', models.IntegerField(default=0)),
-                ('book_friday', models.BooleanField(default=False)),
-                ('checkin_date', models.DateTimeField(blank=True, null=True)),
-                ('checkout_date', models.DateTimeField(blank=True, null=True)),
-                ('booked_date', models.DateTimeField(blank=True, default=datetime.datetime.now)),
-                ('mode_of_payment', models.CharField(blank=True, choices=[('cash', 'Cash'), ('POS', 'POS'), ('card', 'Card'), ('bank_transfer', 'Bank Transfer')], max_length=30, null=True)),
-                ('receipt_number', models.CharField(blank=True, max_length=100, null=True)),
-                ('receipt_file', models.FileField(blank=True, null=True, upload_to='hotel_receipts')),
-            ],
-        ),
         migrations.CreateModel(
             name='Event',
             fields=[
@@ -63,112 +23,37 @@ class Migration(migrations.Migration):
                 ('event_image', models.ImageField(blank=True, upload_to='event_images/')),
                 ('price', models.IntegerField(blank=True)),
                 ('total_seats', models.IntegerField(null=True)),
-                ('date', models.DateField(null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Hotel',
+            name='EventUsers',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('publish', models.BooleanField(default=True)),
-            ],
-            options={
-                'verbose_name': 'Hotel',
-                'verbose_name_plural': 'Hotels',
-            },
-        ),
-        migrations.CreateModel(
-            name='ImageRoomType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='room_type_images')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='OtpModel',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('mobile', models.CharField(default=0, max_length=15)),
-                ('created_time', models.DateTimeField(blank=True, default=datetime.datetime.now)),
-                ('otp', models.CharField(max_length=25, unique=True)),
-                ('is_expired', models.BooleanField(default=False)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='PaymentDetails',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.CharField(max_length=20)),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('type', models.CharField(blank=True, choices=[(0, 'Event Registered'), (1, 'Status Upgrade'), (2, 'Reg Due Payment'), (3, 'Hotel Booking'), (4, 'Hotel Update Booking'), (5, 'Hotel Due Payment'), (6, 'Other Contributions')], max_length=50, null=True)),
-                ('mode_of_payment', models.CharField(blank=True, choices=[('cash', 'Cash'), ('POS', 'POS'), ('card', 'Card'), ('bank_transfer', 'Bank Transfer')], max_length=50, null=True)),
-                ('receipt_number', models.CharField(blank=True, max_length=100, null=True)),
-                ('receipt_file', models.FileField(blank=True, null=True, upload_to='payment_receipts')),
-            ],
-            options={
-                'verbose_name': 'User Payment Detail',
-                'verbose_name_plural': 'User Payment Details',
-            },
-        ),
-        migrations.CreateModel(
-            name='ProxyHotelBooking',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hotel_rent', models.IntegerField(default=0)),
-                ('check_in_date', models.DateTimeField(blank=True, null=True)),
-                ('check_out_date', models.DateTimeField(blank=True, null=True)),
-                ('booked_date', models.DateTimeField(blank=True, default=datetime.datetime.now)),
-                ('hotel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Hotel')),
+                ('first_name', models.CharField(max_length=50)),
+                ('last_name', models.CharField(max_length=50)),
+                ('mobile', models.CharField(blank=True, max_length=30)),
+                ('email', models.CharField(max_length=100)),
+                ('post', models.CharField(blank=True, max_length=30)),
             ],
         ),
         migrations.CreateModel(
             name='RegisteredUsers',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment', models.CharField(choices=[('cash', 'Cash'), ('POS', 'POS'), ('card', 'Card'), ('bank_transfer', 'Bank Transfer')], max_length=20)),
-                ('amount_paid', models.IntegerField(blank=True, null=True)),
+                ('payment', models.CharField(max_length=20)),
+                ('amount_paid', models.CharField(max_length=20)),
                 ('qrcode', models.CharField(max_length=20)),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('confirm_image', models.ImageField(blank=True, upload_to='confirm_images/')),
-                ('event_status', models.CharField(blank=True, choices=[('Couple', 'Couple'), ('Stag', 'Stag'), ('Couple_Informal', 'Couple(1 Day)'), ('Stag_Informal', 'Stag(1 Day)')], max_length=30, null=True)),
-                ('balance_amount', models.IntegerField(blank=True, null=True)),
-                ('reciept_number', models.CharField(blank=True, max_length=100, null=True)),
-                ('reciept_file', models.FileField(blank=True, null=True, upload_to='reciepts')),
-                ('contributed_amount', models.IntegerField(default=0)),
-                ('t_shirt_size', models.CharField(blank=True, choices=[('S', 'S'), ('L', 'L'), ('M', 'M'), ('XL', 'XL'), ('XXL', 'XXL')], max_length=50, null=True)),
-                ('is_active', models.BooleanField(default=True)),
-                # ('is_payment_completed', models.BooleanField(default=False)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Event')),
-                ('event_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='get_user_registration', to=settings.AUTH_USER_MODEL)),
+                ('event_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.EventUsers')),
             ],
-            options={
-                'verbose_name': 'Registered User',
-                'verbose_name_plural': 'Registered Users',
-            },
-        ),
-        migrations.CreateModel(
-            name='RoomType',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('room_type', models.CharField(max_length=50, null=True)),
-                ('rooms_available', models.IntegerField(blank=True, null=True)),
-                ('net_rate', models.IntegerField(blank=True, null=True)),
-                ('sort_order', models.IntegerField(default=0)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('hotel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='get_hotel_room_types', to='events.Hotel')),
-            ],
-            options={
-                'ordering': ['sort_order'],
-            },
         ),
         migrations.CreateModel(
             name='Table',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('table_name', models.CharField(blank=True, max_length=30, null=True)),
-                ('table_order', models.IntegerField(blank=True, null=True)),
-                ('is_partial_payment', models.BooleanField(default=True)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Event')),
             ],
         ),
@@ -178,48 +63,8 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Table'),
         ),
         migrations.AddField(
-            model_name='proxyhotelbooking',
-            name='room_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='events.RoomType'),
-        ),
-        migrations.AddField(
-            model_name='proxyhotelbooking',
-            name='table',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='events.Table'),
-        ),
-        migrations.AddField(
-            model_name='paymentdetails',
-            name='reg_event',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='events.RegisteredUsers'),
-        ),
-        migrations.AddField(
-            model_name='imageroomtype',
-            name='room_type',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='get_room_type_image', to='events.RoomType'),
-        ),
-        migrations.AddField(
-            model_name='bookedhotel',
-            name='hotel',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Hotel'),
-        ),
-        migrations.AddField(
-            model_name='bookedhotel',
-            name='registered_users',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='hotel', to='events.RegisteredUsers'),
-        ),
-        migrations.AddField(
-            model_name='bookedhotel',
-            name='room_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='events.RoomType'),
-        ),
-        migrations.AddField(
             model_name='eventusers',
             name='table',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='events.Table'),
-        ),
-        migrations.AddField(
-            model_name='eventusers',
-            name='user_permissions',
-            field=models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='events.Table'),
         ),
     ]
