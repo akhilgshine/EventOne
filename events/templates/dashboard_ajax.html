@@ -2,7 +2,7 @@
                     <div class="col-sm-3 form-group date_aug_3">
                         <div class="room_type_div">
                             <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
-                            <h1>Total Rooms Booked:{{ booked_rooms.count }}</h1>
+                            <a href="{% url 'list_users' %}?hotel_room_type={{ booked_hotel.id }}&date=2018-08-03"><h1>Total Rooms Booked:{{booked_rooms.count  }}</h1></a>
                         </div>
                     </div>
                     {% for room_type in hotel_roomtype %}
@@ -10,7 +10,7 @@
                             <div class="room_type_div">
                                 <h1><br>{{ room_type.room_type }}</h1>
                                 <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
-                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-03"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-03"><span>Booked: {% get_room_count room_type '2018-08-03' as booked_count %} {{ booked_count }}</span></a>
                                 <br>
                             </div>
                         </div>
@@ -20,7 +20,7 @@
                         <div class="room_type_div">
                             <h2 class="p10"><i class="fa fa-bed" aria-hidden="true"></i> Room Types </h2>
                             <h1>Total Rooms :{{ total_rooms }}</h1>
-                            <a href="{% url 'list_users' %}?hotel_room_type={{ booked_hotel.id }}"> <h1>Total Rooms Booked:{{ booked_rooms.count }}</h1></a>
+                            <a href="{% url 'list_users' %}?hotel_room_type={{ booked_hotel.id }}&date=2018-08-04"> <h1>Total Rooms Booked:{{ booked_rooms.count }}</h1></a>
                             <h1>Total Rooms Available:{{ count}}</h1>
 
                         </div>

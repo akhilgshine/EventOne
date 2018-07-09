@@ -1,7 +1,7 @@
+from events.models import RegisteredUsers, BookedHotel, RoomType
 from django import template
 from django.db.models import Q
 
-from events.models import *
 from events.utils import encoded_id
 
 register = template.Library()
@@ -139,11 +139,7 @@ def get_roomtype_count(booked_room_type, date=None):
 
 @register.filter
 def hotels_booked_two_nights(hotels_book_date):
-    # BookedHotel.objects.filter(Q(checkin_date__lte=hotels_book_date) |
-    #                            Q(checkout_date__gte=hotels_book_date).filter(
-    #                                registered_users__is_active=True).values_list('registered_users__id',
-    #
-    #                                                                              flat=True))
+
     hotels_book = BookedHotel.objects.filter((Q(checkin_date__lte=hotels_book_date)),
                                              registered_users__is_active=True).count()
     return hotels_book

@@ -221,7 +221,7 @@
                             <div class="room_type_div">
                                 <h1><br>{{ room_type.room_type }}</h1>
                                 <span>Rent: Rs {{ room_type.net_rate }} /-</span><br>
-                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-03"><span>Booked: {{ room_type|get_roomtype_count }}</span></a>
+                                <a href="{% url 'list_users' %}?room_type={{ room_type.room_type }}&date=2018-08-03"><span>Booked: {% get_room_count room_type '2018-08-03' as booked_count %} {{ booked_count }}</span></a>
                                 <br>
                             </div>
                         </div>
@@ -271,6 +271,7 @@
             var val = $(this).val();
             $('div[class*=date_aug_]').hide();
             $('.date_aug_' + val).show();
+            hotelBookingDetails();
         });
         hotelBookingDetails();
     });

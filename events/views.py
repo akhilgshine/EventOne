@@ -531,6 +531,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                     partial_paid_relevant_users.append(users.id)
             self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
         elif self.request.GET.get('date') == 'aug3':
+
             hotels = BookedHotel.objects.filter(Q(checkin_date__lte='2018-08-03'),
                                                 registered_users__is_active=True, ).values_list('registered_users__id',
                                                                                                 flat=True)
@@ -564,7 +565,8 @@ class ListUsers(LoginRequiredMixin, ListView):
                 self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
         elif self.request.GET.get('hotel_room_type'):
             hotel = self.request.GET.get('hotel_room_type')
-            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, hotel=hotel).values_list(
+            date = self.request.GET.get('date')
+            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=date, hotel=hotel).values_list(
                 'registered_users__id',
                 flat=True)
             self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
@@ -947,7 +949,7 @@ class DashBoardView(LoginRequiredMixin, ListView):
         context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
         context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context[
             'room_count']
-        context['total_rooms_booked'] = context['total_rooms'] - context['room_count']
+        context['total_rooms_booked_each_date'] = context['total_rooms'] - context['room_count']
 
         context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[
                                                  0] or 0.00
@@ -1355,12 +1357,18 @@ class AddTShirtView(UpdateView):
 class GetHotelBookingDetailsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
+        # import pdb;pdb.set_trace()
         hotel = request.GET.get('hotel')
+        booking_date = request.GET.get('booking_date')
+        if booking_date == '4':
+            booking_date = '2018-08-04'
+        else:
+            booking_date = '2018-08-03'
         try:
             booked_hotel = Hotel.objects.get(id=hotel)
             hotel_room_type = booked_hotel.get_hotel_room_types.all()
             count = hotel_room_type.aggregate(Sum('rooms_available')).values()[0] or 0.00
-            booked_rooms = BookedHotel.objects.filter(hotel=booked_hotel)
+            booked_rooms = BookedHotel.objects.filter(hotel=booked_hotel, checkin_date__lte=booking_date)
             total_rooms = count + booked_rooms.count()
         except Hotel.DoesNotExist:
             booked_hotel = None
