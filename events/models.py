@@ -2,10 +2,8 @@
 from __future__ import unicode_literals
 
 import base64
-import os
 import datetime
 
-import imgkit
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -14,8 +12,9 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
+
+from events.tasks import CouponImageGenerate
 
 CASH = 'cash'
 POS = 'POS'
@@ -428,16 +427,8 @@ class FridayLunchBooking(models.Model):
         return '{} {}'.format(self.registered_user.event_user.first_name, self.registered_user.event_user.last_name)
 
 
-# @receiver(post_save, sender=RegisteredUsers, dispatch_uid="create_coupon")
-# def create_coupon(sender, instance, **kwargs):
-#
-#     current_site = Site.objects.get_current()
-#     domain = current_site.domain
-#
-#     options = {
-#         'format': 'png',
-#         'encoding': "UTF-8",
-#     }
-#     url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': base64.b64encode(str(instance.id))}))
-#     coupon_file_name = '%s.png' % instance.id
-#     imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', coupon_file_name), options=options)
+@receiver(post_save, sender=RegisteredUsers, dispatch_uid="create_coupon")
+def create_coupon(sender, instance, **kwargs):
+    CouponImageGenerate.delay(instance.id)
+
+

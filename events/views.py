@@ -10,8 +10,8 @@ import traceback
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
-from django.core.urlresolvers import reverse
 from django.db.models import Q
+from  django.urls import  reverse_lazy,reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -24,7 +24,6 @@ from events.utils import (decode_id, hotelDetails, send_email,
                           send_sms_message, set_status, track_payment_details)
 
 # from xhtml2pdf import pisa
-
 
 
 class SuperUserMixin(AccessMixin):
@@ -606,7 +605,7 @@ class ListUsers(LoginRequiredMixin, ListView):
 
 
 class InvoiceView(TemplateView):
-    template_name = 'coupon.html'
+    template_name = 'coupon (1).html'
 
     def get(self, request, *args, **kwargs):
         context = {}
