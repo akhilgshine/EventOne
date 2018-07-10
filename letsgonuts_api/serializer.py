@@ -118,13 +118,14 @@ class RegisteredUsersSerializer(ModelSerializer):
     booked_hotel = BookedHotelSerializer(source='hotel', many=True)
     payment_details = serializers.SerializerMethodField()
     coupon_url = serializers.SerializerMethodField()
+    is_approved = serializers.SerializerMethodField()
 
     class Meta:
         model = RegisteredUsers
         # fields = '__all__'
         fields = ['id', 'tableName', 'qrcode', 'amount_paid',
                   'registration_type', 'user_details', 'table_details', 'booked_hotel', 'payment_details',
-                  'coupon_url']
+                  'coupon_url','is_approved']
 
     def get_tableName(self, obj):
         return obj.table.table_name
@@ -145,6 +146,9 @@ class RegisteredUsersSerializer(ModelSerializer):
         domain = current_site.domain
         url = '%s/api/%s/%s' % (domain, 'coupon-success', obj.id)
         return url
+
+    def get_is_approved(self, obj):
+        return obj.event_user.is_approved
 
 
 class EventDocumentSerializer(ModelSerializer):
