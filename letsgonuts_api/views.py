@@ -43,6 +43,7 @@ from .serializer import (EventDocumentSerializer, FilterNameSerializer,
                          RegisterEventSerializer, RoomTypeSerializer,
                          TableListSerializer, UserLoginSerializer)
 
+
 # Create your views here.
 
 
@@ -405,3 +406,30 @@ class FridayLunchBookingCheckViewset(ModelViewSet):
                     return Response({'status': True})
             except NfcCoupon.DoesNotExist:
                 return Response('Card number doesnot exist', status=400)
+
+
+class FridayLunchBookingCreateViewSet(ModelViewSet):
+    queryset = FridayLunchBooking.objects.all()
+    serializer_class = FridayLunchBookingSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        payment_type = serializer.validated_data.get('payment_type')
+        nfc_card_number = serializer.validated_data.get('nfc_card_number')
+        pos_number = serializer.validated_data.get('pos_number')
+        if payment_type and nfc_card_number:
+            try:
+                nfc_card = NfcCoupon.objects.get(card_number=nfc_card_number)
+                nfc_user = nfc_card.registered_user
+                if not nfc_user:
+                    return Response('User not registered for event', status=400)
+                FridayLunchBooking.objects.create(registered_user=nfc_user, payment_type=payment_type,
+                                                  pos_number=pos_number)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except NfcCoupon.DoesNotExist:
+                return Response('Card number doesnt exist', status=400)
+        else:
+            return Response('please enter card_number and payment type', status=400)
+
+

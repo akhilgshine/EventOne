@@ -7,7 +7,7 @@ from .views import (CouponSuccessViewSet, EventDocumentViewSet,
                     NfcCouponViewSet, NfcDetailsViewSet, OtpPostViewSet,
                     PaymentDetailsViewSet, RegisteredUsersViewSet,
                     RegisterEventViewSet, RoomTypeListViewSet,
-                    TableListViewSet, UserLoginViewSet)
+                    TableListViewSet, UserLoginViewSet, FridayLunchBookingCreateViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'tablelist', TableListViewSet, base_name='table-list')
@@ -25,6 +25,7 @@ router.register(r'event_documents', EventDocumentViewSet, base_name='event_docum
 router.register(r'nfc-coupon', NfcCouponViewSet, base_name='nfc_coupon')
 router.register(r'check-nfc', NfcDetailsViewSet, base_name='nfc_list')
 router.register(r'friday-lunch-check', FridayLunchBookingCheckViewset, base_name='friday_lunch_check')
+router.register(r'friday-lunch-booking', FridayLunchBookingCreateViewSet, base_name='friday_lunch_booking')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

@@ -176,4 +176,16 @@ class FridayLunchBookingSerializer(ModelSerializer):
 
     class Meta:
         model = FridayLunchBooking
-        fields = ['registered_user', 'payment_type', 'pos_number', 'nfc_card_number']
+        fields = ['payment_type', 'pos_number', 'nfc_card_number']
+
+    def validate_nfc_card_number(self, card_number):
+        try:
+            nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
+            if nfc_coupon.registered_user.get_friday_lunch_users.all():
+                raise serializers.ValidationError("This user already booked friday lunch")
+            return card_number
+        except NfcCoupon.DoesNotExist:
+            raise serializers.ValidationError("Invalid Coupon")
+
+
+
