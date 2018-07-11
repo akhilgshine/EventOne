@@ -200,6 +200,7 @@ class RegisteredUsers(models.Model):
     t_shirt_size = models.CharField(choices=T_SHIRT_CHOICES, max_length=50, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_payment_completed = models.BooleanField(default=False)
+    is_attending_event = models.BooleanField(default=False)
 
     def __str__(self):
         return "{} {}".format(self.event_user.first_name, self.event_user.last_name)
