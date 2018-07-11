@@ -341,11 +341,6 @@ class RoomType(models.Model):
     class Meta:
         ordering = ['sort_order', ]
 
-    @receiver(post_delete, sender='events.BookedHotel')
-    def increment_roomtype(instance, **kwargs):
-        instance.room_type.rooms_available += 1
-        instance.room_type.save()
-
 
 class ImageRoomType(models.Model):
     image = models.ImageField(upload_to='room_type_images')
@@ -376,6 +371,7 @@ class BookedHotel(models.Model):
     @property
     def hotel_name(self):
         return self.hotel.name
+
 
 
 class ProxyHotelBooking(models.Model):
@@ -432,3 +428,8 @@ def create_coupon(sender, instance, **kwargs):
     CouponImageGenerate.delay(instance.id)
 
 
+@receiver(post_delete, sender='events.BookedHotel')
+def increment_roomtype(instance, **kwargs):
+    if instance.room_type:
+        instance.room_type.rooms_available += 1
+        instance.room_type.save()

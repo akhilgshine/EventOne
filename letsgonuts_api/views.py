@@ -1,30 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-import base64
 import os
-from datetime import date, datetime, timedelta
-
+from datetime import datetime, timedelta
 import dateparser
-import imgkit
 import requests
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from django.core.mail import send_mail
-from django.db.models import Q
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from PIL import Image
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
-from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
+from rest_framework.status import (HTTP_201_CREATED,
                                    HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED)
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -33,8 +22,6 @@ from events.models import (BookedHotel, Event, EventDocument, EventUsers,
                            FridayLunchAmount, FridayLunchBooking, Hotel,
                            NfcCoupon, OtpModel, RegisteredUsers, RoomType,
                            Table)
-from events.utils import encoded_id
-from events_app.settings import DEFAULT_FROM_EMAIL
 
 from .serializer import (EventDocumentSerializer, FilterNameSerializer,
                          FridayLunchBookingSerializer, HotelNameSerializer,
@@ -276,9 +263,13 @@ class OtpPostViewSet(ModelViewSet):
                 otp_obj.is_expired = True
                 otp_obj.save()
                 return Response({'error': 'Otp Expired'}, status=400)
+            if otp_obj.is_expired:
+                return Response({'error': 'Otp Already Used'}, status=400)
         except OtpModel.DoesNotExist:
             return Response({'error': 'Invalid otp'}, status=400)
         response = {}
+        otp_obj.is_expired = True
+        otp_obj.save()
         try:
             event_user = EventUsers.objects.get(mobile=otp_obj.mobile)
         except EventUsers.DoesNotExist:
@@ -431,5 +422,3 @@ class FridayLunchBookingCreateViewSet(ModelViewSet):
                 return Response('Card number doesnt exist', status=400)
         else:
             return Response('please enter card_number and payment type', status=400)
-
-
