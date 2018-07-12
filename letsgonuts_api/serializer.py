@@ -42,7 +42,7 @@ class RegisterEventSerializer(ModelSerializer):
     last_name = serializers.CharField()
     mobile = serializers.CharField()
     email = serializers.CharField()
-    id_card_type = serializers.CharField()
+    id_card_type = serializers.CharField(required=False)
     room_type = serializers.IntegerField(required=False)
     event_status = serializers.ChoiceField(choices=STATUS_CHOICES)
     registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
