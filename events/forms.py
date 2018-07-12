@@ -47,7 +47,7 @@ class HotelForm(forms.ModelForm):
 
     class Meta:
         model = BookedHotel
-        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file')
+        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file', 'room_number')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)
@@ -59,6 +59,8 @@ class HotelForm(forms.ModelForm):
 
         self.fields['tottal_rent'].widget.attrs['class'] = 'form-control'
         self.fields['tottal_rent'].widget.attrs['placeholder'] = 'Rent'
+        self.fields['room_number'].widget.attrs['class'] = 'form-control'
+        self.fields['room_number'].widget.attrs['placeholder'] = 'Room Number'
         # self.fields['tottal_rent'].widget.attrs['readonly'] = 'readonly'
 
         self.fields['checkin_date'].widget.attrs['class'] = 'datepicker form-control'
