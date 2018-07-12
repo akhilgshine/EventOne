@@ -50,7 +50,7 @@ class RegisterEventSerializer(ModelSerializer):
     tottal_rent = serializers.CharField(required=False)
     checkin_date = serializers.CharField(required=False)
     checkout_date = serializers.CharField(required=False)
-    id_images = serializers.FileField(required=False)
+    id_images = serializers.FileField(required=False,read_only=True)
 
     class Meta:
         model = RegisteredUsers
