@@ -425,6 +425,7 @@ class FridayLunchBooking(models.Model):
 
 class IDDocumentsPhoto(models.Model):
     registered_users = models.ForeignKey(RegisteredUsers, related_name='ids_img')
+    id_card_type = models.CharField(max_length=255, null=True, blank=True)
     id_card_images = models.ImageField(upload_to='id_card_images/', null=True, blank=True)
 
     def __str__(self):
