@@ -42,6 +42,7 @@ class RegisterEventSerializer(ModelSerializer):
     last_name = serializers.CharField()
     mobile = serializers.CharField()
     email = serializers.CharField()
+    id_card_type = serializers.CharField()
     room_type = serializers.IntegerField(required=False)
     event_status = serializers.ChoiceField(choices=STATUS_CHOICES)
     registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
@@ -56,7 +57,7 @@ class RegisterEventSerializer(ModelSerializer):
         fields = ['first_name', 'last_name', 'mobile', 'email', 'room_type', 'event_status', 'registration_type',
                   'hotel_id', 'tottal_rent', 'event', 'table', 'payment',
                   'amount_paid', 'event_status', 'registration_type', 'reciept_number', 'reciept_file', 'checkin_date',
-                  'checkout_date', 'id_images']
+                  'checkout_date', 'id_images', 'id_card_type']
 
     def validate(self, data):
         error_flag = True
@@ -111,12 +112,12 @@ class BookedHotelSerializer(ModelSerializer):
         fields = ['checkin_date', 'checkout_date', 'hotel_details', 'room_details', 'tottal_rent', 'room_number']
 
 
-class IDImageFileListSerializer(serializers.Serializer):
+class IDImageFileListSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = IDDocumentsPhoto
-        fields = ['image_url']
+        fields = ['image_url', 'id_card_type']
 
     def get_image_url(self, obj):
         current_site = Site.objects.get_current()

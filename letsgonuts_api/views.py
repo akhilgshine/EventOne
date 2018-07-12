@@ -127,6 +127,7 @@ class RegisterEventViewSet(ModelViewSet):
             tottal_rent = serializer.validated_data.pop('tottal_rent', None)
             checkin_date = serializer.validated_data.pop('checkin_date', None)
             checkout_date = serializer.validated_data.pop('checkout_date', None)
+            id_card_type = serializer.validated_data.pop('id_card_type', None)
             event_user.save()
             if RegisteredUsers.objects.filter(event_user=event_user).exists():
                 registered_user = RegisteredUsers.objects.get(event_user=event_user)
@@ -158,7 +159,8 @@ class RegisterEventViewSet(ModelViewSet):
                     registered_user.is_payment_completed = True
                     registered_user = serializer.save()
             for id_image in self.request.data.getlist('id_images'):
-                IDDocumentsPhoto.objects.create(id_card_images=id_image, registered_users=registered_user)
+                IDDocumentsPhoto.objects.create(id_card_images=id_image, id_card_type=id_card_type,
+                                                registered_users=registered_user)
             try:
                 hotel = Hotel.objects.get(id=hotel_id)
             except Hotel.DoesNotExist:
