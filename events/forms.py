@@ -44,6 +44,7 @@ class EventRegisterForm(forms.Form):
 class HotelForm(forms.ModelForm):
     checkin_date = forms.CharField(required=True)
     checkout_date = forms.CharField(required=True)
+    room_number  = forms.CharField(required=False)
 
     class Meta:
         model = BookedHotel
