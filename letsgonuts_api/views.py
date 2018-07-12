@@ -107,7 +107,7 @@ class RegisterEventViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         post_data = self.request.data.copy()
         id_images = post_data.pop('id_images', {})
-        id_card_type = post_data.pop('id_card_type')
+        id_card_type = post_data.pop('id_card_type', None)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         event_user, created = EventUsers.objects.get_or_create(email=serializer.validated_data.get('email'),
