@@ -21,7 +21,7 @@ from rest_framework.viewsets import ModelViewSet
 from events.models import (BookedHotel, Event, EventDocument, EventUsers,
                            FridayLunchAmount, FridayLunchBooking, Hotel,
                            NfcCoupon, OtpModel, RegisteredUsers, RoomType,
-                           Table)
+                           Table, IDDocumentsPhoto)
 
 from .serializer import (EventDocumentSerializer, FilterNameSerializer,
                          FridayLunchBookingSerializer, HotelNameSerializer,
@@ -157,7 +157,8 @@ class RegisterEventViewSet(ModelViewSet):
                         registered_user.qrcode = 'QRT8001'
                     registered_user.is_payment_completed = True
                     registered_user = serializer.save()
-
+            for id_image in self.request.data.getlist('id_images'):
+                IDDocumentsPhoto.objects.create(id_card_images=id_image, registered_users=registered_user)
             try:
                 hotel = Hotel.objects.get(id=hotel_id)
             except Hotel.DoesNotExist:
@@ -191,6 +192,7 @@ class RegisterEventViewSet(ModelViewSet):
 class RegisteredUsersViewSet(ModelViewSet):
     queryset = RegisteredUsers.objects.all()
     serializer_class = RegisteredUsersSerializer
+    permission_classes = [AllowAny]
 
 
 class RoomTypeListViewSet(ModelViewSet):

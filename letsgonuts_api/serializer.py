@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from events.models import (MEMBER_CHOICES, STATUS_CHOICES, BookedHotel,
                            EventDocument, EventUsers, FridayLunchAmount,
                            FridayLunchBooking, Hotel, ImageRoomType, NfcCoupon,
-                           RegisteredUsers, RoomType, Table)
+                           RegisteredUsers, RoomType, Table, IDDocumentsPhoto)
 from user_registration.validators import validate_phone
 
 
@@ -49,13 +49,14 @@ class RegisterEventSerializer(ModelSerializer):
     tottal_rent = serializers.CharField(required=False)
     checkin_date = serializers.CharField(required=False)
     checkout_date = serializers.CharField(required=False)
+    id_images = serializers.FileField(required=False)
 
     class Meta:
         model = RegisteredUsers
         fields = ['first_name', 'last_name', 'mobile', 'email', 'room_type', 'event_status', 'registration_type',
                   'hotel_id', 'tottal_rent', 'event', 'table', 'payment',
                   'amount_paid', 'event_status', 'registration_type', 'reciept_number', 'reciept_file', 'checkin_date',
-                  'checkout_date']
+                  'checkout_date', 'id_images']
 
     def validate(self, data):
         error_flag = True
@@ -110,22 +111,36 @@ class BookedHotelSerializer(ModelSerializer):
         fields = ['checkin_date', 'checkout_date', 'hotel_details', 'room_details', 'tottal_rent', 'room_number']
 
 
+class IDImageFileListSerializer(serializers.Serializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = IDDocumentsPhoto
+        fields = ['image_url']
+
+    def get_image_url(self, obj):
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        url = '%s%s' % (domain, obj.id_card_images.url)
+        return url
+
+
 class RegisteredUsersSerializer(ModelSerializer):
     user_details = NameDetailsSerializer(source='event_user', read_only=True)
     tableName = serializers.SerializerMethodField()
     registration_type = serializers.SerializerMethodField()
     table_details = TableListSerializer(source='table', read_only=True)
     booked_hotel = BookedHotelSerializer(source='hotel', many=True)
+    id_images = IDImageFileListSerializer(source='ids_img', many=True, read_only=True)
     payment_details = serializers.SerializerMethodField()
     coupon_url = serializers.SerializerMethodField()
     is_approved = serializers.SerializerMethodField()
 
     class Meta:
         model = RegisteredUsers
-        # fields = '__all__'
         fields = ['id', 'tableName', 'qrcode', 'amount_paid',
                   'registration_type', 'user_details', 'table_details', 'booked_hotel', 'payment_details',
-                  'coupon_url','is_approved']
+                  'coupon_url', 'is_approved', 'id_images']
 
     def get_tableName(self, obj):
         return obj.table.table_name
@@ -186,6 +201,3 @@ class FridayLunchBookingSerializer(ModelSerializer):
             return card_number
         except NfcCoupon.DoesNotExist:
             raise serializers.ValidationError("Invalid Coupon")
-
-
-

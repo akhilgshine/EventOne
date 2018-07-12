@@ -374,7 +374,6 @@ class BookedHotel(models.Model):
         return self.hotel.name
 
 
-
 class ProxyHotelBooking(models.Model):
     table = models.ForeignKey(Table, null=True, blank=True)
     hotel = models.ForeignKey(Hotel)
@@ -422,6 +421,14 @@ class FridayLunchBooking(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.registered_user.event_user.first_name, self.registered_user.event_user.last_name)
+
+
+class IDDocumentsPhoto(models.Model):
+    registered_users = models.ForeignKey(RegisteredUsers, related_name='ids_img')
+    id_card_images = models.ImageField(upload_to='id_card_images/', null=True, blank=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)
 
 
 @receiver(post_save, sender=RegisteredUsers, dispatch_uid="create_coupon")
