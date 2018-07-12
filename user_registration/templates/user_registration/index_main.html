@@ -108,6 +108,12 @@
 
                     <button class="btn btn-register">Register Event</button>
                 </a>
+                {% elif request.user.is_authenticated %}
+                <a href="{% url 'event_register' %}">
+
+                    <button class="btn btn-register">Register Event</button>
+                </a>
+
             {% else %}
 
 

@@ -159,6 +159,12 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-sm-4" for="id_room_rent"> Room Number  :</label>
+                            <div class="col-sm-8">
+                                {{ form.room_number }}
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-sm-4" for="pwd">Mode of Payment :</label>
                             <div class="col-sm-2">
                                 <label>
@@ -520,6 +526,7 @@
             $("#id_room_type option[data-hotel=" + hotel + "]").show();
         })
         $("#id_hotel").val('{{hotel_obj.hotel.id}}');
+        $("#id_room_number").val('{{hotel_obj.room_number}}');
         {% if hotel_obj.registered_users.hotel_due %}
             $("#id_tottal_rent").val('{{hotel_obj.registered_users.hotel_due}}');
         {% else %}

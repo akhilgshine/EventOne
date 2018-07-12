@@ -54,6 +54,8 @@ urlpatterns = [
     url(r'^user-registration-list/', UserRegistrationListView.as_view(), name='user_registration_list'),
     url(r'^get-hotel-booking-details/', GetHotelBookingDetailsView.as_view(), name='get_hotel_booking_details'),
     url(r'^t-shirt-update/(?P<pk>\d+)$', AddTShirtView.as_view(), name='t_shirt_update'),
+    url(r'^list-of-attendees/', ListOfAttendees.as_view(), name='list_of_attendees'),
+    url(r'^adding-of-event-attendees/', AjaxAttendeesAddingView.as_view(), name='adding_of_event_attendees'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
     url(r'^user/', include('user_registration.urls')),

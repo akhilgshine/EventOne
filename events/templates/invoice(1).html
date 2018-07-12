@@ -3,146 +3,204 @@
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
     <![endif]-->
-    <!--[if IE 7]>
+<!--[if IE 7]>
     <html class="no-js lt-ie9 lt-ie8" lang="">
         <![endif]-->
-        <!--[if IE 8]>
+<!--[if IE 8]>
         <html class="no-js lt-ie9" lang="">
             <![endif]-->
-            <!--[if gt IE 8]><!-->
-            <html class="no-js" lang="">
-                <!--<![endif]-->
-                <head>
-                    <meta charset="utf-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-                    <title></title>
-                    <meta name="description" content="">
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-                    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
-                    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-                    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
-                    <script src="{% static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
-                </head>
-                <body>
-                    <div class="gradient-bg">
-                        <img src="{% static 'img/dance-shadow.png' %}" class="dance-bg" />
-                        <div class="container-fluid" >
-                            <div class="row">
-                                <div class="col-sm-2 col-xs-5">
-                                    <div class="sub-logo">
-                                        <img src="{% static 'img/sub-logo.png' %}" width="100%"  />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <script src="{% static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+    <style>
+    .coupon-re tbody td { padding: 3px !important; font-size: 13px !important;}
+    body {background: #cacaca;}
+    .mt30 { margin-top: 30px;}
+</style>
+</head>
+<body>
+<div class="gradient-bg">
+    <img src="{% static 'img/dance-shadow.png' %}" class="dance-bg"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 col-xs-5">
+                <div class="sub-logo">
+                    <a href="{% url 'register_event' %}"><img src="{% static 'img/sub-logo.png' %}" width="100%"/></a>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
 
-                            <div class="col-md-10 col-md-offset-1">
-                                <div class="coupon-re">
-                                    <div class="row m0">
-                                        <div class="col-sm-8" style="padding:0px;">
-                                            <div style="    background: url(/static/img/coupon-txt-bg.png);
+        <div class="col-md-10 col-md-offset-1">
+            <div class="coupon-re">
+                <div class="row m0">
+                    <div class="col-sm-8" style="padding:0px;">
+                        <div style="    background: url(/static/img/coupon-txt-bg.png);
                                                 border-radius: 35px;
                                                 margin-bottom: 3em;
                                                 box-shadow: 0px 0px 8px -1px;
                                                 overflow: hidden;     height: 420px;">
-                                                <div class="row m0">
-                                                    <div class="col-sm-4">
-                                                        <img src="{% static 'img/coupon-headleft.png' %}" width="100%" style=" position: absolute;
+                            <div class="row m0">
+                                <div class="col-sm-4">
+                                    <img src="{% static 'img/coupon-headleft.png' %}" width="100%" style=" position: absolute;
                                                             height: fit-content;">
-                                                    </div>
-                                                    <div class="col-sm-8">
-                                                        <img src="{% static 'img/coupon-head-txt.png' %}"  style="    margin-top: 2em;
+                                </div>
+                                <div class="col-sm-8">
+                                    <img src="{% static 'img/coupon-head-txt.png' %}" style="    margin-top: 2em;
                                                             width: 60%;">
-                                                        <table class="table">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;"><b>Name</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">sree lakshmi</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        ; font-size: 16px;"><b>Table</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">Madurai City RT 99</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;"><b>Phone</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">9497826696</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;"><b>Type</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">Couple</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;"><b>Reg.Amount</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">6000/- @April 20, 2018,</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;"><b>Hotel</b>  <span class="pull-right">:</span></td>
-                                                                    <td style="border: 0px;
-                                                                        font-size: 16px;">Hotel Raviz Kollam, Suite, 34000/-,
-                                                                        August 03, 2018 to August 05, 2018
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                        <div align="right">
-                                                            <button class="btn" style="    margin-bottom: 15px;
+                                    <table class="table">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;"><b>Name</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        ; font-size: 16px;"><b>Table</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.event_user.table }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;"><b>Email</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.event_user.email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;"><b>Phone</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.event_user.mobile }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;"><b>Type</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.get_event_status_display }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;"><b>Total amount paid</b> <span
+                                                    class="pull-right">:</span></td>
+                                            <td style="border: 0px;
+                                                                        font-size: 16px;">{{ event_register.amount_paid|add:event_register.contributed_amount }}
+                                                /- @{{ event_register.created_date|date:"D d M Y" }}</td>
+                                        </tr>
+                                        {% if event_register.due_amount %}
+                                            <tr>
+                                                <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
+                                                        class="pull-right">:</span></td>
+                                                <td style="border: 0px;font-size: 16px;"> {{ event_register.due_amount }}/-
+
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px; font-size: 16px;">
+                                    {% if  event_register.hotel_user %}
+                                        {{ event_register.hotel_user.hotel.name }},
+                                        Rs {{ event_register.hotel_user.tottal_rent }}/-,
+                                        {{ event_register.hotel_user.room_type.room_type }},
+                                        <b>{{ event_register.hotel_user.checkin_date|date:"D d M" }}
+                                            to {{ event_register.hotel_user.checkout_date|date:"D d M Y" }}</b>
+                                    {% else %}
+                                        No Hotel Booked
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if  event_register.hotel_due %}
+                                <tr>
+                                <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
+                                        class="pull-right">:</span></td>
+                                <td style="border: 0px;font-size: 16px;">Rs {{ event_register.hotel_due }}/-
+
+                                </td>
+                            </tr>
+
+                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                    <div align="right">
+                                        <a href="{% url 'register_event' %}">
+                                        <button type="button" class="btn" style="    margin-bottom: 15px;
                                                                 margin-right: 20px;
                                                                 background: #ff4057;
                                                                 color: white;
                                                                 border-radius: 23px;
-                                                                padding: 6px 15px;">Reg Number   :  QRT8022</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4" style="    padding: 0px;
+                                                                padding: 6px 15px;">Finish Registration
+                                        </button>
+                                    </a>
+{#                                        <button class="btn" style="    margin-bottom: 15px;#}
+{#                                                                margin-right: 20px;#}
+{#                                                                background: #ff4057;#}
+{#                                                                color: white;#}
+{#                                                                border-radius: 23px;#}
+{#                                                                padding: 6px 15px;">Reg Number : {{ event_register.qrcode }}#}
+{#                                        </button>#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4" style="    padding: 0px;
                                             background: #ff4057;
                                             border-radius: 35px;
                                             box-shadow: 0px 0px 8px -1px;
                                             padding-left: 20px;
                                             padding-top: 1.5em;     height: 420px; overflow: hidden;">
-                                            <img src="{% static 'img/coupon-right-logo.png' %}" style="margin-bottom:10px;">
-                                            <h3 style="    font-size: 46px;
+                        <img src="{% static 'img/coupon-right-logo.png' %}" style="margin-bottom:10px;">
+                        <h3 style="    font-size: 46px;
                                                 font-weight: 100;
                                                 color: #fff; margin-top: 10px;">August 03, 2018 <br>
-                                                August 05, 2018
-                                            </h3>
-                                            <button class="btn" style="     margin-bottom: 15px;
+                            August 05, 2018
+                        </h3>
+                        <button class="btn" style="     margin-bottom: 15px;
                                                 margin-right: 20px;
                                                 background: #ffffff;
                                                 color: black;
                                                 border-radius: 34px;
                                                 padding: 6px 15px;
                                                 font-size: 24px;
-                                                margin-top: 10px;">Reg Number   :  QRT8022</button>
-                                            <img src="{% static 'img/bar-q.png' %}" style="    margin: 10px;
+                                                margin-top: 10px;">Reg Number : {{ event_register.qrcode }}
+                        </button>
+                        <img src="{% static 'img/bar-q.png' %}" style="    margin: 10px;
                                                 margin-bottom: 1em;">
-                                            <div style="    width: 90px;
+                        <div style="    width: 90px;
                                                 height: 90px;
                                                 background: #fff;
                                                 position: absolute;
                                                 top: 55px;
                                                 right: -44px;
                                                 border-radius: 100%;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </body>
-            </html>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

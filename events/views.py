@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.db.models import Q
-from  django.urls import  reverse_lazy,reverse
+from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -22,6 +22,7 @@ from events.forms import *
 from events.templatetags import template_tags
 from events.utils import (decode_id, hotelDetails, send_email,
                           send_sms_message, set_status, track_payment_details)
+
 
 # from xhtml2pdf import pisa
 
@@ -353,7 +354,7 @@ class RegisterEvent(SuperUserMixin, LoginRequiredMixin, TemplateView):
 
 
 class RegSuccessView(TemplateView):
-    template_name = 'invoice.html'
+    template_name = 'invoice(1).html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -566,7 +567,8 @@ class ListUsers(LoginRequiredMixin, ListView):
         elif self.request.GET.get('hotel_room_type'):
             hotel = self.request.GET.get('hotel_room_type')
             date = self.request.GET.get('date')
-            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=date, hotel=hotel).values_list(
+            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=date,
+                                                        hotel=hotel).values_list(
                 'registered_users__id',
                 flat=True)
             self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
@@ -803,6 +805,7 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
         checkin = form.cleaned_data['checkin_date']
         checkout = form.cleaned_data['checkout_date']
         hotel = form.cleaned_data['hotel']
+        room_number = form.cleaned_data['room_number']
         checkin_date = datetime.datetime.strptime(checkin, "%d/%m/%Y")
         checkout_date = datetime.datetime.strptime(checkout, "%d/%m/%Y")
         try:
@@ -825,6 +828,7 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
         hotel_obj.room_type = form.cleaned_data['room_type']
         hotel_obj.checkin_date = checkin_date
         hotel_obj.checkout_date = checkout_date
+        hotel_obj.room_number = room_number
         hotel_obj.receipt_number = form.cleaned_data['receipt_number']
         hotel_obj.receipt_file = form.cleaned_data['receipt_file']
         hotel_obj.save()
@@ -1379,3 +1383,31 @@ class GetHotelBookingDetailsView(TemplateView):
                                  'total_rooms': total_rooms})
 
         return HttpResponse(html)
+
+
+class ListOfAttendees(TemplateView):
+    template_name = 'list_of_attendees.html'
+    queryset = RegisteredUsers.objects.filter(is_active=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(ListOfAttendees, self).get_context_data(**kwargs)
+        context['tables'] = Table.objects.all()
+        context['registered_users'] = self.queryset
+        return context
+
+
+class AjaxAttendeesAddingView(TemplateView):
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.POST.get('user_id')
+        is_checked = request.POST.get('isChecked')
+        attending_registered_user = RegisteredUsers.objects.get(id=user_id)
+        if is_checked == 'true':
+            attending_registered_user.is_attending_event = True
+            attending_registered_user.save()
+        else:
+            attending_registered_user.is_attending_event = False
+            attending_registered_user.save()
+        return HttpResponse({'status': True, })
+
+

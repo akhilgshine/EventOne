@@ -107,7 +107,7 @@ class BookedHotelSerializer(ModelSerializer):
 
     class Meta:
         model = BookedHotel
-        fields = ['checkin_date', 'checkout_date', 'hotel_details', 'room_details', 'tottal_rent']
+        fields = ['checkin_date', 'checkout_date', 'hotel_details', 'room_details', 'tottal_rent', 'room_number']
 
 
 class RegisteredUsersSerializer(ModelSerializer):
