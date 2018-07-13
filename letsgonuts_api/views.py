@@ -105,11 +105,10 @@ class RegisterEventViewSet(ModelViewSet):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        post_data = self.request.data.copy()
-        id_images = post_data.pop('id_images', {})
-        id_card_type = post_data.pop('id_card_type', None)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        print(request.data, "This is the request data")
+        print(serializer.validated_data, "This is the validated data")
         event_user, created = EventUsers.objects.get_or_create(email=serializer.validated_data.get('email'),
                                                                mobile=serializer.validated_data.get('mobile'))
         if created:
@@ -130,9 +129,11 @@ class RegisterEventViewSet(ModelViewSet):
             tottal_rent = serializer.validated_data.pop('tottal_rent', None)
             checkin_date = serializer.validated_data.pop('checkin_date', None)
             checkout_date = serializer.validated_data.pop('checkout_date', None)
-            # id_card_type = serializer.validated_data.pop('id_card_type', None)
-            # id_images = self.request.data.pop('id_images')
+
             event_user.save()
+            id_images = serializer.validated_data.pop('id_images', [])
+            id_card_type = serializer.validated_data.pop('id_card_type', None)
+
             if RegisteredUsers.objects.filter(event_user=event_user).exists():
                 registered_user = RegisteredUsers.objects.get(event_user=event_user)
                 previous_amount_paid = RegisteredUsers.objects.get(event_user=event_user).amount_paid

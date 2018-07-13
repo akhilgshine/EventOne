@@ -42,7 +42,7 @@ class RegisterEventSerializer(ModelSerializer):
     last_name = serializers.CharField()
     mobile = serializers.CharField()
     email = serializers.CharField()
-    id_card_type = serializers.CharField(required=False,read_only=True)
+    id_card_type = serializers.CharField(required=False, write_only=True)
     room_type = serializers.IntegerField(required=False)
     event_status = serializers.ChoiceField(choices=STATUS_CHOICES)
     registration_type = serializers.ChoiceField(choices=MEMBER_CHOICES)
@@ -50,7 +50,7 @@ class RegisterEventSerializer(ModelSerializer):
     tottal_rent = serializers.CharField(required=False)
     checkin_date = serializers.CharField(required=False)
     checkout_date = serializers.CharField(required=False)
-    id_images = serializers.FileField(required=False, read_only=True)
+    id_images = serializers.ListField(child=serializers.FileField(), required=False, write_only=True)
 
     class Meta:
         model = RegisteredUsers
