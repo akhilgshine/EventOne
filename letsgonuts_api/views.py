@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_201_CREATED,
@@ -139,7 +140,7 @@ class RegisterEventViewSet(ModelViewSet):
                 previous_amount_paid = RegisteredUsers.objects.get(event_user=event_user).amount_paid
                 for (key, value) in serializer.validated_data.items():
                     setattr(registered_user, key, value)
-                    registered_user.amount_paid += previous_amount_paid
+                registered_user.amount_paid += previous_amount_paid
                 registered_user.save()
             else:
                 serializer.validated_data['event_user'] = event_user
