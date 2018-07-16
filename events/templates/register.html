@@ -819,6 +819,7 @@
         $('#id_member_type').val(memberType);
         $("#room_type option").hide();
         $('#id_hotel_name').on('change', function () {
+             clearHotelRelatedFields();
             $('#room_type').val('');
             var hotel = $(this).val();
             $("#room_type option").hide();
