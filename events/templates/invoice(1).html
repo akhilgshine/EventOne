@@ -27,10 +27,22 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
     <script src="{% static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
     <style>
-    .coupon-re tbody td { padding: 3px !important; font-size: 13px !important;}
-    body {background: #cacaca;}
-    .mt30 { margin-top: 30px;}
-</style>
+        .coupon-re tbody td {
+            padding: 3px !important;
+            font-size: 13px !important;
+        }
+
+        body {
+            background: #cacaca;
+        }
+
+        .mt30 {
+            margin-top: 30px;
+        }
+        .sub-logo{
+                width: 44%;
+        }       margin-top: 3px;
+    </style>
 </head>
 <body>
 <div class="gradient-bg">
@@ -53,56 +65,58 @@
                                                 border-radius: 35px;
                                                 margin-bottom: 3em;
                                                 box-shadow: 0px 0px 8px -1px;
-                                                overflow: hidden;     height: 420px;">
+                                                overflow: hidden;     height: 530px;">
                             <div class="row m0">
-                                <div class="col-sm-4">
-                                    <img src="{% static 'img/coupon-headleft.png' %}" width="100%" style=" position: absolute;
-                                                            height: fit-content;">
-                                </div>
+
                                 <div class="col-sm-8">
                                     <img src="{% static 'img/coupon-head-txt.png' %}" style="    margin-top: 2em;
                                                             width: 60%;">
                                     <table class="table">
                                         <tbody>
                                         <tr>
+                                            <td>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td style="border: 0px;
                                                                         font-size: 16px;"><b>Name</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 0px;
                                                                         ; font-size: 16px;"><b>Table</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.event_user.table }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 0px;
                                                                         font-size: 16px;"><b>Email</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.event_user.email }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 0px;
                                                                         font-size: 16px;"><b>Phone</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.event_user.mobile }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 0px;
                                                                         font-size: 16px;"><b>Type</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.get_event_status_display }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 0px;
                                                                         font-size: 16px;"><b>Total amount paid</b> <span
-                                                    class="pull-right">:</span></td>
+                                                    class="pull-right"></span></td>
                                             <td style="border: 0px;
                                                                         font-size: 16px;">{{ event_register.amount_paid|add:event_register.contributed_amount }}
                                                 /- @{{ event_register.created_date|date:"D d M Y" }}</td>
@@ -110,67 +124,82 @@
                                         {% if event_register.due_amount %}
                                             <tr>
                                                 <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
-                                                        class="pull-right">:</span></td>
+                                                        class="pull-right"></span></td>
                                                 <td style="border: 0px;font-size: 16px;"> {{ event_register.due_amount }}/-
 
                                                 </td>
                                             </tr>
                                         {% endif %}
                                         <tr>
-                                <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
-                                        class="pull-right">:</span></td>
-                                <td style="border: 0px; font-size: 16px;">
-                                    {% if  event_register.hotel_user %}
-                                        {{ event_register.hotel_user.hotel.name }},
-                                        Rs {{ event_register.hotel_user.tottal_rent }}/-,
-                                        {{ event_register.hotel_user.room_type.room_type }},
-                                        <b>{{ event_register.hotel_user.checkin_date|date:"D d M" }}
-                                            to {{ event_register.hotel_user.checkout_date|date:"D d M Y" }}</b>
-                                    {% else %}
-                                        No Hotel Booked
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% if  event_register.hotel_due %}
-                                <tr>
-                                <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
-                                        class="pull-right">:</span></td>
-                                <td style="border: 0px;font-size: 16px;">Rs {{ event_register.hotel_due }}/-
+                                            <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
+                                                    class="pull-right"></span></td>
+                                            <td style="border: 0px; font-size: 16px;">
+                                                {% if  event_register.hotel_user %}
+                                                    {{ event_register.hotel_user.hotel.name }},
+                                                    Rs {{ event_register.hotel_user.tottal_rent }}/-,
+                                                    {{ event_register.hotel_user.room_type.room_type }},
+                                                    <b>{{ event_register.hotel_user.checkin_date|date:"D d M" }}
+                                                        to {{ event_register.hotel_user.checkout_date|date:"D d M Y" }}</b>
+                                                {% else %}
+                                                    No Hotel Booked
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% if  event_register.hotel_due %}
+                                            <tr>
+                                                <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
+                                                        class="pull-right"></span></td>
+                                                <td style="border: 0px;font-size: 16px;">
+                                                    Rs {{ event_register.hotel_due }}/-
 
-                                </td>
-                            </tr>
+                                                </td>
+                                            </tr>
 
-                            {% endif %}
+                                        {% endif %}
                                         </tbody>
                                     </table>
-                                    <div align="right">
-                                        <a href="{% url 'register_event' %}">
-                                        <button type="button" class="btn" style="    margin-bottom: 15px;
-                                                                margin-right: 20px;
-                                                                background: #ff4057;
-                                                                color: white;
-                                                                border-radius: 23px;
-                                                                padding: 6px 15px;">Finish Registration
-                                        </button>
-                                    </a>
-{#                                        <button class="btn" style="    margin-bottom: 15px;#}
-{#                                                                margin-right: 20px;#}
-{#                                                                background: #ff4057;#}
-{#                                                                color: white;#}
-{#                                                                border-radius: 23px;#}
-{#                                                                padding: 6px 15px;">Reg Number : {{ event_register.qrcode }}#}
-{#                                        </button>#}
-                                    </div>
+
                                 </div>
+                                <div class="col-sm-4 col-xs-hidden col-md-hidden">
+                                    <img src="{% static 'img/coupon-headleft.png' %}" width="100%" style=" position: absolute;
+                                                            height: fit-content;">
+                                </div>
+
+
                             </div>
                         </div>
+                    
+                        <div align="right">
+                            <a href="{% url 'register_event' %}">
+                                <button type="button" class="btn" style="    margin-bottom: 15px;
+                                                                     margin-top: -35px;
+                                                                margin-right: 20px;
+                                                                background: white;
+                                                                color: #ff4057;
+                                                                border-radius: 23px;
+                                                                padding: 6px 15px;">Finish Registration
+                                </button>
+                            </a>
+{#                            <a href="">#}
+{#                                <button type="button" class="btn" style="    margin-bottom: 15px;#}
+{#                                                                    margin-top: -35px;#}
+{#                                                                margin-right: 20px;#}
+{#                                                               background: white;#}
+{#                                                                color: #ff4057;#}
+{#                                                                border-radius: 23px;#}
+{#                                                                padding: 6px 15px;">Download#}
+{#                                </button>#}
+{#                            </a>#}
+
+                        </div>
                     </div>
+
                     <div class="col-sm-4" style="    padding: 0px;
                                             background: #ff4057;
                                             border-radius: 35px;
                                             box-shadow: 0px 0px 8px -1px;
                                             padding-left: 20px;
-                                            padding-top: 1.5em;     height: 420px; overflow: hidden;">
+                                            padding-top: 1.5em;     height: 530px; overflow: hidden;">
                         <img src="{% static 'img/coupon-right-logo.png' %}" style="margin-bottom:10px;">
                         <h3 style="    font-size: 46px;
                                                 font-weight: 100;
