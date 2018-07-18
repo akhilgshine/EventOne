@@ -85,6 +85,7 @@
                 display: table-footer-group
             }
         }
+
     </style>
 
 </head>
@@ -188,26 +189,26 @@
     <div class="fw-container">
         <div class="fw-body">
             <div class="content">
-                <ul class="nav nav-pills">
-                    <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a data-toggle="pill"
-                                          onclick=(window.location="{% url 'list_users' %}")>Registered</a>
-                    </li>
-                    <li {% ifequal request.get_full_path '/users/?attending=True' %}  class="active" {% endifequal %}><a data-toggle="pill" class='list_attendees' data-target="#menu2"
-                           onclick=(window.location="{% url 'list_users' %}?attending=True")>Attending </a>
-                    </li>
-                    <li {% ifequal request.get_full_path '/users/?attending=False' %}  class="active" {% endifequal %}><a data-toggle="pill" data-target="#menu2"
-                           onclick=(window.location="{% url 'list_users' %}?attending=False")>Not
-                        Attending</a></li>
-                </ul>
+{#                <ul class="nav nav-pills">#}
+{#                    <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a data-toggle="pill"#}
+{#                                          onclick=(window.location="{% url 'list_users' %}")>Registered</a>#}
+{#                    </li>#}
+{#                    <li {% ifequal request.get_full_path '/users/?attending=True' %}  class="active" {% endifequal %}><a data-toggle="pill" class='list_attendees' data-target="#menu2"#}
+{#                           onclick=(window.location="{% url 'list_users' %}?attending=True")>Attending </a>#}
+{#                    </li>#}
+{#                    <li {% ifequal request.get_full_path '/users/?attending=False' %}  class="active" {% endifequal %}><a data-toggle="pill" data-target="#menu2"#}
+{#                           onclick=(window.location="{% url 'list_users' %}?attending=False")>Not#}
+{#                        Attending</a></li>#}
+{#                </ul>#}
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
                         <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                                 <th></th>
-                                {% ifequal request.get_full_path "/users/" %}
-                                    <th>Attending Event</th>
-                                {% endifequal %}
+{#                                {% ifequal request.get_full_path "/users/" %}#}
+{#                                    <th>Attending Event</th>#}
+{#                                {% endifequal %}#}
                                 <th>Name</th>
                                 <th>Table</th>
                                 <th>Registration code</th>
@@ -250,16 +251,16 @@
 
                                 <tr>
                                     <td></td>
-                                    {% ifequal request.get_full_path "/users/" %}
-                                        <td>
-                                            <label class="switch">
-                                                <input type="checkbox"
-                                                       {% if user.is_attending_event %}checked="checked"{% endif %}class="id_on_off"
-                                                       data-id="{{ user.id }}">
-                                                <span class="slider round"></span>
-                                            </label>
-                                        </td>
-                                    {% endifequal %}
+{#                                    {% ifequal request.get_full_path "/users/" %}#}
+{#                                        <td>#}
+{#                                            <label class="switch">#}
+{#                                                <input type="checkbox"#}
+{#                                                       {% if user.is_attending_event %}checked="checked"{% endif %}class="id_on_off"#}
+{#                                                       data-id="{{ user.id }}">#}
+{#                                                <span class="slider round"></span>#}
+{#                                            </label>#}
+{#                                        </td>#}
+{#                                    {% endifequal %}#}
 
                                     <td>
                                         {{ user.event_user.first_name }} {{ user.event_user.last_name }}
