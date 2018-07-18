@@ -664,8 +664,9 @@
     function clearHotelRelatedFields() {
         $('#room_type>option[value=0]').prop('selected', true);
         $('#room_type>option[value=0]').attr('selected', true);
-        {#$('#id_hotel_name').val('');#}
+        //$('#id_hotel_name').val('');
         $('#id_room_rent').val('');
+        $('#id_hidden_room').val('');
         $('#checkIn').val('');
         $('#checkOut').val('');
         $('#hotel_amount_final').text(0);

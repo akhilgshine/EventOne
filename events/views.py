@@ -156,9 +156,9 @@ class RegisterEvent(SuperUserMixin, LoginRequiredMixin, TemplateView):
             t_shirt_size = request.POST.get('t_shirt_size', '')
             amount_paid = int(request.POST.get('amount_paid'))
 
-            hotel_name = request.POST.get('hotel', '')
-            room_rent = request.POST.get('room_rent', '')
-            room_type = request.POST.get('room_type', '')
+            hotel_name = request.POST.get('hotel')
+            room_rent = request.POST.get('room_rent')
+            room_type = request.POST.get('room_type')
             # book_friday = request.POST.get('book_friday','')
             checkin = request.POST.get('checkin_date')
             reciept_number = request.POST.get('reciept_number')
@@ -572,6 +572,10 @@ class ListUsers(LoginRequiredMixin, ListView):
                 'registered_users__id',
                 flat=True)
             self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+        elif self.request.GET.get('attending') == 'True':
+            self.queryset = self.queryset.filter(is_attending_event=True)
+        elif self.request.GET.get('attending') == 'False':
+            self.queryset = self.queryset.filter(is_attending_event=False)
         else:
             self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
@@ -600,6 +604,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                 0] or 0.00
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
+
         return context
 
 
@@ -1361,7 +1366,6 @@ class AddTShirtView(UpdateView):
 class GetHotelBookingDetailsView(TemplateView):
 
     def get(self, request, *args, **kwargs):
-        # import pdb;pdb.set_trace()
         hotel = request.GET.get('hotel')
         booking_date = request.GET.get('booking_date')
         if booking_date == '4':
@@ -1386,7 +1390,7 @@ class GetHotelBookingDetailsView(TemplateView):
 
 
 class ListOfAttendees(TemplateView):
-    template_name = 'list_of_attendees.html'
+    template_name = 'ajax_list_of_attendees.html'
     queryset = RegisteredUsers.objects.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
@@ -1402,12 +1406,14 @@ class AjaxAttendeesAddingView(TemplateView):
         user_id = request.POST.get('user_id')
         is_checked = request.POST.get('isChecked')
         attending_registered_user = RegisteredUsers.objects.get(id=user_id)
-        if is_checked == 'true':
-            attending_registered_user.is_attending_event = True
-            attending_registered_user.save()
+        if not attending_registered_user.total_due:
+            if is_checked == 'true':
+                attending_registered_user.is_attending_event = True
+                attending_registered_user.save()
+            else:
+                attending_registered_user.is_attending_event = False
+                attending_registered_user.save()
+            return HttpResponse(json.dumps({'status': True, 'message': 'Success'}))
         else:
-            attending_registered_user.is_attending_event = False
-            attending_registered_user.save()
-        return HttpResponse({'status': True, })
-
+            return HttpResponse(json.dumps({'status': False, 'message': 'Please Pay the Pending Dues'}))
 

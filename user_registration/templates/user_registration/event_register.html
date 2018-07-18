@@ -29,6 +29,7 @@
         .error_div {
             color: red !important;
         }
+
     </style>
 </head>
 <body>
@@ -387,11 +388,6 @@
         }
 
     }());
-    document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.sidenav');
-        var instances = M.Sidenav.init(elems, options);
-
-    });
 
     // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
     // var collapsibleElem = document.querySelector('.collapsible');
@@ -532,13 +528,25 @@
         });
     });
     $('#id_payment_information').on('click', function () {
-        var myForm2 = $('#paymentForm');
-        $.ajax({
-            type: 'POST',
-            url: '{% url 'payment_registration' %}',
-            data: myForm2.serialize(),
-            dataType: 'json',
-            success: function (data) {
+        var client = new XMLHttpRequest();
+        var file = document.getElementById("id_reciept_file");
+
+        var form = $('#paymentForm')
+        var formData = new FormData();
+        formData.append("reciept_file", file.files[0]);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        var data = $('#paymentForm').serializeArray();
+
+        for (var i = 0, l = data.length; i < l; i++) {
+            formData.append(data[i].name, data[i].value)
+        }
+        client.open("post", '{% url 'payment_registration' %}', true);
+        client.send(formData);
+        / Send to server /
+
+        client.onreadystatechange = function () {
+            if (client.readyState == 4 && client.status == 200) {
+                data = JSON.parse(client.response)
                 if (data.status) {
                     window.location.href = data.url;
                 }
@@ -549,9 +557,33 @@
                     });
 
                 }
+
             }
-        });
+        }
     });
+
+    /* var myForm2 = $('#paymentForm');
+
+     $.ajax({
+         type: 'POST',
+
+         data: myForm2.serialize(),
+         dataType: 'json',
+         success: function (data) {
+             if (data.status) {
+                 window.location.href = data.url;
+             }
+             else {
+                 $.each(data, function (key, value) {
+                     var input = $("#paymentForm :input[name='" + key + "']");
+                     input.parent().parent().find('.error_div').text(value);
+                 });
+
+             }
+         }
+     });
+ }
+);*/
     $('.hotel-next').on('click', function () {
         var myForm3 = $('#id_hotel_form');
         $.ajax({

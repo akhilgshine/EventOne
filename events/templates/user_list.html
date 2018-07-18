@@ -61,14 +61,30 @@
         th {
             color: white;
         }
-@media print
-{
-  table { page-break-after:auto }
-  tr    { page-break-inside:avoid; page-break-after:auto }
-  td    { page-break-inside:avoid; page-break-after:auto }
-  thead { display:table-header-group }
-  tfoot { display:table-footer-group }
-}
+
+        @media print {
+            table {
+                page-break-after: auto
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            td {
+                page-break-inside: avoid;
+                page-break-after: auto
+            }
+
+            thead {
+                display: table-header-group
+            }
+
+            tfoot {
+                display: table-footer-group
+            }
+        }
     </style>
 
 </head>
@@ -132,7 +148,7 @@
 
             <div class="col-md-2 user_list_inputs">
                 <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
-                <a href="{% url 'download_csv' %}" >
+                <a href="{% url 'download_csv' %}">
                     <button class='btn btn-primary'>Download</button>
                 </a>
             </div>
@@ -172,182 +188,217 @@
     <div class="fw-container">
         <div class="fw-body">
             <div class="content">
-                <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Table</th>
-                        <th>Registration code</th>
-                        <th>Phone</th>
-                        <th>Email</th>
+                <ul class="nav nav-pills">
+                    <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a data-toggle="pill"
+                                          onclick=(window.location="{% url 'list_users' %}")>Registered</a>
+                    </li>
+                    <li {% ifequal request.get_full_path '/users/?attending=True' %}  class="active" {% endifequal %}><a data-toggle="pill" class='list_attendees' data-target="#menu2"
+                           onclick=(window.location="{% url 'list_users' %}?attending=True")>Attending </a>
+                    </li>
+                    <li {% ifequal request.get_full_path '/users/?attending=False' %}  class="active" {% endifequal %}><a data-toggle="pill" data-target="#menu2"
+                           onclick=(window.location="{% url 'list_users' %}?attending=False")>Not
+                        Attending</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="home_user" class="tab-pane fade in active">
+                        <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                {% ifequal request.get_full_path "/users/" %}
+                                    <th>Attending Event</th>
+                                {% endifequal %}
+                                <th>Name</th>
+                                <th>Table</th>
+                                <th>Registration code</th>
+                                <th>Phone</th>
+                                <th>Email</th>
 
-                        <th>Reg Type</th> <!-- Status -->
-                        <th>Partial/Completely</th><!-- Payment Status -->
+                                <th>Reg Type</th> <!-- Status -->
+                                <th>Partial/Completely</th><!-- Payment Status -->
 
-                        <th>Registration Amount</th>
-                        <th>T-Shirt Size</th>
-                        <th>Amount Due</th>
-                        <!-- <th>Registration Date </th> -->
-                        <!-- <th>Coupon</th> -->
-                        <th>Room</th>
+                                <th>Registration Amount</th>
+                                <th>T-Shirt Size</th>
+                                <th>Amount Due</th>
+                                <!-- <th>Registration Date </th> -->
+                                <!-- <th>Coupon</th> -->
+                                <th>Room</th>
 
-                        <th>Hotel Name</th>
-                        <th>Room Type</th>
-                        <th>Checkin Date</th>
-                        <th>Checkout Date</th>
-                        <th>No of Nights</th>
-                        <th>Hotel Amount Paid</th>
-                        <th>Hotel Dues</th>
-                        <th></th>
-                        <th> Contribution</th>
-                        <th>Total Payment</th>
-                        <th>Total Due</th>
-                        <th>Print Coupon</th>
-                        <th>Edit Registration</th>
-                        {% if is_active %}
-                        <th> Add to Registration</th>
-                        {% else %}
-                            <th> Delete Registration</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
+                                <th>Hotel Name</th>
+                                <th>Room Type</th>
+                                <th>Checkin Date</th>
+                                <th>Checkout Date</th>
+                                <th>No of Nights</th>
+                                <th>Hotel Amount Paid</th>
+                                <th>Hotel Dues</th>
+                                <th></th>
+                                <th> Contribution</th>
+                                <th>Total Payment</th>
+                                <th>Total Due</th>
+                                <th>Print Coupon</th>
+                                <th>Edit Registration</th>
+                                {% if is_active %}
+                                    <th> Add to Registration</th>
+                                {% else %}
+                                    <th> Delete Registration</th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                    {% for user in users %}
-                        <tr>
-                            <td></td>
-                            <td>
-                                {{ user.event_user.first_name }} {{ user.event_user.last_name }}
-                            </td>
-                            <td> {{ user.table.table_name|cut:" " }}</td>
-                            <td> {{ user.qrcode }} </td>
-                            <td> {{ user.event_user.mobile }} </td>
-                            <td> {{ user.event_user.email }}</td>
+                            {% for user in users %}
 
-                            <td>
-                                {{ user.get_event_status_display }}
-                                {% if not user.event_status == 'Couple' %}
-                                    {% if not user.event_status == 'Couple_Informal' %}
-                                        <a href="{% url 'upgrade_reg_status' user.id %}">
-                                            Upgrade
-                                        </a>
+                                <tr>
+                                    <td></td>
+                                    {% ifequal request.get_full_path "/users/" %}
+                                        <td>
+                                            <label class="switch">
+                                                <input type="checkbox"
+                                                       {% if user.is_attending_event %}checked="checked"{% endif %}class="id_on_off"
+                                                       data-id="{{ user.id }}">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+                                    {% endifequal %}
+
+                                    <td>
+                                        {{ user.event_user.first_name }} {{ user.event_user.last_name }}
+                                    </td>
+
+                                    <td> {{ user.table.table_name|cut:" " }}</td>
+                                    <td> {{ user.qrcode }} </td>
+                                    <td> {{ user.event_user.mobile }} </td>
+                                    <td> {{ user.event_user.email }}</td>
+
+                                    <td>
+                                        {{ user.get_event_status_display }}
+                                        {% if not user.event_status == "Couple" %}
+                                            {% if not user.event_status == "Couple_Informal" %}
+                                                <a href="{% url 'upgrade_reg_status' user.id %}">
+                                                    Upgrade
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td> {{ user.id|payment_status }}</td>
+
+                                    <td> {{ user.amount_paid }}</td>
+                                    <td>
+                                        {% if user.t_shirt_size %}
+                                            {{ user.t_shirt_size }}
+                                        {% else %}
+                                            Not Selected
+
+                                        {% endif %}
+
+                                        &nbsp|&nbsp
+                                        <a href="{% url 't_shirt_update' user.id %}">Change </a>
+                                    </td>
+
+                                    <td> {{ user.due_amount }}
+                                        {% if user.due_amount %}
+                                            &nbsp|&nbsp
+                                            <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
+                                        {% endif %}
+                                    </td>
+
+                                    <td style="border-right: 3px solid green; "> <!-- Room --></td>
+                                    <td>
+                                        {% if user.hotel.all %}
+
+                                            {{ user.hotel_name }}
+                                            <br>
+                                            <a href="/update_hotel/{{ user.id }}"> Update Booking </a>
+                                        {% else %}
+                                            -<br>
+                                            <a href="/update_hotel/{{ user.id }}"> Book Hotel </a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.hotel.all %}
+                                            {{ user.hotel_room_type }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.hotel.all %}
+                                            {{ user.checkin_date|date }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.hotel.all %}
+                                            {{ user.checkout_date|date }}
+                                        {% endif %}
+                                    </td>
+
+                                    <td>{{ user.id |no_of_night }}</td>
+                                    <td> {{ user.id| get_hotel_rent }}</td>
+                                    {% if not user.hotel_due %}
+                                        <td>-</td>
+                                    {% else %}
+                                        <td> {{ user.hotel_due }}&nbsp|&nbsp
+                                            <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a>
+                                        </td>
+
                                     {% endif %}
-                                {% endif %}
-                            </td>
-                            <td> {{ user.id|payment_status }}</td>
+                                    <td style="border-right: 3px solid green; "></td>
+                                    <!-- TOTAL PAYMENT  -->
+                                    <td>{{ user.contributed_amount }}</td>
+                                    <td>{{ user.total_paid }}</td>
+                                    <td><!--Total Due --> {{ user.total_due }}</td>
+                                    <td>
+                                        {% encrypt_id user.id as encrypted_id %}
+                                        <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
+                                    <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
+                                    {% if user.is_active %}
+                                        <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
+                                    {% else %}
+                                        <td><a href="{% url 'add_to_registration' user.id %}">Add to Registration</a>
+                                        </td>
+                                    {% endif %}
+                                </tr>
 
-                            <td> {{ user.amount_paid }}</td>
-                            <td>
-                                {% if user.t_shirt_size %}
-                                {{ user.t_shirt_size }}
-                                {% else %}
-                                    Not Selected
+                            {% endfor %}
 
-                                {% endif %}
-
-                              &nbsp|&nbsp
-                            <a href="{% url 't_shirt_update' user.id %}">Change </a>
-                            </td>
-
-                            <td> {{ user.due_amount }}
-                                {% if user.due_amount %}
-                                    &nbsp|&nbsp
-                                <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
-                                {% endif %}
-                            </td>
-
-                            <td style="border-right: 3px solid green; "> <!-- Room --></td>
-                            <td>
-                                {% if user.hotel.all %}
-
-                                    {{ user.hotel_name }}
-                                    <br>
-                                    <a href="/update_hotel/{{ user.id }}"> Update Booking </a>
-                                {% else %}
-                                    -<br>
-                                    <a href="/update_hotel/{{ user.id }}"> Book Hotel </a>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if user.hotel.all %}
-                                    {{ user.hotel_room_type }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if user.hotel.all %}
-                                    {{ user.checkin_date|date }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if user.hotel.all %}
-                                    {{ user.checkout_date|date }}
-                                {% endif %}
-                            </td>
-
-                            <td>{{ user.id |no_of_night }}</td>
-                            <td> {{ user.id| get_hotel_rent }}</td>
-                            {% if not user.hotel_due %}
-                                <td>-</td>
-                            {% else %}
-                                <td> {{ user.hotel_due }}&nbsp|&nbsp
-                                    <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a></td>
-
-                            {% endif %}
-                            <td style="border-right: 3px solid green; "></td>
-                            <!-- TOTAL PAYMENT  -->
-                            <td>{{ user.contributed_amount }}</td>
-                            <td>{{ user.total_paid }}</td>
-                            <td><!--Total Due --> {{ user.total_due }}</td>
-                            <td>
-                                {% encrypt_id user.id as encrypted_id %}
-                                <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
-                            <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
-{#                            <td>Edit</td>#}
-                        {% if user.is_active %}
-                            <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
-                        {% else %}
-                            <td><a href="{%  url 'add_to_registration' user.id %}">Add to Registration</a></td>
-                        {% endif %}
-                        </tr>
-                    
-                    {% endfor %}
-                    
-                    <tr>
-                        <td style="display: none;"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ total_paid_registration }}</td>
-                        <td></td>
-                        <td>{{ total_registration_due }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{ total_paid_hotel }}</td>
-                        <td>{{ total_hotel_due }}</td>
-                        <td></td>
-                        <td>{{total_contributions}}</td>
-                        <td>{{ total_amount_paid }}</td>
-                        <td>{{ total_due }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    </tbody>
-                </table>
-
+                            <tr>
+                                <td style="display: none;"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ total_paid_registration }}</td>
+                                <td></td>
+                                <td>{{ total_registration_due }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ total_paid_hotel }}</td>
+                                <td>{{ total_hotel_due }}</td>
+                                <td></td>
+                                <td>{{ total_contributions }}</td>
+                                <td>{{ total_amount_paid }}</td>
+                                <td>{{ total_due }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+
+
         </div>
     </div>
+</div>
 </div>
 <script type="text/javascript">
     function openNav() {
@@ -360,17 +411,16 @@
 
 
     $(document).ready(function () {
-        function printData()
-        {
-           var divToPrint=document.getElementById("printTable");
-           newWin= window.open("");
-           newWin.document.write(divToPrint.outerHTML);
-           newWin.print();
-           newWin.close();
+        function printData() {
+            var divToPrint = document.getElementById("printTable");
+            newWin = window.open("");
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.print();
+            newWin.close();
         }
 
-        $('#printPage').on('click',function(){
-        printData();
+        $('#printPage').on('click', function () {
+            printData();
         })
 
         var t = $('#user_lists').DataTable({
@@ -382,6 +432,8 @@
             fixedHeader: true,
 
         });
+
+
         $("#user_lists_filter").hide();
 
         t.on('order.dt search.dt', function () {
@@ -423,6 +475,27 @@
             regExSearch = '"' + selected_table + '"';
             table.column(2).search(regExSearch).draw();
         }
+    });
+
+    $('.id_on_off').on('change click', function () {
+
+        var user_id = $(this).data("id");
+        var isChecked = $(this).is(':checked');
+        var element = $(this);
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'adding_of_event_attendees' %}",
+            data: {'user_id': user_id, 'isChecked': isChecked, csrfmiddlewaretoken: '{{ csrf_token }}'},
+            dataType: 'json',
+            success: function (data) {
+                if (!data.status) {
+                    element.parents('td').next().find('.due-error').remove();
+                    element.parents('td').next().append('<div class="due-error" style="color:#f00;">' + data.message + '</div>')
+                    element.prop('checked', false);
+
+                }
+            }
+        });
     });
 </script>
 </body>

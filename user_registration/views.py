@@ -300,12 +300,11 @@ class HotelRegistrationView(RegisteredObjectMixin, FormView):
 class PaymentRegistrationView(RegisteredObjectMixin, FormView):
     template_name = 'user_registration/event_register.html'
     form_class = PaymentDetailsForm
-    success_url = reverse_lazy('coupon_success')
+    success_url = reverse_lazy('success_coupon')
 
     def form_valid(self, form):
-
         payment = form.cleaned_data['payment']
-        reciept_number = form.cleaned_data['reciept_number']
+        reciept_number = form.cleaned_data['reciept_file']
         reciept_file = form.cleaned_data['reciept_file']
         if payment:
             try:

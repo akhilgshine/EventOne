@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^hotel-rent/', AjaxHotelRentCalculation.as_view(), name='hotel_rent'),
     url(r'^hotel-booking/', HotelRegistrationView.as_view(), name='hotel_booking'),
     url(r'^payment-registration/', PaymentRegistrationView.as_view(), name='payment_registration'),
-    url(r'^coupon-success/', CouponSuccessView.as_view(), name='coupon_success'),
+    url(r'^coupon-success/', CouponSuccessView.as_view(), name='success_coupon'),
     url(r'^user-profile/', UserProfileView.as_view(), name='user_profile'),
     url(r'^reset-password/', ResetPassword.as_view(), name='reset_password'),
     url(r'^contact-us/', TemplateView.as_view(template_name='user_registration/contact-us.html'), name='contact_us'),
