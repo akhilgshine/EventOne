@@ -8,8 +8,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 import imgkit
-from django.apps import AppConfig
 
+from django.apps import apps
 
 class CouponImageGenerate(Task):
 
@@ -24,7 +24,7 @@ class CouponImageGenerate(Task):
         url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': base64.b64encode(str(id))}))
         coupon_file_name = '%s.png' % id
         imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', coupon_file_name), options=options)
-        registered_user_model = AppConfig.get_model('events.RegisteredUsers')
+        registered_user_model = apps.get_model('events', 'RegisteredUsers')
 
         reg_user_obj = registered_user_model.objects.get(id=id)
 
