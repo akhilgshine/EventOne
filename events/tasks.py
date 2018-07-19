@@ -2,7 +2,6 @@ import base64
 
 import os
 
-import time
 from celery.task import Task
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -26,7 +25,6 @@ class CouponImageGenerate(Task):
         url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': base64.b64encode(str(id))}))
         coupon_file_name = '%s.png' % id
         imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', coupon_file_name), options=options)
-        time.sleep(2)
         registered_user_model = apps.get_model('events', 'RegisteredUsers')
 
         reg_user_obj = registered_user_model.objects.get(id=id)
