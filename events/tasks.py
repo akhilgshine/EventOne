@@ -29,21 +29,21 @@ class CouponImageGenerate(Task):
         reg_user_obj = registered_user_model.objects.get(id=id)
 
         message = ''
-
-        send_email(reg_user_obj.event_user.email, message, reg_user_obj)
+        to_email = reg_user_obj.event_user.email
         print('success',reg_user_obj.event_user.email)
 
+        cxt = {'event_register': reg_user_obj}
 
-def send_email(to_email, message, event_obj):
-    cxt = {'event_register': event_obj}
+        # if event_obj.amount_paid < 5000:
+        # 	cxt['partial'] = 'Partial'
 
-    # if event_obj.amount_paid < 5000:
-    # 	cxt['partial'] = 'Partial'
+        subject = 'QRT 85 Registration'
+        content = render_to_string('coupon_second.html', cxt)
 
-    subject = 'QRT 85 Registration'
-    content = render_to_string('coupon_second.html', cxt)
-    from_email = settings.DEFAULT_FROM_EMAIL
+        from_email = settings.DEFAULT_FROM_EMAIL
+        print(from_email)
+        msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+        msg.attach_alternative(content, "text/html")
+        msg.send()
 
-    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
-    msg.attach_alternative(content, "text/html")
-    msg.send()
+
