@@ -312,7 +312,7 @@ class RegisteredUsers(models.Model):
 
 
 class PaymentDetails(models.Model):
-    reg_event = models.ForeignKey(RegisteredUsers, null=True)
+    reg_event = models.ForeignKey('events.RegisteredUsers', null=True)
     amount = models.CharField(max_length=20)
     created_date = models.DateTimeField(auto_now_add=True)
     type = models.CharField(choices=TYPE_CHOICES, max_length=50, blank=True, null=True)
@@ -352,7 +352,7 @@ class ImageRoomType(models.Model):
 
 
 class BookedHotel(models.Model):
-    registered_users = models.ForeignKey(RegisteredUsers, null=True, related_name='hotel')
+    registered_users = models.ForeignKey('events.RegisteredUsers', null=True, related_name='hotel')
     hotel = models.ForeignKey(Hotel)
     room_number = models.CharField(max_length=20, null=True)
     tottal_rent = models.IntegerField(default=0)
@@ -398,7 +398,7 @@ class EventDocument(models.Model):
 
 
 class NfcCoupon(models.Model):
-    registered_user = models.ForeignKey(RegisteredUsers, null=True, blank=True, related_name='get_nfc_coupon_users')
+    registered_user = models.ForeignKey('events.RegisteredUsers', null=True, blank=True, related_name='get_nfc_coupon_users')
     card_number = models.CharField(max_length=255, null=True, blank=True)
     created_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
 
@@ -414,7 +414,7 @@ class FridayLunchAmount(models.Model):
 
 
 class FridayLunchBooking(models.Model):
-    registered_user = models.ForeignKey(RegisteredUsers, null=True, blank=True, related_name='get_friday_lunch_users')
+    registered_user = models.ForeignKey('events.RegisteredUsers', null=True, blank=True, related_name='get_friday_lunch_users')
     amount_paid = models.IntegerField(default=0)
     payment_type = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
     pos_number = models.CharField(max_length=255, null=True, blank=True)
@@ -424,7 +424,7 @@ class FridayLunchBooking(models.Model):
 
 
 class IDDocumentsPhoto(models.Model):
-    registered_users = models.ForeignKey(RegisteredUsers, related_name='ids_img')
+    registered_users = models.ForeignKey('events.RegisteredUsers', related_name='ids_img')
     id_card_type = models.CharField(max_length=255, null=True, blank=True)
     id_card_images = models.ImageField(upload_to='id_card_images/', null=True, blank=True)
 
@@ -432,7 +432,7 @@ class IDDocumentsPhoto(models.Model):
         return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)
 
 
-@receiver(post_save, sender=RegisteredUsers, dispatch_uid="create_coupon")
+@receiver(post_save, sender='events.RegisteredUsers', dispatch_uid="create_coupon")
 def create_coupon(sender, instance, **kwargs):
     CouponImageGenerate.delay(instance.id)
 
