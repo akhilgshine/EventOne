@@ -688,7 +688,8 @@ class InvoiceView(TemplateView):
             pk = decode_id(pk)
         except TypeError:
             pass
-        event_reg = get_object_or_404(RegisteredUsers, id=pk)
+
+        event_reg = get_object_or_404(RegisteredUsers, id=int(pk))
         context['partial'] = template_tags.payment_status(event_reg.id)
         # if event_reg.amount_paid < 5000:
         #     context['partial'] = 'Partial'
