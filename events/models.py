@@ -438,7 +438,6 @@ def create_coupon(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender='events.BookedHotel', dispatch_uid="create_hotel_update_coupon")
-@receiver(post_delete, sender='events.BookedHotel', dispatch_uid="delete_hotel_update_coupon")
 def create_hotel_update_coupon(sender, instance, **kwargs):
     CouponImageGenerate.delay(instance.registered_users.id)
 
