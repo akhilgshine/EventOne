@@ -332,11 +332,11 @@ class RegisterEvent(SuperUserMixin, LoginRequiredMixin, TemplateView):
                     event_reg.amount_paid + event_reg.contributed_amount) + "/-"
                 message_status = send_sms_message(phone, message, event_reg.id)
 
-                try:
-                    send_email(email, message, event_reg)
-                except Exception as e:
-                    print(e, "Exception at send mail")
-                    pass
+                # try:
+                #     send_email(email, message, event_reg)
+                # except Exception as e:
+                #     print(e, "Exception at send mail")
+                #     pass
 
                 if message_hotel:
                     message_status = send_sms_message(phone, message_hotel, event_reg.id)
