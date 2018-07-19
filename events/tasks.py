@@ -31,6 +31,8 @@ class CouponImageGenerate(Task):
         message = ''
 
         send_email(reg_user_obj.event_user.email, message, reg_user_obj)
+        print('success',reg_user_obj.event_user.email)
+
 
 def send_email(to_email, message, event_obj):
     cxt = {'event_register': event_obj}
