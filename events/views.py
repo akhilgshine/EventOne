@@ -831,10 +831,10 @@ class UserRegisterUpdate(LoginRequiredMixin, TemplateView):
 
             message_status = send_sms_message(phone, message, reg_user_obj.id)
 
-            try:
-                send_email(email, message, reg_user_obj)
-            except:
-                pass
+            # try:
+            #     send_email(email, message, reg_user_obj)
+            # except:
+            #     pass
             if message_hotel:
                 message_status = send_sms_message(phone, message, reg_user_obj)
 
@@ -916,7 +916,7 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
         message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj)
-        send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
+        # send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
         track_payment_details({'reg_event': registered_user_obj, 'mode_of_payment': hotel_obj.mode_of_payment,
                                'amount': hotel_obj.tottal_rent, 'type': payment_event_type,
                                'receipt_number': hotel_obj.receipt_number, 'receipt_file': hotel_obj.receipt_file})
@@ -992,7 +992,7 @@ class UpgradeStatusView(LoginRequiredMixin, UpdateView):
 
         send_sms_message(self.obj.event_user.mobile, message, self.obj.event_user.id)
         #
-        send_email(self.obj.event_user.email, message, self.obj)
+        # send_email(self.obj.event_user.email, message, self.obj)
         track_payment_details({'reg_event': self.obj, 'mode_of_payment': self.obj.payment,
                                'amount': self.obj.amount_paid, 'type': payment_event_type,
                                'receipt_number': self.obj.reciept_number, 'receipt_file': self.obj.reciept_file})
@@ -1124,7 +1124,7 @@ class DuePaymentView(LoginRequiredMixin, UpdateView):
         self.object.save()
         message = 'Your pending payment has been paid. Paid amount is %s' % self.object.amount_paid
         send_sms_message(self.object.event_user.mobile, message, self.object.event_user.id)
-        send_email(self.object.event_user.email, message, self.object)
+        # send_email(self.object.event_user.email, message, self.object)
         track_payment_details({'reg_event': self.object, 'mode_of_payment': self.object.payment,
                                'amount': self.object.amount_paid, 'type': payment_event_type,
                                'receipt_number': self.object.reciept_number, 'receipt_file': self.object.reciept_file})
