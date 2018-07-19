@@ -689,7 +689,7 @@ class InvoiceView(TemplateView):
         except TypeError:
             pass
 
-        event_reg = get_object_or_404(RegisteredUsers, id=int(pk))
+        event_reg = get_object_or_404(RegisteredUsers, id=pk)
         context['partial'] = template_tags.payment_status(event_reg.id)
         # if event_reg.amount_paid < 5000:
         #     context['partial'] = 'Partial'
@@ -916,7 +916,7 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
-        message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj)
+        message_status = send_sms_message(registered_user_obj.event_user.mobile, message_hotel, registered_user_obj.id)
         # send_email(registered_user_obj.event_user.email, message_hotel, registered_user_obj)
         track_payment_details({'reg_event': registered_user_obj, 'mode_of_payment': hotel_obj.mode_of_payment,
                                'amount': hotel_obj.tottal_rent, 'type': payment_event_type,
