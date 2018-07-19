@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 
-from events.models import BookedHotel, Event, OtpModel, PaymentDetails
+from events.models import BookedHotel, Event, OtpModel, PaymentDetails, RegisteredUsers
 
 
 def hotelDetails(event_obj):
@@ -93,3 +93,10 @@ def send_otp(obj):
         "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
         "&flash=0&type=1&sender=QrtReg",
         headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+
+def send_celery_mail(id):
+    reg_user_obj = RegisteredUsers.objects.get(id=id)
+
+    message = ''
+
+    send_email(reg_user_obj.event_user.email, message, reg_user_obj)

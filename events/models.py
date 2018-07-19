@@ -106,7 +106,7 @@ class Hotel(models.Model):
 class Table(models.Model):
     table_name = models.CharField(max_length=30, blank=True, null=True)
     table_order = models.IntegerField(blank=True, null=True)
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey('events.Event')
     is_partial_payment = models.BooleanField(default=True)
 
     def __str__(self):
@@ -137,7 +137,7 @@ class MyUserManager(BaseUserManager):
 
 class EventUsers(AbstractBaseUser, PermissionsMixin):
     member_type = models.CharField(choices=MEMBER_CHOICES, max_length=50, default='Tabler')
-    table = models.ForeignKey(Table, null=True, blank=True)
+    table = models.ForeignKey('events.Table', null=True, blank=True)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     mobile = models.CharField(max_length=30, blank=True)
@@ -184,12 +184,12 @@ class OtpModel(models.Model):
 
 
 class RegisteredUsers(models.Model):
-    event_user = models.ForeignKey(EventUsers, related_name='get_user_registration')
-    event = models.ForeignKey(Event)
+    event_user = models.ForeignKey('events.EventUsers', related_name='get_user_registration')
+    event = models.ForeignKey('events.Event')
     payment = models.CharField(choices=PAYMENT_CHOICES, max_length=20, blank=False)
     amount_paid = models.IntegerField(blank=True, null=True)
     qrcode = models.CharField(max_length=20, blank=False, null=False)
-    table = models.ForeignKey(Table)
+    table = models.ForeignKey('events.Table')
     created_date = models.DateTimeField(auto_now_add=True)
     confirm_image = models.ImageField(upload_to='confirm_images/', blank=True)
     event_status = models.CharField(choices=STATUS_CHOICES, max_length=30, blank=True, null=True)
@@ -329,7 +329,7 @@ class PaymentDetails(models.Model):
 
 
 class RoomType(models.Model):
-    hotel = models.ForeignKey(Hotel, related_name='get_hotel_room_types')
+    hotel = models.ForeignKey('events.Hotel', related_name='get_hotel_room_types')
     room_type = models.CharField(max_length=50, null=True)
     rooms_available = models.IntegerField(blank=True, null=True)
     net_rate = models.IntegerField(blank=True, null=True)
@@ -345,7 +345,7 @@ class RoomType(models.Model):
 
 class ImageRoomType(models.Model):
     image = models.ImageField(upload_to='room_type_images')
-    room_type = models.ForeignKey(RoomType, null=True, related_name='get_room_type_image')
+    room_type = models.ForeignKey('events.RoomType', null=True, related_name='get_room_type_image')
 
     def __str__(self):
         return self.room_type.room_type
@@ -353,11 +353,11 @@ class ImageRoomType(models.Model):
 
 class BookedHotel(models.Model):
     registered_users = models.ForeignKey('events.RegisteredUsers', null=True, related_name='hotel')
-    hotel = models.ForeignKey(Hotel)
+    hotel = models.ForeignKey('events.Hotel')
     room_number = models.CharField(max_length=20, null=True)
     tottal_rent = models.IntegerField(default=0)
     book_friday = models.BooleanField(default=False)
-    room_type = models.ForeignKey(RoomType, null=True, blank=True)
+    room_type = models.ForeignKey('events.RoomType', null=True, blank=True)
     checkin_date = models.DateTimeField(null=True, blank=True)
     checkout_date = models.DateTimeField(null=True, blank=True)
     booked_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
@@ -375,9 +375,9 @@ class BookedHotel(models.Model):
 
 
 class ProxyHotelBooking(models.Model):
-    table = models.ForeignKey(Table, null=True, blank=True)
-    hotel = models.ForeignKey(Hotel)
-    room_type = models.ForeignKey(RoomType, null=True, blank=True)
+    table = models.ForeignKey('events.Table', null=True, blank=True)
+    hotel = models.ForeignKey('events.Hotel')
+    room_type = models.ForeignKey('events.RoomType', null=True, blank=True)
     hotel_rent = models.IntegerField(default=0)
     check_in_date = models.DateTimeField(null=True, blank=True)
     check_out_date = models.DateTimeField(null=True, blank=True)
@@ -437,7 +437,7 @@ def create_coupon(sender, instance, **kwargs):
     CouponImageGenerate.delay(instance.id)
 
 
-@receiver(post_save, sender=BookedHotel, dispatch_uid="create_hotel_update_coupon")
+@receiver(post_save, sender='events.BookedHotel', dispatch_uid="create_hotel_update_coupon")
 def create_hotel_update_coupon(sender, instance, **kwargs):
     CouponImageGenerate.delay(instance.registered_users.id)
 
