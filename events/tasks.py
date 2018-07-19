@@ -4,8 +4,11 @@ import os
 from celery.task import Task
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 import imgkit
+from django.apps import AppConfig as config
 
 
 class CouponImageGenerate(Task):
@@ -21,3 +24,24 @@ class CouponImageGenerate(Task):
         url = domain + str(reverse_lazy('invoice_view', kwargs={'pk': base64.b64encode(str(id))}))
         coupon_file_name = '%s.png' % id
         imgkit.from_url(url, os.path.join(settings.BASE_DIR, 'Media', coupon_file_name), options=options)
+        registered_user_model = config.get_model('events.RegisteredUsers')
+
+        reg_user_obj = registered_user_model.objects.get(id=id)
+
+        message = ''
+
+        send_email(reg_user_obj.event_user.email, message, reg_user_obj)
+
+def send_email(to_email, message, event_obj):
+    cxt = {'event_register': event_obj}
+
+    # if event_obj.amount_paid < 5000:
+    # 	cxt['partial'] = 'Partial'
+
+    subject = 'QRT 85 Registration'
+    content = render_to_string('coupon_second.html', cxt)
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    msg = EmailMultiAlternatives(subject, 'Hi', from_email, to=[to_email, 'registration@letsgonuts2018.com'])
+    msg.attach_alternative(content, "text/html")
+    msg.send()
