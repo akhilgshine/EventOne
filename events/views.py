@@ -580,6 +580,71 @@ class ListUsers(LoginRequiredMixin, ListView):
             self.queryset = self.queryset.filter(is_active=True)
         return self.queryset
 
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('csv') == 'true':
+            get_user_registered = self.get_queryset()
+            total_paid_registration = get_user_registered.aggregate(Sum('amount_paid')).values()[
+                                          0] or 0.00
+            total_contributions = get_user_registered.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+            total_registration_due = sum(item.due_amount for item in get_user_registered)
+            total_hotel_due = sum(item.hotel_due for item in get_user_registered)
+            total_due = total_registration_due + total_hotel_due
+            total_paid_hotel = BookedHotel.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+            total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
+            if get_user_registered:
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="users_list.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt', 'Partial/Completely',
+                     'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
+                     'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
+                     'Total Payment', 'Total Due'])
+                for users in get_user_registered:
+                    try:
+                        payment_status = template_tags.payment_status(users.id)
+                        try:
+                            user_hotel = users.hotel.all()[0]
+                            hotel_days = template_tags.no_of_night(users.id)
+
+                        except IndexError:
+                            user_hotel = None
+                            hotel_days = '-'
+                        if user_hotel:
+                            room_type = user_hotel.room_type.room_type
+                            hotel_name = user_hotel.hotel_name
+                            check_in_date = user_hotel.checkin_date
+                            check_out_date = user_hotel.checkout_date
+                            hotel_rent = user_hotel.tottal_rent
+
+                        else:
+                            room_type = '-'
+                            hotel_name = '-'
+                            check_in_date = '-'
+                            check_out_date = '-'
+                            hotel_rent = '-'
+                        writer.writerow(
+                            [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
+                             users.qrcode, users.event_user.mobile,
+                             users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
+                             users.amount_paid,
+                             users.due_amount, '',
+                             hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
+                             '', users.contributed_amount, users.total_paid,
+                             users.total_due])
+                    except Exception as e:
+                        print e
+                writer.writerow(
+                    ['', '', '',
+                     '',
+                     '', '', '', total_paid_registration,
+                     total_registration_due, '',
+                     '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
+                     total_contributions, total_amount_paid,
+                     total_due])
+                return response
+        return super(ListUsers, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(ListUsers, self).get_context_data(**kwargs)
         registered_users = self.queryset
@@ -968,72 +1033,72 @@ class DashBoardView(LoginRequiredMixin, ListView):
         return context
 
 
-class DownloadCSVView(TemplateView):
-    template_name = 'user_list.html'
-
-    def get(self, request, *args, **kwargs):
-        get_user_registered = RegisteredUsers.objects.all()
-        total_paid_registration = RegisteredUsers.objects.all().aggregate(Sum('amount_paid')).values()[
-                                      0] or 0.00
-        total_contributions = RegisteredUsers.objects.all().aggregate(Sum('contributed_amount')).values()[0] or 0.00
-        total_registration_due = sum(item.due_amount for item in RegisteredUsers.objects.all())
-        total_hotel_due = sum(item.hotel_due for item in RegisteredUsers.objects.all())
-        total_due = total_registration_due + total_hotel_due
-        total_paid_hotel = BookedHotel.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
-        total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
-        if get_user_registered:
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
-            writer = csv.writer(response)
-            writer.writerow(
-                ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt', 'Partial/Completely',
-                 'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
-                 'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
-                 'Total Payment', 'Total Due'])
-            for users in get_user_registered:
-                try:
-                    payment_status = template_tags.payment_status(users.id)
-                    try:
-                        user_hotel = users.hotel.all()[0]
-                        hotel_days = template_tags.no_of_night(users.id)
-
-                    except IndexError:
-                        user_hotel = None
-                        hotel_days = '-'
-                    if user_hotel:
-                        room_type = user_hotel.room_type.room_type
-                        hotel_name = user_hotel.hotel_name
-                        check_in_date = user_hotel.checkin_date
-                        check_out_date = user_hotel.checkout_date
-                        hotel_rent = user_hotel.tottal_rent
-
-                    else:
-                        room_type = '-'
-                        hotel_name = '-'
-                        check_in_date = '-'
-                        check_out_date = '-'
-                        hotel_rent = '-'
-                    writer.writerow(
-                        [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
-                         users.qrcode, users.event_user.mobile,
-                         users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
-                         users.amount_paid,
-                         users.due_amount, '',
-                         hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
-                         '', users.contributed_amount, users.total_paid,
-                         users.total_due])
-                except Exception as e:
-                    print e
-            writer.writerow(
-                ['', '', '',
-                 '',
-                 '', '', '', total_paid_registration,
-                 total_registration_due, '',
-                 '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
-                 total_contributions, total_amount_paid,
-                 total_due])
-            return response
-        return super(DownloadCSVView, self).get(request, *args, **kwargs)
+# class DownloadCSVView(TemplateView):
+#     template_name = 'user_list.html'
+#
+#     def get(self, request, *args, **kwargs):
+#         get_user_registered = RegisteredUsers.objects.all()
+#         total_paid_registration = get_user_registered.aggregate(Sum('amount_paid')).values()[
+#                                       0] or 0.00
+#         total_contributions = get_user_registered.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+#         total_registration_due = sum(item.due_amount for item in RegisteredUsers.objects.all())
+#         total_hotel_due = sum(item.hotel_due for item in RegisteredUsers.objects.all())
+#         total_due = total_registration_due + total_hotel_due
+#         total_paid_hotel = BookedHotel.objects.all().aggregate(Sum('tottal_rent')).values()[0] or 0.00
+#         total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
+#         if get_user_registered:
+#             response = HttpResponse(content_type='text/csv')
+#             response['Content-Disposition'] = 'attachment; filename="registered_users.csv"'
+#             writer = csv.writer(response)
+#             writer.writerow(
+#                 ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt', 'Partial/Completely',
+#                  'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
+#                  'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
+#                  'Total Payment', 'Total Due'])
+#             for users in get_user_registered:
+#                 try:
+#                     payment_status = template_tags.payment_status(users.id)
+#                     try:
+#                         user_hotel = users.hotel.all()[0]
+#                         hotel_days = template_tags.no_of_night(users.id)
+#
+#                     except IndexError:
+#                         user_hotel = None
+#                         hotel_days = '-'
+#                     if user_hotel:
+#                         room_type = user_hotel.room_type.room_type
+#                         hotel_name = user_hotel.hotel_name
+#                         check_in_date = user_hotel.checkin_date
+#                         check_out_date = user_hotel.checkout_date
+#                         hotel_rent = user_hotel.tottal_rent
+#
+#                     else:
+#                         room_type = '-'
+#                         hotel_name = '-'
+#                         check_in_date = '-'
+#                         check_out_date = '-'
+#                         hotel_rent = '-'
+#                     writer.writerow(
+#                         [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
+#                          users.qrcode, users.event_user.mobile,
+#                          users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
+#                          users.amount_paid,
+#                          users.due_amount, '',
+#                          hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
+#                          '', users.contributed_amount, users.total_paid,
+#                          users.total_due])
+#                 except Exception as e:
+#                     print e
+#             writer.writerow(
+#                 ['', '', '',
+#                  '',
+#                  '', '', '', total_paid_registration,
+#                  total_registration_due, '',
+#                  '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
+#                  total_contributions, total_amount_paid,
+#                  total_due])
+#             return response
+#         return super(DownloadCSVView, self).get(request, *args, **kwargs)
 
 
 class DuePaymentView(LoginRequiredMixin, UpdateView):
@@ -1416,4 +1481,3 @@ class AjaxAttendeesAddingView(TemplateView):
             return HttpResponse(json.dumps({'status': True, 'message': 'Success'}))
         else:
             return HttpResponse(json.dumps({'status': False, 'message': 'Please Pay the Pending Dues'}))
-
