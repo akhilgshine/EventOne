@@ -32,7 +32,8 @@
             src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js">
 
     </script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js" ></script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <style>
@@ -190,22 +191,24 @@
     <div class="fw-container">
         <div class="fw-body">
             <div class="content">
-            {% ifequal request.get_full_path '/users/' %}
-                <ul class="nav nav-pills">
-                    <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a
-                            data-toggle="pill"
-                            onclick=(window.location="{% url 'list_users' %}")>Registered</a>
-                    </li>
-                    <li {% ifequal request.get_full_path '/users/?attending=True' %}  class="active" {% endifequal %}><a
-                            data-toggle="pill" class='list_attendees' data-target="#menu2"
-                            onclick=(window.location="{% url 'list_users' %}?attending=True")>Attending </a>
-                    </li>
-                    <li {% ifequal request.get_full_path '/users/?attending=False' %}  class="active" {% endifequal %}>
-                        <a data-toggle="pill" data-target="#menu2"
-                           onclick=(window.location="{% url 'list_users' %}?attending=False")>Not
-                            Attending</a></li>
-                </ul>
-            {% endifequal %}
+                {% if  request.get_full_path == '/users/' or request.get_full_path == '/users/?attending=True' or request.get_full_path == '/users/?attending=False' %}
+                    <ul class="nav nav-pills">
+                        <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a
+                                data-toggle="pill"
+                                onclick=(window.location="{% url 'list_users' %}")>Registered</a>
+                        </li>
+                        <li {% ifequal request.get_full_path '/users/?attending=True' %}
+                            class="active" {% endifequal %}><a
+                                data-toggle="pill" class='list_attendees' data-target="#menu2"
+                                onclick=(window.location="{% url 'list_users' %}?attending=True")>Attending </a>
+                        </li>
+                        <li {% ifequal request.get_full_path '/users/?attending=False' %}
+                            class="active" {% endifequal %}>
+                            <a data-toggle="pill" data-target="#menu2"
+                               onclick=(window.location="{% url 'list_users' %}?attending=False")>Not
+                                Attending</a></li>
+                    </ul>
+                {% endif %}
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
                         <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
@@ -431,13 +434,13 @@
 
         var t = $('#user_lists').DataTable({
             "order": [[0, 'asc']],
-            paging:false,
+            paging: false,
             "info": false,
             // responsive: true,
             scrollX: true,
             fixedHeader: true,
             scrollCollapse: true,
-            });
+        });
 
 
         $("#user_lists_filter").hide();
