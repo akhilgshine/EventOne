@@ -170,7 +170,7 @@ class RegisteredUsersSerializer(ModelSerializer):
 class EventDocumentSerializer(ModelSerializer):
     class Meta:
         model = EventDocument
-        fields = ['event_videos']
+        fields = ['event_videos','description','event_images']
 
 
 class NfcCouponSerializer(ModelSerializer):
