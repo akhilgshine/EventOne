@@ -596,7 +596,8 @@ class ListUsers(LoginRequiredMixin, ListView):
                 response['Content-Disposition'] = 'attachment; filename="users_list.csv"'
                 writer = csv.writer(response)
                 writer.writerow(
-                    ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt', 'Partial/Completely',
+                    ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt',
+                     'Partial/Completely',
                      'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
                      'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
                      'Total Payment', 'Total Due'])
@@ -629,7 +630,8 @@ class ListUsers(LoginRequiredMixin, ListView):
                              users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
                              users.amount_paid,
                              users.due_amount, '',
-                             hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent, users.hotel_due,
+                             hotel_name, room_type, check_in_date, check_out_date, hotel_days, hotel_rent,
+                             users.hotel_due,
                              '', users.contributed_amount, users.total_paid,
                              users.total_due])
                     except Exception as e:
@@ -647,7 +649,7 @@ class ListUsers(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ListUsers, self).get_context_data(**kwargs)
-        registered_users = self.queryset
+        registered_users = self.get_queryset()
         hotels = []
         for user in registered_users:
             try:
@@ -658,15 +660,21 @@ class ListUsers(LoginRequiredMixin, ListView):
         context['is_active'] = self.request.GET.get('is_active')
         context['users'] = registered_users
         context['tables'] = Table.objects.all()
-        context['total_paid_registration'] = self.queryset.aggregate(Sum('amount_paid')).values()[0] or 0.00
-        context['total_contributions'] = self.queryset.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+        context['total_paid_registration'] = registered_users.aggregate(Sum('amount_paid')).values()[0] or 0.00
+        context['total_contributions'] = registered_users.aggregate(Sum('contributed_amount')).values()[0] or 0.00
 
-        context['total_registration_due'] = sum(item.due_amount for item in self.queryset)
-        context['total_hotel_due'] = sum(item.hotel_due for item in self.queryset)
+        context['total_registration_due'] = sum(item.due_amount for item in registered_users)
+        context['total_hotel_due'] = sum(item.hotel_due for item in registered_users)
         context['total_due'] = context['total_registration_due'] + context['total_hotel_due']
+
+        registered_users_id = registered_users.values_list('id', flat=True)
+
         context['total_paid_hotel'] = \
-            BookedHotel.objects.filter(registered_users__is_active=True).aggregate(Sum('tottal_rent')).values()[
+            BookedHotel.objects.filter(registered_users__is_active=True,
+                                       registered_users_id__in=registered_users_id).aggregate(
+                Sum('tottal_rent')).values()[
                 0] or 0.00
+
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
 
