@@ -190,6 +190,7 @@
     <div class="fw-container">
         <div class="fw-body">
             <div class="content">
+            {% ifequal request.get_full_path '/users/' %}
                 <ul class="nav nav-pills">
                     <li {% ifequal request.get_full_path '/users/' %}  class="active" {% endifequal %}><a
                             data-toggle="pill"
@@ -204,6 +205,7 @@
                            onclick=(window.location="{% url 'list_users' %}?attending=False")>Not
                             Attending</a></li>
                 </ul>
+            {% endifequal %}
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
                         <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
