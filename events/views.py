@@ -1222,7 +1222,14 @@ class EditRegistrationView(LoginRequiredMixin, UpdateView):
             checkout = ""
         if checkin and checkout and self.request.POST.get('room_type'):
             hotel = Hotel.objects.get(id=self.request.POST.get('hotel'))
-            hotel_obj, created = BookedHotel.objects.get_or_create(registered_users=registered_user_obj, hotel=hotel)
+            try:
+                hotel_obj = BookedHotel.objects.get(registered_users=registered_user_obj)
+                hotel_obj.hotel = hotel
+                hotel_obj.save()
+                created = False
+            except BookedHotel.DoesNotExist:
+                hotel_obj = BookedHotel.objects.create(registered_users=registered_user_obj, hotel=hotel)
+                created = True
             # hotel_obj.mode_of_payment = self.request.POST['payment']
             # if hotel_obj.registered_users.hotel_due > 0:
             #     current_rent = hotel_obj.tottal_rent
