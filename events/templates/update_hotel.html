@@ -491,7 +491,7 @@
             alert('Please pay only' + amount_to_be_paid);
             return false;
         }
-        if ((amount_to_be_paid == 0) && (rent_total >= 0)) {
+        if ((amount_to_be_paid > 0) && (rent_total >= 0)) {
             alert("You don't have any due");
             return false;
         }
