@@ -307,7 +307,8 @@
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
 
-                        <table id="user_lists" class="display nowrap main-table" cellspacing="0" width="100%">
+                        <table id="user_lists" class="display nowrap main-table" cellspacing="0" width="100%"
+                               >
                             <thead>
                             <tr>
                                 <th></th>
@@ -384,113 +385,113 @@
                             </tr>
                             </tbody>
                         </table>
-                        <div class="modal fade" id="myModal" role="dialog">
-                            <div class="modal-dialog">
-
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Purchase Coupon</h4>
-                                    </div>
-                                    <div class="modal-body">
-
-                                        <table class="table borderless">
-                                            <tbody>
-                                            <form method="post" action="{% url 'friday_coupon_booking' %}">
-                                                {% csrf_token %}
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h2>Friday Lunch <i class="fa fa-calendar" aria-hidden="true"></i>
-                                                    </h2>
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h4>No of users</h4>
-                                                </td>
-                                                <td>
-                                                    <input type="hidden" id="id_user_id_hidden" name="user_id">
-                                                    <input type="hidden" id="id_user_type">
-                                                    <input type="button" class="operator-style"
-                                                           onclick="decrementValue()" value="-"/>
-                                                    <input type="text" class="number-textbox" id="number" name='no_of_users_friday' maxlength="3"
-                                                           value="0"/>
-                                                    <input type="button" class="operator-style"
-                                                           onclick="incrementValue()" value="+"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h4>kids</h4>
-                                                </td>
-                                                <td>
-                                                    <input type="button" class="operator-style"
-                                                           onclick="decrementValue1()" value="-"/>
-                                                    <input type="text" class="number-textbox" id="number1" name='no_of_kids_friday' value="0"/>
-                                                    <input type="button" class="operator-style"
-                                                           onclick="incrementValue1()" value="+"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h2>Kids Coupon <i class="fa fa-child" aria-hidden="true"></i></h2>
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h4>Kids coupon for event:</h4>
-                                                </td>
-                                                <td>
-                                                    <input type="button" class="operator-style"
-                                                           onclick="decrementValue2()" value="-"/>
-                                                    <input type="text" class="number-textbox" id="number2" name='no_of_kids_event' value="0"/>
-                                                    <input type="button" class="operator-style"
-                                                           onclick="incrementValue2()" value="+"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h2>Payment <i class="fa fa-money" aria-hidden="true"></i></h2>
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h4>Total Amount:</h4>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="text" id='id_total_amount_coupon' name='total_amount_paid_coupon' class="form-control">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <h4><b>Payment Mode</b></h4>
-                                                </td>
-                                                <td>
-                                                    <label> <input id="radioId_1" type="radio" class="payment-mode" name="payment"
-                                                                   value="POS"> <span class="radio-change"></span> POS</label>
-                                                    <label><input id="radioId_2" type="radio" class="payment-mode" name="payment"
-                                                                  value="card"> <span class="radio-change"></span> Card</label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <button type="submit" class=" btn btn-default close-button"
-                                                            style="float:right;width: 77px;">Buy
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">
-                                                        Cancel
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            </form>
+{#                        <div class="modal fade" id="myModal" role="dialog">#}
+{#                            <div class="modal-dialog">#}
+{##}
+{#                                <!-- Modal content-->#}
+{#                                <div class="modal-content">#}
+{#                                    <div class="modal-header">#}
+{#                                        <button type="button" class="close" data-dismiss="modal">&times;</button>#}
+{#                                        <h4 class="modal-title">Purchase Coupon</h4>#}
+{#                                    </div>#}
+{#                                    <div class="modal-body">#}
+{##}
+{#                                        <table class="table borderless">#}
+{#                                            <tbody>#}
+{#                                            <form method="post" action="{% url 'friday_coupon_booking' %}">#}
+{#                                                {% csrf_token %}#}
+{#                                            <tr>#}
+{#                                                <td colspan="2">#}
+{#                                                    <h2>Friday Lunch <i class="fa fa-calendar" aria-hidden="true"></i>#}
+{#                                                    </h2>#}
+{#                                                </td>#}
+{##}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <h4>No of users</h4>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <input type="hidden" id="id_user_id_hidden" name="user_id">#}
+{#                                                    <input type="hidden" id="id_user_type">#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="decrementValue()" value="-"/>#}
+{#                                                    <input type="text" class="number-textbox" id="number" name='no_of_users_friday' maxlength="3"#}
+{#                                                           value="0"/>#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="incrementValue()" value="+"/>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <h4>kids</h4>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="decrementValue1()" value="-"/>#}
+{#                                                    <input type="text" class="number-textbox" id="number1" name='no_of_kids_friday' value="0"/>#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="incrementValue1()" value="+"/>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td colspan="2">#}
+{#                                                    <h2>Kids Coupon <i class="fa fa-child" aria-hidden="true"></i></h2>#}
+{#                                                </td>#}
+{##}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <h4>Kids coupon for event:</h4>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="decrementValue2()" value="-"/>#}
+{#                                                    <input type="text" class="number-textbox" id="number2" name='no_of_kids_event' value="0"/>#}
+{#                                                    <input type="button" class="operator-style"#}
+{#                                                           onclick="incrementValue2()" value="+"/>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td colspan="2">#}
+{#                                                    <h2>Payment <i class="fa fa-money" aria-hidden="true"></i></h2>#}
+{#                                                </td>#}
+{##}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <h4>Total Amount:</h4>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <div class="form-group">#}
+{#                                                        <input type="text" id='id_total_amount_coupon' name='total_amount_paid_coupon' class="form-control">#}
+{#                                                    </div>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <h4><b>Payment Mode</b></h4>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <label> <input id="radioId_1" type="radio" class="payment-mode" name="payment"#}
+{#                                                                   value="POS"> <span class="radio-change"></span> POS</label>#}
+{#                                                    <label><input id="radioId_2" type="radio" class="payment-mode" name="payment"#}
+{#                                                                  value="card"> <span class="radio-change"></span> Card</label>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td>#}
+{#                                                    <button type="submit" class=" btn btn-default close-button"#}
+{#                                                            style="float:right;width: 77px;">Buy#}
+{#                                                    </button>#}
+{#                                                </td>#}
+{#                                                <td>#}
+{#                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">#}
+{#                                                        Cancel#}
+{#                                                    </button>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            </form>#}
                                             </tbody>
                                         </table>
 
