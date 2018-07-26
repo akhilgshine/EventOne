@@ -252,7 +252,8 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4" for="room_type">Room Type :</label>
                             <div class="col-sm-8">
-                                <input type="hidden" name="room_type">
+				<input type="hidden" name="room_type" value="{{ hotel_obj.room_type.id }}">
+
                                 <select name="room_type_sel" class="form-control" id="room_type"
                                         onchange="selectRoomType()">
                                     <option value="0">--- select type ---</option>
