@@ -1245,7 +1245,7 @@ class EditRegistrationView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def update_hotel(self, hotel_obj, created, form, checkin, checkout):
-        room_id = self.request.POST['room_type_sel'].split(":")[0]
+        room_id = self.request.POST.get('room_type')
         if room_id and room_id != '0':
             hotel_obj.room_type = RoomType.objects.get(id=room_id)
         if checkin:
