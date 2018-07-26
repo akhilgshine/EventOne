@@ -1,10 +1,19 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <style>
-    .coupon-re tbody td { padding: 3px !important; font-size: 13px !important;}
-    body {background: #cacaca;}
-    .mt30 { margin-top: 30px;}
 
+    .coupon-re tbody td {
+        padding: 3px !important;
+        font-size: 13px !important;
+    }
+
+    body {
+        background: #cacaca;
+    }
+
+    .mt30 {
+        margin-top: 30px;
+    }
 </style>
 
 <div class="col-sm-10 col-sm-offset-1">
@@ -32,8 +41,8 @@
                                 <tr>
                                     <td style="border: 0px;font-size: 16px;"><b>Name</b> <span
                                             class="pull-right">:</span></td>
-                                    <td style="border: 0px;font-size: 16px;">{{ event_register.event_user.first_name }}
-                                        {{ event_register.event_user.last_name }}
+
+                                    <td style="border: 0px;font-size: 16px;">{{ event_register.event_user.first_name }} {{ event_register.event_user.last_name }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -59,39 +68,37 @@
                                 <tr>
                                     <td style="border: 0px;font-size: 16px;"><b>Type</b> <span
                                             class="pull-right">:</span></td>
-                                    <td style="border: 0px;font-size: 16px;">{{ event_register.get_event_status_display
-                                        }}
+
+                                    <td style="border: 0px;font-size: 16px;">{{ event_register.get_event_status_display }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="border: 0px;font-size: 16px;"><b>Total Amount Paid</b> <span
                                             class="pull-right">:</span></td>
-                                    <td style="border: 0px;font-size: 16px;">{{
-                                        event_register.amount_paid|add:event_register.contributed_amount}} /- @{{
-                                        event_register.created_date|date:"D d M Y" }}
+                                    <td style="border: 0px;font-size: 16px;">{{event_register.amount_paid|add:event_register.contributed_amount}} /- @{{event_register.created_date|date:"D d M Y" }}
                                     </td>
                                 </tr>
                                 {% if event_register.due_amount %}
-                                <tr>
-                                    <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
-                                            class="pull-right">:</span></td>
-                                    <td style="border: 0px;font-size: 16px;"> {{ event_register.due_amount }}/-
+                                    <tr>
+                                        <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
+                                                class="pull-right">:</span></td>
+                                        <td style="border: 0px;font-size: 16px;"> {{ event_register.due_amount }}/-
 
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 {% endif %}
                                 <tr>
                                     <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
                                             class="pull-right">:</span></td>
                                     <td style="border: 0px; font-size: 16px;">
                                         {% if event_register.hotel_user %}
-                                        {{ event_register.hotel_user.hotel.name }},
-                                        Rs {{ event_register.hotel_user.tottal_rent }}/-,
-                                        {{ event_register.hotel_user.room_type.room_type }},
-                                        <b>{{ event_register.hotel_user.checkin_date|date:"D d M" }}
-                                            to {{ event_register.hotel_user.checkout_date|date:"D d M Y" }}</b>
+                                            {{ event_register.hotel_user.hotel.name }},
+                                            Rs {{ event_register.hotel_user.tottal_rent }}/-,
+                                            {{ event_register.hotel_user.room_type.room_type }},
+                                            <b>{{ event_register.hotel_user.checkin_date|date:"D d M" }}
+                                                to {{ event_register.hotel_user.checkout_date|date:"D d M Y" }}</b>
                                         {% else %}
-                                        No Hotel Booked
+                                            No Hotel Booked
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -103,26 +110,18 @@
 
                                     </td>
                                 </tr>
+                                {% endif %}
+                                {% if event_register.due_amount %}
+                                    <tr>
+                                        <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
+                                                class="pull-right">:</span></td>
+                                        <td style="border: 0px;font-size: 16px;"> {{ event_register.due_amount }}/-
 
+                                        </td>
+                                    </tr>
                                 {% endif %}
                                 </tbody>
                             </table>
-                            {#
-                            <div align="right">#}
-                                {#
-                                <button class="btn" style="   margin-bottom: 15px;#}
-{#                                                                margin-right: 20px;#}
-{#                                                                background: #ff4057;#}
-{#                                                                color: white;#}
-{#                                                                border-radius: 23px;#}
-{#                                                                padding: 6px 15px;">Reg Number : {{
-                                    request.user.registered_obj.qrcode }}#}
-                                    {#
-                                </button>
-                                #}
-                                {#
-                            </div>
-                            #}
                         </div>
                     </div>
                 </div>
@@ -146,11 +145,11 @@
                                                 border-radius: 34px;
                                                 padding: 6px 15px;
                                                 font-size: 16px;
-                                                margin-top: 10px;     display: inline-block;">Reg Number :{{
-                    event_register.qrcode }}
+                                                margin-top: 10px;     display: inline-block;">Reg Number
+                    :{{ event_register.qrcode }}
                 </div>
                 <div>
-                    <img src="https://chart.googleapis.com/chart?chs=100x100&amp;cht=qr&amp;chl={{event_register.encoded_id}}&amp;chld=L|1&amp;choe=UTF-8"
+                    <img src="https://chart.googleapis.com/chart?chs=100x100&amp;cht=qr&amp;chl={{ event_register.encoded_id }}&amp;chld=L|1&amp;choe=UTF-8"
                          style="margin: 10px;
                                              margin-bottom: 1em; width: 71px;">
                 </div>
