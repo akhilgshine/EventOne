@@ -183,16 +183,4 @@ class AddRoomNoForm(forms.ModelForm):
         self.fields['room_type'].widget.attrs['class'] = 'form-control'
         self.fields['room_type'].widget.attrs['disabled'] = 'disabled'
         self.fields['room_number'].widget.attrs['class'] = 'form-control'
-
-    def clean_hotel(self):
-        if self.instance: 
-            return self.instance.hotel
-        else: 
-            return self.fields['hotel']
-
-    def clean_room_type(self):
-        if self.instance: 
-            return self.instance.room_type
-        else: 
-            return self.fields['room_type']
         
