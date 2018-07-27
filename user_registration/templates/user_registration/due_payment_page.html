@@ -1,0 +1,111 @@
+{% load static %}
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
+<![endif]-->
+<!--[if IE 7]>
+    <html class="no-js lt-ie9 lt-ie8" lang="">
+<![endif]-->
+<!--[if IE 8]>
+        <html class="no-js lt-ie9" lang="">
+    <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <style>
+        .coupon-re tbody td {
+            padding: 2px !important;
+            font-size: 13px !important;
+        }
+    </style>
+</head>
+<body>
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+
+            </div>
+
+            <a><img src="{% static 'img/home-logo.png' %}" width="75px"></a>
+
+        </div>
+    </li>
+    {% if  not request.user.is_authenticated or request.user.is_superuser %}
+        <li><a href="{% url 'login' %}">
+            <div class="nav-icon home-ic"></div>
+            Admin</a></li>
+    {% endif %}
+    <li><a href="{% url 'index_page' %}">
+        <div class="nav-icon home-ic"></div>
+        Home</a></li>
+    <li><a href="">
+        <div class="nav-icon hotel-ic"></div>
+        Hotels</a></li>
+    <li><a href="">
+        <div class="nav-icon pic-ic"></div>
+        Pictures</a></li>
+    <li><a href="">
+        <div class="nav-icon video-ic"></div>
+        Videos</a></li>
+    {% if  request.user.is_authenticated and  not request.user.is_superuser %}
+
+        <li class="sign-out"><a href="/logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Log out</a></li>
+    {% else %}
+        <li class="sign-out"><a href="{% url 'user_login' %}">
+            <i class="fas fa-sign-out-alt"></i>
+            Log In</a></li>
+    {% endif %}
+</ul>
+
+<form id="paymentForm" method="post"
+      enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="col-sm-12">
+        <label class="pt20">Due Amount</label>
+        {{ payment_form.amount }}
+        <label class="d-block mb20" style="    margin-bottom: 20px;">Payment Method</label>
+        {% for payments in payment_form.payment.field.choices %}
+            <label class="custom-check">
+                {{ payments.1 }}
+                <input type="radio" name="payment" value="{{ payments.0 }}">
+                <span class="checkmark"></span>
+            </label>
+        {% endfor %}
+        <span class="error_div payment_error"></span>
+
+
+        <div class="clearfix"></div>
+        <div id="id_reciept">
+            <label class="pt20">Reciept Number</label>
+            {{ payment_form.receipt_number }}
+            <label class="pt20">Reciept File</label>
+
+            {{ payment_form.receipt_file }}
+
+
+        </div>
+
+        <div class="clearfix m20" style="margin-top: 40px"></div>
+        <a href="{% url 'user_profile' %}" ><button type="button" class="btn btn-main prev-step">BACK</button></a>
+        <button type="submit" class="btn  next-step pull-right btn-main "
+                id="id_payment_information">FINISH
+        </button>
+        <div id="id_finish_message"></div>
+    </div>
+</form>

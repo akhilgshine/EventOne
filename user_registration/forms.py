@@ -1,3 +1,4 @@
+from natsort import natsorted
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
@@ -156,3 +157,16 @@ class ResetPasswordForm(forms.Form):
         self.fields['mobile'].widget.attrs['class'] = 'form-control common-input b0'
         self.fields['mobile'].widget.attrs['placeholder'] = 'Enter Registered Number'
         self.fields['mobile'].widget.attrs.update({'autofocus': 'autofocus'})
+
+
+class PartialAmountDuePaymentForm(forms.Form):
+    amount = forms.CharField(max_length=255)
+    receipt_number = forms.CharField()
+    receipt_file = forms.ImageField()
+    payment = forms.ChoiceField(choices=PAYMENT_CHOICES, widget=forms.RadioSelect())
+
+    def __init__(self, *args, **kwargs):
+        super(PartialAmountDuePaymentForm, self).__init__(*args, **kwargs)
+        self.fields['receipt_number'].widget.attrs['class'] = 'form-control common-input form-group'
+        self.fields['amount'].widget.attrs['class'] = 'form-control common-input form-group'
+        self.fields['receipt_file'].widget.attrs['class'] = 'form-control common-input form-group'

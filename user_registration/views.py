@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
@@ -14,12 +15,12 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView, View
 
 from events.models import (BookedHotel, Event, EventUsers, Hotel, OtpModel,
-                           RegisteredUsers, RoomType)
+                           RegisteredUsers, RoomType, PartialPayment)
 from events.utils import send_otp
 
 from .forms import (HotelDetailForm, OtpPostForm, PaymentDetailsForm,
                     ProfileInformationForm, ResetPasswordForm, TableSelectForm,
-                    UserLoginForm, UserSignupForm)
+                    UserLoginForm, UserSignupForm, PartialAmountDuePaymentForm)
 from .mixins import RegisteredObjectMixin
 
 
@@ -349,3 +350,35 @@ class ResetPassword(FormView):
             return JsonResponse({'status': True, 'url': self.success_url})
         except EventUsers.DoesNotExist:
             return HttpResponse(json.dumps({'status': False, 'message': 'Number DoesNot Exist'}))
+
+
+class PartialDuePaymentView(LoginRequiredMixin, FormView):
+    form_class = PartialAmountDuePaymentForm
+    template_name = 'user_registration/due_payment_page.html'
+    success_url = reverse_lazy('user_profile')
+
+    def get_context_data(self, **kwargs):
+        context = super(PartialDuePaymentView, self).get_context_data()
+        event_user = EventUsers.objects.get(id=self.request.user.id)
+        data = {'amount': event_user.get_user_registration.all()[0].total_due}
+        context['payment_form'] = PartialAmountDuePaymentForm(initial=data)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        amount = self.request.POST.get('amount')
+        event_user = EventUsers.objects.get(id=self.request.user.id)
+        registered_user = event_user.get_user_registration.all()[0]
+        registration_due = registered_user.due_amount
+        hotel_due = registered_user.hotel_due
+        registration_object = registered_user
+        registration_object.amount_paid = registration_object.amount_paid+registration_due
+        registration_object.save()
+        hotel_object = registered_user.hotel_user
+        if hotel_object:
+            hotel_object.tottal_rent = hotel_object.tottal_rent+hotel_due
+            hotel_object.save()
+        PartialPayment.objects.create(registered_users=registered_user, amount_due=amount,
+                                      mode_of_payment=self.request.POST.get('payment'),
+                                      receipt_number=self.request.POST.get('receipt_number'),
+                                      receipt_file=self.request.FILES.get('receipt_file'))
+        return HttpResponseRedirect(self.success_url)

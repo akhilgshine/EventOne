@@ -7,7 +7,7 @@ from .views import (AjaxHotelRentCalculation, CouponSuccessView,
                     HotelRegistrationView, OtpPostView,
                     PaymentRegistrationView, ProfileRegistrationView,
                     ResetPassword, SetPassWordView, UserLoginView,
-                    UserProfileView, UserSignupView, UserTableRegistrationView)
+                    UserProfileView, UserSignupView, UserTableRegistrationView, PartialDuePaymentView)
 
 urlpatterns = [
     url(r'^user_signup/', UserSignupView.as_view(), name='user_signup'),
@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^hotel-rent/', AjaxHotelRentCalculation.as_view(), name='hotel_rent'),
     url(r'^hotel-booking/', HotelRegistrationView.as_view(), name='hotel_booking'),
     url(r'^payment-registration/', PaymentRegistrationView.as_view(), name='payment_registration'),
+    url(r'^get-due-payment/', PartialDuePaymentView.as_view(), name='due_payment'),
     url(r'^coupon-success/', CouponSuccessView.as_view(), name='success_coupon'),
     url(r'^user-profile/', UserProfileView.as_view(), name='user_profile'),
     url(r'^reset-password/', ResetPassword.as_view(), name='reset_password'),

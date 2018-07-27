@@ -173,7 +173,7 @@
                                 <p class="amount-due-p">Due amount
                                     <span>₹ {{ request.user.registered_obj.total_due }}</span></p>
 
-                                <button class="btn-main btn">PROCESS TO PAY</button>
+                               <a href="{%  url 'due_payment' %}"> <button class="btn-main btn"> PROCESS TO PAY</button></a>
                             </div>
                         {% endif %}
                     </div>
