@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.views.generic import (DeleteView, FormView, ListView, TemplateView,
                                   UpdateView, View)
+from django.core.exceptions import ObjectDoesNotExist
 
 from events.forms import *
 from events.templatetags import template_tags
@@ -37,6 +38,14 @@ class SuperUserMixin(AccessMixin):
             return self.handle_no_permission()
         return super(SuperUserMixin, self).dispatch(request, *args, **kwargs)
 
+class RestaurantUserMixin(AccessMixin):
+    """
+    CBV mixin which verifies that the current user is Restaurant User.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).exists():
+            return self.handle_no_permission()
+        return super(RestaurantUserMixin, self).dispatch(request, *args, **kwargs)
 
 class IndexPage(TemplateView):
     template_name = 'user_registration/index_main.html'
@@ -81,6 +90,7 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
+        
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -89,10 +99,49 @@ class LoginView(View):
             if user and user.is_superuser and user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse('register_event'))
+            
+            elif user and user.is_active:
+                try:
+                    user_group = user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).get()
+                except ObjectDoesNotExist:
+                    user_group = None
+
+                if user_group:
+                    return render(self.request, self.template_name, {'form': form})
+
             else:
                 return render(self.request, self.template_name, {'form': form})
 
 
+class RestaurantLoginView(View):
+    template_name = "login.html"
+
+    def get(self, request, *args, **kwargs):
+        form = LoginForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+
+            if user and user.is_superuser and user.is_active:
+                return render(self.request, self.template_name, {'form': form})
+
+            elif user and user.is_active:
+                login(request, user)
+                try:
+                    user_group = user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).get()
+                except ObjectDoesNotExist:
+                    user_group = None
+
+                if user_group:
+                    return HttpResponseRedirect(reverse('registered_user_list'))
+
+            else:
+                return render(self.request, self.template_name, {'form': form})
 """
     Register View
     """
@@ -639,7 +688,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                 writer.writerow(
                     ['', '', '',
                      '',
-                     '', '', '', total_paid_registration,
+                     '', '', '', '',total_paid_registration,
                      total_registration_due, '',
                      '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
                      total_contributions, total_amount_paid,
@@ -677,6 +726,37 @@ class ListUsers(LoginRequiredMixin, ListView):
 
         context['total_amount_paid'] = context['total_paid_registration'] + context['total_paid_hotel'] + context[
             'total_contributions'] or 0.00
+
+        return context
+
+
+
+class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
+    """
+    Return the list of registered users
+    """
+    template_name = 'hotel_user_list.html'
+    queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
+
+    def get_queryset(self):
+        
+        self.queryset = super(ListRegisteredUsers, self).get_queryset()
+        
+        user_group = self.request.user.groups.all().first()
+        
+        relevant_users = BookedHotel.objects.filter(
+            registered_users__is_active=True,
+            hotel__name=user_group.name).values_list('registered_users__id',flat=True)
+        
+        self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+
+        return self.queryset
+
+    def get_context_data(self, **kwargs):
+
+        context = super(ListRegisteredUsers, self).get_context_data(**kwargs)
+        registered_users = self.get_queryset()
+        context['users'] = registered_users
 
         return context
 
