@@ -143,12 +143,13 @@ class RegisterEventViewSet(ModelViewSet):
                 registered_user.amount_paid += previous_amount_paid
                 registered_user.save()
             else:
-
                 serializer.validated_data['event_user'] = event_user
                 registered_user = serializer.save()
                 if registered_user.event_status == 'Couple' or registered_user.event_status == 'Couple_Informal':
+                    print ('couple',registered_user.event_status )
                     [create_user_coupon_set(registered_user.id) for _ in range(2)]
                 else:
+                    print ('stag', registered_user.event_status)
                     create_user_coupon_set(registered_user.id)
                 if not registered_user.qrcode:
                     try:
