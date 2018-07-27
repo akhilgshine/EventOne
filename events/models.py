@@ -75,6 +75,35 @@ T_SHIRT_CHOICES = (
     (DOUBLE_EXTRA_LARGE, ('XXL')),
 )
 
+STAG = 'Stag'
+COUPLE = 'Couple'
+KID = 'Kid'
+
+FRIDAY_USER_TYPE_CHOICES = (
+    (STAG, 'Stag'),
+    (COUPLE, 'Couple'),
+    (KID, 'Kid')
+
+)
+FRIDAY = 'Friday'
+SATURDAY = 'Saturday'
+SUNDAY = 'Sunday'
+
+DAY_TYPE_CHOICES = (
+
+    (FRIDAY, 'Friday'),
+    (SATURDAY, 'Saturday'),
+    (SUNDAY, 'Sunday'),
+)
+
+LUNCH = 'Lunch'
+DINNER = 'Dinner'
+
+TIME_TYPE_CHOICES = (
+    (LUNCH, 'Lunch'),
+    (DINNER, 'Dinner'),
+)
+
 
 class Event(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
@@ -227,7 +256,7 @@ class RegisteredUsers(models.Model):
     def hotel_name(self):
         if self.hotel.all():
             hotel = self.hotel.all()[0].hotel_name
-        return hotel
+            return hotel
 
     @property
     def hotel_room_type(self):
@@ -397,32 +426,6 @@ class EventDocument(models.Model):
         return self.description
 
 
-class NfcCoupon(models.Model):
-    registered_user = models.ForeignKey('events.RegisteredUsers', null=True, blank=True, related_name='get_nfc_coupon_users')
-    card_number = models.CharField(max_length=255, null=True, blank=True)
-    created_date = models.DateTimeField(default=datetime.datetime.now, blank=True)
-
-    def __str__(self):
-        return '{} {}'.format(self.registered_user.event_user.first_name, self.registered_user.event_user.last_name)
-
-
-class FridayLunchAmount(models.Model):
-    friday_lunch_amount = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return self.friday_lunch_amount
-
-
-class FridayLunchBooking(models.Model):
-    registered_user = models.ForeignKey('events.RegisteredUsers', null=True, blank=True, related_name='get_friday_lunch_users')
-    amount_paid = models.IntegerField(default=0)
-    payment_type = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
-    pos_number = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return '{} {}'.format(self.registered_user.event_user.first_name, self.registered_user.event_user.last_name)
-
-
 class IDDocumentsPhoto(models.Model):
     registered_users = models.ForeignKey('events.RegisteredUsers', related_name='ids_img')
     id_card_type = models.CharField(max_length=255, null=True, blank=True)
@@ -447,3 +450,50 @@ def increment_roomtype(instance, **kwargs):
     if instance.room_type:
         instance.room_type.rooms_available += 1
         instance.room_type.save()
+
+
+class FoodType(models.Model):
+    day = models.CharField(choices=DAY_TYPE_CHOICES, max_length=255, null=True, blank=True)
+    time = models.CharField(choices=TIME_TYPE_CHOICES, max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return '{}, {}'.format(self.day, self.time)
+
+
+class UserFoodCoupon(models.Model):
+    coupon_user = models.ForeignKey('events.RegisteredUsers', null=True, blank=True,
+                                    related_name='get_all_food_type_coupons')
+    type = models.ForeignKey('events.FoodType', null=True, blank=True)
+    is_used = models.BooleanField(default=False)
+    used_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.coupon_user.event_user.first_name, self.coupon_user.event_user.last_name)
+
+
+class CouponPurchase(models.Model):
+    registered_users = models.ForeignKey('events.RegisteredUsers', null=True, blank=True,
+                                         related_name='get_coupon_purchase')
+    adult_friday_lunch = models.IntegerField(default=0)
+    kids_friday_lunch = models.IntegerField(default=0)
+    kids_coupon = models.IntegerField(default=0)
+    total_amount_paid = models.IntegerField(default=0)
+    payment_mode = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)
+
+
+class FridayDinnerAmount(models.Model):
+    user_type = models.CharField(max_length=255, choices=FRIDAY_USER_TYPE_CHOICES, null=True, blank=True)
+    amount = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user_type
+
+
+class KidsCouponAmount(models.Model):
+    amount = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.amount)

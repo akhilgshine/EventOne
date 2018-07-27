@@ -2,12 +2,14 @@ from django.conf.urls import include, url
 from rest_framework import routers
 
 from .views import (CouponSuccessViewSet, EventDocumentViewSet,
-                    FilterNameViewSet, FridayLunchBookingCheckViewset,
+                    FilterNameViewSet,
                     HotelNameViewSet, LoginApiView, NameDetailsViewSet,
-                    NfcCouponViewSet, NfcDetailsViewSet, OtpPostViewSet,
+                    OtpPostViewSet,
                     PaymentDetailsViewSet, RegisteredUsersViewSet,
                     RegisterEventViewSet, RoomTypeListViewSet,
-                    TableListViewSet, UserLoginViewSet, FridayLunchBookingCreateViewSet)
+                    TableListViewSet, UserLoginViewSet, UserScanFoodCouponApiViewSet)
+
+# app_name = 'letsgonuts_api'
 
 router = routers.DefaultRouter()
 router.register(r'tablelist', TableListViewSet, base_name='table-list')
@@ -22,10 +24,7 @@ router.register(r'hotel-name', HotelNameViewSet, base_name='hotel_name')
 router.register(r'payment-details', PaymentDetailsViewSet, base_name='payment_details')
 router.register(r'coupon-success', CouponSuccessViewSet, base_name='coupon_success')
 router.register(r'event_documents', EventDocumentViewSet, base_name='event_documents')
-router.register(r'nfc-coupon', NfcCouponViewSet, base_name='nfc_coupon')
-router.register(r'check-nfc', NfcDetailsViewSet, base_name='nfc_list')
-router.register(r'friday-lunch-check', FridayLunchBookingCheckViewset, base_name='friday_lunch_check')
-router.register(r'friday-lunch-booking', FridayLunchBookingCreateViewSet, base_name='friday_lunch_booking')
+router.register(r'user-coupon-scan', UserScanFoodCouponApiViewSet, base_name='user_coupon_scan')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

@@ -3,9 +3,9 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, Serializer
 
 from events.models import (MEMBER_CHOICES, STATUS_CHOICES, BookedHotel,
-                           EventDocument, EventUsers, FridayLunchAmount,
-                           FridayLunchBooking, Hotel, ImageRoomType, NfcCoupon,
-                           RegisteredUsers, RoomType, Table, IDDocumentsPhoto)
+                           EventDocument, EventUsers,
+                           Hotel, ImageRoomType,
+                           RegisteredUsers, RoomType, Table, IDDocumentsPhoto, DAY_TYPE_CHOICES, TIME_TYPE_CHOICES)
 from user_registration.validators import validate_phone
 
 
@@ -170,35 +170,41 @@ class RegisteredUsersSerializer(ModelSerializer):
 class EventDocumentSerializer(ModelSerializer):
     class Meta:
         model = EventDocument
-        fields = ['event_videos','description','event_images']
+        fields = ['event_videos', 'description', 'event_images']
 
 
-class NfcCouponSerializer(ModelSerializer):
-    mobile = serializers.CharField(write_only=True, validators=[validate_phone], required=False)
-    email = serializers.CharField(write_only=True, required=False)
+# class NfcCouponSerializer(ModelSerializer):
+#     mobile = serializers.CharField(write_only=True, validators=[validate_phone], required=False)
+#     email = serializers.CharField(write_only=True, required=False)
+#
+#     class Meta:
+#         model = NfcCoupon
+#         fields = ['card_number', 'mobile', 'email']
+#
+#     def validate_card_number(self, card_number):
+#         if NfcCoupon.objects.filter(card_number=card_number).exists():
+#             raise serializers.ValidationError("This card number already exist")
+#         return card_number
+#
+#
+# class FridayLunchBookingSerializer(ModelSerializer):
+#     nfc_card_number = serializers.CharField(write_only=True, required=False)
+#
+#     class Meta:
+#         model = FridayLunchBooking
+#         fields = ['payment_type', 'pos_number', 'nfc_card_number']
+#
+#     def validate_nfc_card_number(self, card_number):
+#         try:
+#             nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
+#             if nfc_coupon.registered_user.get_friday_lunch_users.all():
+#                 raise serializers.ValidationError("This user already booked friday lunch")
+#             return card_number
+#         except NfcCoupon.DoesNotExist:
+#             raise serializers.ValidationError("Invalid Coupon")
 
-    class Meta:
-        model = NfcCoupon
-        fields = ['card_number', 'mobile', 'email']
 
-    def validate_card_number(self, card_number):
-        if NfcCoupon.objects.filter(card_number=card_number).exists():
-            raise serializers.ValidationError("This card number already exist")
-        return card_number
-
-
-class FridayLunchBookingSerializer(ModelSerializer):
-    nfc_card_number = serializers.CharField(write_only=True, required=False)
-
-    class Meta:
-        model = FridayLunchBooking
-        fields = ['payment_type', 'pos_number', 'nfc_card_number']
-
-    def validate_nfc_card_number(self, card_number):
-        try:
-            nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
-            if nfc_coupon.registered_user.get_friday_lunch_users.all():
-                raise serializers.ValidationError("This user already booked friday lunch")
-            return card_number
-        except NfcCoupon.DoesNotExist:
-            raise serializers.ValidationError("Invalid Coupon")
+class CouponUserScanSerializer(Serializer):
+    user_encoded_id = serializers.CharField(required=True)
+    day = serializers.ChoiceField(choices=DAY_TYPE_CHOICES, required=True)
+    time = serializers.ChoiceField(choices=TIME_TYPE_CHOICES, required=True)

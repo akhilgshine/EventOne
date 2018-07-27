@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from events.models import *
+from events.models import EventUsers
 from events.utils import send_email, send_sms_message
 
 

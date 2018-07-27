@@ -8,7 +8,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 
-from events.models import BookedHotel, Event, OtpModel, PaymentDetails, RegisteredUsers
+from events.models import BookedHotel, Event, OtpModel, PaymentDetails, RegisteredUsers, FoodType, UserFoodCoupon, \
+    FRIDAY
 
 
 def hotelDetails(event_obj):
@@ -94,9 +95,24 @@ def send_otp(obj):
         "&flash=0&type=1&sender=QrtReg",
         headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
 
+
 def send_celery_mail(id):
     reg_user_obj = RegisteredUsers.objects.get(id=id)
 
     message = ''
 
     send_email(reg_user_obj.event_user.email, message, reg_user_obj)
+
+
+def create_user_coupon_set(user_id):
+    registered_user = RegisteredUsers.objects.get(id=user_id)
+    food_types = FoodType.objects.all().exclude(day=FRIDAY)
+    for food_type in food_types:
+        UserFoodCoupon.objects.create(coupon_user=registered_user, type=food_type)
+
+
+def create_friday_lunch_coupon(user_id):
+    registered_user = RegisteredUsers.objects.get(id=user_id)
+    food_types = FoodType.objects.get(day=FRIDAY)
+    UserFoodCoupon.objects.create(coupon_user=registered_user, type=food_types)
+

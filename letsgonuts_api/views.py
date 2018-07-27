@@ -9,27 +9,26 @@ from django.contrib.auth import authenticate
 from django.contrib.sites.models import Site
 from django.http import HttpResponse
 from django.utils.crypto import get_random_string
-from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_201_CREATED,
-                                   HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED)
+                                   HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_200_OK)
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from events.models import (BookedHotel, Event, EventDocument, EventUsers,
-                           FridayLunchAmount, FridayLunchBooking, Hotel,
-                           NfcCoupon, OtpModel, RegisteredUsers, RoomType,
-                           Table, IDDocumentsPhoto)
+                           Hotel,
+                           OtpModel, RegisteredUsers, RoomType,
+                           Table, IDDocumentsPhoto, UserFoodCoupon, FoodType)
+from events.utils import decode_id, create_user_coupon_set
 
 from .serializer import (EventDocumentSerializer, FilterNameSerializer,
-                         FridayLunchBookingSerializer, HotelNameSerializer,
-                         NameDetailsSerializer, NfcCouponSerializer,
+                         HotelNameSerializer,
+                         NameDetailsSerializer,
                          OtpPostSerializer, RegisteredUsersSerializer,
                          RegisterEventSerializer, RoomTypeSerializer,
-                         TableListSerializer, UserLoginSerializer)
+                         TableListSerializer, UserLoginSerializer, CouponUserScanSerializer)
 
 
 # Create your views here.
@@ -167,6 +166,10 @@ class RegisterEventViewSet(ModelViewSet):
             for id_image in id_images:
                 IDDocumentsPhoto.objects.create(id_card_images=id_image, id_card_type=id_card_type,
                                                 registered_users=registered_user)
+            if registered_user.event_status == 'Couple':
+                [create_user_coupon_set(registered_user.id) for _ in range(2)]
+            else:
+                create_user_coupon_set(registered_user.id)
             try:
                 hotel = Hotel.objects.get(id=hotel_id)
             except Hotel.DoesNotExist:
@@ -344,91 +347,123 @@ class EventDocumentViewSet(ModelViewSet):
     permission_classes = [AllowAny, ]
 
 
-class NfcCouponViewSet(ModelViewSet):
-    queryset = NfcCoupon.objects.all()
-    serializer_class = NfcCouponSerializer
+# class NfcCouponViewSet(ModelViewSet):
+#     queryset = NfcCoupon.objects.all()
+#     serializer_class = NfcCouponSerializer
+#
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         mobile = serializer.validated_data.get('mobile')
+#         email = serializer.validated_data.get('email')
+#         card_number = serializer.validated_data.get('card_number')
+#         if mobile and card_number:
+#             try:
+#                 event_user = EventUsers.objects.get(mobile=mobile)
+#                 return self.get_registered_users(event_user, card_number)
+#             except EventUsers.DoesNotExist:
+#                 return Response('Invalid User', status=400)
+#         if email and card_number:
+#             try:
+#                 event_user = EventUsers.objects.get(email=email)
+#                 return self.get_registered_users(event_user, card_number)
+#             except EventUsers.DoesNotExist:
+#                 return Response('Invalid User', status=400)
+#         else:
+#             return Response('Invalid User', status=400)
+#
+#     def get_registered_users(self, event_user, card_number):
+#         registered_user = event_user.registered_obj
+#         if not registered_user:
+#             return Response('User not registered for event', status=400)
+#         NfcCoupon.objects.create(registered_user=registered_user, card_number=card_number)
+#         return Response('coupon created  successfully', status=HTTP_201_CREATED)
+#
+#
+# class NfcDetailsViewSet(ModelViewSet):
+#     queryset = NfcCoupon.objects.all()
+#     serializer_class = NfcCouponSerializer
+#
+#     def list(self, request, *args, **kwargs):
+#         card_number = request.GET.get('card_number')
+#         nfc_details = NfcCoupon.objects.filter(card_number=card_number)
+#         if not nfc_details:
+#             return Response({'status': False})
+#         return Response({'status': True})
+#
+#
+# class FridayLunchBookingCheckViewset(ModelViewSet):
+#     queryset = FridayLunchBooking.objects.all()
+#
+#     def list(self, request, *args, **kwargs):
+#         card_number = request.GET.get('card_number')
+#         if card_number:
+#             try:
+#                 nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
+#                 coupon_user = nfc_coupon.registered_user
+#                 if not coupon_user.get_friday_lunch_users.all():
+#                     response = {}
+#                     response['status'] = False
+#                     response['amount'] = FridayLunchAmount.objects.values_list('friday_lunch_amount', flat=True)
+#                     return Response(response, status=200)
+#                 else:
+#                     return Response({'status': True})
+#             except NfcCoupon.DoesNotExist:
+#                 return Response('Card number doesnot exist', status=400)
+#
+#
+# class FridayLunchBookingCreateViewSet(ModelViewSet):
+#     queryset = FridayLunchBooking.objects.all()
+#     serializer_class = FridayLunchBookingSerializer
+#
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         payment_type = serializer.validated_data.get('payment_type')
+#         nfc_card_number = serializer.validated_data.get('nfc_card_number')
+#         pos_number = serializer.validated_data.get('pos_number')
+#         if payment_type and nfc_card_number:
+#             try:
+#                 nfc_card = NfcCoupon.objects.get(card_number=nfc_card_number)
+#                 nfc_user = nfc_card.registered_user
+#                 if not nfc_user:
+#                     return Response('User not registered for event', status=400)
+#                 FridayLunchBooking.objects.create(registered_user=nfc_user, payment_type=payment_type,
+#                                                   pos_number=pos_number)
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+#             except NfcCoupon.DoesNotExist:
+#                 return Response('Card number doesnt exist', status=400)
+#         else:
+#             return Response('please enter card_number and payment type', status=400)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        mobile = serializer.validated_data.get('mobile')
-        email = serializer.validated_data.get('email')
-        card_number = serializer.validated_data.get('card_number')
-        if mobile and card_number:
-            try:
-                event_user = EventUsers.objects.get(mobile=mobile)
-                return self.get_registered_users(event_user, card_number)
-            except EventUsers.DoesNotExist:
-                return Response('Invalid User', status=400)
-        if email and card_number:
-            try:
-                event_user = EventUsers.objects.get(email=email)
-                return self.get_registered_users(event_user, card_number)
-            except EventUsers.DoesNotExist:
-                return Response('Invalid User', status=400)
-        else:
-            return Response('Invalid User', status=400)
 
-    def get_registered_users(self, event_user, card_number):
-        registered_user = event_user.registered_obj
-        if not registered_user:
-            return Response('User not registered for event', status=400)
-        NfcCoupon.objects.create(registered_user=registered_user, card_number=card_number)
-        return Response('coupon created  successfully', status=HTTP_201_CREATED)
-
-
-class NfcDetailsViewSet(ModelViewSet):
-    queryset = NfcCoupon.objects.all()
-    serializer_class = NfcCouponSerializer
+class UserScanFoodCouponApiViewSet(ModelViewSet):
+    queryset = UserFoodCoupon.objects.all()
+    serializer_class = CouponUserScanSerializer
 
     def list(self, request, *args, **kwargs):
-        card_number = request.GET.get('card_number')
-        nfc_details = NfcCoupon.objects.filter(card_number=card_number)
-        if not nfc_details:
-            return Response({'status': False})
-        return Response({'status': True})
-
-
-class FridayLunchBookingCheckViewset(ModelViewSet):
-    queryset = FridayLunchBooking.objects.all()
-
-    def list(self, request, *args, **kwargs):
-        card_number = request.GET.get('card_number')
-        if card_number:
+        user_encoded_id = request.GET.get('user_encoded_id')
+        day = request.GET.get('day')
+        time = request.GET.get('time')
+        if user_encoded_id and day and time:
+            user_encoded_id = decode_id(user_encoded_id)
             try:
-                nfc_coupon = NfcCoupon.objects.get(card_number=card_number)
-                coupon_user = nfc_coupon.registered_user
-                if not coupon_user.get_friday_lunch_users.all():
-                    response = {}
-                    response['status'] = False
-                    response['amount'] = FridayLunchAmount.objects.values_list('friday_lunch_amount', flat=True)
-                    return Response(response, status=200)
-                else:
-                    return Response({'status': True})
-            except NfcCoupon.DoesNotExist:
-                return Response('Card number doesnot exist', status=400)
+                registered_user = RegisteredUsers.objects.get(id=user_encoded_id)
+                registered_user_food_type = FoodType.objects.get(day=day, time=time)
+            except (RegisteredUsers.DoesNotExist, FoodType.DoesNotExist):
+                return Response('User doesnt exist', status=400)
+            else:
+                try:
+                    registered_user_food_coupon = UserFoodCoupon.objects.filter(coupon_user=registered_user,
+                                                                            type=registered_user_food_type,is_used=False)[0]
+                except IndexError:
+                    return Response('You have no coupons available', status=400)
 
-
-class FridayLunchBookingCreateViewSet(ModelViewSet):
-    queryset = FridayLunchBooking.objects.all()
-    serializer_class = FridayLunchBookingSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        payment_type = serializer.validated_data.get('payment_type')
-        nfc_card_number = serializer.validated_data.get('nfc_card_number')
-        pos_number = serializer.validated_data.get('pos_number')
-        if payment_type and nfc_card_number:
-            try:
-                nfc_card = NfcCoupon.objects.get(card_number=nfc_card_number)
-                nfc_user = nfc_card.registered_user
-                if not nfc_user:
-                    return Response('User not registered for event', status=400)
-                FridayLunchBooking.objects.create(registered_user=nfc_user, payment_type=payment_type,
-                                                  pos_number=pos_number)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except NfcCoupon.DoesNotExist:
-                return Response('Card number doesnt exist', status=400)
+                if registered_user_food_coupon and registered_user_food_type:
+                    registered_user_food_coupon.used_time = datetime.now()
+                    registered_user_food_coupon.is_used = True
+                    registered_user_food_coupon.save()
+                    return Response('SuccessFully scanned coupon', status=HTTP_200_OK)
+                return Response('Card doesnt exist', status=400)
         else:
-            return Response('please enter card_number and payment type', status=400)
+            return Response('Something went wrong', status=400)
