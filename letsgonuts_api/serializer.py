@@ -5,7 +5,8 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from events.models import (MEMBER_CHOICES, STATUS_CHOICES, BookedHotel,
                            EventDocument, EventUsers,
                            Hotel, ImageRoomType,
-                           RegisteredUsers, RoomType, Table, IDDocumentsPhoto, DAY_TYPE_CHOICES, TIME_TYPE_CHOICES)
+                           RegisteredUsers, RoomType, Table, IDDocumentsPhoto, DAY_TYPE_CHOICES, TIME_TYPE_CHOICES,
+                           UserFoodCoupon)
 from user_registration.validators import validate_phone
 
 
@@ -208,3 +209,20 @@ class CouponUserScanSerializer(Serializer):
     user_encoded_id = serializers.CharField(required=True)
     day = serializers.ChoiceField(choices=DAY_TYPE_CHOICES, required=True)
     time = serializers.ChoiceField(choices=TIME_TYPE_CHOICES, required=True)
+
+
+class ScannedCouponDetailsSerializer(Serializer):
+    coupon_users = serializers.SerializerMethodField()
+    day = serializers.ChoiceField(choices=DAY_TYPE_CHOICES, write_only=True)
+    time = serializers.ChoiceField(choices=TIME_TYPE_CHOICES, write_only=True)
+
+    class Meta:
+        model = UserFoodCoupon
+        fields = ['coupon_users', 'day', 'time']
+
+    def get_coupon_users(self, obj):
+        data = {}
+        data['name'] = obj.coupon_user.event_user.get_full_name()
+        data['qrcode'] = obj.coupon_user.qrcode
+        data['qrcode'] = obj.coupon_user.event_status
+        return data

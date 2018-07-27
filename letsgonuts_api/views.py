@@ -28,7 +28,8 @@ from .serializer import (EventDocumentSerializer, FilterNameSerializer,
                          NameDetailsSerializer,
                          OtpPostSerializer, RegisteredUsersSerializer,
                          RegisterEventSerializer, RoomTypeSerializer,
-                         TableListSerializer, UserLoginSerializer, CouponUserScanSerializer)
+                         TableListSerializer, UserLoginSerializer, CouponUserScanSerializer,
+                         ScannedCouponDetailsSerializer)
 
 
 # Create your views here.
@@ -166,7 +167,7 @@ class RegisterEventViewSet(ModelViewSet):
             for id_image in id_images:
                 IDDocumentsPhoto.objects.create(id_card_images=id_image, id_card_type=id_card_type,
                                                 registered_users=registered_user)
-            if registered_user.event_status == 'Couple':
+            if registered_user.event_status == 'Couple' or registered_user.event_status == 'Couple_Informal':
                 [create_user_coupon_set(registered_user.id) for _ in range(2)]
             else:
                 create_user_coupon_set(registered_user.id)
@@ -455,7 +456,8 @@ class UserScanFoodCouponApiViewSet(ModelViewSet):
             else:
                 try:
                     registered_user_food_coupon = UserFoodCoupon.objects.filter(coupon_user=registered_user,
-                                                                            type=registered_user_food_type,is_used=False)[0]
+                                                                                type=registered_user_food_type,
+                                                                                is_used=False)[0]
                 except IndexError:
                     return Response('You have no coupons available', status=400)
 
@@ -467,3 +469,16 @@ class UserScanFoodCouponApiViewSet(ModelViewSet):
                 return Response('Card doesnt exist', status=400)
         else:
             return Response('Something went wrong', status=400)
+
+
+class ScannedCouponDetails(ModelViewSet):
+    queryset = UserFoodCoupon.objects.all()
+    serializer_class = ScannedCouponDetailsSerializer
+    permission_classes = [AllowAny, ]
+
+    def get_queryset(self):
+        day = self.request.GET.get('day')
+        time = self.request.GET.get('time')
+        registered_user_food_type = FoodType.objects.get(day=day, time=time)
+        self.queryset = UserFoodCoupon.objects.all().filter(is_used=True, type=registered_user_food_type)
+        return self.queryset
