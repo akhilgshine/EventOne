@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from events.models import *
 
+
 # class RegisterForm(forms.Form):
 
 class LoginForm(forms.Form):
@@ -44,11 +45,12 @@ class EventRegisterForm(forms.Form):
 class HotelForm(forms.ModelForm):
     checkin_date = forms.CharField(required=True)
     checkout_date = forms.CharField(required=True)
-    room_number  = forms.CharField(required=False)
+    room_number = forms.CharField(required=False)
 
     class Meta:
         model = BookedHotel
-        fields = ('room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file', 'room_number')
+        fields = (
+            'room_type', 'hotel', 'tottal_rent', 'mode_of_payment', 'receipt_number', 'receipt_file', 'room_number')
 
     def __init__(self, *args, **kwargs):
         super(HotelForm, self).__init__(*args, **kwargs)
@@ -171,6 +173,7 @@ class UpdateTShirtForm(forms.ModelForm):
         super(UpdateTShirtForm, self).__init__(*args, **kwargs)
         self.fields['t_shirt_size'].widget.attrs['class'] = 'form-control'
 
+
 class AddRoomNoForm(forms.ModelForm):
     class Meta:
         model = BookedHotel
@@ -183,4 +186,15 @@ class AddRoomNoForm(forms.ModelForm):
         self.fields['room_type'].widget.attrs['class'] = 'form-control'
         self.fields['room_type'].widget.attrs['disabled'] = 'disabled'
         self.fields['room_number'].widget.attrs['class'] = 'form-control'
-        
+
+    def clean_hotel(self):
+        if self.instance:
+            return self.instance.hotel
+        else:
+            return self.fields['hotel']
+
+    def clean_room_type(self):
+        if self.instance:
+            return self.instance.room_type
+        else:
+            return self.fields['room_type']

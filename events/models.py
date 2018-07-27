@@ -383,7 +383,7 @@ class ImageRoomType(models.Model):
 class BookedHotel(models.Model):
     registered_users = models.ForeignKey('events.RegisteredUsers', null=True, related_name='hotel')
     hotel = models.ForeignKey('events.Hotel')
-    room_number = models.CharField(max_length=20, null=True,blank=True)
+    room_number = models.CharField(max_length=20, null=True, blank=True)
     tottal_rent = models.IntegerField(default=0)
     book_friday = models.BooleanField(default=False)
     room_type = models.ForeignKey('events.RoomType', null=True, blank=True)
