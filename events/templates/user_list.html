@@ -228,7 +228,7 @@
                                 <th>Partial/Completely</th><!-- Payment Status -->
 
                                 <th>Registration Amount</th>
-                                <th>T-Shirt Size</th>
+                                <th>Add Room no</th>
                                 <th>Amount Due</th>
                                 <!-- <th>Registration Date </th> -->
                                 <!-- <th>Coupon</th> -->
@@ -293,16 +293,18 @@
                                     <td> {{ user.id|payment_status }}</td>
 
                                     <td> {{ user.amount_paid }}</td>
+
                                     <td>
-                                        {% if user.t_shirt_size %}
-                                            {{ user.t_shirt_size }}
+                                        {% if user.hotel.all %}
+                                            {% if user.hotel.first.room_number %} 
+                                                {{ user.hotel.first.room_number }}
+                                                <!-- Update room no -->
+                                            {% elif user.hotel %}
+                                                <a href="{% url 'add_room_no' user.id %}">Add room number</a>
+                                            {% endif %}
                                         {% else %}
-                                            Not Selected
-
+                                            <p>No Hotels Booked</p>
                                         {% endif %}
-
-                                        &nbsp|&nbsp
-                                        <a href="{% url 't_shirt_update' user.id %}">Change </a>
                                     </td>
 
                                     <td> {{ user.due_amount }}

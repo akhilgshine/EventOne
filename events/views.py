@@ -1523,6 +1523,13 @@ class AddTShirtView(UpdateView):
     template_name = 't_shirt_update.html'
     success_url = reverse_lazy('list_users')
 
+class AddRoomNo(UpdateView):
+    model = BookedHotel
+    form_class = AddRoomNoForm
+    template_name = 'add_room_no.html'
+    success_url = reverse_lazy('list_users')
+        
+
 
 class GetHotelBookingDetailsView(TemplateView):
 

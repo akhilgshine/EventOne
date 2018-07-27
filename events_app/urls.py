@@ -24,6 +24,11 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', IndexPage.as_view(), name='index_page'),
     url(r'^login/$', LoginView.as_view(), name='login'),
+    
+    # Resturants login
+    url(r'^restaurant/login/$', RestaurantLoginView.as_view(), name='restaurant_login'),
+    url(r'^restaurant/registered-users/$', ListRegisteredUsers.as_view(), name='registered_user_list'),
+    
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),
     url(r'^get_user_data/$', GetUserData.as_view(), name='get_userData'),
@@ -54,6 +59,10 @@ urlpatterns = [
     url(r'^user-registration-list/', UserRegistrationListView.as_view(), name='user_registration_list'),
     url(r'^get-hotel-booking-details/', GetHotelBookingDetailsView.as_view(), name='get_hotel_booking_details'),
     url(r'^t-shirt-update/(?P<pk>\d+)$', AddTShirtView.as_view(), name='t_shirt_update'),
+
+    # Set Room No
+    url(r'^add-room-no/(?P<pk>\d+)$', AddRoomNo.as_view(), name='add_room_no'),
+
     url(r'^list-of-attendees/', ListOfAttendees.as_view(), name='list_of_attendees'),
     url(r'^adding-of-event-attendees/', AjaxAttendeesAddingView.as_view(), name='adding_of_event_attendees'),
     url(r'^api-auth/', include('rest_framework.urls')),
