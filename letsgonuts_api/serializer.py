@@ -225,4 +225,7 @@ class ScannedCouponDetailsSerializer(Serializer):
         data['name'] = obj.coupon_user.event_user.get_full_name()
         data['qrcode'] = obj.coupon_user.qrcode
         data['qrcode'] = obj.coupon_user.event_status
+        data['day'] = obj.type.day
+        data['time'] = obj.type.time
+        data['used_time'] = obj.used_time
         return data

@@ -118,6 +118,7 @@ class RegisterEventViewSet(ModelViewSet):
             if request.user.is_superuser:
                 event_user.is_approved = True
             event_user.save()
+            print("Created event user")
         token, _ = Token.objects.get_or_create(user=event_user)
         if serializer.validated_data:
             event_user.first_name = serializer.validated_data.pop('first_name')
@@ -146,10 +147,8 @@ class RegisterEventViewSet(ModelViewSet):
                 serializer.validated_data['event_user'] = event_user
                 registered_user = serializer.save()
                 if registered_user.event_status == 'Couple' or registered_user.event_status == 'Couple_Informal':
-                    print ('couple',registered_user.event_status )
                     [create_user_coupon_set(registered_user.id) for _ in range(2)]
                 else:
-                    print ('stag', registered_user.event_status)
                     create_user_coupon_set(registered_user.id)
                 if not registered_user.qrcode:
                     try:
@@ -455,7 +454,7 @@ class UserScanFoodCouponApiViewSet(ModelViewSet):
                 registered_user = RegisteredUsers.objects.get(id=user_encoded_id)
                 registered_user_food_type = FoodType.objects.get(day=day, time=time)
             except (RegisteredUsers.DoesNotExist, FoodType.DoesNotExist):
-                return Response('User doesnt exist', status=400)
+                return Response('User Coupon doesnt exist', status=400)
             else:
                 try:
                     registered_user_food_coupon = UserFoodCoupon.objects.filter(coupon_user=registered_user,
@@ -468,7 +467,10 @@ class UserScanFoodCouponApiViewSet(ModelViewSet):
                     registered_user_food_coupon.used_time = datetime.now()
                     registered_user_food_coupon.is_used = True
                     registered_user_food_coupon.save()
-                    return Response('SuccessFully scanned coupon', status=HTTP_200_OK)
+                    response = {}
+                    response['status'] = 'Successfully scanned coupon'
+                    response['data'] = RegisteredUsersSerializer(registered_user).data
+                    return Response(response, status=HTTP_200_OK)
                 return Response('Card doesnt exist', status=400)
         else:
             return Response('Something went wrong', status=400)
@@ -477,11 +479,14 @@ class UserScanFoodCouponApiViewSet(ModelViewSet):
 class ScannedCouponDetails(ModelViewSet):
     queryset = UserFoodCoupon.objects.all()
     serializer_class = ScannedCouponDetailsSerializer
-    permission_classes = [AllowAny, ]
 
     def get_queryset(self):
         day = self.request.GET.get('day')
         time = self.request.GET.get('time')
-        registered_user_food_type = FoodType.objects.get(day=day, time=time)
-        self.queryset = UserFoodCoupon.objects.all().filter(is_used=True, type=registered_user_food_type)
-        return self.queryset
+        try:
+            registered_user_food_type = FoodType.objects.get(day=day, time=time)
+        except FoodType.DoesNotExist:
+            return Response('Wrong Day and Time', status=400)
+        else:
+            self.queryset = UserFoodCoupon.objects.all().filter(is_used=True, type=registered_user_food_type)
+            return self.queryset
