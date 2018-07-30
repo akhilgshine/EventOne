@@ -517,6 +517,7 @@ class ProgramSchedule(models.Model):
     program_description = models.CharField(max_length=255, null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     program_time = models.DateTimeField(null=True, blank=True)
+    extra_information = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return self.program_name
