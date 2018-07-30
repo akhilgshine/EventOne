@@ -49,7 +49,8 @@
         .user_list_inputs {
             margin-top: 10px;
         }
-        table tr td:nth-child(12){
+
+        table tr td:nth-child(12) {
             border-right: 2px solid green;
         }
 
@@ -449,7 +450,8 @@
                                                                    name='total_amount_paid_coupon' class="form-control"
                                                                    readonly>
                                                         </div>
-                                                        <div class="purchase_error" style="display: none ;color:red">Amount Cannot
+                                                        <div class="purchase_error" style="display: none ;color:red">
+                                                            Amount Cannot
                                                             be Null
                                                         </div>
                                                     </td>
@@ -603,7 +605,10 @@
         })
         $('#user_lists').dataTable().fnDestroy();
         var t = $('#user_lists').DataTable({
-            ajax: '/get-user-data-json{{ request.get_full_path }}',
+            ajax: {
+                'url': '/get-user-data-json{{ request.get_full_path }}',
+                "dataType": "jsonp"
+            },
             order: [[1, 'asc']],
             paging: false,
             info: false,
@@ -740,7 +745,7 @@
 
     });
 
-    function errorPurchaseShow(){
+    function errorPurchaseShow() {
         var amount_coupon_purchase = $('#id_total_amount_coupon').val();
 
         if ((amount_coupon_purchase == 0 || amount_coupon_purchase == '')) {
