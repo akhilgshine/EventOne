@@ -601,7 +601,7 @@
         $('#printPage').on('click', function () {
             printData();
         })
-
+        $('#user_lists').dataTable().fnDestroy();
         var t = $('#user_lists').DataTable({
             ajax: '/get-user-data-json{{ request.get_full_path }}',
             order: [[1, 'asc']],
@@ -642,7 +642,7 @@
     });
 
     $('#sortOption').on('change', function () {
-
+        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable();
         var order = table.order();
 
@@ -658,6 +658,7 @@
     });
 
     $('#seachDataTable').keyup(function () {
+        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable()
 
         table.settings()[0].oFeatures.bServerSide = false;
@@ -673,6 +674,7 @@
 
 
     $('#sortTable').on('change', function () {
+        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable();
         var selected_table = $("#sortTable option:selected").val();
         if (selected_table == 'all') {
@@ -724,7 +726,7 @@
             dataType: 'json',
             data: {'users_no': users_no, 'kids_no': kids_no, 'kids_coupon_no': kids_coupon_no, 'user_type': user_type},
             success: function (data) {
-                $('#id_total_amount_coupon').val(data.total_amount)
+                $('#id_total_amount_coupon').val(data.total_amount);
                 errorPurchaseShow();
 
             }
