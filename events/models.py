@@ -513,6 +513,7 @@ class PartialPayment(models.Model):
 
 class ProgramSchedule(models.Model):
     program_name = models.CharField(max_length=255, null=True, blank=True)
+    program_theme = models.CharField(max_length=255, null=True, blank=True)
     program_description = models.CharField(max_length=255, null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     program_time = models.DateTimeField(null=True, blank=True)
