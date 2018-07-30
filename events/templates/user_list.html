@@ -36,6 +36,8 @@
             src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+
     <style>
         body {
             background: url('/static/images/bg-pink-dark.jpg') repeat-y;
@@ -46,6 +48,9 @@
 
         .user_list_inputs {
             margin-top: 10px;
+        }
+        table tr td:nth-child(12){
+            border-right: 2px solid green;
         }
 
         table.dataTable thead .sorting,
@@ -88,6 +93,99 @@
                 display: table-footer-group
             }
         }
+
+        #loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 20px;
+            height: 30px;
+            position: absolute;
+            left: 50%;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .dataTables_processing {
+            background: none !important;
+        }
+
+        .modal-header {
+            color: #fff;
+            background-color: #391756;
+        }
+
+        .close-button {
+
+            color: #fff;
+            background-color: #391756;
+        }
+
+        .close-button:hover {
+            color: #fff;
+            background-color: #391756;
+        }
+
+        .close-button:focus {
+            color: #fff;
+            background-color: #391756;
+        }
+
+        .close {
+            color: #fff;
+            opacity: 1;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
+        .operator-style {
+            border: #fff;
+            background-color: #fff;
+            color: #fff;
+            height: 19px;
+            width: 20px;
+            font-size: 13px;
+            background-color: #391756;
+            border-radius: 50%;
+        }
+
+        .number-textbox {
+            width: 36px;
+            height: 22px;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+
+        table.borderless td {
+            border: none !important;
+        }
+
+        .table {
+            margin-bottom: -10px;
+            margin-top: -25px;
+        }
+
 
     </style>
 
@@ -160,7 +258,7 @@
                     <option value="" disabled selected>Select Table</option>
                     <option value="all">All</option>
                     {% for table in tables %}
-                        <option value={{ table.table_name|cut:" " }}>
+                        <option value="{{ table.table_name }}">
                             {{ table.table_name }}
                         </option>
                     {% endfor %}
@@ -211,7 +309,9 @@
                 {% endif %}
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
-                        <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
+
+                        <table id="user_lists" class="display nowrap main-table" cellspacing="0" width="100%"
+                               data-url="{% url 'get_user_data_json' %}">
                             <thead>
                             <tr>
                                 <th></th>
@@ -228,16 +328,16 @@
                                 <th>Partial/Completely</th><!-- Payment Status -->
 
                                 <th>Registration Amount</th>
-                                <th>Add Room no</th>
                                 <th>Amount Due</th>
                                 <!-- <th>Registration Date </th> -->
                                 <!-- <th>Coupon</th> -->
+                                <th>Buy Friday Coupon</th>
                                 <th>Room</th>
 
                                 <th>Hotel Name</th>
                                 <th>Room Type</th>
-                                <th>Checkin Date</th>
-                                <th>Checkout Date</th>
+                                {#                                <th>Checkin Date</th>#}
+                                {#                                <th>Checkout Date</th>#}
                                 <th>No of Nights</th>
                                 <th>Hotel Amount Paid</th>
                                 <th>Hotel Dues</th>
@@ -256,155 +356,144 @@
                             </thead>
                             <tbody>
 
-                            {% for user in users %}
-
-                                <tr>
-                                    <td></td>
-                                    {% ifequal request.get_full_path "/users/" %}
-                                        <td>
-                                            <label class="switch">
-                                                <input type="checkbox"
-                                                       {% if user.is_attending_event %}checked="checked"{% endif %}class="id_on_off"
-                                                       data-id="{{ user.id }}">
-                                                <span class="slider round"></span>
-                                            </label>
-                                        </td>
-                                    {% endifequal %}
-
-                                    <td>
-                                        {{ user.event_user.first_name }} {{ user.event_user.last_name }}
-                                    </td>
-
-                                    <td> {{ user.table.table_name|cut:" " }}</td>
-                                    <td> {{ user.qrcode }} </td>
-                                    <td> {{ user.event_user.mobile }} </td>
-                                    <td> {{ user.event_user.email }}</td>
-
-                                    <td>
-                                        {{ user.get_event_status_display }}
-                                        {% if not user.event_status == "Couple" %}
-                                            {% if not user.event_status == "Couple_Informal" %}
-                                                <a href="{% url 'upgrade_reg_status' user.id %}">
-                                                    Upgrade
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    </td>
-                                    <td> {{ user.id|payment_status }}</td>
-
-                                    <td> {{ user.amount_paid }}</td>
-
-                                    <td>
-                                        {% if user.hotel.all %}
-                                            {% if user.hotel.first.room_number %}
-                                                {{ user.hotel.first.room_number }}
-                                                <br>
-                                                <a href="{% url 'add_room_no' user.id %}">Edit room number</a>
-                                                <!-- Update room no -->
-                                            {% elif user.hotel %}
-                                                <a href="{% url 'add_room_no' user.id %}">Add room number</a>
-                                            {% endif %}
-                                        {% else %}
-                                            <p>No Hotels Booked</p>
-                                        {% endif %}
-                                    </td>
-
-                                    <td> {{ user.due_amount }}
-                                        {% if user.due_amount %}
-                                            &nbsp|&nbsp
-                                            <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
-                                        {% endif %}
-                                    </td>
-
-                                    <td style="border-right: 3px solid green; "> <!-- Room --></td>
-                                    <td>
-                                        {% if user.hotel.all %}
-
-                                            {{ user.hotel_name }}
-                                            <br>
-                                            <a href="/update_hotel/{{ user.id }}"> Update Booking </a>
-                                        {% else %}
-                                            -<br>
-                                            <a href="/update_hotel/{{ user.id }}"> Book Hotel </a>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.hotel.all %}
-                                            {{ user.hotel_room_type }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.hotel.all %}
-                                            {{ user.checkin_date|date }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.hotel.all %}
-                                            {{ user.checkout_date|date }}
-                                        {% endif %}
-                                    </td>
-
-                                    <td>{{ user.id |no_of_night }}</td>
-                                    <td> {{ user.id| get_hotel_rent }}</td>
-                                    {% if not user.hotel_due %}
-                                        <td>-</td>
-                                    {% else %}
-                                        <td> {{ user.hotel_due }}&nbsp|&nbsp
-                                            <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a>
-                                        </td>
-
-                                    {% endif %}
-                                    <td style="border-right: 3px solid green; "></td>
-                                    <!-- TOTAL PAYMENT  -->
-                                    <td>{{ user.contributed_amount }}</td>
-                                    <td>{{ user.total_paid }}</td>
-                                    <td><!--Total Due --> {{ user.total_due }}</td>
-                                    <td>
-                                        {% encrypt_id user.id as encrypted_id %}
-                                        <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
-                                    <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
-                                    {% if user.is_active %}
-                                        <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
-                                    {% else %}
-                                        <td><a href="{% url 'add_to_registration' user.id %}">Add to Registration</a>
-                                        </td>
-                                    {% endif %}
-                                </tr>
-
-                            {% endfor %}
-
-                            <tr>
-                                <td style="display: none;"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            <td></td>
-                                <td>{{ total_paid_registration }}</td>
-                                <td></td>
-                                <td>{{ total_registration_due }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>{{ total_paid_hotel }}</td>
-                                <td>{{ total_hotel_due }}</td>
-                                <td></td>
-                                <td>{{ total_contributions }}</td>
-                                <td>{{ total_amount_paid }}</td>
-                                <td>{{ total_due }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
                             </tbody>
                         </table>
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close close_or_cancel_button" data-dismiss="modal">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title">Purchase Coupon</h4>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <table class="table borderless">
+                                            <tbody>
+                                            <form method="post" id="id_purchase_friday_coupon"
+                                                  action="{% url 'friday_coupon_booking' %}">
+                                                {% csrf_token %}
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <h2>Friday Lunch <i class="fa fa-calendar"
+                                                                            aria-hidden="true"></i>
+                                                        </h2>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h4>No of users</h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" id="id_user_id_hidden" name="user_id">
+                                                        <input type="hidden" id="id_user_type">
+                                                        <input type="button" class="operator-style"
+                                                               onclick="decrementValue()" value="-"/>
+                                                        <input type="text" class="number-textbox" id="number"
+                                                               name='no_of_users_friday' maxlength="3"
+                                                               value="0" readonly/>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="incrementValue()" value="+"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h4>kids</h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="decrementValue1()" value="-"/>
+                                                        <input type="text" class="number-textbox" id="number1"
+                                                               name='no_of_kids_friday' value="0" readonly/>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="incrementValue1()" value="+"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <h2>Kids Coupon <i class="fa fa-child" aria-hidden="true"></i>
+                                                        </h2>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h4>Kids coupon for event:</h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="decrementValue2()" value="-"/>
+                                                        <input type="text" class="number-textbox" id="number2"
+                                                               name='no_of_kids_event' value="0" readonly/>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="incrementValue2()" value="+"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <h2>Payment <i class="fa fa-money" aria-hidden="true"></i></h2>
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h4>Total Amount:</h4>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" id='id_total_amount_coupon'
+                                                                   name='total_amount_paid_coupon' class="form-control"
+                                                                   readonly>
+                                                        </div>
+                                                        <div class="purchase_error" style="display: none ;color:red">Amount Cannot
+                                                            be Null
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h4><b>Payment Mode</b></h4>
+                                                    </td>
+                                                    <td>
+                                                        <label> <input id="radioId_1" type="radio" class="payment-mode"
+                                                                       name="payment"
+                                                                       value="POS"> <span class="radio-change"></span>
+                                                            POS</label>
+                                                        <label><input id="radioId_2" type="radio" class="payment-mode"
+                                                                      name="payment"
+                                                                      value="card"> <span class="radio-change"></span>
+                                                            Card</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <button type="submit" id="buy_button"
+                                                                class=" btn btn-default close-button"
+                                                                style="float:right;width: 77px;">Buy
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button"
+                                                                class="btn btn-danger close_or_cancel_button"
+                                                                data-dismiss="modal">
+                                                            Cancel
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -415,6 +504,72 @@
 </div>
 </div>
 <script type="text/javascript">
+    function incrementValue() {
+        var usertype = $('#id_user_type').val();
+        if (usertype === 'Stag' || usertype === 'Stag_Informal') {
+            var value = parseInt(document.getElementById('number').value, 1);
+        }
+        else {
+            var value = parseInt(document.getElementById('number').value, 2);
+        }
+        value = isNaN(value) ? 0 : value;
+        value++;
+        document.getElementById('number').value = value;
+    }
+
+    function decrementValue() {
+        var value = parseInt(document.getElementById('number').value, 0);
+        value = isNaN(value) ? 0 : value;
+        if (value != 0) {
+            value--;
+        }
+
+        document.getElementById('number').value = value;
+    }
+
+    function incrementValue1() {
+        var value = parseInt(document.getElementById('number1').value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        document.getElementById('number1').value = value;
+    }
+
+    function decrementValue1() {
+        var value = parseInt(document.getElementById('number1').value, 10);
+        value = isNaN(value) ? 0 : value;
+        if (value != 0) {
+            value--;
+        }
+
+        document.getElementById('number1').value = value;
+    }
+
+    function incrementValue2() {
+        var value = parseInt(document.getElementById('number2').value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        document.getElementById('number2').value = value;
+    }
+
+    function decrementValue2() {
+        var value = parseInt(document.getElementById('number2').value, 10);
+        value = isNaN(value) ? 0 : value;
+        if (value != 0) {
+            value--;
+        }
+        document.getElementById('number2').value = value;
+    }
+
+    jQuery(document).ready(function () {
+        jQuery(".main-table").clone(true).appendTo('#table-scroll').addClass('clone');
+        $('.close_or_cancel_button').on('click', function () {
+
+            $("#id_purchase_friday_coupon").trigger('reset');
+        })
+
+
+    });
+
     function openNav() {
         document.getElementById("myNav").style.height = "100%";
     }
@@ -425,12 +580,22 @@
 
 
     $(document).ready(function () {
+
+        $('body').on('click', '#id_purchase', function () {
+            var userid = $(this).data('id');
+            var usertype = $(this).data('usertype');
+            $('#id_user_id_hidden').val(userid);
+            $('#id_user_type').val(usertype);
+            $('#myModal').modal('show');
+        });
+
         function printData() {
             var divToPrint = document.getElementById("printTable");
             newWin = window.open("");
             newWin.document.write(divToPrint.outerHTML);
             newWin.print();
             newWin.close();
+
         }
 
         $('#printPage').on('click', function () {
@@ -438,13 +603,32 @@
         })
 
         var t = $('#user_lists').DataTable({
-            "order": [[0, 'asc']],
+            ajax: '/get-user-data-json{{ request.get_full_path }}',
+            order: [[1, 'asc']],
             paging: false,
-            "info": false,
-            // responsive: true,
+            info: false,
             scrollX: true,
             fixedHeader: true,
             scrollCollapse: true,
+            oLanguage: {sProcessing: "<div id='loader'></div>"},
+            processing: true,
+            serverSide: true,
+        });
+
+        $('.dataTables_scrollBody').on('scroll', function () {
+            if ($('#user_lists th:nth-child(3)').offset().left < 10) {
+                if (!$('#user_lists tr').hasClass('fixed-tr')) {
+                    $('#user_lists tr').addClass('fixed-tr')
+                    $('#user_lists th:nth-child(3)').addClass('fixed-th')
+                    $('#user_lists td:nth-child(3)').addClass('fixed-td')
+                }
+            }
+            else {
+                $('#user_lists tr').removeClass('fixed-tr')
+                $('#user_lists th:nth-child(3)').removeClass('fixed-th')
+                $('#user_lists td:nth-child(3)').removeClass('fixed-td')
+
+            }
         });
 
 
@@ -474,8 +658,17 @@
     });
 
     $('#seachDataTable').keyup(function () {
-        var table = $('#user_lists').DataTable();
+        var table = $('#user_lists').DataTable()
+
+        table.settings()[0].oFeatures.bServerSide = false;
+        table.settings()[0].ajax = false;
+
         table.search($(this).val()).draw();
+
+        // here activate it again
+        table.settings()[0].oFeatures.bServerSide = true;
+
+
     })
 
 
@@ -486,12 +679,20 @@
             location.reload();
         }
         else {
+            // here temporary disable ajax
+            table.settings()[0].oFeatures.bServerSide = false;
+            table.settings()[0].ajax = false;
+
             regExSearch = '"' + selected_table + '"';
+            console.log('ff', regExSearch);
             table.column(3).search(regExSearch).draw();
+
+            // here activate it again
+            table.settings()[0].oFeatures.bServerSide = true;
         }
     });
 
-    $('.id_on_off').on('change click', function () {
+    $('body').on('change', '.id_on_off', function () {
 
         var user_id = $(this).data("id");
         var isChecked = $(this).is(':checked');
@@ -511,6 +712,54 @@
             }
         });
     });
+
+    function incrementDecrementAjax() {
+        var users_no = $('#number').val();
+        var kids_no = $('#number1').val();
+        var kids_coupon_no = $('#number2').val();
+        var user_type = $('#id_user_type').val();
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'increment_decrement_ajax' %}",
+            dataType: 'json',
+            data: {'users_no': users_no, 'kids_no': kids_no, 'kids_coupon_no': kids_coupon_no, 'user_type': user_type},
+            success: function (data) {
+                $('#id_total_amount_coupon').val(data.total_amount)
+                errorPurchaseShow();
+
+            }
+        });
+    }
+
+    $('.operator-style').on('click', function () {
+        incrementDecrementAjax();
+
+
+    });
+
+    function errorPurchaseShow(){
+        var amount_coupon_purchase = $('#id_total_amount_coupon').val();
+
+        if ((amount_coupon_purchase == 0 || amount_coupon_purchase == '')) {
+
+            $('#buy_button').attr("disabled", true);
+            $(".purchase_error").css("display", "block");
+        }
+        else {
+            $('#buy_button').attr("disabled", false);
+            $('.purchase_error').css('display', 'none');
+
+        }
+
+
+    }
+
+    $('#buy_button').on('click', function () {
+        errorPurchaseShow();
+
+    })
+
+
 </script>
 </body>
 </html>

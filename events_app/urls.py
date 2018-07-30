@@ -65,6 +65,9 @@ urlpatterns = [
 
     url(r'^list-of-attendees/', ListOfAttendees.as_view(), name='list_of_attendees'),
     url(r'^adding-of-event-attendees/', AjaxAttendeesAddingView.as_view(), name='adding_of_event_attendees'),
+    url(r'^get-user-data-json/', UserListJson.as_view(), name='get_user_data_json'),
+    url(r'^increment-decrement-ajax/', IncrementDecrementAmountAjaxView.as_view(), name='increment_decrement_ajax'),
+    url(r'^friday-coupon-booking/', FridayDinnerBookingView.as_view(), name='friday_coupon_booking'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('letsgonuts_api.urls')),
     url(r'^user/', include('user_registration.urls')),

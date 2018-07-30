@@ -139,7 +139,6 @@ def get_roomtype_count(booked_room_type, date=None):
 
 @register.filter
 def hotels_booked_two_nights(hotels_book_date):
-
     hotels_book = BookedHotel.objects.filter((Q(checkin_date__lte=hotels_book_date)),
                                              registered_users__is_active=True).count()
     return hotels_book
@@ -162,3 +161,13 @@ def get_room_count(booked_room_type, date):
 @register.assignment_tag
 def encrypt_id(user_id):
     return encoded_id(user_id)
+
+
+# @register.filter
+# def event_attendees_list(attendance_list):
+#     x= '<td> {{ user.table.table_name|cut:" " }}</td>\
+#                                     <td> '+ qrcode  +'</td>\
+#                                     <td> {{ user.event_user.mobile }} </td>\
+#                                     <td> {{ user.event_user.email }}</td>'
+#     pass
+

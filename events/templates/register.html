@@ -625,7 +625,7 @@
 
 
     $("#id_confirm_register").on('click', function () {
-        {#var hotel_name = $('#id_hotel_name').val();#}
+        var hotel_name = $('#id_hotel_name').val();
         var hotel_rent = $('#id_room_rent').val();
         var check_in = $('#checkIn').val();
         var check_out = $('#checkOut').val();
@@ -816,6 +816,7 @@
 
 
     $(document).ready(function () {
+        room_type = $('#room_type').html();
         var memberType = $('#memberType').val();
         $('#id_member_type').val(memberType);
         $("#room_type option").hide();
@@ -823,8 +824,9 @@
              clearHotelRelatedFields();
             $('#room_type').val('');
             var hotel = $(this).val();
-            $("#room_type option").hide();
-            $("#room_type option[data-hotel=" + hotel + "]").show();
+            $('#room_type').html(room_type);
+            $("#room_type :not(option[data-hotel=" + hotel + "])").remove();
+            $('#room_type').prepend('<option selected="selected">--- select type ---</option>')
         })
 
     });

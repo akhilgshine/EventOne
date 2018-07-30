@@ -114,7 +114,7 @@
                                 <input type="hidden" name="room_type" value="{{ hotel_obj.room_type.id }}">
                                 <select name="room_type_sel" class="form-control" id="id_room_type"
                                         onchange="selectRoomType(this)" required="">
-                                    <option value="">--- select type ---</option>
+                                    <option value="0">--- select type ---</option>
                                     {% for room in room_types %}
                                         <option value="{{ room.id }}:{{ room.net_rate }}"
                                                 {% if  not room.rooms_available %}
@@ -159,7 +159,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-4" for="id_room_rent"> Room Number  :</label>
+                            <label class="control-label col-sm-4" for="id_room_rent"> Room Number :</label>
                             <div class="col-sm-8">
                                 {{ form.room_number }}
                             </div>
@@ -275,22 +275,43 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script type="text/javascript">
-
+    var room_type, room_type_val;
     $(document).ready(function () {
 
+        room_type_val =  $('#id_room_type').val();
 
         var amount_to_be_paid = $('#rent_total').val();
         var initial_due = $('#id_tottal_rent').val();
         var initial_paid = $('#id_current_paid').val();
         var rent_total = $('#rent_total').val();
         $("#id_room_type option").hide();
-        $('#id_hotel').on('change', function () {
 
+        room_type = $('#id_room_type').html();
+
+        $('#id_hotel').on('change', function () {
             var hotel = $(this).val();
+            if(!hotel){
+                hotel=0
+            }
+
+            console.log(hotel, '22222222222222222222222222')
             $('#id_room_type').val('');
-            $("#id_room_type option").hide();
-            $("#id_room_type option[data-hotel=" + hotel + "]").show();
-        })
+            $('#id_room_type').html(room_type)
+            $("#id_room_type :not(option[data-hotel=" + hotel + "])").remove();
+            $('#id_room_type').prepend('<option selected="selected">--- select type ---</option>')
+            $('#id_room_type option').show()
+            clearHotelFields();
+
+        });
+
+
+
+        var hotel = $('#id_hotel').val();
+        $('#id_room_type').val('');
+        $('#id_room_type').html(room_type)
+        $("#id_room_type :not(option[data-hotel=" + hotel + "])").remove();
+        $('#id_room_type').prepend('<option selected="selected">--- select type ---</option>')
+        $('#id_room_type option').show()
 
 
         $('#hotel_amount_final').text($('#id_tottal_rent').val());
@@ -519,13 +540,9 @@
 
 
     });
+
+
     {% if hotel_obj %}
-        $('#id_hotel').on('change', function () {
-            var hotel = $(this).val();
-            $('#id_room_type').val('');
-            $("#id_room_type option").hide();
-            $("#id_room_type option[data-hotel=" + hotel + "]").show();
-        })
         $("#id_hotel").val('{{hotel_obj.hotel.id}}');
         $("#id_room_number").val('{{hotel_obj.room_number}}');
         {% if hotel_obj.registered_users.hotel_due %}

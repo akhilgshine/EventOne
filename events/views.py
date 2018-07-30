@@ -6,13 +6,14 @@ import datetime
 import json
 import re
 import traceback
+from urlparse import urlparse
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse_lazy, reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.views.generic import (DeleteView, FormView, ListView, TemplateView,
@@ -22,7 +23,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from events.forms import *
 from events.templatetags import template_tags
 from events.utils import (decode_id, hotelDetails, send_email,
-                          send_sms_message, set_status, track_payment_details)
+                          send_sms_message, set_status, track_payment_details, create_user_coupon_set,
+                          create_friday_lunch_coupon)
 
 
 # from xhtml2pdf import pisa
@@ -38,14 +40,17 @@ class SuperUserMixin(AccessMixin):
             return self.handle_no_permission()
         return super(SuperUserMixin, self).dispatch(request, *args, **kwargs)
 
+
 class RestaurantUserMixin(AccessMixin):
     """
     CBV mixin which verifies that the current user is Restaurant User.
     """
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).exists():
             return self.handle_no_permission()
         return super(RestaurantUserMixin, self).dispatch(request, *args, **kwargs)
+
 
 class IndexPage(TemplateView):
     template_name = 'user_registration/index_main.html'
@@ -90,7 +95,7 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
-        
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -99,7 +104,7 @@ class LoginView(View):
             if user and user.is_superuser and user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse('register_event'))
-            
+
             elif user and user.is_active:
                 try:
                     user_group = user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).get()
@@ -142,6 +147,8 @@ class RestaurantLoginView(View):
 
             else:
                 return render(self.request, self.template_name, {'form': form})
+
+
 """
     Register View
     """
@@ -323,6 +330,10 @@ class RegisterEvent(SuperUserMixin, LoginRequiredMixin, TemplateView):
                 event_reg.amount_paid = amount_paid
                 event_reg.t_shirt_size = t_shirt_size
                 event_reg.save()
+                if event_reg.event_status == 'Couple' or event_reg.event_status == 'Couple_Informal':
+                    [create_user_coupon_set(event_reg.id) for _ in range(2)]
+                else:
+                    create_user_coupon_set(event_reg.id)
                 if amount_paid:
                     track_payment_details({'reg_event': event_reg, 'mode_of_payment': event_reg.payment,
                                            'amount': event_reg.amount_paid, 'type': payment_event_type,
@@ -688,7 +699,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                 writer.writerow(
                     ['', '', '',
                      '',
-                     '', '', '', '',total_paid_registration,
+                     '', '', '', '', total_paid_registration,
                      total_registration_due, '',
                      '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
                      total_contributions, total_amount_paid,
@@ -730,7 +741,6 @@ class ListUsers(LoginRequiredMixin, ListView):
         return context
 
 
-
 class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
     """
     Return the list of registered users
@@ -739,21 +749,19 @@ class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
     queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
 
     def get_queryset(self):
-        
         self.queryset = super(ListRegisteredUsers, self).get_queryset()
-        
+
         user_group = self.request.user.groups.all().first()
-        
+
         relevant_users = BookedHotel.objects.filter(
             registered_users__is_active=True,
-            hotel__name=user_group.name).values_list('registered_users__id',flat=True)
-        
+            hotel__name=user_group.name).values_list('registered_users__id', flat=True)
+
         self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
 
         return self.queryset
 
     def get_context_data(self, **kwargs):
-
         context = super(ListRegisteredUsers, self).get_context_data(**kwargs)
         registered_users = self.get_queryset()
         context['users'] = registered_users
@@ -1000,7 +1008,7 @@ class UpdateHotelView(LoginRequiredMixin, UpdateView):
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
         else:
-            message_hotel = "You have successfully updated room in" + + hotel_obj.hotel.name + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
+            message_hotel = "You have successfully updated room in" + hotel_obj.hotel.name + " for the event, Area 1 Agm of Round Table India hosted by QRT85 'Lets Go Nuts'. You have choosen : '" + str(
                 hotel_obj.room_type) + "' "
             message_hotel += " And your total rent is Rs." + str(hotel_obj.tottal_rent) + "/-"
 
@@ -1523,26 +1531,27 @@ class AddTShirtView(UpdateView):
     template_name = 't_shirt_update.html'
     success_url = reverse_lazy('list_users')
 
+
 class AddRoomNo(UpdateView):
     model = BookedHotel
     form_class = AddRoomNoForm
     template_name = 'add_room_no.html'
     success_url = reverse_lazy('list_users')
 
-
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
-        
+
         try:
             registered_user = RegisteredUsers.objects.get(pk=registered_user)
             booked_hotel = BookedHotel.objects.get(registered_users=registered_user)
-        
+
         except RegisteredUsers.DoesNotExist:
             registered_user = None
         except BookedHotel.DoesNotExist:
             booked_hotel = None
 
         return booked_hotel
+
 
 class GetHotelBookingDetailsView(TemplateView):
 
@@ -1597,3 +1606,244 @@ class AjaxAttendeesAddingView(TemplateView):
             return HttpResponse(json.dumps({'status': True, 'message': 'Success'}))
         else:
             return HttpResponse(json.dumps({'status': False, 'message': 'Please Pay the Pending Dues'}))
+
+
+class UserListJson(ListView):
+    queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
+
+    def get_queryset(self):
+        self.queryset = super(UserListJson, self).get_queryset()
+        if self.request.GET.get('is_active') == 'False':
+            self.queryset = RegisteredUsers.objects.filter(is_active=False)
+        elif self.request.GET.get('hotel') == 'True':
+            hotels = BookedHotel.objects.filter(registered_users__is_active=True).values_list('registered_users__id',
+                                                                                              flat=True)
+            hotel_booked_users = self.queryset.filter(id__in=hotels)
+            self.queryset = hotel_booked_users
+        elif self.request.GET.get('stag') == 'True':
+            self.queryset = self.queryset.filter(event_status='Stag')
+        elif self.request.GET.get('couple') == 'True':
+            self.queryset = self.queryset.filter(event_status='Couple')
+        elif self.request.GET.get('complete') == 'True':
+            all_users = RegisteredUsers.objects.filter(is_active=True)
+            full_paid_relevant_users = []
+            for user in all_users:
+                completely_paid = template_tags.payment_status(user.id)
+                if completely_paid == 'Complete':
+                    full_paid_relevant_users.append(user.id)
+            self.queryset = self.queryset.filter(id__in=full_paid_relevant_users)
+        elif self.request.GET.get('partial') == 'True':
+            all_users = RegisteredUsers.objects.filter(is_active=True)
+            partial_paid_relevant_users = []
+            for users in all_users:
+                partially_paid = template_tags.payment_status(users.id)
+                if partially_paid == 'Partial':
+                    partial_paid_relevant_users.append(users.id)
+            self.queryset = self.queryset.filter(id__in=partial_paid_relevant_users)
+        elif self.request.GET.get('date') == 'aug3':
+
+            hotels = BookedHotel.objects.filter(Q(checkin_date__lte='2018-08-03'),
+                                                registered_users__is_active=True, ).values_list('registered_users__id',
+                                                                                                flat=True)
+            self.queryset = self.queryset.filter(id__in=hotels)
+        elif self.request.GET.get('date') == 'aug4':
+            relevant_users = BookedHotel.objects.filter(Q(checkin_date__lte='2018-08-04'),
+                                                        registered_users__is_active=True).values_list(
+                'registered_users__id',
+                flat=True)
+            self.queryset = self.queryset.filter(id__in=relevant_users)
+        elif self.request.GET.get('room_type'):
+
+            type = self.request.GET.get('room_type')
+            if self.request.GET.get('date'):
+                try:
+                    room_type = RoomType.objects.get(room_type=type)
+                except RoomType.DoesNotExist:
+                    room_type = None
+                relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, room_type=room_type,
+                                                            checkin_date__lte=self.request.GET.get('date')).values_list(
+                    'registered_users__id', flat=True)
+                self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+            else:
+                try:
+                    room_type = RoomType.objects.get(room_type=type)
+                except RoomType.DoesNotExist:
+                    room_type = None
+                relevant_users = BookedHotel.objects.filter(registered_users__is_active=True,
+                                                            room_type=room_type).values_list('registered_users__id',
+                                                                                             flat=True)
+                self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+        elif self.request.GET.get('hotel_room_type'):
+            hotel = self.request.GET.get('hotel_room_type')
+            date = self.request.GET.get('date')
+            relevant_users = BookedHotel.objects.filter(registered_users__is_active=True, checkin_date__lte=date,
+                                                        hotel=hotel).values_list(
+                'registered_users__id',
+                flat=True)
+            self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
+        elif self.request.GET.get('attending') == 'True':
+            self.queryset = self.queryset.filter(is_attending_event=True)
+        elif self.request.GET.get('attending') == 'False':
+            self.queryset = self.queryset.filter(is_attending_event=False)
+        else:
+            self.queryset = self.queryset.filter(is_active=True)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+        users = self.get_queryset()
+        total_paid_registration = users.aggregate(Sum('amount_paid')).values()[0] or 0.00
+        total_contributions = users.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+
+        total_registration_due = sum(item.due_amount for item in users)
+        total_hotel_due = sum(item.hotel_due for item in users)
+        total_due = total_registration_due + total_hotel_due
+
+        registered_users_id = users.values_list('id', flat=True)
+
+        total_paid_hotel = \
+            BookedHotel.objects.filter(registered_users__is_active=True,
+                                       registered_users_id__in=registered_users_id).aggregate(
+                Sum('tottal_rent')).values()[
+                0] or 0.00
+
+        total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
+        users_data = []
+
+        count = 0
+        for user in users:
+            user_data = []
+            count += 1
+            payment_status = template_tags.payment_status(user.id)
+            if user.hotel_room_type:
+                room_type = user.hotel_room_type.room_type
+            else:
+                room_type = None
+            if not user.event_status == "Couple" and not user.event_status == "Couple_Informal":
+                event_status = '%s &nbsp|&nbsp<a href="%s">Upgrade</a>' % (user.get_event_status_display(),
+                                                                           reverse_lazy('upgrade_reg_status',
+                                                                                        kwargs={'pk': user.id}))
+            else:
+                event_status = user.get_event_status_display()
+
+            if user.hotel.all():
+                hotel_name = '%s<br><a href="%s"> Update Booking </a>' % (
+                    user.hotel_name, reverse_lazy('update_hotel_view',
+                                                  kwargs={
+                                                      'pk': user.id}))
+            else:
+                hotel_name = '-<br><a href="%s"> Book Hotel </a>' % (reverse_lazy('update_hotel_view',
+                                                                                  kwargs={'pk': user.id}))
+
+            if user.due_amount:
+                registration_due = '%s &nbsp|&nbsp<a href="%s">Pay Pending</a>' % (
+                    user.due_amount, reverse_lazy('due_payment_update',
+                                                  kwargs={'pk': user.id}))
+            else:
+                registration_due = 0
+
+            if user.hotel_due:
+                hotel_due = '%s&nbsp|&nbsp<a href="%s">Pay Pending</a>' % (
+                    user.hotel_due, reverse_lazy('hotel_due_payment',
+                                                 kwargs={'pk': user.hotel.all()[0].id}))
+            else:
+                hotel_due = 0
+            encrypt_id = template_tags.encrypt_id(user.id)
+            print_coupon = '<a href="%s">Click to Print Coupon</a>' % (reverse_lazy('invoice_view',
+                                                                                    kwargs={'pk': encrypt_id}))
+            edit = '<a href="%s">Edit</a>' % (reverse_lazy('edit-registration',
+                                                           kwargs={'pk': user.event_user.id}))
+            if user.is_active:
+                add_or_delete = '<a href="%s">Delete</a>' % (reverse_lazy('delete_user',
+                                                                          kwargs={'pk': user.id}))
+            else:
+                add_or_delete = '<a href="%s">Add to Registration</a>' % (reverse_lazy('add_to_registration',
+                                                                                       kwargs={'pk': user.id}))
+            buy_coupon = '<a href="javascript:void(0)" id="id_purchase" data-id=%s data-usertype=%s>Purchase Coupon</a>' % (
+                user.id, user.event_status)
+            html_data_name = None
+            user_data.extend([count])
+            url = request.get_full_path()
+            url = re.sub(r'draw=.*', '', url)
+            if url.strip('?') == "/get-user-data-json/users/":
+
+                if user.is_attending_event:
+                    checked_status = 'checked="checked"'
+                else:
+                    checked_status = ''
+                html_data_name = \
+                    '<td> \
+                    <label class="switch"> \
+                    <input type="checkbox" {0} class="id_on_off" \
+                    data-id="{1}"> \
+                    <span class="slider round"></span> \
+                    </label> \
+                    </td>'.format(checked_status, user.id)
+                user_data.extend([html_data_name])
+
+            no_of_night = template_tags.no_of_night(user.id)
+            user_data.extend([user.event_user.first_name + ' ' + user.event_user.last_name,
+                              user.event_user.table.table_name,
+                              user.qrcode, user.event_user.mobile, user.event_user.email, event_status, payment_status,
+                              user.amount_paid, registration_due, buy_coupon, '', hotel_name, room_type, no_of_night,
+                              user.hotel_rent, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
+                              print_coupon,
+                              edit, add_or_delete])
+
+            users_data.append(user_data)
+        amount_datas = ['', '', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+                        '',
+                        '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
+                        '',
+                        '', '', '']
+        users_data.append(amount_datas)
+        return JsonResponse({'data': users_data})
+
+
+class IncrementDecrementAmountAjaxView(View):
+
+    def get(self, request, *args, **kwargs):
+        users_no = request.GET.get('users_no')
+        kids_no = request.GET.get('kids_no')
+        kids_coupon_no = request.GET.get('kids_coupon_no')
+        user_type = request.GET.get('user_type')
+        user_amount = self.get_friday_user_amount(user_type) * int(users_no)
+        kids_amount = 0
+        kids_coupon_amount = 0
+        if kids_no:
+            user_type = KID
+            kids_amount = self.get_friday_user_amount(user_type) * int(kids_no)
+        if kids_coupon_no:
+            kids_coupon_amount = KidsCouponAmount.objects.get().amount * int(kids_coupon_no)
+
+        total_amount = user_amount + kids_amount + kids_coupon_amount
+        return HttpResponse(json.dumps({'total_amount': total_amount}))
+
+    def get_friday_user_amount(self, user_type):
+        amount_paid = FridayDinnerAmount.objects.get(user_type=user_type).amount
+        return amount_paid
+
+
+class FridayDinnerBookingView(TemplateView):
+    success_url = '/users/'
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.POST.get('user_id')
+        no_of_users_friday = request.POST.get('no_of_users_friday')
+        no_of_kids_friday = request.POST.get('no_of_kids_friday')
+        no_of_kids_event = request.POST.get('no_of_kids_event')
+        total_amount_paid_coupon = request.POST.get('total_amount_paid_coupon')
+        payment = request.POST.get('payment')
+        registered_user = RegisteredUsers.objects.get(id=user_id)
+        purchase_coupon = CouponPurchase.objects.create(registered_users=registered_user,
+                                                        adult_friday_lunch=no_of_users_friday,
+                                                        kids_friday_lunch=no_of_kids_friday,
+                                                        kids_coupon=no_of_kids_event,
+                                                        total_amount_paid=total_amount_paid_coupon,
+                                                        payment_mode=payment)
+        if no_of_users_friday:
+            [create_friday_lunch_coupon(registered_user.id) for _ in range(int(no_of_users_friday))]
+        if no_of_kids_friday:
+            [create_friday_lunch_coupon(registered_user.id) for _ in range(int(no_of_kids_friday))]
+        if no_of_kids_event:
+            [create_user_coupon_set(registered_user.id) for _ in range(int(no_of_kids_event))]
+        return HttpResponseRedirect(self.success_url)
