@@ -20,7 +20,7 @@ from rest_framework.viewsets import ModelViewSet
 from events.models import (BookedHotel, Event, EventDocument, EventUsers,
                            Hotel,
                            OtpModel, RegisteredUsers, RoomType,
-                           Table, IDDocumentsPhoto, UserFoodCoupon, FoodType)
+                           Table, IDDocumentsPhoto, UserFoodCoupon, FoodType, ProgramSchedule)
 from events.utils import decode_id, create_user_coupon_set
 
 from .serializer import (EventDocumentSerializer, FilterNameSerializer,
@@ -29,7 +29,7 @@ from .serializer import (EventDocumentSerializer, FilterNameSerializer,
                          OtpPostSerializer, RegisteredUsersSerializer,
                          RegisterEventSerializer, RoomTypeSerializer,
                          TableListSerializer, UserLoginSerializer, CouponUserScanSerializer,
-                         ScannedCouponDetailsSerializer)
+                         ScannedCouponDetailsSerializer, ProgramScheduleSerializer)
 
 
 # Create your views here.
@@ -490,3 +490,9 @@ class ScannedCouponDetails(ModelViewSet):
         else:
             self.queryset = UserFoodCoupon.objects.all().filter(is_used=True, type=registered_user_food_type)
             return self.queryset
+
+
+class ProgramScheduleDetails(ModelViewSet):
+    queryset = ProgramSchedule.objects.all()
+    serializer_class = ProgramScheduleSerializer
+    permission_classes = [AllowAny,]

@@ -501,8 +501,8 @@ class KidsCouponAmount(models.Model):
 
 class PartialPayment(models.Model):
     registered_users = models.ForeignKey('events.RegisteredUsers', null=True, blank=True,
-                             related_name='get_partial_payment')
-    amount_due = models.CharField(max_length=255,null=True,blank=True)
+                                         related_name='get_partial_payment')
+    amount_due = models.CharField(max_length=255, null=True, blank=True)
     mode_of_payment = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
     receipt_number = models.CharField(blank=True, null=True, max_length=100)
     receipt_file = models.FileField(blank=True, null=True, upload_to='payment_reciepts')
@@ -511,3 +511,11 @@ class PartialPayment(models.Model):
         return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)
 
 
+class ProgramSchedule(models.Model):
+    program_name = models.CharField(max_length=255, null=True, blank=True)
+    program_description = models.CharField(max_length=255, null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+    program_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.program_name

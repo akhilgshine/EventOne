@@ -6,7 +6,7 @@ from events.models import (MEMBER_CHOICES, STATUS_CHOICES, BookedHotel,
                            EventDocument, EventUsers,
                            Hotel, ImageRoomType,
                            RegisteredUsers, RoomType, Table, IDDocumentsPhoto, DAY_TYPE_CHOICES, TIME_TYPE_CHOICES,
-                           UserFoodCoupon)
+                           UserFoodCoupon, ProgramSchedule)
 from user_registration.validators import validate_phone
 
 
@@ -229,3 +229,9 @@ class ScannedCouponDetailsSerializer(Serializer):
         data['time'] = obj.type.time
         data['used_time'] = obj.used_time
         return data
+
+
+class ProgramScheduleSerializer(ModelSerializer):
+    class Meta:
+        model = ProgramSchedule
+        fields = '__all__'

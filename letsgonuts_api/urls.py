@@ -7,7 +7,8 @@ from .views import (CouponSuccessViewSet, EventDocumentViewSet,
                     OtpPostViewSet,
                     PaymentDetailsViewSet, RegisteredUsersViewSet,
                     RegisterEventViewSet, RoomTypeListViewSet,
-                    TableListViewSet, UserLoginViewSet, UserScanFoodCouponApiViewSet, ScannedCouponDetails)
+                    TableListViewSet, UserLoginViewSet, UserScanFoodCouponApiViewSet, ScannedCouponDetails,
+                    ProgramScheduleDetails)
 
 # app_name = 'letsgonuts_api'
 
@@ -26,6 +27,7 @@ router.register(r'coupon-success', CouponSuccessViewSet, base_name='coupon_succe
 router.register(r'event_documents', EventDocumentViewSet, base_name='event_documents')
 router.register(r'user-coupon-scan', UserScanFoodCouponApiViewSet, base_name='user_coupon_scan')
 router.register(r'coupon-scan-details', ScannedCouponDetails, base_name='coupon_scan_details')
+router.register(r'program-details', ProgramScheduleDetails, base_name='program_details')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
