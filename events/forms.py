@@ -187,14 +187,17 @@ class AddRoomNoForm(forms.ModelForm):
         self.fields['room_type'].widget.attrs['disabled'] = 'disabled'
         self.fields['room_number'].widget.attrs['class'] = 'form-control'
 
-    def clean_hotel(self):
-        if self.instance:
-            return self.instance.hotel
-        else:
-            return self.fields['hotel']
+    def clean(self):
+        """
+        Form validation
+        """
+        cleaned_data = super(AddRoomNoForm, self).clean()
+        room_no = cleaned_data.get('room_number')
 
-    def clean_room_type(self):
-        if self.instance:
-            return self.instance.room_type
-        else:
-            return self.fields['room_type']
+        is_exists = BookedHotel.objects.filter(room_number=room_no).exists()
+
+        if is_exists:
+            raise forms.ValidationError("Select another room")
+
+        return cleaned_data
+        

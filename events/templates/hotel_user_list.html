@@ -37,6 +37,7 @@
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <style>
+       
         body {
             background: url('/static/images/bg-pink-dark.jpg') repeat-y;
             /*min-height: 100%;*/
@@ -54,6 +55,15 @@
             background: none;
         }
 
+        table.dataTable thead tr th {
+            word-wrap: break-word !important;
+            word-break: break-all !important;
+        }
+        table.dataTable tbody tr td {
+            word-wrap: break-word !important;
+            word-break: break-all !important;
+        }
+        
         .dataTables_scrollBody {
             position: relative;
             overflow: auto !important;
@@ -94,23 +104,14 @@
 </head>
 <body id="page-top">
 
-<div id="myNav" class="overlay">
+    <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
-        <a href="{% url 'register_event' %}">Home</a>
-        <a href="/users/">Registered Users</a>
-        <a href="/register/">Register Event </a>
-        <a href="{% url 'un_registered_users' %}">UnRegistered Users</a>
-        <a href="{% url 'proxy-hotel' %}">Proxy Hotel Booking</a>
-        <a href="{% url 'proxy-listing' %}">Proxy Hotel Listing</a>
-        <a href="{% url 'user_registration_list' %}">User Registration Approval</a>
-        <a href="/users/?is_active=False">Deleted Users </a>
-        <a href="{% url 'dash_board' %}">DashBoard </a>
         <a href="/logout/">Logout</a>
     </div>
 </div>
 
-<div class="wraper-user_list" style="margin-bottom: 1%;">
+    <div class="wraper-user_list" style="margin-bottom: 1%;">
 
     <div class="container-fluid bg-3 text-center">
         <div class="row">
@@ -151,20 +152,9 @@
         <div class="row content">
             <div class="col-md-2 user_list_inputs">
                 <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
-                <a href="{{ request.get_full_path }}?csv=true">
+                <a href="{{ request.get_full_path }}&csv=true">
                     <button class='btn btn-primary'>Download</button>
                 </a>
-            </div>
-            <div class="col-md-6 user_list_inputs">
-                <select id="sortTable" class="btn btn-primary btn_sort" place>
-                    <option value="" disabled selected>Select Table</option>
-                    <option value="all">All</option>
-                    {% for table in tables %}
-                        <option value={{ table.table_name|cut:" " }}>
-                            {{ table.table_name }}
-                        </option>
-                    {% endfor %}
-                </select>
             </div>
 
             <div class="col-md-2 user_list_inputs">
@@ -177,7 +167,7 @@
                 </select>
             </div>
 
-            <div class="col-md-2 user_list_inputs">
+            <div class="col-md-4 user_list_inputs">
                 <div class="input-group">
                     <input id="seachDataTable" type="text" class="form-control form_serch" placeholder="Search for...">
                 </div>
@@ -211,7 +201,7 @@
                 {% endif %}
                 <div class="tab-content">
                     <div id="home_user" class="tab-pane fade in active">
-                        <table id="user_lists" class="display nowrap" cellspacing="0" width="100%">
+                        <table id="user_lists" class="display nowrap" cellspacing="0" style="width:100%">
                             <thead>
                             <tr>
                                 <th></th>
@@ -219,39 +209,28 @@
                                     <th>Attending Event</th>
                                 {% endifequal %}
                                 <th>Name</th>
-                                <th>Table</th>
-                                <th>Registration code</th>
+                               
                                 <th>Phone</th>
                                 <th>Email</th>
 
-                                <th>Reg Type</th> <!-- Status -->
                                 <th>Partial/Completely</th><!-- Payment Status -->
 
-                                <th>Registration Amount</th>
-                                <th>Add Room no</th>
-                                <th>Amount Due</th>
                                 <!-- <th>Registration Date </th> -->
                                 <!-- <th>Coupon</th> -->
-                                <th>Room</th>
+                                <th></th>
 
-                                <th>Hotel Name</th>
                                 <th>Room Type</th>
                                 <th>Checkin Date</th>
                                 <th>Checkout Date</th>
-                                <th>No of Nights</th>
+                                
                                 <th>Hotel Amount Paid</th>
                                 <th>Hotel Dues</th>
                                 <th></th>
-                                <th> Contribution</th>
+                                
                                 <th>Total Payment</th>
                                 <th>Total Due</th>
-                                <th>Print Coupon</th>
-                                <th>Edit Registration</th>
-                                {% if is_active %}
-                                    <th> Add to Registration</th>
-                                {% else %}
-                                    <th> Delete Registration</th>
-                                {% endif %}
+                                <th>Download ID card</th>
+                            
                             </tr>
                             </thead>
                             <tbody>
@@ -274,60 +253,13 @@
                                     <td>
                                         {{ user.event_user.first_name }} {{ user.event_user.last_name }}
                                     </td>
-
-                                    <td> {{ user.table.table_name|cut:" " }}</td>
-                                    <td> {{ user.qrcode }} </td>
                                     <td> {{ user.event_user.mobile }} </td>
                                     <td> {{ user.event_user.email }}</td>
 
-                                    <td>
-                                        {{ user.get_event_status_display }}
-                                        {% if not user.event_status == "Couple" %}
-                                            {% if not user.event_status == "Couple_Informal" %}
-                                                <a href="{% url 'upgrade_reg_status' user.id %}">
-                                                    Upgrade
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    </td>
                                     <td> {{ user.id|payment_status }}</td>
 
-                                    <td> {{ user.amount_paid }}</td>
-
-                                    <td>
-                                        {% if user.hotel.all %}
-                                            {% if user.hotel.first.room_number %}
-                                                {{ user.hotel.first.room_number }}
-                                                <br>
-                                                <a href="{% url 'add_room_no' user.id %}">Edit room number</a>
-                                                <!-- Update room no -->
-                                            {% elif user.hotel %}
-                                                <a href="{% url 'add_room_no' user.id %}">Add room number</a>
-                                            {% endif %}
-                                        {% else %}
-                                            <p>No Hotels Booked</p>
-                                        {% endif %}
-                                    </td>
-
-                                    <td> {{ user.due_amount }}
-                                        {% if user.due_amount %}
-                                            &nbsp|&nbsp
-                                            <a href="{% url 'due_payment_update' user.id %}">Pay Pending</a>
-                                        {% endif %}
-                                    </td>
-
                                     <td style="border-right: 3px solid green; "> <!-- Room --></td>
-                                    <td>
-                                        {% if user.hotel.all %}
-
-                                            {{ user.hotel_name }}
-                                            <br>
-                                            <a href="/update_hotel/{{ user.id }}"> Update Booking </a>
-                                        {% else %}
-                                            -<br>
-                                            <a href="/update_hotel/{{ user.id }}"> Book Hotel </a>
-                                        {% endif %}
-                                    </td>
+                                    
                                     <td>
                                         {% if user.hotel.all %}
                                             {{ user.hotel_room_type }}
@@ -344,53 +276,39 @@
                                         {% endif %}
                                     </td>
 
-                                    <td>{{ user.id |no_of_night }}</td>
                                     <td> {{ user.id| get_hotel_rent }}</td>
                                     {% if not user.hotel_due %}
                                         <td>-</td>
                                     {% else %}
-                                        <td> {{ user.hotel_due }}&nbsp|&nbsp
-                                            <a href="{% url 'hotel_due_payment' user.hotel.all.0.id %}">Pay Pending</a>
+                                        <td> {{ user.hotel_due }}
+                                            
                                         </td>
 
                                     {% endif %}
                                     <td style="border-right: 3px solid green; "></td>
                                     <!-- TOTAL PAYMENT  -->
-                                    <td>{{ user.contributed_amount }}</td>
+                                    
                                     <td>{{ user.total_paid }}</td>
                                     <td><!--Total Due --> {{ user.total_due }}</td>
                                     <td>
-                                        {% encrypt_id user.id as encrypted_id %}
-                                        <a href="{% url 'invoice_view' encrypted_id %}">Click to Print Coupon</a></td>
-                                    <td><a href='{% url 'edit-registration' user.event_user.id %}'>Edit</a></td>
-                                    {% if user.is_active %}
-                                        <td><a href="{% url 'delete_user' user.id %}">Delete</a></td>
-                                    {% else %}
-                                        <td><a href="{% url 'add_to_registration' user.id %}">Add to Registration</a>
-                                        </td>
-                                    {% endif %}
+                                        {% if user.ids_img.all %}
+                                                {% for each_image in user.ids_img.all %}
+                                                    <a href="/media/{{ each_image.id_card_images }}" download>ID {{ forloop.counter }}</a><br>
+                                                {% endfor %}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </td>
+                                   
                                 </tr>
 
                             {% endfor %}
 
                             <tr>
                                 <td style="display: none;"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                             <td></td>
                                 <td>{{ total_paid_registration }}</td>
-                                <td></td>
                                 <td>{{ total_registration_due }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td>{{ total_paid_hotel }}</td>
@@ -439,14 +357,15 @@
 
         var t = $('#user_lists').DataTable({
             "order": [[0, 'asc']],
+            autoWidth: false,
             paging: false,
             "info": false,
-            // responsive: true,
             scrollX: true,
-            fixedHeader: true,
             scrollCollapse: true,
+
         });
 
+        t.columns.adjust().draw();
 
         $("#user_lists_filter").hide();
 
