@@ -163,11 +163,8 @@ def encrypt_id(user_id):
     return encoded_id(user_id)
 
 
-# @register.filter
-# def event_attendees_list(attendance_list):
-#     x= '<td> {{ user.table.table_name|cut:" " }}</td>\
-#                                     <td> '+ qrcode  +'</td>\
-#                                     <td> {{ user.event_user.mobile }} </td>\
-#                                     <td> {{ user.event_user.email }}</td>'
-#     pass
-
+@register.filter
+def get_hotel_names(hotel_name):
+    registerd_user = RegisteredUsers.objects.get(id=hotel_name.id)
+    hotel_name = registerd_user.hotel.all()[0].hotel
+    return hotel_name

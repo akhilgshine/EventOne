@@ -122,7 +122,7 @@
             </div>
             <div class="col-sm-2">
                 <div class="container text-center">
-                    <h2 style="color: #fff;">Registered Users</h2>
+                    <h2 style="color: #fff;">{{users.0|get_hotel_names}}</h2>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -226,6 +226,7 @@
                                 <!-- <th>Coupon</th> -->
                                 <th></th>
                                 <th>Add Room no</th>
+                            <th>Room Type</th>
                                 <th>Checkin Date</th>
                                 <th>Checkout Date</th>
                                 <th></th>
@@ -273,6 +274,7 @@
                                         {% else %}
                                             <p>No Hotels Booked</p>
                                         {% endif %}
+                                <td>{{ user.hotel.first.room_type }}</td>
                                     <td>
                                         {% if user.hotel.all %}
                                             {{ user.checkin_date|date }}
