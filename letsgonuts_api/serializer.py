@@ -232,6 +232,7 @@ class ScannedCouponDetailsSerializer(Serializer):
 
 
 class ProgramScheduleSerializer(ModelSerializer):
+
     class Meta:
         model = ProgramSchedule
         fields = '__all__'

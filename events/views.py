@@ -781,6 +781,7 @@ class ListRegisteredUsers(ListView):
         context = super(ListRegisteredUsers, self).get_context_data(**kwargs)
         registered_users = self.get_queryset()
         context['users'] = registered_users
+        context['tables'] = Table.objects.all()
 
         return context
 
