@@ -1760,6 +1760,17 @@ class UserListJson(ListView):
                                                                                        kwargs={'pk': user.id}))
             buy_coupon = '<a href="javascript:void(0)" id="id_purchase" data-id=%s data-usertype=%s>Purchase Coupon</a>' % (
                 user.id, user.event_status)
+            if user.hotel.all():
+                if user.hotel.first().room_number:
+                    number = '%s&nbsp|&nbsp<a href="%s">Add room number</a>' % (
+                        user.hotel.first().room_number, reverse_lazy('add_room_no',
+                                                                     kwargs={'pk': user.id}))
+                elif user.hotel:
+                    number = '<a href="%s">Add room number</a>' % (reverse_lazy('add_room_no',
+                                                                                kwargs={'pk': user.id}))
+            else:
+                number = "No Hotels Booked"
+
             html_data_name = None
             user_data.extend([count])
             url = request.get_full_path()
@@ -1784,13 +1795,15 @@ class UserListJson(ListView):
             user_data.extend([user.event_user.first_name + ' ' + user.event_user.last_name,
                               user.event_user.table.table_name,
                               user.qrcode, user.event_user.mobile, user.event_user.email, event_status, payment_status,
-                              user.amount_paid, registration_due, buy_coupon, '', hotel_name, room_type, no_of_night,
+                              user.amount_paid, registration_due, buy_coupon, number, '', hotel_name, room_type,
+                              no_of_night,
                               user.hotel_rent, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
                               print_coupon,
                               edit, add_or_delete])
 
             users_data.append(user_data)
         amount_datas = ['', '', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+                        '',
                         '',
                         '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
                         '',
