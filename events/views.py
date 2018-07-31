@@ -742,22 +742,35 @@ class ListUsers(LoginRequiredMixin, ListView):
 
 
 
-class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
+class ListRegisteredUsers(ListView):
     """
     Return the list of registered users
     """
     template_name = 'hotel_user_list.html'
     queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
 
+    def get(self, request, *args, **kwargs):
+
+        if kwargs.get('pk',None) == '4131' :
+            if kwargs.get('hotel',None) != 'raviz':
+                return HttpResponseRedirect(reverse('index_page'))
+
+
+        elif kwargs.get('pk',None) == '9181':
+            if kwargs.get('hotel',None)  != 'beach':          
+                return HttpResponseRedirect(reverse('index_page'))
+        else:
+            return HttpResponseRedirect(reverse('index_page'))
+
+        return super(ListRegisteredUsers, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
         
         self.queryset = super(ListRegisteredUsers, self).get_queryset()
 
-        user_group = self.request.user.groups.all().first()
-
         relevant_users = BookedHotel.objects.filter(
             registered_users__is_active=True,
-            hotel__name=user_group.name).values_list('registered_users__id', flat=True)
+            hotel__name__contains=self.kwargs.get('hotel',None)).values_list('registered_users__id', flat=True)
 
         self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
 
@@ -1557,7 +1570,7 @@ class AddRoomNo(UpdateView):
 
         return booked_hotel
 
-class HotelAddRoomNo(RestaurantUserMixin, UpdateView):
+class HotelAddRoomNo(UpdateView):
     
     model = BookedHotel
     form_class = AddRoomNoForm

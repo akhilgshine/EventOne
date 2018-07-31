@@ -26,8 +26,8 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     
     # Hotel
-    url(r'^hotel/login/$', RestaurantLoginView.as_view(), name='restaurant_login'),
-    url(r'^hotel/registered-users/$', ListRegisteredUsers.as_view(), name='registered_user_list'),
+    # url(r'^hotel/login/$', RestaurantLoginView.as_view(), name='restaurant_login'),
+    url(r'^hotel/(?P<hotel>[\w\-]+)/(?P<pk>\d+)/$', ListRegisteredUsers.as_view(), name='registered_user_list'),
     # Set Room No
     url(r'^hotel/add-room-no/(?P<pk>\d+)$', HotelAddRoomNo.as_view(), name='hotel_add_room_no'),
     
