@@ -423,7 +423,7 @@ class EventDocument(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.description
+        return str(self.description)
 
 
 class IDDocumentsPhoto(models.Model):

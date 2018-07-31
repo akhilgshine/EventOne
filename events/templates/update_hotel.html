@@ -310,8 +310,9 @@
         $('#id_room_type').val('');
         $('#id_room_type').html(room_type)
         $("#id_room_type :not(option[data-hotel=" + hotel + "])").remove();
-        $('#id_room_type').prepend('<option selected="selected">--- select type ---</option>')
+        $('#id_room_type').prepend('<option>--- select type ---</option>')
         $('#id_room_type option').show()
+        $('#room_type option[value="'+room_type_val +'"]').attr('selected', 'selected');
 
 
         $('#hotel_amount_final').text($('#id_tottal_rent').val());
