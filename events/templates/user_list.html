@@ -604,7 +604,6 @@
         $('#printPage').on('click', function () {
             printData();
         })
-        $('#user_lists').dataTable().fnDestroy();
         var t = $('#user_lists').DataTable({
             ajax: {
                 url: '/get-user-data-json{{ request.get_full_path }}',
@@ -657,7 +656,6 @@
     });
 
     $('#sortOption').on('change', function () {
-        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable();
         var order = table.order();
 
@@ -673,7 +671,6 @@
     });
 
     $('#seachDataTable').keyup(function () {
-        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable()
 
         table.settings()[0].oFeatures.bServerSide = false;
@@ -689,7 +686,6 @@
 
 
     $('#sortTable').on('change', function () {
-        $('#user_lists').dataTable().fnDestroy();
         var table = $('#user_lists').DataTable();
         var selected_table = $("#sortTable option:selected").val();
         if (selected_table == 'all') {
