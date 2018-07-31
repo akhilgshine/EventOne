@@ -25,9 +25,11 @@ urlpatterns = [
     url(r'^$', IndexPage.as_view(), name='index_page'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     
-    # Resturants login
-    url(r'^restaurant/login/$', RestaurantLoginView.as_view(), name='restaurant_login'),
-    url(r'^restaurant/registered-users/$', ListRegisteredUsers.as_view(), name='registered_user_list'),
+    # Hotel
+    url(r'^hotel/login/$', RestaurantLoginView.as_view(), name='restaurant_login'),
+    url(r'^hotel/registered-users/$', ListRegisteredUsers.as_view(), name='registered_user_list'),
+    # Set Room No
+    url(r'^hotel/add-room-no/(?P<pk>\d+)$', HotelAddRoomNo.as_view(), name='hotel_add_room_no'),
     
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^auto_name/$', GetName.as_view(), name='get_name'),

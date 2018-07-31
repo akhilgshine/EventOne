@@ -150,11 +150,23 @@
 
     <div class="container-fluid">
         <div class="row content">
-            <div class="col-md-2 user_list_inputs">
+            <div class="col-md-3 user_list_inputs">
                 <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
             </div>
 
-            <div class="col-md-2 user_list_inputs">
+            <div class="col-md-3 user_list_inputs">
+                <select id="sortTable" class="btn btn-primary btn_sort" place>
+                    <option value="" disabled selected>Select Table</option>
+                    <option value="all">All</option>
+                    {% for table in tables %}
+                        <option value={{ table.table_name|cut:" " }}>
+                            {{ table.table_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 user_list_inputs">
                 <select id="sortOption" class="btn btn-primary btn_sort">
                     <option>Select one</option>
                     <option value=1>Name</option>
@@ -164,7 +176,7 @@
                 </select>
             </div>
 
-            <div class="col-md-4 user_list_inputs">
+            <div class="col-md-3 user_list_inputs">
                 <div class="input-group">
                     <input id="seachDataTable" type="text" class="form-control form_serch" placeholder="Search for...">
                 </div>
@@ -206,26 +218,18 @@
                                     <th>Attending Event</th>
                                 {% endifequal %}
                                 <th>Name</th>
-                               
+                                <th>Table</th>
                                 <th>Phone</th>
                                 <th>Email</th>
-
-                                <th>Partial/Completely</th><!-- Payment Status -->
 
                                 <!-- <th>Registration Date </th> -->
                                 <!-- <th>Coupon</th> -->
                                 <th></th>
-
-                                <th>Room Type</th>
+                                <th>Add Room no</th>
                                 <th>Checkin Date</th>
                                 <th>Checkout Date</th>
-                                
-                                <th>Hotel Amount Paid</th>
-                                <th>Hotel Dues</th>
                                 <th></th>
                                 
-                                <th>Total Payment</th>
-                                <th>Total Due</th>
                                 <th>Download ID card</th>
                             
                             </tr>
@@ -250,18 +254,25 @@
                                     <td>
                                         {{ user.event_user.first_name }} {{ user.event_user.last_name }}
                                     </td>
+                                    <td> {{ user.table.table_name|cut:" " }}</td>
                                     <td> {{ user.event_user.mobile }} </td>
                                     <td> {{ user.event_user.email }}</td>
-
-                                    <td> {{ user.id|payment_status }}</td>
 
                                     <td style="border-right: 3px solid green; "> <!-- Room --></td>
                                     
                                     <td>
                                         {% if user.hotel.all %}
-                                            {{ user.hotel_room_type }}
+                                            {% if user.hotel.first.room_number %}
+                                                {{ user.hotel.first.room_number }}
+                                                <br>
+                                                <a href="{% url 'hotel_add_room_no' user.id %}">Edit room number</a>
+                                                <!-- Update room no -->
+                                            {% elif user.hotel %}
+                                                <a href="{% url 'hotel_add_room_no' user.id %}">Add room number</a>
+                                            {% endif %}
+                                        {% else %}
+                                            <p>No Hotels Booked</p>
                                         {% endif %}
-                                    </td>
                                     <td>
                                         {% if user.hotel.all %}
                                             {{ user.checkin_date|date }}
@@ -273,20 +284,9 @@
                                         {% endif %}
                                     </td>
 
-                                    <td> {{ user.id| get_hotel_rent }}</td>
-                                    {% if not user.hotel_due %}
-                                        <td>-</td>
-                                    {% else %}
-                                        <td> {{ user.hotel_due }}
-                                            
-                                        </td>
-
-                                    {% endif %}
+        
                                     <td style="border-right: 3px solid green; "></td>
                                     <!-- TOTAL PAYMENT  -->
-                                    
-                                    <td>{{ user.total_paid }}</td>
-                                    <td><!--Total Due --> {{ user.total_due }}</td>
                                     <td>
                                         {% if user.ids_img.all %}
                                                 {% for each_image in user.ids_img.all %}
@@ -308,15 +308,12 @@
                                 <td>{{ total_registration_due }}</td>
                                 <td></td>
                                 <td></td>
-                                <td>{{ total_paid_hotel }}</td>
-                                <td>{{ total_hotel_due }}</td>
+                                <td></td>
                                 <td></td>
                                 <td>{{ total_contributions }}</td>
                                 <td>{{ total_amount_paid }}</td>
                                 <td>{{ total_due }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                
                             </tr>
                             </tbody>
                         </table>

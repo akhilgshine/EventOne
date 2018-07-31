@@ -95,7 +95,7 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
-
+        
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -104,7 +104,7 @@ class LoginView(View):
             if user and user.is_superuser and user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse('register_event'))
-
+            
             elif user and user.is_active:
                 try:
                     user_group = user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).get()
@@ -741,6 +741,7 @@ class ListUsers(LoginRequiredMixin, ListView):
         return context
 
 
+
 class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
     """
     Return the list of registered users
@@ -749,6 +750,7 @@ class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
     queryset = RegisteredUsers.objects.filter(is_active=True, event_user__is_approved=True)
 
     def get_queryset(self):
+        
         self.queryset = super(ListRegisteredUsers, self).get_queryset()
 
         user_group = self.request.user.groups.all().first()
@@ -762,6 +764,7 @@ class ListRegisteredUsers(LoginRequiredMixin, RestaurantUserMixin, ListView):
         return self.queryset
 
     def get_context_data(self, **kwargs):
+
         context = super(ListRegisteredUsers, self).get_context_data(**kwargs)
         registered_users = self.get_queryset()
         context['users'] = registered_users
@@ -1539,13 +1542,36 @@ class AddRoomNo(UpdateView):
     template_name = 'add_room_no.html'
     success_url = reverse_lazy('list_users')
 
+
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
-
+        
         try:
             registered_user = RegisteredUsers.objects.get(pk=registered_user)
             booked_hotel = BookedHotel.objects.get(registered_users=registered_user)
+        
+        except RegisteredUsers.DoesNotExist:
+            registered_user = None
+        except BookedHotel.DoesNotExist:
+            booked_hotel = None
 
+        return booked_hotel
+
+class HotelAddRoomNo(RestaurantUserMixin, UpdateView):
+    
+    model = BookedHotel
+    form_class = AddRoomNoForm
+    template_name = 'hotel_add_room_no.html'
+    success_url = reverse_lazy('registered_user_list')
+
+
+    def get_object(self):
+        registered_user = self.kwargs.get('pk', None)
+        
+        try:
+            registered_user = RegisteredUsers.objects.get(pk=registered_user)
+            booked_hotel = BookedHotel.objects.get(registered_users=registered_user)
+        
         except RegisteredUsers.DoesNotExist:
             registered_user = None
         except BookedHotel.DoesNotExist:

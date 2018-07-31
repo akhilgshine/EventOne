@@ -337,8 +337,8 @@
   border-radius: 0px;
   color:#fff;
   font-weight: bold;
-  min-width: 250px;
   padding: 10px 30px;
+  width: 100%;
 }
 
 .nuts-sub-hotel-confirm{
@@ -357,8 +357,8 @@
   border-radius: 0px;
   /*color:#fff;*/
   font-weight: bold;
-  min-width: 276px;
   padding: 10px 30px;
+  width: 100%;
 }
 
 .form-nuts label.control-label{
@@ -666,9 +666,9 @@ and (max-device-width : 480px) {
     font-size: 14px;
   }
   .table_diivider_mobile
-	{
-		margin-top: 20px;
-	}
+  {
+    margin-top: 20px;
+  }
   .btn_sort
   {
     background: #2d0834;
@@ -681,3 +681,6 @@ and (max-device-width : 480px) {
   }
 /*table custom styling ends here*/
 
+.pl0 { padding-left: 0px; }
+
+.mb10 { margin-bottom: 10px; }
