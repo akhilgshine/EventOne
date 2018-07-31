@@ -1300,6 +1300,7 @@ class EditRegistrationView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         registered_user_obj = RegisteredUsers.objects.get(event_user=self.object)
+        registered_user_obj.contributed_amount = int(self.request.POST.get('other_contribution'))
         if self.request.POST.get('checkin_date'):
             checkin = datetime.datetime.strptime(self.request.POST.get('checkin_date'), "%d/%m/%Y")
         else:
@@ -1762,7 +1763,7 @@ class UserListJson(ListView):
                 user.id, user.event_status)
             if user.hotel.all():
                 if user.hotel.first().room_number:
-                    number = '%s&nbsp|&nbsp<a href="%s">Add room number</a>' % (
+                    number = '%s&nbsp|&nbsp<a href="%s">Change Room Number</a>' % (
                         user.hotel.first().room_number, reverse_lazy('add_room_no',
                                                                      kwargs={'pk': user.id}))
                 elif user.hotel:
