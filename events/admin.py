@@ -95,9 +95,10 @@ class UserFoodCouponAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     class Meta:
         model = UserFoodCoupon
 
-    search_fields = ['coupon_user_event_user_first_name', 'coupon_user_event_user_last_name',
-                     'coupon_user_event_user_email', 'coupon_user_event_user_mobile']
-    list_display = ['type', 'is_used', 'used_time']
+    search_fields = ['coupon_user__event_user__first_name', 'coupon_user__event_user__last_name',
+                     'coupon_user__event_user__mobile',
+                     'coupon_user__event_user__email']
+    list_display = ['coupon_user', 'type', 'is_used', 'used_time']
 
 
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
