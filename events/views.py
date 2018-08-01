@@ -1816,6 +1816,7 @@ class UserListJson(ListView):
             user_data.extend([count])
             url = request.get_full_path()
             url = re.sub(r'draw=.*', '', url)
+
             if url.strip('?') == "/get-user-data-json/users/":
 
                 if user.is_attending_event:
@@ -1843,7 +1844,7 @@ class UserListJson(ListView):
                               edit, add_or_delete])
 
             users_data.append(user_data)
-        amount_datas = ['', '', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+        amount_datas = ['', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
                         '',
                         '',
                         '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
