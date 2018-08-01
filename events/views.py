@@ -1775,12 +1775,13 @@ class UserListJson(ListView):
             else:
                 hotel_name = '-<br><a href="%s"> Book Hotel </a>' % (reverse_lazy('update_hotel_view',
                                                                                   kwargs={'pk': user.id}))
+                hotel_amount_paid = None
 
             if user.due_amount:
                 registration_due = '%s &nbsp|&nbsp<a href="%s">Pay Pending</a>' % (
                     user.due_amount, reverse_lazy('due_payment_update',
                                                   kwargs={'pk': user.id}))
-                hotel_amount_paid = None
+
             else:
                 registration_due = 0
 
