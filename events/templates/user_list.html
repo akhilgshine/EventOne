@@ -697,13 +697,28 @@
 
 
     $('#sortTable').on('change', function () {
+        var full_path = window.location.href;
+        var users_path = full_path.split('/')[4];
+        console.log('l.split(\'/\')[3]');
         var table = $('#user_lists').DataTable();
         var selected_table = $("#sortTable option:selected").val();
-        if (selected_table == 'all') {
+        if (selected_table === 'all') {
             table.settings()[0].oFeatures.bServerSide = false;
             table.settings()[0].ajax = false;
              table.column(3).search('').draw();
              table.settings()[0].oFeatures.bServerSide = true;
+        }
+        if(users_path==='') {
+            // here temporary disable ajax
+            table.settings()[0].oFeatures.bServerSide = false;
+            table.settings()[0].ajax = false;
+
+            regExSearch = '"' + selected_table + '"';
+            console.log('ff', regExSearch);
+            table.column(3).search(regExSearch).draw();
+
+            // here activate it again
+            table.settings()[0].oFeatures.bServerSide = true;
         }
         else {
             // here temporary disable ajax
@@ -712,7 +727,7 @@
 
             regExSearch = '"' + selected_table + '"';
             console.log('ff', regExSearch);
-            table.column(3).search(regExSearch).draw();
+            table.column(2).search(regExSearch).draw();
 
             // here activate it again
             table.settings()[0].oFeatures.bServerSide = true;

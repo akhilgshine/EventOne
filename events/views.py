@@ -95,7 +95,7 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
-        
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -104,7 +104,7 @@ class LoginView(View):
             if user and user.is_superuser and user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse('register_event'))
-            
+
             elif user and user.is_active:
                 try:
                     user_group = user.groups.filter(Q(name='Raviz Hotel') | Q(name='Beach Hotel')).get()
@@ -757,7 +757,7 @@ class ListRegisteredUsers(ListView):
 
 
         elif kwargs.get('pk',None) == '9181':
-            if kwargs.get('hotel',None)  != 'beach':          
+            if kwargs.get('hotel',None)  != 'beach':
                 return HttpResponseRedirect(reverse('index_page'))
         else:
             return HttpResponseRedirect(reverse('index_page'))
@@ -765,7 +765,7 @@ class ListRegisteredUsers(ListView):
         return super(ListRegisteredUsers, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        
+
         self.queryset = super(ListRegisteredUsers, self).get_queryset()
 
         relevant_users = BookedHotel.objects.filter(
@@ -1559,11 +1559,11 @@ class AddRoomNo(UpdateView):
 
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
-        
+
         try:
             registered_user = RegisteredUsers.objects.get(pk=registered_user)
             booked_hotel = BookedHotel.objects.get(registered_users=registered_user)
-        
+
         except RegisteredUsers.DoesNotExist:
             registered_user = None
         except BookedHotel.DoesNotExist:
@@ -1572,7 +1572,7 @@ class AddRoomNo(UpdateView):
         return booked_hotel
 
 class HotelAddRoomNo(UpdateView):
-    
+
     model = BookedHotel
     form_class = AddRoomNoForm
     template_name = 'hotel_add_room_no.html'
@@ -1581,11 +1581,11 @@ class HotelAddRoomNo(UpdateView):
 
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
-        
+
         try:
             registered_user = RegisteredUsers.objects.get(pk=registered_user)
             booked_hotel = BookedHotel.objects.get(registered_users=registered_user)
-        
+
         except RegisteredUsers.DoesNotExist:
             registered_user = None
         except BookedHotel.DoesNotExist:
@@ -1844,13 +1844,25 @@ class UserListJson(ListView):
                               edit, add_or_delete])
 
             users_data.append(user_data)
-        amount_datas = ['', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
-                        '',
-                        '',
-                        '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
-                        '',
-                        '', '', '']
-        users_data.append(amount_datas)
+        if url.strip('?') == "/get-user-data-json/users/":
+
+            amount_datas = ['','', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+                            '',
+                            '',
+                            '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
+                            '',
+                            '', '', '']
+            users_data.append(amount_datas)
+        else:
+            amount_datas = ['', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+                            '',
+                            '',
+                            '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid,
+                            total_due,
+                            '',
+                            '', '', '']
+            users_data.append(amount_datas)
+
         return JsonResponse({'data': users_data})
 
 
