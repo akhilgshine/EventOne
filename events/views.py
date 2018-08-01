@@ -1832,14 +1832,13 @@ class UserListJson(ListView):
                     </label> \
                     </td>'.format(checked_status, user.id)
                 user_data.extend([html_data_name])
-
             no_of_night = template_tags.no_of_night(user.id)
             user_data.extend([user.event_user.first_name + ' ' + user.event_user.last_name,
                               user.event_user.table.table_name,
                               user.qrcode, user.event_user.mobile, user.event_user.email, event_status, payment_status,
                               user.amount_paid, registration_due, buy_coupon, number, '', hotel_name, room_type,
                               no_of_night,
-                              user.hotel_rent, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
+                              user.hotel.all()[0].tottal_rent, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
                               print_coupon,
                               edit, add_or_delete])
 
