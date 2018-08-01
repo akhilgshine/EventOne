@@ -1606,7 +1606,7 @@ class GetHotelBookingDetailsView(TemplateView):
         try:
             booked_hotel = Hotel.objects.get(id=hotel)
             hotel_room_type = booked_hotel.get_hotel_room_types.all()
-            count = hotel_room_type.aggregate(Sum('rooms_available')).values()[0] or 0.00
+            count = hotel_room_type.aggregate(Sum('rooms_available')).values()[0]
             booked_rooms = BookedHotel.objects.filter(hotel=booked_hotel, checkin_date__lte=booking_date)
             total_rooms = count + booked_rooms.count()
         except Hotel.DoesNotExist:
