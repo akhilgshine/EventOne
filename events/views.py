@@ -1771,6 +1771,7 @@ class UserListJson(ListView):
                     user.hotel_name, reverse_lazy('update_hotel_view',
                                                   kwargs={
                                                       'pk': user.id}))
+                hotel_amount_paid = user.hotel.all()[0].tottal_rent
             else:
                 hotel_name = '-<br><a href="%s"> Book Hotel </a>' % (reverse_lazy('update_hotel_view',
                                                                                   kwargs={'pk': user.id}))
@@ -1779,6 +1780,7 @@ class UserListJson(ListView):
                 registration_due = '%s &nbsp|&nbsp<a href="%s">Pay Pending</a>' % (
                     user.due_amount, reverse_lazy('due_payment_update',
                                                   kwargs={'pk': user.id}))
+                hotel_amount_paid = None
             else:
                 registration_due = 0
 
@@ -1838,7 +1840,7 @@ class UserListJson(ListView):
                               user.qrcode, user.event_user.mobile, user.event_user.email, event_status, payment_status,
                               user.amount_paid, registration_due, buy_coupon, number, '', hotel_name, room_type,
                               no_of_night,
-                              user.hotel.all()[0].tottal_rent, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
+                              hotel_amount_paid, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
                               print_coupon,
                               edit, add_or_delete])
 
