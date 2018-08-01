@@ -91,6 +91,15 @@ class ImageRoomTypeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'mobile']
 
 
+class UserFoodCouponAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    class Meta:
+        model = UserFoodCoupon
+
+    search_fields = ['coupon_user_event_user_first_name', 'coupon_user_event_user_last_name',
+                     'coupon_user_event_user_email', 'coupon_user_event_user_mobile']
+    list_display = ['type', 'is_used', 'used_time']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers, EventUserAdmin)
 admin.site.register(BookedHotel, BookedHotelAdmin)
@@ -105,7 +114,7 @@ admin.site.register(ProxyHotelBooking)
 admin.site.register(EventDocument)
 admin.site.register(IDDocumentsPhoto)
 admin.site.register(FoodType, ImportExportModelAdmin)
-admin.site.register(UserFoodCoupon, ImportExportModelAdmin)
+admin.site.register(UserFoodCoupon, UserFoodCouponAdmin)
 admin.site.register(CouponPurchase, ImportExportModelAdmin)
 admin.site.register(FridayDinnerAmount, ImportExportModelAdmin)
 admin.site.register(KidsCouponAmount, ImportExportModelAdmin)
