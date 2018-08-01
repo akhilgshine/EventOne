@@ -1134,7 +1134,7 @@ class DashBoardView(LoginRequiredMixin, ListView):
 
         context['room_types'] = RoomType.objects.all()
         context['hotel_names'] = Hotel.objects.all()
-        context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0] or 0
+        context['room_count'] = RoomType.objects.aggregate(Sum('rooms_available')).values()[0]
         context['total_rooms'] = BookedHotel.objects.filter(registered_users__is_active=True).count() + context[
             'room_count']
         context['total_rooms_booked_each_date'] = context['total_rooms'] - context['room_count']
