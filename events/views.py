@@ -656,7 +656,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                 response['Content-Disposition'] = 'attachment; filename="users_list.csv"'
                 writer = csv.writer(response)
                 writer.writerow(
-                    ['Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt',
+                    ['First Name', 'Last Name', 'Table', 'Registration Code', 'Phone', 'Email', 'Reg Type', 'T Shirt',
                      'Partial/Completely',
                      'Registration Amount ', 'Amount Due', 'Room', 'Hotel Name', 'Room Type', 'Check-In',
                      'Check-Out', 'No of Nights', 'Hotel Amount Paid', 'Hotel Dues', '', 'Contribution',
@@ -685,7 +685,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                             check_out_date = '-'
                             hotel_rent = '-'
                         writer.writerow(
-                            [users.event_user.first_name + '' + users.event_user.last_name, users.table.table_name,
+                            [users.event_user.first_name, users.event_user.last_name, users.table.table_name,
                              users.qrcode, users.event_user.mobile,
                              users.event_user.email, users.event_status, users.t_shirt_size, payment_status,
                              users.amount_paid,
@@ -699,7 +699,7 @@ class ListUsers(LoginRequiredMixin, ListView):
                 writer.writerow(
                     ['', '', '',
                      '',
-                     '', '', '', '', total_paid_registration,
+                     '', '', '', '', '', total_paid_registration,
                      total_registration_due, '',
                      '', '', '', '', '', total_paid_hotel, total_hotel_due, '',
                      total_contributions, total_amount_paid,
@@ -741,7 +741,6 @@ class ListUsers(LoginRequiredMixin, ListView):
         return context
 
 
-
 class ListRegisteredUsers(ListView):
     """
     Return the list of registered users
@@ -751,13 +750,13 @@ class ListRegisteredUsers(ListView):
 
     def get(self, request, *args, **kwargs):
 
-        if kwargs.get('pk',None) == '4131' :
-            if kwargs.get('hotel',None) != 'raviz':
+        if kwargs.get('pk', None) == '4131':
+            if kwargs.get('hotel', None) != 'raviz':
                 return HttpResponseRedirect(reverse('index_page'))
 
 
-        elif kwargs.get('pk',None) == '9181':
-            if kwargs.get('hotel',None)  != 'beach':
+        elif kwargs.get('pk', None) == '9181':
+            if kwargs.get('hotel', None) != 'beach':
                 return HttpResponseRedirect(reverse('index_page'))
         else:
             return HttpResponseRedirect(reverse('index_page'))
@@ -770,7 +769,7 @@ class ListRegisteredUsers(ListView):
 
         relevant_users = BookedHotel.objects.filter(
             registered_users__is_active=True,
-            hotel__name__contains=self.kwargs.get('hotel',None)).values_list('registered_users__id', flat=True)
+            hotel__name__contains=self.kwargs.get('hotel', None)).values_list('registered_users__id', flat=True)
 
         self.queryset = RegisteredUsers.objects.filter(id__in=relevant_users)
 
@@ -1556,7 +1555,6 @@ class AddRoomNo(UpdateView):
     template_name = 'add_room_no.html'
     success_url = reverse_lazy('list_users')
 
-
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
 
@@ -1571,13 +1569,12 @@ class AddRoomNo(UpdateView):
 
         return booked_hotel
 
-class HotelAddRoomNo(UpdateView):
 
+class HotelAddRoomNo(UpdateView):
     model = BookedHotel
     form_class = AddRoomNoForm
     template_name = 'hotel_add_room_no.html'
     success_url = reverse_lazy('registered_user_list')
-
 
     def get_object(self):
         registered_user = self.kwargs.get('pk', None)
@@ -1749,7 +1746,8 @@ class UserListJson(ListView):
 
         total_amount_paid = total_paid_registration + total_paid_hotel + total_contributions or 0.00
         users_data = []
-
+        url = request.get_full_path()
+        url = re.sub(r'draw=.*', '', url)
         count = 0
         for user in users:
             user_data = []
@@ -1804,6 +1802,7 @@ class UserListJson(ListView):
                                                                                        kwargs={'pk': user.id}))
             buy_coupon = '<a href="javascript:void(0)" id="id_purchase" data-id=%s data-usertype=%s>Purchase Coupon</a>' % (
                 user.id, user.event_status)
+
             if user.hotel.all():
                 if user.hotel.first().room_number:
                     number = '%s&nbsp|&nbsp<a href="%s">Change Room Number</a>' % (
@@ -1817,8 +1816,6 @@ class UserListJson(ListView):
 
             html_data_name = None
             user_data.extend([count])
-            url = request.get_full_path()
-            url = re.sub(r'draw=.*', '', url)
 
             if url.strip('?') == "/get-user-data-json/users/":
 
@@ -1841,17 +1838,20 @@ class UserListJson(ListView):
                               user.qrcode, user.event_user.mobile, user.event_user.email, event_status, payment_status,
                               user.amount_paid, registration_due, buy_coupon, number, '', hotel_name, room_type,
                               no_of_night,
-                              hotel_amount_paid, hotel_due, '', user.contributed_amount, user.total_paid, user.total_due,
+                              hotel_amount_paid, hotel_due, '', user.contributed_amount, user.total_paid,
+                              user.total_due,
                               print_coupon,
                               edit, add_or_delete])
 
             users_data.append(user_data)
         if url.strip('?') == "/get-user-data-json/users/":
 
-            amount_datas = ['','', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+            amount_datas = ['', '', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '',
                             '',
                             '',
-                            '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid, total_due,
+                            '',
+                            '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid,
+                            total_due,
                             '',
                             '', '', '']
             users_data.append(amount_datas)

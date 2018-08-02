@@ -250,9 +250,15 @@
         <div class="row content">
             <div class="col-md-2 user_list_inputs">
                 <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
+                {% ifequal request.get_full_path '/users/' %}
                 <a href="{{ request.get_full_path }}?csv=true">
                     <button class='btn btn-primary'>Download</button>
                 </a>
+                    {% else %}
+                    <a href="{{ request.get_full_path }}&csv=true">
+                    <button class='btn btn-primary'>Download</button>
+                </a>
+                {% endifequal %}
             </div>
             <div class="col-md-6 user_list_inputs">
                 <select id="sortTable" class="btn btn-primary btn_sort" place>
