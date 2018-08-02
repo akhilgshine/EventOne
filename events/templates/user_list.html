@@ -251,13 +251,13 @@
             <div class="col-md-2 user_list_inputs">
                 <button class='btn btn-primary' id='printPage' onclick="window.print();">Print</button>
                 {% ifequal request.get_full_path '/users/' %}
-                <a href="{{ request.get_full_path }}?csv=true">
-                    <button class='btn btn-primary'>Download</button>
-                </a>
-                    {% else %}
+                    <a href="{{ request.get_full_path }}?csv=true">
+                        <button class='btn btn-primary'>Download</button>
+                    </a>
+                {% else %}
                     <a href="{{ request.get_full_path }}&csv=true">
-                    <button class='btn btn-primary'>Download</button>
-                </a>
+                        <button class='btn btn-primary'>Download</button>
+                    </a>
                 {% endifequal %}
             </div>
             <div class="col-md-6 user_list_inputs">
@@ -514,13 +514,9 @@
 </div>
 <script type="text/javascript">
     function incrementValue() {
-        var usertype = $('#id_user_type').val();
-        if (usertype === 'Stag' || usertype === 'Stag_Informal') {
-            var value = parseInt(document.getElementById('number').value, 1);
-        }
-        else {
-            var value = parseInt(document.getElementById('number').value, 2);
-        }
+
+        var value = parseInt(document.getElementById('number').value);
+        //value = isNaN(value)||value>=20 ? 0 : value;
         value = isNaN(value) ? 0 : value;
         value++;
         document.getElementById('number').value = value;
@@ -596,6 +592,15 @@
             $('#id_user_id_hidden').val(userid);
             $('#id_user_type').val(usertype);
             $('#myModal').modal('show');
+            if (usertype === 'Stag' || usertype === 'Stag_Informal') {
+
+                $('#number').val(parseInt(1))
+            }
+            else {
+                $('#number').val(parseInt(2))
+
+            }
+            incrementDecrementAjax();
         });
 
         function printData() {
@@ -614,13 +619,10 @@
             ajax: {
                 url: '/get-user-data-json{{ request.get_full_path }}',
                 data: function (data) {
-                    for (var i = 0, len = data.columns.length; i < len; i++) {
-                        if (! data.columns[i].search.value) delete data.columns[i].search;
-                        if (data.columns[i].searchable === true) delete data.columns[i].searchable;
-                        if (data.columns[i].orderable === true) delete data.columns[i].orderable;
-                        if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name;
-                    }
+
                     delete data.search.regex;
+                    delete data.columns;
+
                 }
             },
             order: [[1, 'asc']],
@@ -664,10 +666,9 @@
     $('#sortOption').on('change', function () {
         var table = $('#user_lists').DataTable();
         var order = table.order();
-        console.log('order',order)
+        console.log('order', order)
         table.settings()[0].oFeatures.bServerSide = false;
         table.settings()[0].ajax = false;
-
 
 
         // here activate it again
@@ -675,13 +676,13 @@
         selected_id = $("#sortOption option:selected").val();
         if (selected_id.toLowerCase() == 'select one')
             selected_id = '9'
-        console.log(selected_id,'selected_id');
+        console.log(selected_id, 'selected_id');
 
         if (selected_id == '9') {
             table.order([12, 'desc']).draw();
         }
         else {
-            table.order([selected_id , 'asc']).draw();
+            table.order([selected_id, 'asc']).draw();
         }
         table.settings()[0].oFeatures.bServerSide = true;
 
@@ -711,10 +712,10 @@
         if (selected_table === 'all') {
             table.settings()[0].oFeatures.bServerSide = false;
             table.settings()[0].ajax = false;
-             table.column(3).search('').draw();
-             table.settings()[0].oFeatures.bServerSide = true;
+            table.column(3).search('').draw();
+            table.settings()[0].oFeatures.bServerSide = true;
         }
-        if(users_path==='') {
+        if (users_path === '') {
             // here temporary disable ajax
             table.settings()[0].oFeatures.bServerSide = false;
             table.settings()[0].ajax = false;
