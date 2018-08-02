@@ -169,6 +169,7 @@ class RegisterEventViewSet(ModelViewSet):
                         registered_user.qrcode = 'QRT8001'
                     registered_user.is_payment_completed = True
                     registered_user = serializer.save()
+            print(id_images)
             for id_image in id_images:
                 IDDocumentsPhoto.objects.create(id_card_images=id_image, id_card_type=id_card_type,
                                                 registered_users=registered_user)
