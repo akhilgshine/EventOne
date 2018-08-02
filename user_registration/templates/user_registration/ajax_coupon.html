@@ -1,9 +1,12 @@
 {% load static %}
 
 <div class="coupon-re">
-<style>
-    .coupon-re tbody td { padding: 2px !important; font-size: 13px !important;}
-</style>
+    <style>
+        .coupon-re tbody td {
+            padding: 2px !important;
+            font-size: 13px !important;
+        }
+    </style>
     <div class="row m0">
         <div class="col-sm-8" style="padding:0px;">
             <div style="    background: url(img/coupon-txt-bg.png);
@@ -61,13 +64,13 @@
                                 </td>
                             </tr>
                             {% if request.user.registered_obj.due_amount %}
-                                 <tr>
-                                <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
-                                        class="pull-right">:</span></td>
-                                <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.due_amount }}/-
+                                <tr>
+                                    <td style="border: 0px;font-size: 16px;"><b>Due Amount</b> <span
+                                            class="pull-right">:</span></td>
+                                    <td style="border: 0px;font-size: 16px;">{{ request.user.registered_obj.due_amount }}/-
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             {% endif %}
                             <tr>
                                 <td style="border: 0px;font-size: 16px;"><b>Hotel</b> <span
@@ -86,25 +89,26 @@
                             </tr>
                             {% if  request.user.registered_obj.hotel_due %}
                                 <tr>
-                                <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
-                                        class="pull-right">:</span></td>
-                                <td style="border: 0px;font-size: 16px;">Rs {{ request.user.registered_obj.hotel_due }}/-
+                                    <td style="border: 0px;font-size: 16px;"><b>Hotel Due</b> <span
+                                            class="pull-right">:</span></td>
+                                    <td style="border: 0px;font-size: 16px;">
+                                        Rs {{ request.user.registered_obj.hotel_due }}/-
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
                             {% endif %}
                             </tbody>
                         </table>
-{#                        <div align="right">#}
-{#                            <button class="btn" style="   margin-bottom: 15px;#}
-{#                                                                margin-right: 20px;#}
-{#                                                                background: #ff4057;#}
-{#                                                                color: white;#}
-{#                                                                border-radius: 23px;#}
-{#                                                                padding: 6px 15px;">Reg Number : {{ request.user.registered_obj.qrcode }}#}
-{#                            </button>#}
-{#                        </div>#}
+                        {#                        <div align="right">#}
+                        {#                            <button class="btn" style="   margin-bottom: 15px;#}
+                        {#                                                                margin-right: 20px;#}
+                        {#                                                                background: #ff4057;#}
+                        {#                                                                color: white;#}
+                        {#                                                                border-radius: 23px;#}
+                        {#                                                                padding: 6px 15px;">Reg Number : {{ request.user.registered_obj.qrcode }}#}
+                        {#                            </button>#}
+                        {#                        </div>#}
                     </div>
                 </div>
             </div>
@@ -128,10 +132,14 @@
                                                 border-radius: 34px;
                                                 padding: 6px 15px;
                                                 font-size: 16px;
-                                                margin-top: 10px;     display: inline-block;">Reg Number :{{ request.user.registered_obj.qrcode }}
+                                                margin-top: 10px;     display: inline-block;">Reg Number
+                :{{ request.user.registered_obj.qrcode }}
             </div>
-            <img src="{% static 'img/bar-q.png' %}" style="    margin: 10px;
-                                                margin-bottom: 1em;">
+            <div>
+                <img src="https://chart.googleapis.com/chart?chs=100x100&amp;cht=qr&amp;chl={{ request.user.registered_obj.encoded_id }}&amp;chld=L|1&amp;choe=UTF-8"
+                     style="margin: 10px;
+                                             margin-bottom: 1em; width: 100px;">
+            </div>
             <div style="width: 90px;height: 90px;background: #fff; position: absolute;top: 55px;right: -44px;border-radius: 100%;"></div>
         </div>
     </div>
