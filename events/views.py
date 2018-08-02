@@ -1731,8 +1731,11 @@ class UserListJson(ListView):
         users = self.get_queryset()
         total_paid_registration = users.aggregate(Sum('amount_paid')).values()[0] or 0.00
         total_contributions = users.aggregate(Sum('contributed_amount')).values()[0] or 0.00
+        # total_friday_coupon_amount = users.aggregate(Sum('friday_coupon_amount')).values()[0] or 0.00
 
         total_registration_due = sum(item.due_amount for item in users)
+        total_friday_coupon_amount = sum(item.friday_coupon_amount for item in users)
+        print(total_friday_coupon_amount, "hhhhhhhhhhhhhhhhhhhhh")
         total_hotel_due = sum(item.hotel_due for item in users)
         total_due = total_registration_due + total_hotel_due
 
@@ -1800,9 +1803,16 @@ class UserListJson(ListView):
             else:
                 add_or_delete = '<a href="%s">Add to Registration</a>' % (reverse_lazy('add_to_registration',
                                                                                        kwargs={'pk': user.id}))
-            buy_coupon = '<a href="javascript:void(0)" id="id_purchase" data-id=%s data-usertype=%s>Purchase Coupon</a>' % (
-                user.id, user.event_status)
+            if user.get_coupon_purchase.all():
+                friday_coupon_amount = sum(item.total_amount_paid for item in user.get_coupon_purchase.all())
+                buy_coupon = '%s &nbsp|&nbsp<a href="javascript:void(0)" id="id_purchase"' \
+                             ' data-id=%s data-usertype=%s>Buy more coupon</a>' % (friday_coupon_amount,
+                                                                                   user.id,
+                                                                                   user.event_status)
 
+            else:
+                buy_coupon = '<a href="javascript:void(0)" id="id_purchase"' \
+                             ' data-id=%s data-usertype=%s>Purchase Coupon</a>' % (user.id, user.event_status)
             if user.hotel.all():
                 if user.hotel.first().room_number:
                     number = '%s&nbsp|&nbsp<a href="%s">Change Room Number</a>' % (
@@ -1846,7 +1856,8 @@ class UserListJson(ListView):
             users_data.append(user_data)
         if url.strip('?') == "/get-user-data-json/users/":
 
-            amount_datas = ['', '', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '',
+            amount_datas = ['', '', '', '', '', '', '', '', '',
+                            total_paid_registration,total_registration_due,total_friday_coupon_amount, '',
                             '',
                             '',
                             '',
@@ -1856,7 +1867,8 @@ class UserListJson(ListView):
                             '', '', '']
             users_data.append(amount_datas)
         else:
-            amount_datas = ['', '', '', '', '', '', '', '', total_paid_registration, total_registration_due, '', '', '',
+            amount_datas = ['', '', '', '', '', '', '', '',
+                            total_paid_registration, total_registration_due, total_friday_coupon_amount, '', '',
                             '',
                             '',
                             '', total_paid_hotel, total_hotel_due, '', total_contributions, total_amount_paid,
@@ -1875,16 +1887,21 @@ class IncrementDecrementAmountAjaxView(View):
         kids_no = request.GET.get('kids_no')
         kids_coupon_no = request.GET.get('kids_coupon_no')
         user_type = request.GET.get('user_type')
+        no_of_extra_persons = request.GET.get('no_of_extra_persons')
         user_amount = self.get_friday_user_amount(user_type) * int(users_no)
         kids_amount = 0
         kids_coupon_amount = 0
+        persons_amount = 0
+        if no_of_extra_persons:
+            user_type = EXTRA_PERSON
+            persons_amount = self.get_friday_user_amount(user_type) * int(no_of_extra_persons)
         if kids_no:
             user_type = KID
             kids_amount = self.get_friday_user_amount(user_type) * int(kids_no)
         if kids_coupon_no:
             kids_coupon_amount = KidsCouponAmount.objects.get().amount * int(kids_coupon_no)
 
-        total_amount = user_amount + kids_amount + kids_coupon_amount
+        total_amount = user_amount + kids_amount + kids_coupon_amount + persons_amount
         return HttpResponse(json.dumps({'total_amount': total_amount}))
 
     def get_friday_user_amount(self, user_type):
@@ -1901,12 +1918,14 @@ class FridayDinnerBookingView(TemplateView):
         no_of_kids_friday = request.POST.get('no_of_kids_friday')
         no_of_kids_event = request.POST.get('no_of_kids_event')
         total_amount_paid_coupon = request.POST.get('total_amount_paid_coupon')
+        no_of_extra_persons = request.POST.get('no_of_extra_persons')
         payment = request.POST.get('payment')
         registered_user = RegisteredUsers.objects.get(id=user_id)
         purchase_coupon = CouponPurchase.objects.create(registered_users=registered_user,
                                                         adult_friday_lunch=no_of_users_friday,
                                                         kids_friday_lunch=no_of_kids_friday,
                                                         kids_coupon=no_of_kids_event,
+                                                        no_of_extra_persons=no_of_extra_persons,
                                                         total_amount_paid=total_amount_paid_coupon,
                                                         payment_mode=payment)
         if no_of_users_friday:
@@ -1915,4 +1934,5 @@ class FridayDinnerBookingView(TemplateView):
             [create_friday_lunch_coupon(registered_user.id) for _ in range(int(no_of_kids_friday))]
         if no_of_kids_event:
             [create_user_coupon_set(registered_user.id) for _ in range(int(no_of_kids_event))]
-        return HttpResponseRedirect(self.success_url)
+        return JsonResponse({'success': True})
+        # return HttpResponseRedirect(self.success_url)

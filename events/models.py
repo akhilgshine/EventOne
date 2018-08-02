@@ -78,11 +78,13 @@ T_SHIRT_CHOICES = (
 STAG = 'Stag'
 COUPLE = 'Couple'
 KID = 'Kid'
+EXTRA_PERSON = 'Extra_Person'
 
 FRIDAY_USER_TYPE_CHOICES = (
     (STAG, 'Stag'),
     (COUPLE, 'Couple'),
-    (KID, 'Kid')
+    (KID, 'Kid'),
+    (EXTRA_PERSON, 'Extra Person')
 
 )
 FRIDAY = 'Friday'
@@ -336,6 +338,13 @@ class RegisteredUsers(models.Model):
             return None
 
     @property
+    def friday_coupon_amount(self):
+        if self.get_coupon_purchase.all():
+            return self.get_coupon_purchase.all().aggregate(Sum('total_amount_paid')).get(
+                    'total_amount_paid__sum')
+        return 0
+
+    @property
     def encoded_id(self):
         return base64.b64encode(str(self.id))
 
@@ -477,6 +486,7 @@ class CouponPurchase(models.Model):
     adult_friday_lunch = models.IntegerField(default=0)
     kids_friday_lunch = models.IntegerField(default=0)
     kids_coupon = models.IntegerField(default=0)
+    no_of_extra_persons = models.IntegerField(default=0)
     total_amount_paid = models.IntegerField(default=0)
     payment_mode = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
 

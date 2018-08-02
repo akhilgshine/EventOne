@@ -381,6 +381,7 @@
 
                                         <table class="table borderless">
                                             <tbody>
+                                            <h3 class="text-center success-message" style="color: green">COUPON SUCCESSFULLY PURCHASED!!</h3>
                                             <form method="post" id="id_purchase_friday_coupon"
                                                   action="{% url 'friday_coupon_booking' %}">
                                                 {% csrf_token %}
@@ -441,6 +442,19 @@
                                                                onclick="incrementValue2()" value="+"/>
                                                     </td>
                                                 </tr>
+                                                 <tr>
+                                                    <td>
+                                                        <h4>Extra person</h4>
+                                                    </td>
+                                                    <td>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="decrementValue3()" value="-"/>
+                                                        <input type="text" class="number-textbox" id="number3"
+                                                               name='no_of_extra_persons' value="0" readonly/>
+                                                        <input type="button" class="operator-style"
+                                                               onclick="incrementValue3()" value="+"/>
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <td colspan="2">
                                                         <h2>Payment <i class="fa fa-money" aria-hidden="true"></i></h2>
@@ -470,14 +484,16 @@
                                                     <td>
                                                         <label> <input id="radioId_1" type="radio" class="payment-mode"
                                                                        name="payment"
-                                                                       value="POS"> <span class="radio-change"></span>
+                                                                       value="POS" required> <span class="radio-change"></span>
                                                             POS</label>
                                                         <label><input id="radioId_2" type="radio" class="payment-mode"
                                                                       name="payment"
-                                                                      value="cash"> <span class="radio-change"></span>
+                                                                      value="cash" required> <span class="radio-change"></span>
                                                             Cash</label>
                                                     </td>
+                                                    <span id="notifications"style="color: red;"></span>
                                                 </tr>
+
                                                 <tr>
                                                     <td>
                                                         <button type="submit" id="buy_button"
@@ -514,6 +530,7 @@
 </div>
 <script type="text/javascript">
     function incrementValue() {
+        errorPurchaseShow();
 
         var value = parseInt(document.getElementById('number').value);
         //value = isNaN(value)||value>=20 ? 0 : value;
@@ -523,6 +540,7 @@
     }
 
     function decrementValue() {
+        errorPurchaseShow();
         var value = parseInt(document.getElementById('number').value, 0);
         value = isNaN(value) ? 0 : value;
         if (value != 0) {
@@ -532,7 +550,8 @@
         document.getElementById('number').value = value;
     }
 
-    function incrementValue1() {
+    function incrementValue1(){
+    errorPurchaseShow();
         var value = parseInt(document.getElementById('number1').value, 10);
         value = isNaN(value) ? 0 : value;
         value++;
@@ -540,6 +559,7 @@
     }
 
     function decrementValue1() {
+        errorPurchaseShow();
         var value = parseInt(document.getElementById('number1').value, 10);
         value = isNaN(value) ? 0 : value;
         if (value != 0) {
@@ -550,6 +570,7 @@
     }
 
     function incrementValue2() {
+        errorPurchaseShow();
         var value = parseInt(document.getElementById('number2').value, 10);
         value = isNaN(value) ? 0 : value;
         value++;
@@ -557,6 +578,7 @@
     }
 
     function decrementValue2() {
+        errorPurchaseShow();
         var value = parseInt(document.getElementById('number2').value, 10);
         value = isNaN(value) ? 0 : value;
         if (value != 0) {
@@ -564,6 +586,25 @@
         }
         document.getElementById('number2').value = value;
     }
+
+     function incrementValue3() {
+        errorPurchaseShow();
+        var value = parseInt(document.getElementById('number3').value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        document.getElementById('number3').value = value;
+    }
+
+    function decrementValue3() {
+        errorPurchaseShow();
+        var value = parseInt(document.getElementById('number3').value, 10);
+        value = isNaN(value) ? 0 : value;
+        if (value != 0) {
+            value--;
+        }
+        document.getElementById('number3').value = value;
+    }
+
 
     jQuery(document).ready(function () {
         jQuery(".main-table").clone(true).appendTo('#table-scroll').addClass('clone');
@@ -767,11 +808,12 @@
         var kids_no = $('#number1').val();
         var kids_coupon_no = $('#number2').val();
         var user_type = $('#id_user_type').val();
+        var no_of_extra_persons = $('#number3').val();
         $.ajax({
             type: 'GET',
             url: "{% url 'increment_decrement_ajax' %}",
             dataType: 'json',
-            data: {'users_no': users_no, 'kids_no': kids_no, 'kids_coupon_no': kids_coupon_no, 'user_type': user_type},
+            data: {'users_no': users_no, 'kids_no': kids_no, 'kids_coupon_no': kids_coupon_no, 'user_type': user_type,'no_of_extra_persons':no_of_extra_persons,},
             success: function (data) {
                 $('#id_total_amount_coupon').val(data.total_amount);
                 errorPurchaseShow();
@@ -787,6 +829,8 @@
     });
 
     function errorPurchaseShow() {
+        $(".purchase_error").hide();
+        $('#buy_button').attr("disabled", false);
         var amount_coupon_purchase = $('#id_total_amount_coupon').val();
 
         if ((amount_coupon_purchase == 0 || amount_coupon_purchase == '')) {
@@ -794,19 +838,49 @@
             $('#buy_button').attr("disabled", true);
             $(".purchase_error").css("display", "block");
         }
+
+
+
+    }
+
+    $('#myModal').on('shown.bs.modal', function (e) {
+        $('.success-message').hide();
+        $("#notifications").text('');
+        });
+
+    $('#buy_button').on('click', function (e) {
+        errorPurchaseShow();
+        e.preventDefault();
+
+        if (!$('input[name=payment]:checked').val()) {
+            $("#notifications").text('Please Select a Payment Mode !');
+            return false;
+        }
         else {
             $('#buy_button').attr("disabled", false);
             $('.purchase_error').css('display', 'none');
 
         }
 
+        var form = $('#id_purchase_friday_coupon');
+        var url = form.attr('action');
 
-    }
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: function(data)
+               {
+                   if(data.success)
+                       $('.success-message').show();
+                   location.reload();
+               }
+             });
 
-    $('#buy_button').on('click', function () {
-        errorPurchaseShow();
 
-    })
+
+
+        })
 
 
 </script>
