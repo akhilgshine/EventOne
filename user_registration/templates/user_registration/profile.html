@@ -63,7 +63,7 @@
     <li><a href="">
         <div class="nav-icon video-ic"></div>
         Videos</a></li>
-    {% if  request.user.is_authenticated and  not request.user.is_superuser %}
+    {% if  request.user.is_authenticated %}
 
         <li class="sign-out"><a href="/logout">
            <i class="fas fa-sign-out-alt"></i>

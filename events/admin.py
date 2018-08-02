@@ -101,6 +101,14 @@ class UserFoodCouponAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['coupon_user', 'type', 'is_used', 'used_time']
 
 
+class OtpModelAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    class Meta:
+        model = OtpModel
+
+    search_fields = ['mobile', 'otp']
+    list_display = ['mobile', 'otp', 'is_expired', 'created_time']
+
+
 admin.site.register(RegisteredUsers, RegisteredUserAdmin)
 admin.site.register(EventUsers, EventUserAdmin)
 admin.site.register(BookedHotel, BookedHotelAdmin)
@@ -108,7 +116,7 @@ admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(Event)
 admin.site.register(Table)
 admin.site.register(PaymentDetails, PaymentDetailsAdmin)
-admin.site.register(OtpModel)
+admin.site.register(OtpModel, OtpModelAdmin)
 admin.site.register(Hotel)
 admin.site.register(ImageRoomType, ImageRoomTypeAdmin)
 admin.site.register(ProxyHotelBooking)
