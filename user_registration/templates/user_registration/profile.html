@@ -305,9 +305,8 @@
                                             box-shadow: 0px 0px 8px -1px;
                                             padding-left: 20px;
                                             padding-top: 1.5em;     height: 420px; overflow: hidden;     text-align: left;">
-                                            <img src="https://chart.googleapis.com/chart?chs=100x100&amp;cht=qr&amp;chl={{ event_register.encoded_id }}&amp;chld=L|1&amp;choe=UTF-8"
-                         style="margin: 10px;
-                                             margin-bottom: 1em; width: 100px;">
+                                            <img src="{% static 'img/coupon-right-logo.png' %}"
+                                                 style="margin-bottom:10px;">
                                             <h3 style="font-size: 30px;
     font-weight: 100;
     color: #fff;
@@ -327,9 +326,9 @@
                                                 margin-top: 10px;     display: inline-block;">Reg Number
                                                 :{{ request.user.registered_obj.qrcode }}
                                             </div>
-                                            <img src="{% static 'img/bar-q.png' %}" style="     margin: 10px;
-    margin-bottom: 1em;
-    width: 80%;">
+                                            <img src="https://chart.googleapis.com/chart?chs=100x100&amp;cht=qr&amp;chl={{ event_register.encoded_id }}&amp;chld=L|1&amp;choe=UTF-8"
+                         style="margin: 10px;
+                                             margin-bottom: 1em; width: 100px;">
                                             <div style="width: 90px;height: 90px;background: #fff; position: absolute;top: 55px;right: -44px;border-radius: 100%;"></div>
                                         </div>
                                     </div>
