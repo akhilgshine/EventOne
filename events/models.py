@@ -341,7 +341,7 @@ class RegisteredUsers(models.Model):
     def friday_coupon_amount(self):
         if self.get_coupon_purchase.all():
             return self.get_coupon_purchase.all().aggregate(Sum('total_amount_paid')).get(
-                    'total_amount_paid__sum')
+                'total_amount_paid__sum')
         return 0
 
     @property
@@ -533,3 +533,12 @@ class ProgramSchedule(models.Model):
 
     def __str__(self):
         return str(self.program_name)
+
+
+class PinCoupon(models.Model):
+    registered_users = models.ForeignKey('events.RegisteredUsers', null=True, blank=True,
+                                         related_name='get_pin_amount')
+    amount = models.IntegerField(default=0)
+
+    def __str__(self):
+        return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)

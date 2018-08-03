@@ -1932,6 +1932,8 @@ class FridayDinnerBookingView(TemplateView):
             [create_friday_lunch_coupon(registered_user.id) for _ in range(int(no_of_users_friday))]
         if no_of_kids_friday:
             [create_friday_lunch_coupon(registered_user.id) for _ in range(int(no_of_kids_friday))]
+        if no_of_extra_persons:
+            [create_user_coupon_set(registered_user.id) for _ in range(int(no_of_extra_persons))]
         if no_of_kids_event:
             [create_user_coupon_set(registered_user.id) for _ in range(int(no_of_kids_event))]
         return JsonResponse({'success': True})
