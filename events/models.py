@@ -489,6 +489,8 @@ class CouponPurchase(models.Model):
     no_of_extra_persons = models.IntegerField(default=0)
     total_amount_paid = models.IntegerField(default=0)
     payment_mode = models.CharField(choices=PAYMENT_CHOICES, max_length=30, blank=True, null=True)
+    purchase_time = models.DateTimeField(null=True, blank=True)
+
 
     def __str__(self):
         return '{} {}'.format(self.registered_users.event_user.first_name, self.registered_users.event_user.last_name)
