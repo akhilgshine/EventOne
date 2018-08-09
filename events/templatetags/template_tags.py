@@ -42,21 +42,25 @@ def no_of_night(user_id):
 @register.filter
 def payment_status(user_id):
     user = RegisteredUsers.objects.get(id=user_id)
-    if user.event_user.member_type == 'Square_Leg':
-        if (user.event_status == 'Stag' and user.amount_paid < 4000) or (
-                user.event_status == 'Couple' and user.amount_paid < 5000):
-            return 'Partial'
-        elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (
-                user.event_status == 'Couple_Informal' and user.amount_paid < 3500):
-            return 'Partial'
-        else:
-            return 'Complete'
-    else:
-        if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (
-                user.event_status == 'Couple' and user.amount_paid < 6000):
-            return 'Partial'
-        else:
-            return 'Complete'
+    if not user.total_due:
+        return 'Complete'
+    return 'Partial'
+
+    # if user.event_user.member_type == 'Square_Leg':
+    #     if (user.event_status == 'Stag' and user.amount_paid < 4000) or (
+    #             user.event_status == 'Couple' and user.amount_paid < 5000) and user.hotel_due:
+    #         return 'Partial'
+    #     elif (user.event_status == 'Stag_Informal' and user.amount_paid < 2500) or (
+    #             user.event_status == 'Couple_Informal' and user.amount_paid < 3500) and user.hotel_due:
+    #         return 'Partial'
+    #     else:
+    #         return 'Complete'
+    # else:
+    #     if (user.event_status == 'Not Mentioned') or (user.event_status == 'Stag' and user.amount_paid < 5000) or (
+    #             user.event_status == 'Couple' and user.amount_paid < 6000)and user.hotel_due:
+    #         return 'Partial'
+    #     else:
+    #         return 'Complete'
 
 
 @register.filter
