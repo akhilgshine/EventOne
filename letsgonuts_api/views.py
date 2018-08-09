@@ -496,6 +496,4 @@ class ScannedCouponDetails(ModelViewSet):
 class ProgramScheduleDetails(ModelViewSet):
     queryset = ProgramSchedule.objects.all()
     serializer_class = ProgramScheduleSerializer
-    permission_classes = [AllowAny,]
-
-    
+    permission_classes = [AllowAny, ]
