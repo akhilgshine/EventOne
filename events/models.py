@@ -320,7 +320,7 @@ class RegisteredUsers(models.Model):
     @property
     def hotel_due(self):
         if self.hotel.all():
-            if not self.id in [94, 18, 100]:
+            if not self.id in [94, 18, 100, 20]:
                 return self.hotel_rent - self.hotel.all()[0].tottal_rent
             return 0
         return 0
