@@ -64,5 +64,5 @@ class Command(BaseCommand):
             message = "You are successfully registered for the event, " \
                       "Area 1 Agm of Round Table India  'Black and White'." \
                       " And you have paid Rs.%s/-" % (str(event_reg.amount_paid))
-            # send_sms_message(event_reg.event_user.mobile, message, event_reg.id)
+            send_sms_message(event_reg.event_user.mobile, message, event_reg.id)
             print(message)
