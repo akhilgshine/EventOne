@@ -35,7 +35,7 @@ def send_email(to_email, message, event_obj):
     # if event_obj.amount_paid < 5000:
     # 	cxt['partial'] = 'Partial'
 
-    subject = 'QRT 85 Registration'
+    subject = 'AAGM Registration'
     content = render_to_string('coupon_second.html', cxt)
     from_email = settings.DEFAULT_FROM_EMAIL
 
@@ -89,7 +89,7 @@ def track_payment_details(data):
 def send_otp(obj):
     otp_number = get_random_string(length=6, allowed_chars='1234567890')
     OtpModel.objects.create(mobile=obj.mobile, otp=otp_number)
-    message = "OTP for Letsgonuts login is %s" % (otp_number,)
+    message = "OTP for Black & White login is %s" % (otp_number,)
     message_status = requests.get(
         "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + obj.mobile + "&text=" + message +
         "&flash=0&type=1&sender=QrtReg",

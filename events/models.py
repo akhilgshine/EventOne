@@ -20,12 +20,14 @@ CASH = 'cash'
 POS = 'POS'
 CARD = 'card'
 BANK_TRANSFER = 'bank_transfer'
+CHEQUE = 'cheque'
 
 STATUS_CHOICES = (
     ('Couple', _('Couple')),
     ('Stag', _('Stag')),
     ('Couple_Informal', _('Couple(1 Day)')),
     ('Stag_Informal', _('Stag(1 Day)')),
+    ('Not_Mentioned', _('Not Mentioned')),
 )
 ROOM_CHOICES = (
     ('Single', _('Single')),
@@ -42,6 +44,7 @@ PAYMENT_CHOICES = (
     (POS, _("POS")),
     (CARD, _("Card")),
     (BANK_TRANSFER, _("Bank Transfer")),
+    (CHEQUE, _("Cheque")),
 )
 
 EVENT_REGISTER = 0
