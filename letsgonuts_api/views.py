@@ -153,20 +153,26 @@ class RegisterEventViewSet(ModelViewSet):
                 if not registered_user.qrcode:
                     try:
                         registered_user.qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
-                        if not registered_user.qrcode.split('QRT')[1].startswith('8'):
-                            registered_user.qrcode = 'QRT8001'
+                        if not registered_user.qrcode:
+                            registered_user.qrcode = '1000'
                         else:
-                            qrcode_updated = registered_user.qrcode[-3:]
-                            qrcode_updated_increment = int(qrcode_updated) + 1
-                            qrcode_updated_length = len(str(qrcode_updated_increment))
-                            if qrcode_updated_length == 1:
-                                registered_user.qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
-                            if qrcode_updated_length == 2:
-                                registered_user.qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
-                            else:
-                                registered_user.qrcode = str('QRT8') + str(qrcode_updated_increment)
+                            current_qrcode = registered_user.qrcode
+                            new_qr_code = int(current_qrcode) + 1
+                            registered_user.qrcode = new_qr_code
+                        # if not registered_user.qrcode.split('QRT')[1].startswith('8'):
+                        #     registered_user.qrcode = 'QRT8001'
+                        # else:
+                        #     qrcode_updated = registered_user.qrcode[-3:]
+                        #     qrcode_updated_increment = int(qrcode_updated) + 1
+                        #     qrcode_updated_length = len(str(qrcode_updated_increment))
+                        #     if qrcode_updated_length == 1:
+                        #         registered_user.qrcode = str('QRT8') + '00' + str(qrcode_updated_increment)
+                        #     if qrcode_updated_length == 2:
+                        #         registered_user.qrcode = str('QRT8') + '0' + str(qrcode_updated_increment)
+                        #     else:
+                        #         registered_user.qrcode = str('QRT8') + str(qrcode_updated_increment)
                     except:
-                        registered_user.qrcode = 'QRT8001'
+                        registered_user.qrcode = '1000'
                     registered_user.is_payment_completed = True
                     registered_user = serializer.save()
             print(id_images)
