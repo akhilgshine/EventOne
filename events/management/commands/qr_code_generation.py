@@ -10,11 +10,12 @@ class Command(BaseCommand):
         registered_users = RegisteredUsers.objects.all()
         for user in registered_users:
             if not user.qrcode:
+                latest_qrcode = RegisteredUsers.objects.latest('qrcode').qrcode
                 user.qrcode = '1000'
                 user.save()
 
             else:
-                current_qrcode = user.qrcode
+                current_qrcode = latest_qrcode
                 new_qr_code = int(current_qrcode) + 1
                 user.qrcode = new_qr_code
             user.save()
