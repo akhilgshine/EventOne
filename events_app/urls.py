@@ -71,7 +71,14 @@ urlpatterns = [
     url(r'^increment-decrement-ajax/', IncrementDecrementAmountAjaxView.as_view(), name='increment_decrement_ajax'),
     url(r'^friday-coupon-booking/', FridayDinnerBookingView.as_view(), name='friday_coupon_booking'),
     url(r'^api-auth/', include('rest_framework.urls')),
+
+    #LetsGoNuts Api
+
     url(r'^api/', include('letsgonuts_api.urls')),
+
+    # EventOne Api
+
+    url(r'^event-one-api/', include('event_one_api.urls')),
     url(r'^user/', include('user_registration.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

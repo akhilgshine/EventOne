@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'events',
     'user_registration',
     'letsgonuts_api',
+    'event_one_api',
 ]
 
 MIDDLEWARE = [
