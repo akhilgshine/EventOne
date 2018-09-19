@@ -26,7 +26,7 @@ class OtpGenerationViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         mobile = serializer.validated_data.get('mobile')
         otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        OtpModel.objects.get(otp=otp_number, mobile=mobile)
+        OtpModel.objects.create(otp=otp_number, mobile=mobile)
         message = "OTP for  login is %s" % (otp_number,)
         requests.get(
             "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
