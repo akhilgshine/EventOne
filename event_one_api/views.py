@@ -25,14 +25,22 @@ class OtpGenerationViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         mobile = serializer.validated_data.get('mobile')
-        otp_number = get_random_string(length=6, allowed_chars='1234567890')
-        OtpModel.objects.create(otp=otp_number, mobile=mobile)
-        message = "OTP for  login is %s" % (otp_number,)
-        requests.get(
-            "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
-            "&flash=0&type=1&sender=QrtReg",
-            headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
-        return Response({'status': True}, status=HTTP_201_CREATED)
+        try:
+            event_user = EventUsers.objects.get(mobile=mobile)
+            if event_user.is_admin:
+                otp_number = get_random_string(length=6, allowed_chars='1234567890')
+                OtpModel.objects.create(otp=otp_number, mobile=mobile)
+                message = "OTP for  login is %s" % (otp_number,)
+                requests.get(
+                    "http://unifiedbuzz.com/api/insms/format/json/?mobile=" + mobile + "&text=" + message +
+                    "&flash=0&type=1&sender=QrtReg",
+                    headers={"X-API-Key": "918e0674e62e01ec16ddba9a0cea447b"})
+                return Response({'status': True}, status=HTTP_201_CREATED)
+            else:
+                return Response({'status': False, 'error': 'You are not an authenticated user'},
+                                status=HTTP_201_CREATED)
+        except EventUsers.DoesNotExist:
+            return Response({'status': False}, status=HTTP_201_CREATED)
 
 
 class OtpPostViewSet(ModelViewSet):
