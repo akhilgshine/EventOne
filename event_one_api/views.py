@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import ModelViewSet
 
-from events.models import OtpModel, EventUsers, MEMBER_CHOICES, Table
+from events.models import OtpModel, EventUsers, MEMBER_CHOICES, Table, RoomType
 from .serializer import OtpGenerationSerializer, OtpPostSerializer, TableListSerializer
 
 
@@ -97,3 +97,52 @@ class RegistrationAmountType(ModelViewSet):
                              {'registration_type': 'Stag', 'id': 1, 'amount': 4000},
                              {'registration_type': 'Stag_Informal', 'id': 1, 'amount': 2500},
                              {'registration_type': 'Couple_Informal', 'id': 1, 'amount': 3500}])
+
+
+class GetHotelList(ModelViewSet):
+    queryset = RoomType.objects.all()
+    serializer_class = TableListSerializer
+    permission_classes = [AllowAny, ]
+
+    def list(self, request, *args, **kwargs):
+        return Response([
+            {
+                'id': 1,
+                'name': 'Raviz',
+                'event_date': '12-08 -2018',
+                'Room': [
+                    {
+                        'id': 121,
+                        'Name': 'Superior Room',
+                        'Available': 5,
+                        'date_from': '12-08 -2018',
+                        'date_to': '12-08 -2018',
+                        'rate': 2500
+                    },
+                    {
+                        'id': 122,
+                        'Name': 'Premium Room',
+                        'Available': 5,
+                        'date_from': '12-08 -2018',
+                        'date_to': '12-08 -2018',
+                        'rate': 3500
+                    }
+                ]
+            },
+            {
+                'id': 2,
+                'name': 'Beach',
+                'event_date': '12-08 -2018',
+                'Room': [
+                    {
+                        'id': 125,
+                        'Name': 'Premium',
+                        'Available': 5,
+                        'date_from': '12-08 -2018',
+                        'date_to': '12-08 -2018',
+                        'rate': 2500
+                    },
+
+                ]
+            },
+                ])
