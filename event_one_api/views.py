@@ -116,7 +116,7 @@ class GetHotelList(ModelViewSet):
                         'Name': 'Superior Room',
                         'Available': 5,
                         'date_from': '12-08 -2018',
-                        'date_to': '12-08 -2018',
+                        'date_to': '13-08 -2018',
                         'rate': 2500
                     },
                     {
@@ -124,7 +124,7 @@ class GetHotelList(ModelViewSet):
                         'Name': 'Premium Room',
                         'Available': 5,
                         'date_from': '12-08 -2018',
-                        'date_to': '12-08 -2018',
+                        'date_to': '13-08 -2018',
                         'rate': 3500
                     }
                 ]
@@ -139,7 +139,7 @@ class GetHotelList(ModelViewSet):
                         'Name': 'Premium',
                         'Available': 5,
                         'date_from': '12-08 -2018',
-                        'date_to': '12-08 -2018',
+                        'date_to': '13-08 -2018',
                         'rate': 2500
                     },
 
