@@ -108,22 +108,22 @@ class GetHotelList(ModelViewSet):
     def list(self, request, *args, **kwargs):
         return Response([
             {
-                'id': 1,
+                'id': 4,
                 'name': 'Raviz',
                 'event_date': '12-08 -2018',
                 'Room': [
                     {
-                        'id': 121,
+                        'id': 14,
                         'Name': 'Superior Room',
-                        'Available': 5,
+                        'Available': 50,
                         'date_from': '12-08 -2018',
                         'date_to': '13-08 -2018',
                         'rate': 2500
                     },
                     {
-                        'id': 122,
-                        'Name': 'Premium Room',
-                        'Available': 5,
+                        'id': 15,
+                        'Name': 'Superior king',
+                        'Available': 50,
                         'date_from': '12-08 -2018',
                         'date_to': '13-08 -2018',
                         'rate': 3500
@@ -131,14 +131,14 @@ class GetHotelList(ModelViewSet):
                 ]
             },
             {
-                'id': 2,
+                'id': 5,
                 'name': 'Beach',
                 'event_date': '12-08 -2018',
                 'Room': [
                     {
-                        'id': 125,
+                        'id': 16,
                         'Name': 'Premium',
-                        'Available': 5,
+                        'Available': 50,
                         'date_from': '12-08 -2018',
                         'date_to': '13-08 -2018',
                         'rate': 2500
