@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import ModelViewSet
 
-from events.models import OtpModel, EventUsers, MEMBER_CHOICES, Table, RoomType, Hotel, BookedHotel, RegisteredUsers
+from events.models import OtpModel, EventUsers,Table, RoomType, Hotel, BookedHotel, RegisteredUsers
 from .serializer import OtpGenerationSerializer, OtpPostSerializer, TableListSerializer, RegisterSerializer
 
 
@@ -78,7 +78,7 @@ class TableAndMemberTypeViewSet(ModelViewSet):
         data = {}
         tables_datas = Table.objects.all()
         data['tables'] = TableListSerializer(tables_datas, many=True).data
-        data['member_type'] = [{"id": 1, "type": "Tabler"}, {"id": 2, "type": "SqLeg"}]
+        data['member_type'] = [{"id": 1, "type": "Tabler"}, {"id": 2, "type": "Square_Leg"}]
 
         return Response(data)
 
@@ -163,7 +163,6 @@ class RegisterViewSet(ModelViewSet):
             table = serializer.validated_data.get('table')
             event_user.table = table
             event_user.save()
-            print("Created event user")
         if serializer.validated_data:
             event_user.first_name = serializer.validated_data.pop('first_name')
             event_user.last_name = serializer.validated_data.pop('last_name')
@@ -177,9 +176,6 @@ class RegisterViewSet(ModelViewSet):
             checkout_date = serializer.validated_data.pop('checkout_date', None)
 
             event_user.save()
-            # id_images = serializer.validated_data.pop('id_images', [])
-            # id_card_type = serializer.validated_data.pop('id_card_type', None)
-
             if RegisteredUsers.objects.filter(event_user=event_user).exists():
                 registered_user = RegisteredUsers.objects.get(event_user=event_user)
                 previous_amount_paid = RegisteredUsers.objects.get(event_user=event_user).amount_paid
