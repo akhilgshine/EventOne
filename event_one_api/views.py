@@ -110,22 +110,22 @@ class GetHotelList(ModelViewSet):
             {
                 'id': 4,
                 'name': 'Raviz',
-                'event_date': '12-08 -2018',
+                'event_date': '12-08-2018',
                 'Room': [
                     {
                         'id': 14,
                         'Name': 'Superior Room',
                         'Available': 50,
-                        'date_from': '12-08 -2018',
-                        'date_to': '13-08 -2018',
+                        'date_from': '12-08-2018',
+                        'date_to': '13-08-2018',
                         'rate': 2500
                     },
                     {
                         'id': 15,
                         'Name': 'Superior king',
                         'Available': 50,
-                        'date_from': '12-08 -2018',
-                        'date_to': '13-08 -2018',
+                        'date_from': '12-08-2018',
+                        'date_to': '13-08-2018',
                         'rate': 3500
                     }
                 ]
@@ -133,14 +133,14 @@ class GetHotelList(ModelViewSet):
             {
                 'id': 5,
                 'name': 'Beach',
-                'event_date': '12-08 -2018',
+                'event_date': '12-08-2018',
                 'Room': [
                     {
                         'id': 16,
                         'Name': 'Premium',
                         'Available': 50,
-                        'date_from': '12-08 -2018',
-                        'date_to': '13-08 -2018',
+                        'date_from': '12-08-2018',
+                        'date_to': '13-08-2018',
                         'rate': 2500
                     },
 
