@@ -234,7 +234,7 @@ class RegisterViewSet(ModelViewSet):
                 data['registered_user_id'] = registered_user.id
                 data['paid_amount'] = registered_user.total_paid
                 data['due_amount'] = registered_user.total_due
-                data['date'] = registered_user.created_date
+                data['date'] = registered_user.created_date.strftime("%Y-%m-%d %H:%M")
                 data['success_message'] = 'Successfully created'
 
         return Response(data)
