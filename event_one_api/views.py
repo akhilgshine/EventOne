@@ -159,6 +159,7 @@ class RegisterViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         event_user, created = EventUsers.objects.get_or_create(email=serializer.validated_data.get('email'),
                                                                mobile=serializer.validated_data.get('mobile'))
+        data = {}
         if created:
             table = serializer.validated_data.get('table')
             event_user.table = table
@@ -225,16 +226,17 @@ class RegisterViewSet(ModelViewSet):
                 hotel_obj.room_type.rooms_available -= 1
                 hotel_obj.room_type.save()
                 hotel_obj.save()
-                data = {}
-                current_site = Site.objects.get_current()
-                domain = current_site.domain
-                data['coupon'] = '%s/api/%s/%s' % (domain, 'coupon-success', registered_user.id)
-                data['status'] = True
-                data['user_id'] = event_user.id
-                data['registered_user_id'] = registered_user.id
-                data['paid_amount'] = registered_user.total_paid
-                data['due_amount'] = registered_user.total_due
-                data['date'] = registered_user.created_date.strftime("%Y-%m-%d %H:%M")
-                data['success_message'] = 'Successfully created'
+
+            current_site = Site.objects.get_current()
+            domain = current_site.domain
+
+            data['coupon'] = '%s/api/%s/%s' % (domain, 'coupon-success', registered_user.id)
+            data['status'] = True
+            data['user_id'] = event_user.id
+            data['registered_user_id'] = registered_user.id
+            data['paid_amount'] = registered_user.total_paid
+            data['due_amount'] = registered_user.total_due
+            data['date'] = registered_user.created_date.strftime("%Y-%m-%d %H:%M")
+            data['success_message'] = 'Successfully created'
 
         return Response(data)
