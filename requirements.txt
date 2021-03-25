@@ -1,7 +1,7 @@
 Django==1.11.3
 Markdown==2.6.11
 Pillow==4.2.1
-PyYAML==3.12
+PyYAML==5.4
 #argparse==1.2.1
 certifi==2018.1.18
 chardet==3.0.4
